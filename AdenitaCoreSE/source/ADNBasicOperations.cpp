@@ -437,7 +437,7 @@ void ADNBasicOperations::SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss,
   int count = 0;
 
   while (nt != nullptr) {
-    DNABlocks t = residue_names_.right.at(seq[count]);
+    DNABlocks t = ADNModel::ResidueNameToType(seq[count]);
     MutateNucleotide(nt, t, changePair);
     nt = nt->GetNext();
   }

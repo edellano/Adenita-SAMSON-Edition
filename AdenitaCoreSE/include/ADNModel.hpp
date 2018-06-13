@@ -7,6 +7,8 @@
 #include "SBMStructuralModelNodeSidechain.hpp"
 #include "SBMStructuralModelNodeResidue.hpp"
 #include "SBMStructuralModelNodeChain.hpp"
+#include "SBMStructuralModelNodeGroup.hpp"
+#include "SBMStructuralModelNode.hpp"
 #include <boost/bimap.hpp>
 #include <boost/assign/list_of.hpp>
 #include "ADNAuxiliary.hpp"
@@ -57,6 +59,7 @@ const DNAPairsToString nt_pairs_names_ = boost::assign::list_of<DNAPairsToString
 namespace ADNModel {
   DNABlocks GetComplementaryBase(DNABlocks base);
   char GetResidueName(DNABlocks t);
+  DNABlocks ResidueNameToType(char n);
 }
 
 /* Classes */
@@ -81,6 +84,25 @@ public:
   void SetPosition(Position3D const &newPosition);
 
   bool IsInBackbone();
+};
+
+// mixin needs ADNAtom completely defined, hence defined here
+class PositionableSB {
+public:
+  PositionableSB() = default;
+  ~PositionableSB() = default;
+  PositionableSB(const PositionableSB& other);
+
+  PositionableSB& operator=(const PositionableSB& other);
+
+  void SetPosition(Position3D pos);
+  Position3D GetPosition() const;
+
+  ADNPointer<ADNAtom> GetCenterAtom() const;
+  void SetCenterAtom(ADNPointer<ADNAtom> centerAtom);
+
+private:
+  ADNPointer<ADNAtom> centerAtom_;
 };
 
 class ADNBackbone: public SBBackbone, public PositionableSB {
@@ -138,16 +160,17 @@ public:
   ADNPointer<ADNBaseSegment> GetBaseSegment();
 
   End GetEnd();
+  void SetEnd(End e);
 
   ADNPointer<ADNBackbone> GetBackbone();
   ADNPointer<ADNSidechain> GetSidechain();
-  void SetSidechainPosition(ublas::vector<double> pos);
-  ublas::vector<double> GetSidechainPosition();
-  void SetBackbonePosition(ublas::vector<double> pos);
-  ublas::vector<double> GetBackbonePosition();
+  void SetSidechainPosition(Position3D pos);
+  Position3D GetSidechainPosition();
+  void SetBackbonePosition(Position3D pos);
+  Position3D GetBackbonePosition();
 
-  // override GetName so if it is empty we use nucleotide id and type
-  char GetName();
+  std::string const & GetName() const;
+  void SetName(const std::string &name);
 
   void AddAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
   void ADNNucleotide::DeleteAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
@@ -178,6 +201,8 @@ public:
 
   ADNSingleStrand& operator=(const ADNSingleStrand& other);
 
+  std::string const & GetName() const;
+
   ADNPointer<ADNNucleotide> GetFivePrime();
   ADNPointer<ADNNucleotide> GetThreePrime();
 
@@ -188,7 +213,7 @@ public:
   void IsScaffold(bool b);
   bool IsScaffold();
   CollectionMap<ADNNucleotide> GetNucleotides() const;
-  ADNPointer<ADNNucleotide> GetNucleotide(int id) const;
+  ADNPointer<ADNNucleotide> GetNucleotide(unsigned int id) const;
   void AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt);  // add nucleotide to the three prime end
   void AddNucleotideFivePrime(ADNPointer<ADNNucleotide> nt);  // add nucleotide to the five prime end
 
@@ -217,9 +242,9 @@ private:
   ADNPointer<ADNNucleotide> threePrime_;
 };
 
-class ADNCell {
+class ADNCell : public SBStructuralGroup {
 public:
-  ADNCell() = default;
+  ADNCell() : SBStructuralGroup() {};
   virtual ~ADNCell() {};
   virtual CellType GetType() = 0;
   virtual void RemoveNucleotide(ADNPointer<ADNNucleotide> nt) = 0;
@@ -305,9 +330,9 @@ private:
 
 class ADNDoubleStrand;
 
-class ADNBaseSegment: public Identifiable, public Positionable, public Orientable {
+class ADNBaseSegment: public Identifiable, public PositionableSB, public SBStructuralNode, public Orientable {
 public:
-  ADNBaseSegment() : Identifiable(), Positionable(), Orientable() {};
+  ADNBaseSegment() : Identifiable(), PositionableSB(), SBStructuralNode(), Orientable() {};
   ADNBaseSegment(const ADNBaseSegment& other);
   ~ADNBaseSegment() = default;
 
@@ -315,11 +340,10 @@ public:
 
   void SetNumber(int n);
   int GetNumber();
-  void SetPrev(ADNPointer<ADNBaseSegment> bs);
+
   ADNPointer<ADNBaseSegment> GetPrev();
-  void SetNext(ADNPointer<ADNBaseSegment> bs);
   ADNPointer<ADNBaseSegment> GetNext();
-  void SetDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
+
   ADNPointer<ADNDoubleStrand> GetDoubleStrand();
 
   void SetCell(ADNPointer<ADNCell> c);
@@ -330,16 +354,13 @@ public:
 private:
   ADNPointer<ADNCell> cell_ = nullptr;
   int number_ = -1;  // number of the base in the double strand
-  ADNWeakPointer<ADNBaseSegment> next_;  //next base segment around the face
-  ADNWeakPointer<ADNBaseSegment> previous_;  //previous base segment around the face
-  ADNWeakPointer<ADNDoubleStrand> doubleStrand_;  // the double strand to which this nucleotide belongs
 };
 
-class ADNDoubleStrand : public std::enable_shared_from_this<ADNDoubleStrand>, public Identifiable, public Collection<ADNBaseSegment> {
+class ADNDoubleStrand : public SBStructuralGroup, public Identifiable {
 public:
-  ADNDoubleStrand() : Identifiable(), Collection<ADNBaseSegment>() {};
-  ADNDoubleStrand(int numBases);
-  ADNDoubleStrand(std::vector<ADNPointer<ADNBaseSegment>> bss);
+  ADNDoubleStrand() : Identifiable(), SBStructuralGroup() {};
+  //ADNDoubleStrand(int numBases);
+  //ADNDoubleStrand(std::vector<ADNPointer<ADNBaseSegment>> bss);
   ~ADNDoubleStrand() = default;
   ADNDoubleStrand(const ADNDoubleStrand& other);
 
