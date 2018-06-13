@@ -125,39 +125,3 @@ ublas::vector<double> Orientable::GetE3() const
 {
   return e3_;
 }
-
-PositionableSB::PositionableSB(const PositionableSB & other)
-{
-  *this = other;
-}
-
-PositionableSB & PositionableSB::operator=(const PositionableSB & other)
-{
-  if (&other == this) {
-    return *this;
-  }
-
-  centerAtom_ = other.GetCenterAtom();
-
-  return *this;
-}
-
-void PositionableSB::SetPosition(Position3D pos)
-{
-  centerAtom_->setPosition(pos);
-}
-
-Position3D PositionableSB::GetPosition() const
-{
-  return centerAtom_.getPosition();
-}
-
-ADNPointer<ADNAtom> PositionableSB::GetCenterAtom() const
-{
-  return centerAtom_;
-}
-
-void PositionableSB::SetCenterAtom(ADNPointer<ADNAtom> centerAtom)
-{
-  centerAtom_ = centerAtom;
-}

@@ -4,9 +4,34 @@
 #include <memory>
 #include <map>
 #include <boost/numeric/ublas/vector.hpp>
+#include "SAMSON.hpp"
+#include "SBCReferencePointer.hpp"
+#include "SBCReferencePointerIndexer.hpp"
 
 
 namespace ublas = boost::numeric::ublas;
+
+/* Using smart pointers */
+//template <typename T>
+//using ADNPointer = std::shared_ptr<T>;
+
+template <typename T>
+using ADNPointer = SBCReferencePointer<T>;
+
+//template <typename T>
+//using ADNWeakPointer = std::weak_ptr<T>;
+
+template <typename T>
+using ADNWeakPointer = SBCReferencePointer<T>;
+
+//template<typename T>
+//using CollectionMap = std::map<int, ADNPointer<T>>;
+
+template<typename T>
+using CollectionMap = SBPointerIndexer<T>;
+
+//using Position3D = ublas::vector<double>;
+using Position3D = SBPosition3;
 
 class Nameable {
 public:
@@ -34,26 +59,6 @@ public:
   ublas::vector<double> GetPosition() const;
 private:
   ublas::vector<double> position_;
-};
-
-class ADNAtom;
-
-class PositionableSB {
-public:
-  PositionableSB() = default;
-  ~PositionableSB() = default;
-  PositionableSB(const PositionableSB& other);
-
-  PositionableSB& operator=(const PositionableSB& other);
-
-  void SetPosition(Position3D pos);
-  Position3D GetPosition() const;
-   
-  ADNPointer<ADNAtom> GetCenterAtom() const;
-  void SetCenterAtom(ADNPointer<ADNAtom> centerAtom);
-
-private:
-  ADNPointer<ADNAtom> centerAtom_;
 };
 
 class Identifiable {
@@ -89,28 +94,6 @@ private:
   ublas::vector<double> e2_;
   ublas::vector<double> e3_;
 };
-
-/* Using smart pointers */
-//template <typename T>
-//using ADNPointer = std::shared_ptr<T>;
-
-template <typename T>
-using ADNPointer = SBCReferencePointer<T>;
-
-//template <typename T>
-//using ADNWeakPointer = std::weak_ptr<T>;
-
-template <typename T>
-using ADNWeakPointer = SBCReferencePointer<T>;
-
-//template<typename T>
-//using CollectionMap = std::map<int, ADNPointer<T>>;
-
-template<typename T>
-using CollectionMap = SBPointerList<T>;
-
-//using Position3D = ublas::vector<double>;
-using Position3D = Position3D;
 
 template <class T>
 class Collection {
