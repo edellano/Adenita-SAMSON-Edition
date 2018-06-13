@@ -5,7 +5,7 @@
 #include "ADNNanorobot.hpp"
 
 
-ADNNanorobot::ADNNanorobot(const ADNNanorobot & n) : Nameable(n), Positionable(n), Orientable(n), Collection<ADNPart>(n)
+ADNNanorobot::ADNNanorobot(const ADNNanorobot & n) : Nameable(n), Positionable(n), Orientable(n)
 {
   *this = n;
 }
@@ -15,42 +15,8 @@ ADNNanorobot & ADNNanorobot::operator=(const ADNNanorobot& other)
   Nameable::operator =(other);
   Positionable::operator =(other);
   Orientable::operator =(other);
-  Collection<ADNPart>::operator =(other);
 
-  if (this != &other) {
-    lastAtomKey_ = other.GetLastAtomKey();
-    lastNucleotideKey_ = other.GetLastNucleotideKey();
-    lastSingleStrandKey_ = other.GetLastSingleStrandKey();
-    lastBaseSegmentKey_ = other.GetLastBaseSegmentKey();
-    lastDoubleStrandKey_ = other.GetLastDoubleStrandKey();
-
-  }
   return *this;
-}
-
-int ADNNanorobot::GetLastDoubleStrandKey() const
-{
-  return lastDoubleStrandKey_;
-}
-
-int ADNNanorobot::GetLastBaseSegmentKey() const
-{
-  return lastBaseSegmentKey_;
-}
-
-int ADNNanorobot::GetLastSingleStrandKey() const
-{
-  return lastSingleStrandKey_;
-}
-
-int ADNNanorobot::GetLastNucleotideKey() const
-{
-  return lastNucleotideKey_;
-}
-
-int ADNNanorobot::GetLastAtomKey() const
-{
-  return lastAtomKey_;
 }
 
 int ADNNanorobot::GetNumberOfDoubleStrands()
@@ -58,8 +24,7 @@ int ADNNanorobot::GetNumberOfDoubleStrands()
   auto parts = GetParts();
   int count = 0;
 
-  for (auto &p: parts) {
-    auto part = p.second;
+  SB_FOR (ADNPointer<ADNPart> part, parts) {
     count += part->GetNumberOfDoubleStrands();
   }
 
@@ -71,8 +36,7 @@ int ADNNanorobot::GetNumberOfBaseSegments()
   auto parts = GetParts();
   int count = 0;
 
-  for (auto &p : parts) {
-    auto part = p.second;
+  SB_FOR(ADNPointer<ADNPart> part, parts) {
     count += part->GetNumberOfBaseSegments();
   }
 
@@ -84,8 +48,7 @@ int ADNNanorobot::GetNumberOfSingleStrands()
   auto parts = GetParts();
   int count = 0;
 
-  for (auto &p : parts) {
-    auto part = p.second;
+  SB_FOR(ADNPointer<ADNPart> part, parts) {
     count += part->GetNumberOfSingleStrands();
   }
 
@@ -97,8 +60,7 @@ int ADNNanorobot::GetNumberOfNucleotides()
   auto parts = GetParts();
   int count = 0;
 
-  for (auto &p : parts) {
-    auto part = p.second;
+  SB_FOR(ADNPointer<ADNPart> part, parts) {
     count += part->GetNumberOfNucleotides();
   }
 
@@ -107,62 +69,17 @@ int ADNNanorobot::GetNumberOfNucleotides()
 
 CollectionMap<ADNPart> ADNNanorobot::GetParts() const
 {
-  return GetCollection();
-}
+  CollectionMap<ADNPart> parts;
 
-void ADNNanorobot::RegisterPart(ADNPointer<ADNPart> part)
-{
-  part->SetId(GetLastKey() + 1);
-  AddElement(part, part->GetId());
-}
+  SBNodeIndexer nodeIndexer;
+  SAMSON::getActiveDocument()->getNodes(nodeIndexer, SBNode::IsType(SBNode::StructuralModel));
 
-void ADNNanorobot::RegisterDoubleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNDoubleStrand> ds)
-{
-  ds->SetId(lastDoubleStrandKey_ + 1);
-  lastDoubleStrandKey_ += 1;
-  part->RegisterDoubleStrand(ds);
-}
+  SB_FOR(SBNode* n, nodeIndexer) {
+    ADNPointer<ADNPart> a = static_cast<ADNPart*>(n);
+    parts.addReferenceTarget(a());
+  }
 
-void ADNNanorobot::RegisterBaseSegmentBeginning(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs)
-{
-  bs->SetId(lastBaseSegmentKey_ + 1);
-  lastBaseSegmentKey_ += 1;
-  ds->AddBaseSegmentBeginning(bs);
-}
-
-void ADNNanorobot::RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs)
-{
-  bs->SetId(lastBaseSegmentKey_ + 1);
-  lastBaseSegmentKey_ += 1;
-  ds->AddBaseSegmentEnd(bs);
-}
-
-void ADNNanorobot::RegisterSingleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> ss)
-{
-  ss->SetId(lastSingleStrandKey_ + 1);
-  lastSingleStrandKey_ += 1;
-  part->RegisterSingleStrand(ss);
-}
-
-void ADNNanorobot::RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt)
-{
-  nt->SetId(lastNucleotideKey_ + 1);
-  lastNucleotideKey_ += 1;
-  ss->AddNucleotideFivePrime(nt);
-}
-
-void ADNNanorobot::RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt)
-{
-  nt->SetId(lastNucleotideKey_ + 1);
-  lastNucleotideKey_ += 1;
-  ss->AddNucleotideThreePrime(nt);
-}
-
-void ADNNanorobot::RegisterAtom(ADNPointer<ADNNucleotide> nt, ADNPointer<ADNNucleotideGroup> group, ADNPointer<ADNAtom> atom)
-{
-  atom->SetId(lastAtomKey_ + 1);
-  lastAtomKey_ += 1;
-  nt->AddAtom(group, atom);
+  return parts;
 }
 
 //std::map<int, ANTSingleStrand*> ANTNanorobot::GetSingleStrands() const {

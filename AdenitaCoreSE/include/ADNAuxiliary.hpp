@@ -5,8 +5,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QFile>
-//#include <SAMSON.hpp>
-//#include <SBSideChain.hpp>
+#include <SAMSON.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix_proxy.hpp>
@@ -14,6 +13,8 @@
 
 
 namespace ublas = boost::numeric::ublas;
+
+using Position3D = SBPosition3;
 
 namespace ADNAuxiliary {
   using namespace ublas;
@@ -94,14 +95,18 @@ namespace ADNAuxiliary {
 	char getBaseSymbol(std::string name);
 	char getBaseSymbol(size_t numAtoms); 
   void getHeatMapColor(double val, double min, double max, int* color);
-  //std::string SBPosition3ToString(SBPosition3 position);
-  //std::string SBVector3ToString(SBVector3 vec);
+
   std::string UblasVectorToString(ublas::vector<double> vec);
   std::string VectorToString(std::vector<int> vec);
-  //SBPosition3 StringToSBPosition3(std::string position);
-  //SBVector3 StringToSBVector3(std::string vec);
+  std::string SBPositionToString(Position3D pos);
+  std::string SBVector3ToString(SBVector3 vec);
+
   ublas::vector<double> StringToUblasVector(std::string vec);
+  Position3D StringToSBPosition(std::string vec);
+  SBVector3 StringToSBVector(std::string vec);
   std::vector<int> StringToVector(std::string vec);
+
+  Position3D UblasVectorToSBPosition(ublas::vector<double> pos);
   
   bool ValidateSequence(std::string seq);
 };

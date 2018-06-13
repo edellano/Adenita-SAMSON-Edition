@@ -4,20 +4,14 @@
 #include "ADNPart.hpp"
 
 
-class ADNNanorobot : public Nameable, public Positionable, public Orientable, public Collection<ADNPart> {
+class ADNNanorobot : public Nameable, public Positionable, public Orientable {
 public:
-  ADNNanorobot() : Nameable(), Positionable(), Orientable(), Collection<ADNPart>() {};
+  ADNNanorobot() : Nameable(), Positionable(), Orientable() {};
   ADNNanorobot(const ADNNanorobot &n);
   ~ADNNanorobot() = default;
 
   /* Operators */
   ADNNanorobot& operator=(const ADNNanorobot& other);
-
-  int GetLastDoubleStrandKey() const;
-  int GetLastBaseSegmentKey() const;
-  int GetLastSingleStrandKey() const;
-  int GetLastNucleotideKey() const;
-  int GetLastAtomKey() const;
 
   int GetNumberOfDoubleStrands();
   int GetNumberOfBaseSegments();
@@ -26,23 +20,7 @@ public:
 
   CollectionMap<ADNPart> GetParts() const;
 
-  // everytime a new object is created it needs to be registered
-  void RegisterPart(ADNPointer<ADNPart> part);
-  void RegisterDoubleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNDoubleStrand> ds);
-  void RegisterBaseSegmentBeginning(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs);
-  void RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs);
-  void RegisterSingleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> ss);
-  void RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
-  void RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
-  void RegisterAtom(ADNPointer<ADNNucleotide> nt, ADNPointer<ADNNucleotideGroup> group, ADNPointer<ADNAtom> atom);
-
 private:
-  int lastDoubleStrandKey_ = -1;
-  int lastBaseSegmentKey_ = -1;
-  int lastSingleStrandKey_ = -1;
-  int lastNucleotideKey_ = -1;
-  int lastAtomKey_ = -1;
-
 //  /* Getters */
 //  std::map<int, ANTSingleStrand*> GetSingleStrands() const;
 //  std::map<ANTDoubleStrand*, ANTPart*> GetDoubleStrands() const;
