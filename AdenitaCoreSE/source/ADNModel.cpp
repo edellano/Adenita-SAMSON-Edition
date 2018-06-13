@@ -286,6 +286,11 @@ std::string const & ADNSingleStrand::GetName() const
   return getName();
 }
 
+void ADNSingleStrand::SetName(const std::string & name)
+{
+  setName(name);
+}
+
 ADNPointer<ADNNucleotide> ADNSingleStrand::GetFivePrime()
 {
   return fivePrime_;
@@ -320,10 +325,10 @@ CollectionMap<ADNNucleotide> ADNSingleStrand::GetNucleotides() const
 {
   CollectionMap<ADNNucleotide> ntList;
 
-  auto children = getChildren();
+  SBPointerList<SBStructuralNode> children = *getChildren();
   SB_FOR(SBStructuralNode* n, children) {
-    ADNNucleotide* a = static_cast<ADNNucleotide*>(n);
-    ntList.addReferenceTarget(a);
+    ADNPointer<ADNNucleotide> a = static_cast<ADNNucleotide*>(n);
+    ntList.addReferenceTarget(a());
   }
 
   return ntList;
@@ -362,35 +367,6 @@ void ADNSingleStrand::AddNucleotideFivePrime(ADNPointer<ADNNucleotide> nt)
   addChild(nt(), fivePrime_());
   fivePrime_ = nt;
 }
-
-//SBPointer<SBChain> ANTSingleStrand::CreateSBChain(bool use_btta) {
-//  SBPointer<SBChain> chain = new SBChain();
-//  chain_ = chain;
-//  chain->setName(chainName_);
-//
-//  auto nucleotides = nucleotides_;
-//  ANTNucleotide* nt_first = fivePrime_;
-//  ANTNucleotide* nt = nt_first;
-//  ANTNucleotide* nt_prev = nullptr;
-//  do {
-//    SBPointer<SBResidue> res = nt->CreateSBResidue();
-//    // link residues (if all-atom model was produced!)
-//    // todo: deal better with non-paired regions!!
-//    if (nt_prev != nullptr && use_btta && nt->atomList_.size() > 0 && nt_prev->atomList_.size() > 0) {
-//      // previous O3'
-//      ANTAtom* o3_prime = nt_prev->GetAtom("O3'");
-//      ANTAtom* p = nt->GetAtom("P");
-//      SBPointer<SBBond> link = new SBBond(o3_prime->sbAtom_(), p->sbAtom_());
-//      SBBackbone* bb = res->getBackbone();
-//      bb->addChild(link());
-//    }
-//    chain->addChild(res());
-//    nt_prev = nt;
-//    nt = nt->next_;
-//  } while (nt != nullptr);
-//
-//  return chain;
-//}
 
 void ADNSingleStrand::ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq) {
   if (nt == fivePrime_) return;
@@ -611,8 +587,8 @@ ADNPointer<ADNDoubleStrand> ADNBaseSegment::GetDoubleStrand()
 //  return coord;
 //}
 
-void ADNBaseSegment::SetCell(ADNPointer<ADNCell> c) {
-  cell_ = c;
+void ADNBaseSegment::SetCell(ADNCell* c) {
+  cell_ = ADNPointer<ADNCell>(c);
 }
 
 ADNPointer<ADNCell> ADNBaseSegment::GetCell() const {
@@ -678,7 +654,7 @@ CollectionMap<ADNBaseSegment> ADNDoubleStrand::GetBaseSegments() const
 {
   CollectionMap<ADNBaseSegment> bsList;
 
-  auto children = getChildren();
+  auto children = *getChildren();
   SB_FOR(SBStructuralNode* n, children) {
     ADNBaseSegment* a = static_cast<ADNBaseSegment*>(n);
     bsList.addReferenceTarget(a);
@@ -803,31 +779,25 @@ ADNPointer<ADNNucleotide> ADNLoop::GetEnd()
   return endNt_;
 }
 
-void ADNLoop::SetStrand(ADNPointer<ADNSingleStrand> ss)
-{
-  strand_ = ADNWeakPointer<ADNSingleStrand>(ss);
-}
-
-ADNPointer<ADNSingleStrand> ADNLoop::GetStrand()
-{
-  return strand_;
-}
-
 CollectionMap<ADNNucleotide> ADNLoop::GetNucleotides() const
 {
-  return GetCollection();
+  CollectionMap<ADNNucleotide> ntList;
+
+  auto children = *getChildren();
+  SB_FOR(SBStructuralNode* n, children) {
+    ADNPointer<ADNNucleotide> a = static_cast<ADNNucleotide*>(n);
+    ntList.addReferenceTarget(a());
+  }
+
+  return ntList;
 }
 
 void ADNLoop::AddNucleotide(ADNPointer<ADNNucleotide> nt) {
-  if (nt->GetId() < 0) {
-    int id = GetLastKey() + 1;
-    nt->SetId(id);
-  }
-  AddElement(nt, nt->GetId());
+  addChild(nt());
 }
 
 void ADNLoop::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
-  DeleteElement(nt->GetId());
+  removeChild(nt());
 }
 
 //void ADNLoop::PositionLoopNucleotides(ublas::vector<double> bsPositionPrev, ublas::vector<double> bsPositionNext) {
@@ -874,7 +844,7 @@ void ADNLoop::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
 
 bool ADNLoop::IsEmpty() {
   bool empty = true;
-  if (GetCollection().size() > 0) empty = false;
+  if (GetNucleotides().size() > 0) empty = false;
   return empty;
 }
 
@@ -921,7 +891,7 @@ CollectionMap<ADNAtom> ADNBackbone::GetAtoms() const
 {
   CollectionMap<ADNAtom> atomList;
 
-  auto children = getChildren();
+  auto children = *getChildren();
   SB_FOR(SBStructuralNode* n, children) {
     ADNAtom* a = static_cast<ADNAtom*>(n);
     atomList.addReferenceTarget(a);
@@ -968,7 +938,7 @@ CollectionMap<ADNAtom> ADNSidechain::GetAtoms()
 {
   CollectionMap<ADNAtom> atomList;
 
-  auto children = getChildren();
+  auto children = *getChildren();
   SB_FOR(SBStructuralNode* n, children) {
     ADNAtom* a = static_cast<ADNAtom*>(n);
     atomList.addReferenceTarget(a);
@@ -1011,7 +981,7 @@ void PositionableSB::SetPosition(Position3D pos)
 
 Position3D PositionableSB::GetPosition() const
 {
-  return centerAtom_.getPosition();
+  return centerAtom_->getPosition();
 }
 
 ADNPointer<ADNAtom> PositionableSB::GetCenterAtom() const

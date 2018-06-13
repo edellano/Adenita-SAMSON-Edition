@@ -9,8 +9,8 @@
 
 namespace ADNLoader {
   // json
-  ADNPointer<ADNPart> LoadPartFromJson(ADNPointer<ADNNanorobot> nr, std::string filename);
-  ADNPointer<ADNPart> LoadPartFromJsonLegacy(ADNPointer<ADNNanorobot> nr, std::string filename);
+  ADNPointer<ADNPart> LoadPartFromJson(std::string filename);
+  ADNPointer<ADNPart> LoadPartFromJsonLegacy(std::string filename);
   void SavePartToJson(ADNPointer<ADNPart> p, std::string filename);
 
   // pdb

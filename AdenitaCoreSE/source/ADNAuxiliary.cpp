@@ -92,23 +92,23 @@ void ADNAuxiliary::getHeatMapColor(double val, double min, double max, int* colo
 
 }
 
-//std::string ADNAuxiliary::SBPosition3ToString(SBPosition3 position) {
-//  std::string x = std::to_string(position[0].getValue());
-//  std::string y = std::to_string(position[1].getValue());
-//  std::string z = std::to_string(position[2].getValue());
-//
-//  std::string st_pos = x + "," + y + "," + z;
-//  return st_pos;
-//}
-//
-//std::string ADNAuxiliary::SBVector3ToString(SBVector3 vec) {
-//  std::string x = std::to_string(vec[0].getValue());
-//  std::string y = std::to_string(vec[1].getValue());
-//  std::string z = std::to_string(vec[2].getValue());
-//
-//  std::string st_pos = x + "," + y + "," + z;
-//  return st_pos;
-//}
+std::string ADNAuxiliary::SBPositionToString(SBPosition3 position) {
+  std::string x = std::to_string(position[0].getValue());
+  std::string y = std::to_string(position[1].getValue());
+  std::string z = std::to_string(position[2].getValue());
+
+  std::string st_pos = x + "," + y + "," + z;
+  return st_pos;
+}
+
+std::string ADNAuxiliary::SBVector3ToString(SBVector3 vec) {
+  std::string x = std::to_string(vec[0].getValue());
+  std::string y = std::to_string(vec[1].getValue());
+  std::string z = std::to_string(vec[2].getValue());
+
+  std::string st_pos = x + "," + y + "," + z;
+  return st_pos;
+}
 
 std::string ADNAuxiliary::UblasVectorToString(ublas::vector<double> vec) {
   std::string st_pos = "";
@@ -139,39 +139,39 @@ std::string ADNAuxiliary::VectorToString(std::vector<int> vec)
   return st_pos;
 }
 
-//SBPosition3 ADNAuxiliary::StringToSBPosition3(std::string position) {
-//  std::vector<std::string> stringArray;
-//  std::size_t pos = 0;
-//  std::size_t found;
-//  while ((found = position.find(',', pos)) != std::string::npos) {
-//    stringArray.push_back(position.substr(pos, found - pos));
-//    pos = found + 1;
-//  }
-//  stringArray.push_back(position.substr(pos));
-//
-//  SBPosition3 sbPos = SBPosition3();
-//  sbPos[0] = SBQuantity::picometer(std::stod(stringArray[0]));
-//  sbPos[1] = SBQuantity::picometer(std::stod(stringArray[1]));
-//  sbPos[2] = SBQuantity::picometer(std::stod(stringArray[2]));
-//  return sbPos;
-//}
-//
-//SBVector3 ADNAuxiliary::StringToSBVector3(std::string vec) {
-//  std::vector<std::string> stringArray;
-//  std::size_t pos = 0;
-//  std::size_t found;
-//  while ((found = vec.find(',', pos)) != std::string::npos) {
-//    stringArray.push_back(vec.substr(pos, found - pos));
-//    pos = found + 1;
-//  }
-//  stringArray.push_back(vec.substr(pos));
-//
-//  SBVector3 sbVec = SBVector3();
-//  sbVec[0] = SBQuantity::dimensionless(std::stod(stringArray[0]));
-//  sbVec[1] = SBQuantity::dimensionless(std::stod(stringArray[1]));
-//  sbVec[2] = SBQuantity::dimensionless(std::stod(stringArray[2]));
-//  return sbVec;
-//}
+Position3D ADNAuxiliary::StringToSBPosition(std::string position) {
+  std::vector<std::string> stringArray;
+  std::size_t pos = 0;
+  std::size_t found;
+  while ((found = position.find(',', pos)) != std::string::npos) {
+    stringArray.push_back(position.substr(pos, found - pos));
+    pos = found + 1;
+  }
+  stringArray.push_back(position.substr(pos));
+
+  SBPosition3 sbPos = SBPosition3();
+  sbPos[0] = SBQuantity::picometer(std::stod(stringArray[0]));
+  sbPos[1] = SBQuantity::picometer(std::stod(stringArray[1]));
+  sbPos[2] = SBQuantity::picometer(std::stod(stringArray[2]));
+  return sbPos;
+}
+
+SBVector3 ADNAuxiliary::StringToSBVector(std::string vec) {
+  std::vector<std::string> stringArray;
+  std::size_t pos = 0;
+  std::size_t found;
+  while ((found = vec.find(',', pos)) != std::string::npos) {
+    stringArray.push_back(vec.substr(pos, found - pos));
+    pos = found + 1;
+  }
+  stringArray.push_back(vec.substr(pos));
+
+  SBVector3 sbVec = SBVector3();
+  sbVec[0] = SBQuantity::dimensionless(std::stod(stringArray[0]));
+  sbVec[1] = SBQuantity::dimensionless(std::stod(stringArray[1]));
+  sbVec[2] = SBQuantity::dimensionless(std::stod(stringArray[2]));
+  return sbVec;
+}
 
 ublas::vector<double> ADNAuxiliary::StringToUblasVector(std::string vec) 
 {
@@ -209,6 +209,16 @@ std::vector<int> ADNAuxiliary::StringToVector(std::string vec)
   }
 
   return uVec;
+}
+
+Position3D ADNAuxiliary::UblasVectorToSBPosition(ublas::vector<double> pos)
+{
+  Position3D sbPos;
+  sbPos[0] = SBQuantity::picometer(pos[0]);
+  sbPos[1] = SBQuantity::picometer(pos[1]);
+  sbPos[2] = SBQuantity::picometer(pos[2]);
+
+  return sbPos;
 }
 
 bool ADNAuxiliary::ValidateSequence(std::string seq) 

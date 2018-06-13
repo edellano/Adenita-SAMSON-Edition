@@ -448,7 +448,7 @@ void ADNBasicOperations::MutateBasePairIntoLoopPair(ADNPointer<ADNBaseSegment> b
   auto cell = bs->GetCell();
   if (cell->GetType() != CellType::BasePair) return;
 
-  ADNPointer<ADNBasePair> bp = std::static_pointer_cast<ADNBasePair>(cell);
+  ADNPointer<ADNBasePair> bp(static_cast<ADNBasePair*>(cell()));
   ADNPointer<ADNNucleotide> leftNt = bp->GetLeftNucleotide();
   ADNPointer<ADNNucleotide> rightNt = bp->GetRightNucleotide();
   // unpair
@@ -463,13 +463,11 @@ void ADNBasicOperations::MutateBasePairIntoLoopPair(ADNPointer<ADNBaseSegment> b
   leftLoop->AddNucleotide(leftNt);
   leftLoop->SetStart(leftNt);
   leftLoop->SetEnd(leftNt);
-  leftLoop->SetStrand(leftNt->GetStrand());
   rightLoop->AddNucleotide(rightNt);
   rightLoop->SetStart(rightNt);
   rightLoop->SetEnd(rightNt);
-  rightLoop->SetStrand(rightNt->GetStrand());
 
-  bs->SetCell(lp);
+  bs->SetCell(lp());
 }
 
 

@@ -71,6 +71,7 @@ class ADNNucleotide;
 class ADNSingleStrand;
 
 class ADNAtom: public SBAtom, public Identifiable {
+  SB_CLASS
 public:
   ADNAtom() : SBAtom(), Identifiable() {};
   ADNAtom(const ADNAtom& other);
@@ -85,6 +86,9 @@ public:
 
   bool IsInBackbone();
 };
+
+SB_REGISTER_TARGET_TYPE(ADNAtom, "ADNAtom", "292377CD-F926-56E9-52AB-D6B623C3A104");
+SB_DECLARE_BASE_TYPE(ADNAtom, SBAtom);
 
 // mixin needs ADNAtom completely defined, hence defined here
 class PositionableSB {
@@ -106,6 +110,7 @@ private:
 };
 
 class ADNBackbone: public SBBackbone, public PositionableSB {
+  SB_CLASS
 public:
   ADNBackbone() : PositionableSB(), SBBackbone() {};
   ADNBackbone(const ADNBackbone& other);
@@ -122,7 +127,11 @@ public:
   ADNPointer<ADNNucleotide> GetNucleotide() const;
 };
 
+SB_REGISTER_TARGET_TYPE(ADNBackbone, "ADNBackbone", "CFA95C6A-7686-3029-F93C-2F1FD1988C33");
+SB_DECLARE_BASE_TYPE(ADNBackbone, SBBackbone);
+
 class ADNSidechain: public PositionableSB, public SBSideChain {
+  SB_CLASS
 public:
   ADNSidechain() : PositionableSB(), SBSideChain() {};
   ADNSidechain(const ADNSidechain& other);
@@ -139,7 +148,11 @@ public:
   ADNPointer<ADNNucleotide> GetNucleotide() const;
 };
 
+SB_REGISTER_TARGET_TYPE(ADNSidechain, "ADNSidechain", "CD6919A2-5B4C-7723-AAD7-804157EA51EA");
+SB_DECLARE_BASE_TYPE(ADNSidechain, SBSideChain);
+
 class ADNNucleotide: public PositionableSB, public SBResidue, public Identifiable, public Orientable {
+  SB_CLASS
 public:
   ADNNucleotide() : PositionableSB(), SBResidue(), Identifiable(), Orientable() {};
   ADNNucleotide(const ADNNucleotide& other);
@@ -191,7 +204,11 @@ private:
   End end_;
 };
 
+SB_REGISTER_TARGET_TYPE(ADNNucleotide, "ADNNucleotide", "26603E7A-7792-0C83-B1D5-6C1D222B3379");
+SB_DECLARE_BASE_TYPE(ADNNucleotide, SBResidue);
+
 class ADNSingleStrand: public SBChain, public Identifiable {
+  SB_CLASS
 public:
   ADNSingleStrand() : SBChain(), Identifiable() {};
   //ADNSingleStrand(int numNts);
@@ -202,6 +219,7 @@ public:
   ADNSingleStrand& operator=(const ADNSingleStrand& other);
 
   std::string const & GetName() const;
+  void SetName(const std::string &name);
 
   ADNPointer<ADNNucleotide> GetFivePrime();
   ADNPointer<ADNNucleotide> GetThreePrime();
@@ -242,7 +260,11 @@ private:
   ADNPointer<ADNNucleotide> threePrime_;
 };
 
+SB_REGISTER_TARGET_TYPE(ADNSingleStrand, "ADNSingleStrand", "8EB118A4-A8BF-19F5-5171-C68582AC6262");
+SB_DECLARE_BASE_TYPE(ADNSingleStrand, SBChain);
+
 class ADNCell : public SBStructuralGroup {
+  SB_CLASS
 public:
   ADNCell() : SBStructuralGroup() {};
   virtual ~ADNCell() {};
@@ -250,7 +272,11 @@ public:
   virtual void RemoveNucleotide(ADNPointer<ADNNucleotide> nt) = 0;
 };
 
+SB_REGISTER_TARGET_TYPE(ADNCell, "ADNCell", "E6BFD315-2734-B4A6-5808-E784AA4102EF");
+SB_DECLARE_BASE_TYPE(ADNCell, SBStructuralGroup);
+
 class ADNBasePair : public ADNCell {
+  SB_CLASS
 public:
   ADNBasePair() = default;
   ~ADNBasePair() = default;
@@ -267,7 +293,11 @@ private:
   ADNPointer<ADNNucleotide> right_ = nullptr;
 };
 
+SB_REGISTER_TARGET_TYPE(ADNBasePair, "ADNBasePair", "71C5049C-EC51-8DC5-15EF-1525E4DBAB42");
+SB_DECLARE_BASE_TYPE(ADNBasePair, ADNCell);
+
 class ADNSkipPair : public ADNCell {
+  SB_CLASS
 public:
   ADNSkipPair() = default;
   ~ADNSkipPair() = default;
@@ -276,13 +306,15 @@ public:
 
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
 private:
-  ADNPointer<ADNNucleotide> left_ = nullptr;
-  ADNPointer<ADNNucleotide> right_ = nullptr;
 };
 
-class ADNLoop: Collection<ADNNucleotide> {
+SB_REGISTER_TARGET_TYPE(ADNSkipPair, "ADNSkipPair", "65441545-3022-773B-49A5-FF39A89AE754");
+SB_DECLARE_BASE_TYPE(ADNSkipPair, ADNCell);
+
+class ADNLoop: public SBStructuralGroup {
+  SB_CLASS
 public:
-  ADNLoop() : Collection<ADNNucleotide>() {};
+  ADNLoop() : SBStructuralGroup() {};
   /**
   * Destructor for ANTLoop.
   * Deletes references in other ANTLoop, but not on the ANTSingleStrand.
@@ -293,8 +325,6 @@ public:
   ADNPointer<ADNNucleotide> GetStart();
   void SetEnd(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetEnd();
-  void SetStrand(ADNPointer<ADNSingleStrand> ss);
-  ADNPointer<ADNSingleStrand> GetStrand();
 
   CollectionMap<ADNNucleotide> GetNucleotides() const;
 
@@ -306,10 +336,13 @@ public:
 private:
   ADNPointer<ADNNucleotide> startNt_ = nullptr;
   ADNPointer<ADNNucleotide> endNt_ = nullptr;
-  ADNWeakPointer<ADNSingleStrand> strand_;
 };
 
+SB_REGISTER_TARGET_TYPE(ADNLoop, "ADNLoop", "8531205A-01B2-C438-1E26-A50699CA6678");
+SB_DECLARE_BASE_TYPE(ADNLoop, SBStructuralGroup);
+
 class ADNLoopPair : public ADNCell {
+  SB_CLASS
 public:
   ADNLoopPair() = default;
   ~ADNLoopPair() = default;
@@ -328,9 +361,13 @@ private:
   ADNPointer<ADNLoop> right_ = nullptr;
 };
 
+SB_REGISTER_TARGET_TYPE(ADNLoopPair, "ADNLoopPair", "F9CB2D19-D635-F494-D87D-EC619763E577");
+SB_DECLARE_BASE_TYPE(ADNLoopPair, ADNCell);
+
 class ADNDoubleStrand;
 
 class ADNBaseSegment: public Identifiable, public PositionableSB, public SBStructuralNode, public Orientable {
+  SB_CLASS
 public:
   ADNBaseSegment() : Identifiable(), PositionableSB(), SBStructuralNode(), Orientable() {};
   ADNBaseSegment(const ADNBaseSegment& other);
@@ -346,7 +383,7 @@ public:
 
   ADNPointer<ADNDoubleStrand> GetDoubleStrand();
 
-  void SetCell(ADNPointer<ADNCell> c);
+  void SetCell(ADNCell* c);  // we use raw pointers so subclassing will work
   ADNPointer<ADNCell> GetCell() const;
   CellType GetCellType() const;
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
@@ -356,7 +393,11 @@ private:
   int number_ = -1;  // number of the base in the double strand
 };
 
+SB_REGISTER_TARGET_TYPE(ADNBaseSegment, "ADNBaseSegment", "114D0E73-D768-0DF5-3C1A-11569CB91F25");
+SB_DECLARE_BASE_TYPE(ADNBaseSegment, SBStructuralNode);
+
 class ADNDoubleStrand : public SBStructuralGroup, public Identifiable {
+  SB_CLASS
 public:
   ADNDoubleStrand() : Identifiable(), SBStructuralGroup() {};
   //ADNDoubleStrand(int numBases);
@@ -383,3 +424,6 @@ private:
   ADNPointer<ADNBaseSegment> end_ = nullptr;
   double initialTwistAngle_ = 0.0;
 };
+
+SB_REGISTER_TARGET_TYPE(ADNDoubleStrand, "ADNDoubleStrand", "D87CDA71-C36A-EA63-9B20-24DD78A4BC4C");
+SB_DECLARE_BASE_TYPE(ADNDoubleStrand, SBStructuralGroup);
