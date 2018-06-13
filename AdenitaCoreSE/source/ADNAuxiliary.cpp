@@ -1,0 +1,224 @@
+#include "ADNAuxiliary.hpp"	
+
+double ADNAuxiliary::mapRange(double input, double input_start, double input_end, double output_start, double output_end)
+{
+	//Y = (X - A) / (B - A) * (D - C) + C
+	return (input - input_start) / (input_end - input_start) * (output_end - output_start) + output_start;	
+}
+
+//char ADNAuxiliary::getBaseSymbol(SBNode* node)
+//{
+//	char result;
+//
+//	if (false)
+//	{
+//		SBNodeIndexer atoms;
+//		node->getNodes(atoms, SBNode::IsType(SBNode::Atom));
+//		result = getBaseSymbol(atoms.size());
+//	}
+//	else {
+//		SBSideChain* sidechain = static_cast<SBSideChain*>(node);
+//		string name = sidechain->getName();
+//		result = getBaseSymbol(name);
+//	}
+//
+//	return result;
+//}
+
+char ADNAuxiliary::getBaseSymbol(std::string name)
+{
+	std::string symbol = name.substr(1, 2);
+	//Auxiliary::log(symbol.c_str());
+
+	return symbol.c_str()[0];
+}
+
+char ADNAuxiliary::getBaseSymbol(size_t numAtoms) {
+
+	char symbol = '\0';
+  
+	return symbol;
+}
+
+void ADNAuxiliary::getHeatMapColor(double val, double min, double max, int* color)
+{
+  /*if (val < 0.0001f) {
+    color[0] = 255;
+    color[1] = 255;
+    color[2] = 255;
+    color[3] = 255;
+    return;
+  }*/
+
+  const int NUM_COLORS = 5;
+  std::vector<int*> colors;
+  int color4[] = { 254, 240, 217, 255 };
+  int color3[] = { 253, 204, 138, 255 };
+  int color2[] = { 252, 141, 89, 255 };
+  int color1[] = { 227, 74, 51, 255 };
+  int color0[] = { 179, 0, 0, 255  };
+
+  colors.push_back(color4);
+  colors.push_back(color3);
+  colors.push_back(color2);
+  colors.push_back(color1);
+  colors.push_back(color0);
+
+  int idx1;
+  int idx2;
+  float fractBetween = 0;
+
+  //Y = (X - A) / (B - A) * (D - C) + C
+  double mappedVal = mapRange(val, min, max, 0, 1);
+
+  if (mappedVal <= 0) {
+    idx1 = idx2 = 0;
+  }
+  else if (mappedVal >= 1) {
+    idx1 = idx2 = NUM_COLORS - 1;
+  }
+  else {
+
+    mappedVal = mappedVal * (NUM_COLORS - 1);
+    idx1 = int(mappedVal);
+    idx2 = idx1 + 1;
+    fractBetween = mappedVal - float(idx1);
+  }
+
+  color[0] = (colors[idx2][0] - colors[idx1][0]) * fractBetween + colors[idx1][0];
+  color[1] = (colors[idx2][1] - colors[idx1][1]) * fractBetween + colors[idx1][1];
+  color[2] = (colors[idx2][2] - colors[idx1][2]) * fractBetween + colors[idx1][2];
+  color[3] = 255;
+
+}
+
+//std::string ADNAuxiliary::SBPosition3ToString(SBPosition3 position) {
+//  std::string x = std::to_string(position[0].getValue());
+//  std::string y = std::to_string(position[1].getValue());
+//  std::string z = std::to_string(position[2].getValue());
+//
+//  std::string st_pos = x + "," + y + "," + z;
+//  return st_pos;
+//}
+//
+//std::string ADNAuxiliary::SBVector3ToString(SBVector3 vec) {
+//  std::string x = std::to_string(vec[0].getValue());
+//  std::string y = std::to_string(vec[1].getValue());
+//  std::string z = std::to_string(vec[2].getValue());
+//
+//  std::string st_pos = x + "," + y + "," + z;
+//  return st_pos;
+//}
+
+std::string ADNAuxiliary::UblasVectorToString(ublas::vector<double> vec) {
+  std::string st_pos = "";
+  bool start = true;
+  for (auto &v : vec) {
+    if (!start) {
+      st_pos += ",";
+    }
+    st_pos += std::to_string(v);
+    start = false;
+  }
+
+  return st_pos;
+}
+
+std::string ADNAuxiliary::VectorToString(std::vector<int> vec)
+{
+  std::string st_pos = "";
+  bool start = true;
+  for (auto &v : vec) {
+    if (!start) {
+      st_pos += ",";
+    }
+    st_pos += std::to_string(v);
+    start = false;
+  }
+
+  return st_pos;
+}
+
+//SBPosition3 ADNAuxiliary::StringToSBPosition3(std::string position) {
+//  std::vector<std::string> stringArray;
+//  std::size_t pos = 0;
+//  std::size_t found;
+//  while ((found = position.find(',', pos)) != std::string::npos) {
+//    stringArray.push_back(position.substr(pos, found - pos));
+//    pos = found + 1;
+//  }
+//  stringArray.push_back(position.substr(pos));
+//
+//  SBPosition3 sbPos = SBPosition3();
+//  sbPos[0] = SBQuantity::picometer(std::stod(stringArray[0]));
+//  sbPos[1] = SBQuantity::picometer(std::stod(stringArray[1]));
+//  sbPos[2] = SBQuantity::picometer(std::stod(stringArray[2]));
+//  return sbPos;
+//}
+//
+//SBVector3 ADNAuxiliary::StringToSBVector3(std::string vec) {
+//  std::vector<std::string> stringArray;
+//  std::size_t pos = 0;
+//  std::size_t found;
+//  while ((found = vec.find(',', pos)) != std::string::npos) {
+//    stringArray.push_back(vec.substr(pos, found - pos));
+//    pos = found + 1;
+//  }
+//  stringArray.push_back(vec.substr(pos));
+//
+//  SBVector3 sbVec = SBVector3();
+//  sbVec[0] = SBQuantity::dimensionless(std::stod(stringArray[0]));
+//  sbVec[1] = SBQuantity::dimensionless(std::stod(stringArray[1]));
+//  sbVec[2] = SBQuantity::dimensionless(std::stod(stringArray[2]));
+//  return sbVec;
+//}
+
+ublas::vector<double> ADNAuxiliary::StringToUblasVector(std::string vec) 
+{
+  std::vector<std::string> stringArray;
+  std::size_t pos = 0;
+  std::size_t found;
+  while ((found = vec.find(',', pos)) != std::string::npos) {
+    stringArray.push_back(vec.substr(pos, found - pos));
+    pos = found + 1;
+  }
+  stringArray.push_back(vec.substr(pos));
+
+  ublas::vector<double> uVec = ublas::vector<double>(stringArray.size());
+  for (size_t i = 0; i < stringArray.size(); ++i) {
+    uVec[i] = std::stod(stringArray[i]);
+  }
+  
+  return uVec;
+}
+
+std::vector<int> ADNAuxiliary::StringToVector(std::string vec)
+{
+  std::vector<std::string> stringArray;
+  std::size_t pos = 0;
+  std::size_t found;
+  while ((found = vec.find(',', pos)) != std::string::npos) {
+    stringArray.push_back(vec.substr(pos, found - pos));
+    pos = found + 1;
+  }
+  stringArray.push_back(vec.substr(pos));
+
+  std::vector<int> uVec = std::vector<int>(stringArray.size());
+  for (size_t i = 0; i < stringArray.size(); ++i) {
+    uVec[i] = std::stoi(stringArray[i]);
+  }
+
+  return uVec;
+}
+
+bool ADNAuxiliary::ValidateSequence(std::string seq) 
+{
+  bool val = true;
+  for (auto& c: seq) {
+    if (c != 'N' && c != 'A' && c != 'C' && c != 'T' && c != 'G') {
+      val = false;
+      break;
+    }
+  }
+  return val;
+}
