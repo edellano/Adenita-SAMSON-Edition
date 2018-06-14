@@ -35,6 +35,7 @@ enum End {
 };
 
 enum CellType {
+  Undefined = -1,
   BasePair = 0,
   SkipPair = 1,
   LoopPair = 2,
@@ -93,7 +94,7 @@ SB_DECLARE_BASE_TYPE(ADNAtom, SBAtom);
 // mixin needs ADNAtom completely defined, hence defined here
 class PositionableSB {
 public:
-  PositionableSB() = default;
+  PositionableSB();
   ~PositionableSB() = default;
   PositionableSB(const PositionableSB& other);
 
@@ -154,7 +155,7 @@ SB_DECLARE_BASE_TYPE(ADNSidechain, SBSideChain);
 class ADNNucleotide: public PositionableSB, public SBResidue, public Identifiable, public Orientable {
   SB_CLASS
 public:
-  ADNNucleotide() : PositionableSB(), SBResidue(), Identifiable(), Orientable() {};
+  ADNNucleotide();
   ADNNucleotide(const ADNNucleotide& other);
   ~ADNNucleotide() = default;
 
@@ -177,6 +178,7 @@ public:
 
   ADNPointer<ADNBackbone> GetBackbone();
   ADNPointer<ADNSidechain> GetSidechain();
+
   void SetSidechainPosition(Position3D pos);
   Position3D GetSidechainPosition();
   void SetBackbonePosition(Position3D pos);
@@ -224,9 +226,9 @@ public:
   ADNPointer<ADNNucleotide> GetFivePrime();
   ADNPointer<ADNNucleotide> GetThreePrime();
 
-  // if using these functions, make sure nucleotides are properly linked
-  void SetFivePrime(int ntId);
-  void SetThreePrime(int ntId);
+  // if using these functions, make sure nucleotides are properly added
+  void SetFivePrime(ADNPointer<ADNNucleotide> nt);
+  void SetThreePrime(ADNPointer<ADNNucleotide> nt);
 
   void IsScaffold(bool b);
   bool IsScaffold();
@@ -268,8 +270,8 @@ class ADNCell : public SBStructuralGroup {
 public:
   ADNCell() : SBStructuralGroup() {};
   virtual ~ADNCell() {};
-  virtual CellType GetType() = 0;
-  virtual void RemoveNucleotide(ADNPointer<ADNNucleotide> nt) = 0;
+  virtual CellType GetType() { return CellType::Undefined; };
+  virtual void RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {};
 };
 
 SB_REGISTER_TARGET_TYPE(ADNCell, "ADNCell", "E6BFD315-2734-B4A6-5808-E784AA4102EF");

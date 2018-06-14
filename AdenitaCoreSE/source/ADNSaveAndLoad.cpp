@@ -240,11 +240,11 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
 
       if (nucleotideId == fivePrimeId) {
         nt->SetEnd(FivePrime);
-        ss->SetFivePrime(nt->GetId());
+        ss->SetFivePrime(nt);
       }
       if (nucleotideId == threePrimeId) {
         nt->SetEnd(ThreePrime);
-        ss->SetThreePrime(nt->GetId());
+        ss->SetThreePrime(nt);
       }
 
       std::pair<int, int> key = std::make_pair(strandId, nucleotideId);

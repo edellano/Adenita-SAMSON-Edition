@@ -38,6 +38,16 @@ bool ADNAtom::IsInBackbone()
   return isFromNucleicAcidBackbone();
 }
 
+ADNNucleotide::ADNNucleotide() : PositionableSB(), SBResidue(), Identifiable(), Orientable()
+{
+  ADNPointer<ADNBackbone> bb = new ADNBackbone();
+  bb->setName(getName() + " " + "Backbone");
+  ADNPointer<ADNSidechain> sc = new ADNSidechain();
+  sc->setName(getName() + " " + "Sidechain");
+  addChild(bb());
+  addChild(sc());
+}
+
 ADNNucleotide::ADNNucleotide(const ADNNucleotide & other) : Identifiable(other), PositionableSB(other), SBResidue(other), Orientable(other)
 {
   *this = other;
@@ -301,14 +311,14 @@ ADNPointer<ADNNucleotide> ADNSingleStrand::GetThreePrime()
   return threePrime_;
 }
 
-void ADNSingleStrand::SetFivePrime(int ntId)
+void ADNSingleStrand::SetFivePrime(ADNPointer<ADNNucleotide> nt)
 {
-  fivePrime_ = GetNucleotide(ntId);
+  fivePrime_ = nt;
 }
 
-void ADNSingleStrand::SetThreePrime(int ntId)
+void ADNSingleStrand::SetThreePrime(ADNPointer<ADNNucleotide> nt)
 {
-  threePrime_ = GetNucleotide(ntId);
+  threePrime_ = nt;
 }
 
 void ADNSingleStrand::IsScaffold(bool b)
@@ -966,6 +976,11 @@ ADNPointer<ADNNucleotide> ADNSidechain::GetNucleotide() const
 {
   auto nt = static_cast<ADNNucleotide*>(getParent());
   return ADNPointer<ADNNucleotide>(nt);
+}
+
+PositionableSB::PositionableSB()
+{
+  centerAtom_ = ADNPointer<ADNAtom>(new ADNAtom());
 }
 
 PositionableSB::PositionableSB(const PositionableSB & other)
