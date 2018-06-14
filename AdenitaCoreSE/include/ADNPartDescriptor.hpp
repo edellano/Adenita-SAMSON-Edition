@@ -1,6 +1,9 @@
 #pragma once
 
+/// \headerfile SBProxy.hpp "SBProxy.hpp"
 #include "SBProxy.hpp"
+
+/// \headerfile ADNPart.hpp "ADNPart.hpp"
 #include "ADNPart.hpp"
 
 

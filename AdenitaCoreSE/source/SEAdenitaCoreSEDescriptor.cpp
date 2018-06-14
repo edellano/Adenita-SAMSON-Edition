@@ -1,5 +1,7 @@
 /// \headerfile SEAdenitaCoreSEAppDescriptor.hpp "SEAdenitaCoreSEAppDescriptor.hpp"
 #include "SEAdenitaCoreSEAppDescriptor.hpp"
+#include "ADNModelDescriptor.hpp"
+#include "ADNPartDescriptor.hpp"
 
 
 
@@ -15,6 +17,19 @@ SB_ELEMENT_VERSION_NUMBER("0.7.0");
 SB_ELEMENT_CLASSES_BEGIN;
 
 	SB_ELEMENT_CLASS(SEAdenitaCoreSEApp);
+  SB_ELEMENT_CLASS(ADNAtom);
+  SB_ELEMENT_CLASS(ADNBackbone);
+  SB_ELEMENT_CLASS(ADNSidechain);
+  SB_ELEMENT_CLASS(ADNNucleotide);
+  SB_ELEMENT_CLASS(ADNSingleStrand);
+  SB_ELEMENT_CLASS(ADNCell);
+  SB_ELEMENT_CLASS(ADNBasePair);
+  SB_ELEMENT_CLASS(ADNLoopPair);
+  SB_ELEMENT_CLASS(ADNSkipPair);
+  SB_ELEMENT_CLASS(ADNLoop);
+  SB_ELEMENT_CLASS(ADNBaseSegment);
+  SB_ELEMENT_CLASS(ADNDoubleStrand);
+  SB_ELEMENT_CLASS(ADNPart);
 
 SB_ELEMENT_CLASSES_END;
 

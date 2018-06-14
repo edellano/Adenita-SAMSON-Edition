@@ -12,7 +12,7 @@
 SB_CLASS_BEGIN(SEAdenitaCoreSEApp);
 
 	SB_CLASS_TYPE(SBCClass::App);
-        SB_CLASS_DESCRIPTION("SEAdenitaCoreSEApp : SAMSON Element generator pro tip: modify me");
+        SB_CLASS_DESCRIPTION("Adenita: DNA Nanostructures Modeling and Visualization Toolkit");
 
 	SB_FACTORY_BEGIN;
 
