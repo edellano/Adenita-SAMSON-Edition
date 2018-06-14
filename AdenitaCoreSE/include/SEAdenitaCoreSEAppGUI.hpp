@@ -52,7 +52,8 @@ public:
 
 public slots:
 
-	// SAMSON Element generator pro tip: add slots here to interact with your app
+  void onLoadPart();
+  void onSavePart();
 
 private:
 
