@@ -107,6 +107,8 @@ namespace ADNAuxiliary {
   std::vector<int> StringToVector(std::string vec);
 
   Position3D UblasVectorToSBPosition(ublas::vector<double> pos);
+  SBVector3 UblasVectorToSBVector(ublas::vector<double> pos);
+  ublas::vector<double> SBVectorToUblasVector(SBVector3 v);
   
   bool ValidateSequence(std::string seq);
 };

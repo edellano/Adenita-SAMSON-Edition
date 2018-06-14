@@ -370,7 +370,6 @@ ADNPointer<ADNDoubleStrand> DASEditor::CreateDoubleStrand(int length, SBPosition
   // create nucleotides
   ADNPointer<ADNSingleStrand> ss = new ADNSingleStrand();
   ADNPointer<ADNSingleStrand> pair_ss = new ADNSingleStrand();
-  ss->IsScaffold(true);
 
   for (size_t i = 0; i < length; ++i) {
     ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
@@ -385,6 +384,7 @@ ADNPointer<ADNDoubleStrand> DASEditor::CreateDoubleStrand(int length, SBPosition
     nt->SetPosition(bs->GetPosition());
     nt->SetBackbonePosition(bs->GetPosition());
     nt->SetSidechainPosition(bs->GetPosition());
+    nt->SetBaseSegment(bs);
     bp->SetLeftNucleotide(nt);
 
     ADNPointer<ADNNucleotide> ntPair = new ADNNucleotide();
@@ -392,6 +392,7 @@ ADNPointer<ADNDoubleStrand> DASEditor::CreateDoubleStrand(int length, SBPosition
     ntPair->SetPosition(bs->GetPosition());
     ntPair->SetBackbonePosition(bs->GetPosition());
     ntPair->SetSidechainPosition(bs->GetPosition());
+    ntPair->SetBaseSegment(bs);
     bp->SetRightNucleotide(ntPair);
 
     nt->SetPair(ntPair);
@@ -407,4 +408,40 @@ ADNPointer<ADNDoubleStrand> DASEditor::CreateDoubleStrand(int length, SBPosition
   pair_ss->SetDefaultName();
 
   return ds;
+}
+
+ADNPointer<ADNSingleStrand> DASEditor::CreateSingleStrand(int length, SBPosition3 start, SBVector3 direction)
+{
+  SBPosition3 delt = SBQuantity::nanometer(ADNConstants::BP_RISE) * direction;
+  SBPosition3 pos = start;
+
+  ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
+
+  // create nucleotides
+  ADNPointer<ADNSingleStrand> ss = new ADNSingleStrand();
+
+  for (size_t i = 0; i < length; ++i) {
+    ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
+    ds->AddBaseSegmentEnd(bs);
+
+    ADNPointer<ADNBasePair> bp = new ADNBasePair();
+    bs->SetCell(bp());
+    bs->SetPosition(pos);
+
+    ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+    nt->SetType(DNABlocks::DI);
+    nt->SetPosition(bs->GetPosition());
+    nt->SetBackbonePosition(bs->GetPosition());
+    nt->SetSidechainPosition(bs->GetPosition());
+    nt->SetBaseSegment(bs);
+    bp->SetLeftNucleotide(nt);
+
+    ss->AddNucleotideThreePrime(nt);
+
+    pos += delt;
+  }
+
+  ss->SetDefaultName();
+
+  return ss;
 }

@@ -23,6 +23,7 @@ enum EditorType {
 namespace DASEditor {
 
   ADNPointer<ADNDoubleStrand> CreateDoubleStrand(int length, SBPosition3 start, SBVector3 direction);
+  ADNPointer<ADNSingleStrand> CreateSingleStrand(int length, SBPosition3 start, SBVector3 direction);
 
   ///**
   // * Creates a straight double helix between the given spatial points

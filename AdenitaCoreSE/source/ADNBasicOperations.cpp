@@ -419,6 +419,58 @@ std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOper
   return dsPair;
 }
 
+std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOperations::DeleteNucleotide(ADNPointer<ADNNucleotide> nt)
+{
+  std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> res = std::make_pair(nullptr, nullptr);
+  // first break
+  auto ssPair = BreakSingleStrand(nt);
+  res.first = ssPair.first;
+  if (nt->GetEnd() == ThreePrime) {
+    ssPair.second.deleteReferenceTarget();
+  }
+  else {
+    // second break
+    auto ssPair2 = BreakSingleStrand(nt->GetNext());
+    res.second = ssPair2.second;
+
+    // delete remaining single strand containing nt
+    ssPair2.first.deleteReferenceTarget();
+  }
+
+  return res;
+}
+
+std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOperations::DeleteBaseSegment(ADNPointer<ADNBaseSegment> bs)
+{
+  std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> res = std::make_pair(nullptr, nullptr);
+  // first break
+  auto ssPair = BreakDoubleStrand(bs);
+  res.first = ssPair.first;
+  if (bs->GetNext() == nullptr) {
+    ssPair.second.deleteReferenceTarget();
+  }
+  else {
+    // second break
+    auto ssPair2 = BreakDoubleStrand(bs->GetNext());
+    res.second = ssPair2.second;
+
+    // delete remaining single strand containing nt
+    ssPair2.first.deleteReferenceTarget();
+  }
+
+  return res;
+}
+
+void ADNBasicOperations::DeleteSingleStrand(ADNPointer<ADNSingleStrand> ss)
+{
+  ss.deleteReferenceTarget();
+}
+
+void ADNBasicOperations::DeleteDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
+{
+  ds.deleteReferenceTarget();
+}
+
 void ADNBasicOperations::MutateNucleotide(ADNPointer<ADNNucleotide> nt, DNABlocks newType, bool changePair)
 {
   nt->SetType(newType);
