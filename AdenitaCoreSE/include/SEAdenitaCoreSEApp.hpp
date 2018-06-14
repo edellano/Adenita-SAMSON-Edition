@@ -2,6 +2,8 @@
 
 #include "SBDApp.hpp"
 #include "SEAdenitaCoreSEAppGUI.hpp"
+#include "ADNNanorobot.hpp"
+#include "ADNSaveAndLoad.hpp"
 
 
 /// This class implements the functionality of the app
@@ -29,6 +31,7 @@ public :
 
 	//@}
 
+  void LoadPart(QString filename);
 };
 
 

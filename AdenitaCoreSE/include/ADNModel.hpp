@@ -376,7 +376,9 @@ public:
   ADNBaseSegment& operator=(const ADNBaseSegment& other);
 
   void SetNumber(int n);
-  int GetNumber();
+  int GetNumber() const;
+  void setNumber(int n);
+  int getNumber() const;
 
   ADNPointer<ADNBaseSegment> GetPrev();
   ADNPointer<ADNBaseSegment> GetNext();

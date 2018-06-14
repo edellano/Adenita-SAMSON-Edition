@@ -504,9 +504,19 @@ void ADNBaseSegment::SetNumber(int n)
   number_ = n;
 }
 
-int ADNBaseSegment::GetNumber()
+int ADNBaseSegment::GetNumber() const
 {
   return number_;
+}
+
+void ADNBaseSegment::setNumber(int n)
+{
+  SetNumber(n);
+}
+
+int ADNBaseSegment::getNumber() const
+{
+  return GetNumber();
 }
 
 ADNPointer<ADNBaseSegment> ADNBaseSegment::GetPrev()

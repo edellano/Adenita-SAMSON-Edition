@@ -31,6 +31,19 @@ void SEAdenitaCoreSEAppGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+void SEAdenitaCoreSEAppGUI::onLoadPart()
+{
+  QString filename = QFileDialog::getOpenFileName(this, tr("Select an ANTPart .json file"), QDir::currentPath(), tr("Json (*.json)"));
+  if (!filename.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->LoadPart(filename);
+  }
+}
+
+void SEAdenitaCoreSEAppGUI::onSavePart()
+{
+}
+
 SBCContainerUUID SEAdenitaCoreSEAppGUI::getUUID() const { return SBCContainerUUID( "386506A7-DD8B-69DD-4599-F136C1B91610" );}
 
 QPixmap SEAdenitaCoreSEAppGUI::getLogo() const { 
