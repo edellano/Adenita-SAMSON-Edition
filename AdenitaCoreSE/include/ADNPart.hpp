@@ -10,10 +10,10 @@ using BaseSegments = std::map<int, ADNBaseSegment*>;
 using NtSegments = std::map<ADNNucleotide*, ADNBaseSegment*>;
 using NTMap = boost::bimap<unsigned int, ADNNucleotide*>;
 
-class ADNPart : public Orientable, public Identifiable, public PositionableSB, public SBStructuralModel {
+class ADNPart : public Orientable, public PositionableSB, public SBStructuralModel {
   SB_CLASS
 public:
-  ADNPart() : Orientable(), Identifiable(), PositionableSB(), SBStructuralModel() {};
+  ADNPart() : Orientable(), PositionableSB(), SBStructuralModel() {};
   ADNPart(const ADNPart &n);
   ~ADNPart() = default;
 

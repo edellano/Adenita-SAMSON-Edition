@@ -78,6 +78,13 @@ int Identifiable::GetId() const
   return id_;
 }
 
+Orientable::Orientable()
+{
+  e1_ = ublas::vector<double>(3, 0.0);
+  e2_ = ublas::vector<double>(3, 0.0);
+  e3_ = ublas::vector<double>(3, 0.0);
+}
+
 Orientable::Orientable(const Orientable & other)
 {
   *this = other;
