@@ -1,9 +1,6 @@
 #pragma once
 
-/// \headerfile SBProxy.hpp "SBProxy.hpp"
 #include "SBProxy.hpp"
-
-/// \headerfile SEVMTestVisualModel.hpp "SEVMTestVisualModel.hpp"
 #include "ADNModel.hpp"
 
 
