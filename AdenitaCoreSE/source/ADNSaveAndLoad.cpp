@@ -5,7 +5,7 @@
 
 ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
 {
-  ADNPointer<ADNPart> part = ADNPointer<ADNPart>(new ADNPart());
+  ADNPointer<ADNPart> part = new ADNPart();
 
   FILE* fp = fopen(filename.c_str(), "rb");
   char readBuffer[131072];
@@ -183,7 +183,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
 {
   // ids are reset since old format didn't use unique ids
 
-  ADNPointer<ADNPart> part = ADNPointer<ADNPart>(new ADNPart());
+  ADNPointer<ADNPart> part = new ADNPart();
 
   FILE* fp = fopen(filename.c_str(), "rb");
   char readBuffer[131072];
@@ -294,7 +294,6 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
   Value& doubleStrands = d["doubleStrands"];
   std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> origBssId;
   std::map<int, ADNPointer<ADNDoubleStrand>> origDoubleStrandId;
-
   for (Value::ConstMemberIterator itr = doubleStrands.MemberBegin(); itr != doubleStrands.MemberEnd(); ++itr) {
     ADNPointer<ADNDoubleStrand> ds = ADNPointer<ADNDoubleStrand>(new ADNDoubleStrand());
     part->RegisterDoubleStrand(ds);
@@ -307,7 +306,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
 
     ADNPointer<ADNBaseSegment> startBs = nullptr;
     for (int i = 0; i < size; ++i) {
-      ADNPointer<ADNBaseSegment> bs = ADNPointer<ADNBaseSegment>(new ADNBaseSegment());
+      ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
       ds->AddBaseSegmentEnd(bs);
       if (i == 0) {
         startBs = bs;
@@ -339,7 +338,6 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
 
     ADNPointer<ADNBaseSegment> bs = ds->GetNthBaseSegment(number);
 
-    int id = bs->GetId();
     bs->SetNumber(number);
     bs->SetE2(ADNAuxiliary::StringToUblasVector(itr->value["normal"].GetString()));
     bs->SetE3(ADNAuxiliary::StringToUblasVector(itr->value["direction"].GetString()));
@@ -493,15 +491,15 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
   SB_FOR(SBStructuralNode* p, doubleStrands) {
     ADNPointer<ADNDoubleStrand> ds = static_cast<ADNDoubleStrand*>(p);
     
-    std::string key = std::to_string(ds->GetId());
+    std::string key = std::to_string(ds->getNodeIndex());
     writer.Key(key.c_str());
     writer.StartObject();
 
     writer.Key("firstBaseSegment");
-    writer.Int(ds->GetFirstBaseSegment()->GetId());
+    writer.Int(ds->GetFirstBaseSegment()->getNodeIndex());
 
     writer.Key("lastBaseSegment");
-    writer.Int(ds->GetLastBaseSegment()->GetId());
+    writer.Int(ds->GetLastBaseSegment()->getNodeIndex());
 
     writer.Key("initialTwistAngle");
     writer.Double(ds->GetInitialTwistAngle());
@@ -512,7 +510,7 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
     SB_FOR(SBStructuralNode* pair, bases) {
       ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(pair);
 
-      std::string key = std::to_string(bs->GetId());
+      std::string key = std::to_string(bs->getNodeIndex());
       writer.Key(key.c_str());
       writer.StartObject();
 
@@ -523,12 +521,12 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
       writer.String(ADNAuxiliary::SBPositionToString(bs->GetPosition()).c_str());
 
       int nextId = -1;
-      if (bs->GetNext() != nullptr) nextId = bs->GetNext()->GetId();
+      if (bs->GetNext() != nullptr) nextId = bs->GetNext()->getNodeIndex();
       writer.Key("next");
       writer.Int(nextId);
 
       int prevId = -1;
-      if (bs->GetPrev() != nullptr) prevId = bs->GetPrev()->GetId();
+      if (bs->GetPrev() != nullptr) prevId = bs->GetPrev()->getNodeIndex();
       writer.Key("previous");
       writer.Int(prevId);
 
@@ -553,12 +551,12 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
         ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(cell());
 
         int idLeft = -1;
-        if (bp->GetLeftNucleotide() != nullptr) idLeft = bp->GetLeftNucleotide()->GetId();
+        if (bp->GetLeftNucleotide() != nullptr) idLeft = bp->GetLeftNucleotide()->getNodeIndex();
         writer.Key("left");
         writer.Int(idLeft);
 
         int idRight = -1;
-        if (bp->GetRightNucleotide() != nullptr) idRight = bp->GetRightNucleotide()->GetId();
+        if (bp->GetRightNucleotide() != nullptr) idRight = bp->GetRightNucleotide()->getNodeIndex();
         writer.Key("right");
         writer.Int(idRight);
       }
@@ -571,12 +569,12 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
         
         if (left != nullptr) {
           int startNtId = -1;
-          if (left->GetStart() != nullptr) startNtId = left->GetStart()->GetId();
+          if (left->GetStart() != nullptr) startNtId = left->GetStart()->getNodeIndex();
           writer.Key("startNt");
           writer.Int(startNtId);
 
           int endNtId = -1;
-          if (left->GetEnd() != nullptr) endNtId = left->GetEnd()->GetId();
+          if (left->GetEnd() != nullptr) endNtId = left->GetEnd()->getNodeIndex();
           writer.Key("endNt");
           writer.Int(endNtId);
 
@@ -585,7 +583,7 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
           writer.Key("nucleotides");
           SB_FOR(SBStructuralNode* n, nts) {
             ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(n);
-            ntList.push_back(nt->GetId());
+            ntList.push_back(nt->getNodeIndex());
           }
           std::string str = ADNAuxiliary::VectorToString(ntList);
           writer.String(str.c_str());
@@ -599,12 +597,12 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
         
         if (right != nullptr) {
           int startNtId = -1;
-          if (right->GetStart() != nullptr) startNtId = right->GetStart()->GetId();
+          if (right->GetStart() != nullptr) startNtId = right->GetStart()->getNodeIndex();
           writer.Key("startNt");
           writer.Int(startNtId);
 
           int endNtId = -1;
-          if (right->GetEnd() != nullptr) endNtId = right->GetEnd()->GetId();
+          if (right->GetEnd() != nullptr) endNtId = right->GetEnd()->getNodeIndex();
           writer.Key("endNt");
           writer.Int(endNtId);
 
@@ -613,7 +611,7 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
           writer.Key("nucleotides");
           SB_FOR(SBStructuralNode* n, nts) {
             ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(n);
-            ntList.push_back(nt->GetId());
+            ntList.push_back(nt->getNodeIndex());
           }
           std::string strRight = ADNAuxiliary::VectorToString(ntList);
           writer.String(strRight.c_str());
@@ -637,7 +635,7 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
   SB_FOR(SBStructuralNode* p, singleStrands) {
     ADNPointer<ADNSingleStrand> ss = static_cast<ADNSingleStrand*>(p);
     
-    std::string key = std::to_string(ss->GetId());
+    std::string key = std::to_string(ss->getNodeIndex());
     writer.Key(key.c_str());
     writer.StartObject();
 
@@ -648,10 +646,10 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
     writer.Bool(ss->IsScaffold());
 
     writer.Key("fivePrimeId");
-    writer.Int(ss->GetFivePrime()->GetId());
+    writer.Int(ss->GetFivePrime()->getNodeIndex());
 
     writer.Key("threePrimeId");
-    writer.Int(ss->GetThreePrime()->GetId());
+    writer.Int(ss->GetThreePrime()->getNodeIndex());
 
     auto nucleotides = ss->GetNucleotides();
     writer.Key("nucleotides");
@@ -659,7 +657,7 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
     SB_FOR(SBStructuralNode* pair, nucleotides) {
       ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(pair);
       
-      std::string key = std::to_string(nt->GetId());
+      std::string key = std::to_string(nt->getNodeIndex());
       writer.Key(key.c_str());
       writer.StartObject();
 
@@ -669,17 +667,17 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
       writer.String(typ.c_str());
 
       int pairId = -1;
-      if (nt->GetPair() != nullptr) pairId = nt->GetPair()->GetId();
+      if (nt->GetPair() != nullptr) pairId = nt->GetPair()->getNodeIndex();
       writer.Key("pair");
       writer.Int(pairId);
 
       int prevId = -1;
-      if (nt->GetPrev() != nullptr) prevId = nt->GetPrev()->GetId();
+      if (nt->GetPrev() != nullptr) prevId = nt->GetPrev()->getNodeIndex();
       writer.Key("prev");
       writer.Int(prevId);
 
       int nextId = -1;
-      if (nt->GetNext() != nullptr) nextId = nt->GetNext()->GetId();
+      if (nt->GetNext() != nullptr) nextId = nt->GetNext()->getNodeIndex();
       writer.Key("next");
       writer.Int(nextId);
 

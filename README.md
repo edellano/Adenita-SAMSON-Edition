@@ -9,4 +9,4 @@ if multiple Qt versions are installed then the best solution is to set the envir
 
 # CMAKE Commands
 
-cmake -G"Visual Studio 14 Win64" -DQT5_CMAKE_INCLUDE_DIR="C:\Qt\5.8\msvc2015_64\lib" -DBOOST_PATH="C:/Users/DeLlanoE/Documents/code/boost_1_64_0" -DRAPIDJSON_PATH="C:\Users\DeLlanoE\Documents\code\Adenita_thirdparty" ..
+cmake -G"Visual Studio 14 Win64" -DSAMSON_SDK_PATH="C:\Users\DeLlanoE\NANO-D\SDK\0.7.0" -DQT5_CMAKE_INCLUDE_DIR="C:\Qt\5.8\msvc2015_64\lib" -DBOOST_PATH="C:/Users/DeLlanoE/Documents/code/boost_1_64_0" -DRAPIDJSON_PATH="C:\Users\DeLlanoE\Documents\code\Adenita_thirdparty" ..

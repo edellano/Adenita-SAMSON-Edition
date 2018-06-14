@@ -1,7 +1,7 @@
 #include "ADNPart.hpp"
 
 
-ADNPart::ADNPart(const ADNPart & n) : Orientable(n), Identifiable(n), PositionableSB(n), SBStructuralModel(n) 
+ADNPart::ADNPart(const ADNPart & n) : Orientable(n), PositionableSB(n), SBStructuralModel(n) 
 {
   *this = n;
 }
@@ -9,7 +9,6 @@ ADNPart::ADNPart(const ADNPart & n) : Orientable(n), Identifiable(n), Positionab
 ADNPart & ADNPart::operator=(const ADNPart& other) 
 {
   Orientable::operator =(other);
-  Identifiable::operator =(other);
   PositionableSB::operator =(other);
   SBStructuralModel::operator =(other);  
 
@@ -185,6 +184,7 @@ void ADNPart::RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss)
 
 void ADNPart::RegisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds) 
 {
+  ds->setName("Double Strand " + std::to_string(ds->getNodeIndex()));
   auto root = getStructuralRoot();
   root->addChild(ds());
 }

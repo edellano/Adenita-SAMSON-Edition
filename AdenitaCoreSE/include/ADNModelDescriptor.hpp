@@ -202,7 +202,7 @@ SB_CLASS_BEGIN(ADNBaseSegment);
   SB_INTERFACE_BEGIN;
 
     // show custom members in inspector
-    SB_ATTRIBUTE_READ_WRITE(int, ADNBaseSegment, Number, "Number", "The number of turns");
+    SB_ATTRIBUTE_READ_WRITE(int, ADNBaseSegment, Number, "Number", "Helix turns at this position");
 
   SB_INTERFACE_END;
 

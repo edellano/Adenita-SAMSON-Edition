@@ -77,7 +77,7 @@ private:
 
 class Orientable {
 public:
-  Orientable() = default;
+  Orientable();
   ~Orientable() = default;
   Orientable(const Orientable& other);
 

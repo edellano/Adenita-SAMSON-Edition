@@ -61,6 +61,7 @@ namespace ADNModel {
   DNABlocks GetComplementaryBase(DNABlocks base);
   char GetResidueName(DNABlocks t);
   DNABlocks ResidueNameToType(char n);
+  std::string CellTypeToString(CellType t);
 }
 
 /* Classes */
@@ -71,10 +72,10 @@ class ADNNucleotideGroup;
 class ADNNucleotide;
 class ADNSingleStrand;
 
-class ADNAtom: public SBAtom, public Identifiable {
+class ADNAtom: public SBAtom {
   SB_CLASS
 public:
-  ADNAtom() : SBAtom(), Identifiable() {};
+  ADNAtom() : SBAtom() {};
   ADNAtom(const ADNAtom& other);
   ~ADNAtom() = default;
 
@@ -113,7 +114,7 @@ private:
 class ADNBackbone: public SBBackbone, public PositionableSB {
   SB_CLASS
 public:
-  ADNBackbone() : PositionableSB(), SBBackbone() {};
+  ADNBackbone();
   ADNBackbone(const ADNBackbone& other);
   ~ADNBackbone() = default;
 
@@ -134,7 +135,7 @@ SB_DECLARE_BASE_TYPE(ADNBackbone, SBBackbone);
 class ADNSidechain: public PositionableSB, public SBSideChain {
   SB_CLASS
 public:
-  ADNSidechain() : PositionableSB(), SBSideChain() {};
+  ADNSidechain();
   ADNSidechain(const ADNSidechain& other);
   ~ADNSidechain() = default;
 
@@ -152,7 +153,7 @@ public:
 SB_REGISTER_TARGET_TYPE(ADNSidechain, "ADNSidechain", "CD6919A2-5B4C-7723-AAD7-804157EA51EA");
 SB_DECLARE_BASE_TYPE(ADNSidechain, SBSideChain);
 
-class ADNNucleotide: public PositionableSB, public SBResidue, public Identifiable, public Orientable {
+class ADNNucleotide: public PositionableSB, public SBResidue, public Orientable {
   SB_CLASS
 public:
   ADNNucleotide();
@@ -209,10 +210,10 @@ private:
 SB_REGISTER_TARGET_TYPE(ADNNucleotide, "ADNNucleotide", "26603E7A-7792-0C83-B1D5-6C1D222B3379");
 SB_DECLARE_BASE_TYPE(ADNNucleotide, SBResidue);
 
-class ADNSingleStrand: public SBChain, public Identifiable {
+class ADNSingleStrand: public SBChain {
   SB_CLASS
 public:
-  ADNSingleStrand() : SBChain(), Identifiable() {};
+  ADNSingleStrand() : SBChain() {};
   //ADNSingleStrand(int numNts);
   //ADNSingleStrand(std::vector<ADNPointer<ADNNucleotide>> nts);
   ADNSingleStrand(const ADNSingleStrand& other);
@@ -368,10 +369,10 @@ SB_DECLARE_BASE_TYPE(ADNLoopPair, ADNCell);
 
 class ADNDoubleStrand;
 
-class ADNBaseSegment: public Identifiable, public PositionableSB, public SBStructuralNode, public Orientable {
+class ADNBaseSegment: public PositionableSB, public SBStructuralGroup, public Orientable {
   SB_CLASS
 public:
-  ADNBaseSegment() : Identifiable(), PositionableSB(), SBStructuralNode(), Orientable() {};
+  ADNBaseSegment() : PositionableSB(), SBStructuralGroup(), Orientable() {};
   ADNBaseSegment(const ADNBaseSegment& other);
   ~ADNBaseSegment() = default;
 
@@ -398,14 +399,12 @@ private:
 };
 
 SB_REGISTER_TARGET_TYPE(ADNBaseSegment, "ADNBaseSegment", "114D0E73-D768-0DF5-3C1A-11569CB91F25");
-SB_DECLARE_BASE_TYPE(ADNBaseSegment, SBStructuralNode);
+SB_DECLARE_BASE_TYPE(ADNBaseSegment, SBStructuralGroup);
 
-class ADNDoubleStrand : public SBStructuralGroup, public Identifiable {
+class ADNDoubleStrand : public SBStructuralGroup {
   SB_CLASS
 public:
-  ADNDoubleStrand() : Identifiable(), SBStructuralGroup() {};
-  //ADNDoubleStrand(int numBases);
-  //ADNDoubleStrand(std::vector<ADNPointer<ADNBaseSegment>> bss);
+  ADNDoubleStrand() : SBStructuralGroup() {};
   ~ADNDoubleStrand() = default;
   ADNDoubleStrand(const ADNDoubleStrand& other);
 

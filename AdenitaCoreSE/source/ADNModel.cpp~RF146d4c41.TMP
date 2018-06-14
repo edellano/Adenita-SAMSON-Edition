@@ -488,22 +488,7 @@ DNABlocks ADNModel::ResidueNameToType(char n)
   return DNABlocks();
 }
 
-std::string ADNModel::CellTypeToString(CellType t)
-{
-  std::string typ = "Unknown";
-  if (t == BasePair) {
-    typ = "Base Pair";
-  }
-  else if (t == LoopPair) {
-    typ = "Loop Pair";
-  }
-  else if (t == SkipPair) {
-    typ = "Skip Pair";
-  }
-  return typ;
-}
-
-ADNBaseSegment::ADNBaseSegment(const ADNBaseSegment & other) : PositionableSB(other), Orientable(other), SBStructuralGroup(other)
+ADNBaseSegment::ADNBaseSegment(const ADNBaseSegment & other) : PositionableSB(other), Orientable(other), SBStructuralNode(other)
 {
   *this = other;
 }
@@ -511,11 +496,11 @@ ADNBaseSegment::ADNBaseSegment(const ADNBaseSegment & other) : PositionableSB(ot
 ADNBaseSegment & ADNBaseSegment::operator=(const ADNBaseSegment & other) {
   PositionableSB::operator =(other);
   Orientable::operator =(other);
-  SBStructuralGroup::operator =(other);
+  SBStructuralNode::operator =(other);
 
   if (this != &other) {
     number_ = other.number_;
-    //cell_ = other.GetCell();
+    cell_ = other.GetCell();
   }
   return *this;
 }
@@ -559,14 +544,12 @@ ADNPointer<ADNDoubleStrand> ADNBaseSegment::GetDoubleStrand()
 }
 
 void ADNBaseSegment::SetCell(ADNCell* c) {
-  cell_ = ADNPointer<ADNCell>(c);
-  std::string type = ADNModel::CellTypeToString(cell_->GetType());
-  cell_->setName(type + " " + std::to_string(cell_->getNodeIndex()));
-  addChild(cell_());
+  //cell_ = ADNPointer<ADNCell>(c);
 }
 
 ADNPointer<ADNCell> ADNBaseSegment::GetCell() const {
-  return cell_;
+  //return cell_;
+  return nullptr;
 }
 
 CellType ADNBaseSegment::GetCellType() const
@@ -579,6 +562,23 @@ void ADNBaseSegment::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   ADNPointer<ADNCell> cell = GetCell();
   cell->RemoveNucleotide(nt);
 }
+
+//ADNDoubleStrand::ADNDoubleStrand(int numBases) : Identifiable(), Collection<ADNBaseSegment>()
+//{
+//  for (int i = 0; i < numBases; ++i) {
+//    ADNPointer<ADNBaseSegment> bs = ADNPointer<ADNBaseSegment>(new ADNBaseSegment());;
+//    bs->SetId(GetLastKey() + 1);
+//    AddBaseSegmentEnd(bs);
+//  }
+//}
+//
+//ADNDoubleStrand::ADNDoubleStrand(std::vector<ADNPointer<ADNBaseSegment>> bss)
+//{
+//  for (auto bs : bss) {
+//    bs->SetId(GetLastKey() + 1);
+//    AddBaseSegmentEnd(bs);
+//  }
+//}
 
 ADNDoubleStrand::ADNDoubleStrand(const ADNDoubleStrand & other) : SBStructuralGroup(other)
 {
@@ -655,7 +655,6 @@ void ADNDoubleStrand::AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs)
 
 void ADNDoubleStrand::AddBaseSegmentEnd(ADNPointer<ADNBaseSegment> bs)
 {
-  bs->setName("Base Segment " + std::to_string(bs->getNodeIndex()));
   int number = 0;
   if (end_ == nullptr) {
     // bs is also first
@@ -680,7 +679,6 @@ void ADNBasePair::SetLeftNucleotide(ADNPointer<ADNNucleotide> nt) {
     logger.Log(msg);
   }
   left_ = nt;
-  addChild(left_());
 }
 
 ADNPointer<ADNNucleotide> ADNBasePair::GetRightNucleotide() {
@@ -694,7 +692,6 @@ void ADNBasePair::SetRightNucleotide(ADNPointer<ADNNucleotide> nt) {
     logger.Log(msg);
   }
   right_ = nt;
-  addChild(right_());
 }
 
 void ADNBasePair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
@@ -823,13 +820,6 @@ void ADNLoopPair::SetRightLoop(ADNPointer<ADNLoop> lp) {
   right_ = lp;
 }
 
-ADNBackbone::ADNBackbone() : PositionableSB(), SBBackbone()
-{
-  auto cA = GetCenterAtom();
-  cA->setElementType(SBElement::Einsteinium);
-  addChild(cA());
-}
-
 ADNBackbone::ADNBackbone(const ADNBackbone & other)
 {
   *this = other;
@@ -875,13 +865,6 @@ ADNPointer<ADNNucleotide> ADNBackbone::GetNucleotide() const
 {
   auto nt = static_cast<ADNNucleotide*>(getParent());
   return ADNPointer<ADNNucleotide>(nt);
-}
-
-ADNSidechain::ADNSidechain() : PositionableSB(), SBSideChain()
-{
-  auto cA = GetCenterAtom();
-  cA->setElementType(SBElement::Fermium);
-  addChild(cA());
 }
 
 ADNSidechain::ADNSidechain(const ADNSidechain & other)
