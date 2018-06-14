@@ -13,7 +13,6 @@ namespace ADNBasicOperations {
 
   // Delete
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> DeleteNucleotide(ADNPointer<ADNNucleotide> nt);
-  std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> DeleteMultipleNucleotides(ADNPointer<ADNNucleotide> nt);
   std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> DeleteBaseSegment(ADNPointer<ADNBaseSegment> bs);
   void DeleteSingleStrand(ADNPointer<ADNSingleStrand> ss);
   void DeleteDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
@@ -22,4 +21,7 @@ namespace ADNBasicOperations {
   void MutateNucleotide(ADNPointer<ADNNucleotide> nt, DNABlocks newType, bool changePair = true);
   void SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss, std::string seq, bool changePair = true);
   void MutateBasePairIntoLoopPair(ADNPointer<ADNBaseSegment> bs);
+
+  // Geometric operations
+  void TwistDoubleHelix(double deg);
 }

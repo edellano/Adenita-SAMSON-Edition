@@ -221,6 +221,26 @@ Position3D ADNAuxiliary::UblasVectorToSBPosition(ublas::vector<double> pos)
   return sbPos;
 }
 
+SBVector3 ADNAuxiliary::UblasVectorToSBVector(ublas::vector<double> pos)
+{
+  SBVector3 sbPos;
+  sbPos[0] = SBQuantity::dimensionless(pos[0]);
+  sbPos[1] = SBQuantity::dimensionless(pos[1]);
+  sbPos[2] = SBQuantity::dimensionless(pos[2]);
+
+  return sbPos;
+}
+
+ublas::vector<double> ADNAuxiliary::SBVectorToUblasVector(SBVector3 v)
+{
+  ublas::vector<double> w(3, 0.0);
+  w[0] = v[0].getValue();
+  w[1] = v[1].getValue();
+  w[2] = v[2].getValue();
+
+  return w;
+}
+
 bool ADNAuxiliary::ValidateSequence(std::string seq) 
 {
   bool val = true;
