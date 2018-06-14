@@ -1,0 +1,51 @@
+REMARK   4      COMPLIES WITH FORMAT V. 3.0, 1-DEC-2006
+REMARK 888
+REMARK 888 WRITTEN BY MAESTRO (A PRODUCT OF SCHRODINGER, LLC)
+TITLE     g
+MODEL        1
+ATOM      1  P    DG B  23     -34.567  -6.261  -1.527  1.00  0.00           P  
+ATOM      2  OP1  DG B  23     -33.645  -5.135  -1.798  1.00  0.00           O  
+ATOM      3  OP2  DG B  23     -35.866  -6.212  -2.235  1.00  0.00           O1-
+ATOM      4  O5'  DG B  23     -33.835  -7.648  -1.838  1.00  0.00           O  
+ATOM      5  C5'  DG B  23     -32.875  -8.158  -0.892  1.00  0.00           C  
+ATOM      6  C4'  DG B  23     -31.838  -9.001  -1.608  1.00  0.00           C  
+ATOM      7  O4'  DG B  23     -32.337 -10.366  -1.720  1.00  0.00           O  
+ATOM      8  C3'  DG B  23     -31.526  -8.592  -3.047  1.00  0.00           C  
+ATOM      9  O3'  DG B  23     -30.251  -9.077  -3.454  1.00  0.00           O  
+ATOM     10  C2'  DG B  23     -32.595  -9.334  -3.849  1.00  0.00           C  
+ATOM     11  C1'  DG B  23     -32.745 -10.627  -3.055  1.00  0.00           C  
+ATOM     12  N9   DG B  23     -34.140 -11.149  -3.017  1.00  0.00           N  
+ATOM     13  C8   DG B  23     -35.329 -10.454  -2.975  1.00  0.00           C  
+ATOM     14  N7   DG B  23     -36.393 -11.219  -2.949  1.00  0.00           N  
+ATOM     15  C5   DG B  23     -35.873 -12.512  -2.977  1.00  0.00           C  
+ATOM     16  C6   DG B  23     -36.538 -13.765  -2.969  1.00  0.00           C  
+ATOM     17  O6   DG B  23     -37.744 -13.996  -2.936  1.00  0.00           O  
+ATOM     18  N1   DG B  23     -35.626 -14.829  -3.008  1.00  0.00           N  
+ATOM     19  C2   DG B  23     -34.251 -14.699  -3.048  1.00  0.00           C  
+ATOM     20  N2   DG B  23     -33.556 -15.838  -3.081  1.00  0.00           N  
+ATOM     21  N3   DG B  23     -33.628 -13.522  -3.055  1.00  0.00           N  
+ATOM     22  C4   DG B  23     -34.499 -12.480  -3.019  1.00  0.00           C  
+CONECT    1    2    3    4
+CONECT    2    1
+CONECT    3    1
+CONECT    4    1    5
+CONECT    5    4    6   
+CONECT    6    5    7    8   
+CONECT    7    6   11
+CONECT    8    6    9   10   
+CONECT    9    8
+CONECT   10    8   11   
+CONECT   11    7   10   12   
+CONECT   12   11   13   22
+CONECT   13   12   14   
+CONECT   14   13   15
+CONECT   15   14   16   22
+CONECT   16   15   17   18
+CONECT   17   16
+CONECT   18   16   19   
+CONECT   19   18   20   21
+CONECT   20   19   
+CONECT   21   19   22
+CONECT   22   12   15   21
+ENDMDL
+END   
