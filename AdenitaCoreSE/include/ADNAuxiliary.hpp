@@ -109,6 +109,8 @@ namespace ADNAuxiliary {
   Position3D UblasVectorToSBPosition(ublas::vector<double> pos);
   SBVector3 UblasVectorToSBVector(ublas::vector<double> pos);
   ublas::vector<double> SBVectorToUblasVector(SBVector3 v);
+  ublas::vector<double> SBPositionToUblas(Position3D pos);
+  std::vector<double> SBPositionToVector(Position3D pos);
   
   bool ValidateSequence(std::string seq);
 };

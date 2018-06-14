@@ -413,6 +413,8 @@ public:
   void SetInitialTwistAngle(double angle);
   double GetInitialTwistAngle() const;
 
+  int GetSize() const;
+
   CollectionMap<ADNBaseSegment> GetBaseSegments() const;
   ADNPointer<ADNBaseSegment> GetNthBaseSegment(int n);  // return the base segment by position in the double strand
 

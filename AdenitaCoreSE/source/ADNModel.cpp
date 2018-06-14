@@ -606,6 +606,11 @@ double ADNDoubleStrand::GetInitialTwistAngle() const
   return initialTwistAngle_;
 }
 
+int ADNDoubleStrand::GetSize() const
+{
+  return boost::numeric_cast<int>(GetBaseSegments());
+}
+
 CollectionMap<ADNBaseSegment> ADNDoubleStrand::GetBaseSegments() const
 {
   CollectionMap<ADNBaseSegment> bsList;
