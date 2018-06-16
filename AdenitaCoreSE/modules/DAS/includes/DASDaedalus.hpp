@@ -20,6 +20,7 @@
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/graphviz.hpp>
 #include "DASPolyhedron.hpp"
+#include "DASEditor.hpp"
 #include "ADNNanorobot.hpp"
 #include "ADNVectorMath.hpp"
 #include "ADNConstants.hpp"
@@ -169,7 +170,7 @@ private:
   LinkList linkGraph_;
   std::map<int, ADNPointer<ADNSingleStrand>> chains_;
   std::map<DASHalfEdge*, ADNPointer<ADNBaseSegment>> firstBasesHe_;
-  std::map<ADNPointer<ADNBaseSegment>, ADNPointer<ADNBaseSegment>> bsPairs_;
+  std::map<int, int> bsPairs_;
   BSPositions positionsBBSC_;
   /** Generates an undirected graph from figure from current nodes and links
    *  \return an UndirectedGraph object
@@ -252,7 +253,7 @@ private:
   std::string GetChainSequence(int c_id);
   ADNPointer<ADNBaseSegment> AdvanceBaseSegment(ADNPointer<ADNBaseSegment> bs, int pos);
   ADNPointer<ADNBaseSegment> MoveBackBaseSegment(ADNPointer<ADNBaseSegment> bs, int pos);
-  ADNPointer<ADNSingleStrand> CreateEdgeChain(int c_id, ADNPointer<ADNBaseSegment> bs, int pos_span, int neg_span);
+  ADNPointer<ADNSingleStrand> CreateEdgeChain(ADNPointer<ADNPart> origami, ADNPointer<ADNBaseSegment> bs, int c_id, int pos_span, int neg_span);
   ADNPointer<ADNSingleStrand> CreateVertexChain(int c_id, std::vector<DASHalfEdge*>ps, EdgeBps &lengths);
   void LogEdgeMap(ADNPointer<ADNPart> origami);
   static SBVector3 SBCrossProduct(SBVector3 v, SBVector3 w);
@@ -263,6 +264,7 @@ private:
   void Set2DPositions(ADNPointer<ADNPart> origami);
   void Set1DPositions(ADNPointer<ADNPart> origami);
   SBVector3 GetPolygonNorm(DASPolygon* face);
+  ADNPointer<ADNBaseSegment> FindBaseSegmentPair(ADNPointer<ADNPart> origami, ADNPointer<ADNBaseSegment> bs);
 };
 
 #endif

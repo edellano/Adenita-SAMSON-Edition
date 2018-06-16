@@ -62,6 +62,7 @@ namespace ADNModel {
   char GetResidueName(DNABlocks t);
   DNABlocks ResidueNameToType(char n);
   std::string CellTypeToString(CellType t);
+  bool IsAtomInBackboneByName(std::string name);
 }
 
 /* Classes */
@@ -178,7 +179,9 @@ public:
   void SetEnd(End e);
 
   ADNPointer<ADNBackbone> GetBackbone();
+  void SetBackbone(ADNPointer<ADNBackbone> bb);
   ADNPointer<ADNSidechain> GetSidechain();
+  void SetSidechain(ADNPointer<ADNSidechain> sc);
 
   void SetSidechainPosition(Position3D pos);
   Position3D GetSidechainPosition();
@@ -198,7 +201,7 @@ public:
   /**
   * Copy atoms into ANTNucleotide target.
   */
-  //void CopyAtoms(ADNPointer<ADNNucleotide> target);
+  void CopyAtoms(ADNPointer<ADNNucleotide> target);
 
 private:
   ADNWeakPointer<ADNNucleotide> pair_;
@@ -237,6 +240,7 @@ public:
   ADNPointer<ADNNucleotide> GetNucleotide(unsigned int id) const;
   void AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt);  // add nucleotide to the three prime end
   void AddNucleotideFivePrime(ADNPointer<ADNNucleotide> nt);  // add nucleotide to the five prime end
+  void AddNucleotide(ADNPointer<ADNNucleotide> nt, ADNPointer<ADNNucleotide> nextNt);  // add nucleotide at any position
 
   /**
   * Shift start of the strand to the selected nucleotide and sequence.
@@ -328,12 +332,12 @@ public:
   ADNPointer<ADNNucleotide> GetStart();
   void SetEnd(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetEnd();
+  void SetBaseSegment(ADNPointer<ADNBaseSegment> bs, bool setPositions = false);
 
   CollectionMap<ADNNucleotide> GetNucleotides() const;
 
   void AddNucleotide(ADNPointer<ADNNucleotide> nt);
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
-  //void PositionLoopNucleotides(ublas::vector<double> bsPositionPrev, ublas::vector<double> bsPositionNext);
   bool IsEmpty();
 
 private:
