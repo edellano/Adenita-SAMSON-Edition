@@ -58,6 +58,7 @@ public:
   void SetNucleotidePositionUnpaired(ADNPointer<ADNNucleotide> nt);
   void SetPositionLoopNucleotides(ADNPointer<ADNBaseSegment> bs);
   void SetNucleotidePositionPaired(ADNPointer<ADNBaseSegment> bs, bool set_pair, double initialAngleDegrees = 0.0);
+  void PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosition3 bsPositionPrev, SBPosition3 bsPositionNext);
 
   void GenerateAllAtomModel(ADNPointer<ADNPart> origami);
   void SetAllAtomsPostions(ADNPointer<ADNPart> origami);

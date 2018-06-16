@@ -177,10 +177,22 @@ ADNPointer<ADNBackbone> ADNNucleotide::GetBackbone()
   return ADNPointer<ADNBackbone>(bb);
 }
 
+void ADNNucleotide::SetBackbone(ADNPointer<ADNBackbone> bb)
+{
+  auto bbOld = GetBackbone();
+  bbOld = bb;
+}
+
 ADNPointer<ADNSidechain> ADNNucleotide::GetSidechain()
 {
   auto sc = static_cast<ADNSidechain*>(getSideChain());
   return ADNPointer<ADNSidechain>(sc);
+}
+
+void ADNNucleotide::SetSidechain(ADNPointer<ADNSidechain> sc)
+{
+  auto scOld = GetSidechain();
+  scOld = sc;
 }
 
 void ADNNucleotide::SetSidechainPosition(Position3D pos)
@@ -220,40 +232,40 @@ bool ADNNucleotide::GlobalBaseIsSet() {
   return set;
 }
 
-//void ADNNucleotide::CopyAtoms(ADNPointer<ADNNucleotide> target) {
-//
-//  ADNPointer<ADNBackbone> bb(new ADNBackbone());
-//  ADNPointer<ADNSidechain> sc(new ADNSidechain());
-//
-//  std::map<ADNPointer<ADNAtom>, ADNPointer<ADNAtom>> atomMap;
-//
-//  ADNPointer<ADNBackbone> bbO = GetBackbone();
-//  for (auto ait : bbO->GetAtoms()) {
-//    auto oat = ait.second;
-//    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
-//    AddAtom(bb, atom);
-//    atomMap.insert(std::make_pair(oat, atom));
-//  }
-//  ADNPointer<ADNSidechain> scO = GetSidechain();
-//  for (auto ait : scO->GetAtoms()) {
-//    auto oat = ait.second;
-//    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
-//    AddAtom(sc, atom);
-//    atomMap.insert(std::make_pair(oat, atom));
-//  }
-//
-//  auto bonds = GetBonds();
-//  for (auto b : bonds) {
-//    ADNPointer<ADNAtom> b1 = b.first;
-//    ADNPointer<ADNAtom> b2 = b.second;
-//    auto newB1 = atomMap.at(b1);
-//    auto newB2 = atomMap.at(b2);
-//    target->AddBond(newB1, newB2);
-//  }
-//
-//  target->SetBackbone(bb);
-//  target->SetSidechain(sc);
-//}
+void ADNNucleotide::CopyAtoms(ADNPointer<ADNNucleotide> target) {
+
+  ADNPointer<ADNBackbone> bb(new ADNBackbone());
+  ADNPointer<ADNSidechain> sc(new ADNSidechain());
+
+  std::map<int, int> atomMap;
+
+  ADNPointer<ADNBackbone> bbO = GetBackbone();
+  auto bb0Atoms = bbO->GetAtoms();
+  SB_FOR(ADNPointer<ADNAtom> oat, bb0Atoms) {
+    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
+    bb->AddAtom(atom);
+    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
+  }
+  ADNPointer<ADNSidechain> scO = GetSidechain();
+  auto sc0Atoms = scO->GetAtoms();
+  SB_FOR(ADNPointer<ADNAtom> oat, sc0Atoms) {
+    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
+    sc->AddAtom(atom);
+    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
+  }
+
+  /*auto bonds = GetBonds();
+  for (auto b : bonds) {
+    ADNPointer<ADNAtom> b1 = b.first;
+    ADNPointer<ADNAtom> b2 = b.second;
+    auto newB1 = atomMap.at(b1);
+    auto newB2 = atomMap.at(b2);
+    target->AddBond(newB1, newB2);
+  }*/
+
+  target->SetBackbone(bb);
+  target->SetSidechain(sc);
+}
 
 //ADNSingleStrand::ADNSingleStrand(int numNts) : Nameable(), Identifiable(), Collection<ADNNucleotide>() 
 //{
@@ -373,6 +385,14 @@ void ADNSingleStrand::AddNucleotideFivePrime(ADNPointer<ADNNucleotide> nt)
   nt->SetEnd(FivePrime);
   addChild(nt(), fivePrime_());
   fivePrime_ = nt;
+}
+
+void ADNSingleStrand::AddNucleotide(ADNPointer<ADNNucleotide> nt, ADNPointer<ADNNucleotide> nextNt)
+{
+  if (nextNt == nullptr) return AddNucleotideThreePrime(nt);
+  if (nextNt == GetFivePrime()) return AddNucleotideFivePrime(nt);
+
+  addChild(nt(), nextNt());
 }
 
 void ADNSingleStrand::ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq) {
@@ -503,6 +523,16 @@ std::string ADNModel::CellTypeToString(CellType t)
   return typ;
 }
 
+bool ADNModel::IsAtomInBackboneByName(std::string name)
+{
+  bool res = false;
+  if (std::find(backbone_names_.begin(), backbone_names_.end(), name) != backbone_names_.end()) {
+    res = true;
+  }
+  return res;
+
+}
+
 ADNBaseSegment::ADNBaseSegment(const ADNBaseSegment & other) : PositionableSB(other), Orientable(other), SBStructuralGroup(other)
 {
   *this = other;
@@ -608,7 +638,7 @@ double ADNDoubleStrand::GetInitialTwistAngle() const
 
 int ADNDoubleStrand::GetSize() const
 {
-  return boost::numeric_cast<int>(GetBaseSegments());
+  return boost::numeric_cast<int>(GetBaseSegments().size());
 }
 
 CollectionMap<ADNBaseSegment> ADNDoubleStrand::GetBaseSegments() const
@@ -741,6 +771,19 @@ void ADNLoop::SetEnd(ADNPointer<ADNNucleotide> nt)
 ADNPointer<ADNNucleotide> ADNLoop::GetEnd()
 {
   return endNt_;
+}
+
+void ADNLoop::SetBaseSegment(ADNPointer<ADNBaseSegment> bs, bool setPositions)
+{
+  auto nts = GetNucleotides();
+  SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+    nt->SetBaseSegment(bs);
+    if (setPositions) {
+      nt->SetPosition(bs->GetPosition());
+      nt->SetBackbonePosition(bs->GetPosition());
+      nt->SetSidechainPosition(bs->GetPosition());
+    }
+  }
 }
 
 CollectionMap<ADNNucleotide> ADNLoop::GetNucleotides() const

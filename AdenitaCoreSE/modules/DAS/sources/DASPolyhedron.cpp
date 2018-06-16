@@ -344,6 +344,78 @@ void DASPolyhedron::BuildPolyhedron(std::map<int, SBPosition3> vertices, std::ma
   }
 }
 
+void DASPolyhedron::LoadFromPLYFile(std::string filename)
+{
+  //get file lines
+  std::vector<std::string> lines;
+  SBIFileReader::getFileLines(filename, lines);
+
+  unsigned int start_vertices = 0;
+  unsigned int start_faces = 0;
+
+  int counter_vertices = 0;
+  int counter_faces = 0;
+  int total_vertices = 0;
+  int total_faces = 0;
+
+  // Check first line is ply
+  if (lines[0] != "ply") throw 20;
+
+  //initialize values
+  for (unsigned int i = 1; i < lines.size(); i++) {
+    std::string line = lines[i];
+
+    // Fetch number of vertices and faces
+    if (total_vertices == 0) {
+      std::string num_vertices_tok = "element vertex ";
+      total_vertices = FetchNumber(line, num_vertices_tok);
+    }
+    if (total_faces == 0) {
+      std::string num_faces_tok = "element face ";
+      total_faces = FetchNumber(line, num_faces_tok);
+    }
+    if (line == "end_header") {
+      start_vertices = i + 1;
+      start_faces = start_vertices + total_vertices;
+      break;
+    }
+  }
+
+  int currentSerialNumber = 0;
+
+  // Fetch vertices
+  std::map<int, SBPosition3> vertices;
+  for (unsigned int i = start_vertices; i < start_faces; i++) {
+    std::string line = lines[i];
+    std::vector<double> coords = SplitString(line, std::string("double"), 0.1);
+    SBPosition3 coordsSB = SBPosition3();
+    coordsSB[0] = SBQuantity::angstrom(coords[0]);
+    coordsSB[1] = SBQuantity::angstrom(coords[1]);
+    coordsSB[2] = SBQuantity::angstrom(coords[2]);
+    vertices.insert(std::make_pair(currentSerialNumber, coordsSB));
+    ++currentSerialNumber;
+  }
+
+  // Fetch faces
+  currentSerialNumber = 0;
+
+  std::map<int, std::vector<int>> faces;
+  for (unsigned int i = start_faces; i < start_faces + total_faces; i++) {
+    std::string line = lines[i];
+
+    std::vector<int> f = SplitString(line, std::string("int"), 1);
+    std::vector<int> v;
+
+    for (int j = 1; j <= f[0]; j++) {
+      v.push_back(f[j]);
+    }
+    faces.insert(std::make_pair(currentSerialNumber, v));
+    ++currentSerialNumber;
+  }
+
+  BuildPolyhedron(vertices, faces);
+}
+
 int DASPolyhedron::FetchNumber(std::string st, std::string tok) {
   int num = 0;
   size_t tok_size = tok.length();
