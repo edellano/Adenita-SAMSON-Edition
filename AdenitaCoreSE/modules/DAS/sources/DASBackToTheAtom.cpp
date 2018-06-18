@@ -981,8 +981,10 @@ void DASBackToTheAtom::LoadNtPairs() {
 
 std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> DASBackToTheAtom::ParseBasePairPDB(std::string source) {
   std::ifstream file(source.c_str(), std::ios::in);
+  ADNLogger& logger = ADNLogger::GetLogger();
   if (!file) {
-    std::cout << "Could not open file " << source << std::endl;
+    std::string msg = "Could not open file " + source;
+    logger.Log(msg);
   }
 
   ADNPointer<ADNNucleotide> nt_left = new ADNNucleotide();

@@ -1,0 +1,108 @@
+REMARK   4      COMPLIES WITH FORMAT V. 3.0, 1-DEC-2006
+REMARK 888
+REMARK 888 WRITTEN BY MAESTRO (A PRODUCT OF SCHRODINGER, LLC)
+TITLE     Displayed atoms
+MODEL        1
+ATOM      1  P    DA A   2      -6.830  -6.650  -1.432  1.00  0.00           P  
+ATOM      2  OP1  DA A   2      -7.071  -8.094  -1.212  1.00  0.00           O  
+ATOM      3  OP2  DA A   2      -7.668  -5.729  -0.632  1.00  0.00           O1-
+ATOM      4  O5'  DA A   2      -5.283  -6.316  -1.196  1.00  0.00           O  
+ATOM      5  C5'  DA A   2      -4.329  -6.669  -2.215  1.00  0.00           C  
+ATOM      6  C4'  DA A   2      -2.975  -6.938  -1.588  1.00  0.00           C  
+ATOM      7  O4'  DA A   2      -2.256  -5.677  -1.459  1.00  0.00           O  
+ATOM      8  C3'  DA A   2      -3.001  -7.506  -0.169  1.00  0.00           C  
+ATOM      9  O3'  DA A   2      -1.782  -8.176   0.138  1.00  0.00           O  
+ATOM     10  C2'  DA A   2      -3.084  -6.250   0.697  1.00  0.00           C  
+ATOM     11  C1'  DA A   2      -2.245  -5.258  -0.103  1.00  0.00           C  
+ATOM     12  N9   DA A   2      -2.756  -3.860  -0.048  1.00  0.00           N  
+ATOM     13  C8   DA A   2      -4.057  -3.414   0.004  1.00  0.00           C  
+ATOM     14  N7   DA A   2      -4.169  -2.122   0.045  1.00  0.00           N  
+ATOM     15  C5   DA A   2      -2.857  -1.670   0.017  1.00  0.00           C  
+ATOM     16  C6   DA A   2      -2.298  -0.383   0.036  1.00  0.00           C  
+ATOM     17  N6   DA A   2      -3.029   0.740   0.090  1.00  0.00           N  
+ATOM     18  N1   DA A   2      -0.956  -0.289  -0.003  1.00  0.00           N  
+ATOM     19  C2   DA A   2      -0.236  -1.408  -0.056  1.00  0.00           C  
+ATOM     20  N3   DA A   2      -0.644  -2.658  -0.079  1.00  0.00           N  
+ATOM     21  C4   DA A   2      -1.990  -2.724  -0.040  1.00  0.00           C  
+TER      22       DA A   2
+ATOM     23  P    DT B   2       3.340   8.348   1.517  1.00  0.00           P  
+ATOM     24  OP1  DT B   2       4.574   9.124   1.259  1.00  0.00           O  
+ATOM     25  OP2  DT B   2       2.132   8.802   0.792  1.00  0.00           O1-
+ATOM     26  O5'  DT B   2       3.600   6.799   1.217  1.00  0.00           O  
+ATOM     27  C5'  DT B   2       4.338   6.016   2.174  1.00  0.00           C  
+ATOM     28  C4'  DT B   2       5.064   4.885   1.472  1.00  0.00           C  
+ATOM     29  O4'  DT B   2       4.161   3.748   1.353  1.00  0.00           O  
+ATOM     30  C3'  DT B   2       5.507   5.169   0.037  1.00  0.00           C  
+ATOM     31  O3'  DT B   2       6.569   4.304  -0.353  1.00  0.00           O  
+ATOM     32  C2'  DT B   2       4.268   4.800  -0.778  1.00  0.00           C  
+ATOM     33  C1'  DT B   2       3.708   3.623   0.014  1.00  0.00           C  
+ATOM     34  N1   DT B   2       2.219   3.570   0.033  1.00  0.00           N  
+ATOM     35  C2   DT B   2       1.638   2.324   0.023  1.00  0.00           C  
+ATOM     36  O2   DT B   2       2.286   1.291  -0.001  1.00  0.00           O  
+ATOM     37  N3   DT B   2       0.257   2.314   0.041  1.00  0.00           N  
+ATOM     38  C4   DT B   2      -0.570   3.418   0.068  1.00  0.00           C  
+ATOM     39  O4   DT B   2      -1.795   3.283   0.083  1.00  0.00           O  
+ATOM     40  C5   DT B   2       0.132   4.679   0.078  1.00  0.00           C  
+ATOM     41  C7   DT B   2      -0.692   5.933   0.106  1.00  0.00           C  
+ATOM     42  C6   DT B   2       1.474   4.719   0.060  1.00  0.00           C  
+CONECT    1    2    3    4
+CONECT    1    2
+CONECT    2    1
+CONECT    2    1
+CONECT    3    1
+CONECT    4    1    5
+CONECT    5    4    6
+CONECT    6    5    7    8
+CONECT    7    6   11
+CONECT    8    6    9   10
+CONECT    9    8
+CONECT   10    8   11
+CONECT   11    7   10   12
+CONECT   12   11   13   21
+CONECT   13   12   14
+CONECT   13   14
+CONECT   14   13   15
+CONECT   14   13
+CONECT   15   14   16   21
+CONECT   15   21
+CONECT   16   15   17   18
+CONECT   16   18
+CONECT   17   16
+CONECT   18   16   19
+CONECT   18   16
+CONECT   19   18   20
+CONECT   19   20
+CONECT   20   19   21
+CONECT   20   19
+CONECT   21   12   15   20
+CONECT   21   15
+CONECT   23   24   25   26
+CONECT   23   24
+CONECT   24   23
+CONECT   24   23
+CONECT   25   23
+CONECT   26   23   27
+CONECT   27   26   28
+CONECT   28   27   29   30
+CONECT   29   28   33
+CONECT   30   28   31   32
+CONECT   31   30
+CONECT   32   30   33
+CONECT   33   29   32   34
+CONECT   34   33   35   42
+CONECT   35   34   36   37
+CONECT   35   36
+CONECT   36   35
+CONECT   36   35
+CONECT   37   35   38
+CONECT   38   37   39   40
+CONECT   38   39
+CONECT   39   38
+CONECT   39   38
+CONECT   40   38   41   42
+CONECT   40   42
+CONECT   41   40
+CONECT   42   34   40
+CONECT   42   40
+ENDMDL
+END   
