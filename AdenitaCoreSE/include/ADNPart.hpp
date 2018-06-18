@@ -23,14 +23,14 @@ public:
   std::string const & GetName() const;
   void SetName(const std::string &name);
 
-  ADNPointer<ADNDoubleStrand> GetDoubleStrand(int id);
   void RegisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
-  ADNPointer<ADNSingleStrand> GetSingleStrand(int c_id);
-  void RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
-
   void RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs);
+  void RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
+  void RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
+  void RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
+  void RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at);
+
   unsigned int GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs);
-  //void RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
 
   CollectionMap<ADNSingleStrand> GetSingleStrands() const;
   CollectionMap<ADNDoubleStrand> GetDoubleStrands() const;
@@ -51,6 +51,7 @@ public:
 protected:
 private:
   // inside these pointers ids are unique
+  CollectionMap<ADNAtom> atomsIndex_;
   CollectionMap<ADNNucleotide> nucleotidesIndex_;
   CollectionMap<ADNSingleStrand> singleStrandsIndex_;
   CollectionMap<ADNBaseSegment> baseSegmentsIndex_;

@@ -49,3 +49,25 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
   SAMSON::getActiveLayer()->addChild(part());
   SAMSON::endHolding();
 }
+
+void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename, ADNConstants::CadnanoLatticeType t)
+{
+  DASCadnano cad = DASCadnano();
+  ADNPointer<ADNPart> part = new ADNPart();
+  std::string seq = "";
+
+  cad.ParseJSON(filename.toStdString());
+  cad.CreateModel(part, seq, t);
+  
+  DASBackToTheAtom btta = DASBackToTheAtom();
+  btta.SetNucleotidesPostions(part);
+  /*SEConfig& config = SEConfig::GetInstance();
+  if (config.use_atomic_details) {
+  btta.SetAllAtomsPostions(part);
+  }*/
+
+  SAMSON::beginHolding("Add model");
+  part->create();
+  SAMSON::getActiveLayer()->addChild(part());
+  SAMSON::endHolding();
+}
