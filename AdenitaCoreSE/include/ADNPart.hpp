@@ -13,6 +13,7 @@ using NTMap = boost::bimap<unsigned int, ADNNucleotide*>;
 class ADNPart : public Orientable, public PositionableSB, public SBStructuralModel {
   SB_CLASS
 public:
+
   ADNPart() : Orientable(), PositionableSB(), SBStructuralModel() {};
   ADNPart(const ADNPart &n);
   ~ADNPart() = default;
@@ -26,6 +27,10 @@ public:
   void RegisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
   ADNPointer<ADNSingleStrand> GetSingleStrand(int c_id);
   void RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
+
+  void RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs);
+  unsigned int GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs);
+  //void RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
 
   CollectionMap<ADNSingleStrand> GetSingleStrands() const;
   CollectionMap<ADNDoubleStrand> GetDoubleStrands() const;
@@ -45,6 +50,11 @@ public:
 
 protected:
 private:
+  // inside these pointers ids are unique
+  CollectionMap<ADNNucleotide> nucleotidesIndex_;
+  CollectionMap<ADNSingleStrand> singleStrandsIndex_;
+  CollectionMap<ADNBaseSegment> baseSegmentsIndex_;
+  CollectionMap<ADNDoubleStrand> doubleStrandsIndex_;
 };
 
 SB_REGISTER_TARGET_TYPE(ADNPart, "ADNPart", "D3809709-A2EA-DDC1-9753-A40B2B9DE57E");

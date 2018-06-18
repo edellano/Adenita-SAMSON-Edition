@@ -6,21 +6,22 @@
 //#include "DASCadnano.hpp"
 
 // type of editor enumeration
-enum EditorType {
-  DoubleStrand = 0,
-  Cylinder = 1,
-  TwoDoubleHelices = 2,
-  
-  WireframeTetrahedron = 10,
-  WireframeCube = 11,
-  WireframeDodecahedron = 12,
-  WireframeOctahedron = 13,
-  WireframeIcosahedron = 14,
-
-  WireframeCuboid = 20
-};
 
 namespace DASEditor {
+
+  enum EditorType {
+    DoubleStrand = 0,
+    Cylinder = 1,
+    TwoDoubleHelices = 2,
+
+    WireframeTetrahedron = 10,
+    WireframeCube = 11,
+    WireframeDodecahedron = 12,
+    WireframeOctahedron = 13,
+    WireframeIcosahedron = 14,
+
+    WireframeCuboid = 20
+  };
 
   ADNPointer<ADNDoubleStrand> CreateDoubleStrand(int length, SBPosition3 start, SBVector3 direction);
   ADNPointer<ADNSingleStrand> CreateSingleStrand(int length, SBPosition3 start, SBVector3 direction);

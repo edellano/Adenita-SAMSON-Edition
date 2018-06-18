@@ -39,14 +39,14 @@ CollectionMap<ADNBaseSegment> ADNPart::GetBaseSegments(CellType celltype) const
 {
   CollectionMap<ADNBaseSegment> bsList;
 
-  SBMStructuralModelNodeRoot* root = getStructuralRoot();
-  SBNodeIndexer nodeIndexer;
-  root->getNodes(nodeIndexer, SBNode::IsType(SBNode::StructuralModelNode));
+  //SBMStructuralModelNodeRoot* root = getStructuralRoot();
+  //SBNodeIndexer nodeIndexer;
 
-  SB_FOR(SBNode* n, nodeIndexer) {
-    ADNBaseSegment* a = static_cast<ADNBaseSegment*>(n);
-    if (a->GetCellType() == celltype) {
-      bsList.addReferenceTarget(a);
+  //root->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegmentsIndex_) {
+    if (celltype == ALL || bs->GetCellType() == celltype) {
+      bsList.addReferenceTarget(bs());
     }
   }
 
@@ -174,12 +174,28 @@ void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
 {
   auto root = getStructuralRoot();
   root->removeChild(ds());
+
+
 }
 
 void ADNPart::RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss) 
 {
   auto root = getStructuralRoot();
   root->addChild(ss());
+
+  singleStrandsIndex_.addReferenceTarget(ss());
+}
+
+void ADNPart::RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs)
+{
+  ds->AddBaseSegmentEnd(bs);
+
+  baseSegmentsIndex_.addReferenceTarget(bs());
+}
+
+unsigned int ADNPart::GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs)
+{
+  return baseSegmentsIndex_.getIndex(bs());
 }
 
 void ADNPart::RegisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds) 
@@ -187,6 +203,8 @@ void ADNPart::RegisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
   ds->setName("Double Strand " + std::to_string(ds->getNodeIndex()));
   auto root = getStructuralRoot();
   root->addChild(ds());
+
+  doubleStrandsIndex_.addReferenceTarget(ds());
 }
 
 ADNPointer<ADNSingleStrand> ADNPart::GetSingleStrand(int c_id)

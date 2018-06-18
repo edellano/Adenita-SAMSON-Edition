@@ -44,6 +44,18 @@ void SEAdenitaCoreSEAppGUI::onSavePart()
 {
 }
 
+void SEAdenitaCoreSEAppGUI::onLoadPLYFile()
+{
+  int minEdgeSize = ui.spnDaedalusMinEdgeSize->value();
+  QString filename = QFileDialog::getOpenFileName(this, tr("Select a .ply file"), QDir::currentPath(), tr("Mesh (*.ply)"));
+  if (!filename.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->LoadPartWithDaedalus(filename, minEdgeSize);
+  }
+
+  SAMSON::getActiveCamera()->center();
+}
+
 SBCContainerUUID SEAdenitaCoreSEAppGUI::getUUID() const { return SBCContainerUUID( "386506A7-DD8B-69DD-4599-F136C1B91610" );}
 
 QPixmap SEAdenitaCoreSEAppGUI::getLogo() const { 

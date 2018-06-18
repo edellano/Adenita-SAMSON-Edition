@@ -4,6 +4,9 @@
 #include "SEAdenitaCoreSEAppGUI.hpp"
 #include "ADNNanorobot.hpp"
 #include "ADNSaveAndLoad.hpp"
+#include "DASDaedalus.hpp"
+#include "DASBackToTheAtom.hpp"
+#include "SEConfig.hpp"
 
 
 /// This class implements the functionality of the app
@@ -32,6 +35,7 @@ public :
 	//@}
 
   void LoadPart(QString filename);
+  void LoadPartWithDaedalus(QString filename, int minEdgeSize);
 };
 
 
