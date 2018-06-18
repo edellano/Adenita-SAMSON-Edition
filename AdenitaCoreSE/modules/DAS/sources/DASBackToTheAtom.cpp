@@ -417,6 +417,21 @@ void DASBackToTheAtom::PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosit
   }
 }
 
+void DASBackToTheAtom::GenerateAllAtomModel(ADNPointer<ADNPart> origami)
+{
+  // delete previous atoms if they have been created
+  auto atoms = origami->GetAtoms();
+  SB_FOR(ADNPointer<ADNAtom> a, atoms) {
+    // todo: check that the node is only deleted from datagraph but reference is not destroyed
+    a->erase();
+  }
+
+  auto nts = origami->GetNucleotides();
+  SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+
+  }
+}
+
 void DASBackToTheAtom::FindAtomsPositions(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNNucleotide> nt_l) {
   ADNPointer<ADNNucleotide> nt_left;
   ADNPointer<ADNNucleotide> nt_right;

@@ -73,7 +73,7 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron &
   DirectedGraph d_graph = GenerateDirectedGraph(u_graph_pseudo, daedalus_part);
   //LogLinkGraph();
   // Route scaffold
-  RouteScaffold(scaff, seq, r_length);
+  RouteScaffold(daedalus_part, scaff, seq, r_length);
   //ANTAuxiliary::log(GetChainSequence(scaff->id_));
   // Create staple objects
   CreateEdgeStaples(daedalus_part);
@@ -534,7 +534,7 @@ void DASDaedalus::CreateVertexStaples(ADNPointer<ADNPart> origami, DASPolyhedron
     for (int i = 0; i < a; ++i) {
       // 52nt span 2 edges = 4 half edges
       std::vector<DASHalfEdge*> ps(edges.end() - 4, edges.end());
-      ADNPointer<ADNSingleStrand> chain = CreateVertexChain(c_id, ps, bpLengths_);
+      ADNPointer<ADNSingleStrand> chain = CreateVertexChain(origami, c_id, ps, bpLengths_);
       chains_.insert(std::make_pair(c_id, chain));
       ++c_id;
       edges.erase(edges.end() - 4, edges.end());
@@ -542,7 +542,7 @@ void DASDaedalus::CreateVertexStaples(ADNPointer<ADNPart> origami, DASPolyhedron
     for (int i = 0; i < b; ++i) {
       // 78nt span 3 edges = 6 half edges
       std::vector<DASHalfEdge*> ps(edges.end() - 6, edges.end());
-      ADNPointer<ADNSingleStrand> chain = CreateVertexChain(c_id, ps, bpLengths_);
+      ADNPointer<ADNSingleStrand> chain = CreateVertexChain(origami, c_id, ps, bpLengths_);
       chains_.insert(std::make_pair(c_id, chain));
       ++c_id;
       edges.erase(edges.end() - 6, edges.end());
@@ -748,7 +748,7 @@ void DASDaedalus::SetEdgeBps(int min_edge_bp, ADNPointer<ADNPart> part, DASPolyh
   }
 }
 
-void DASDaedalus::RouteScaffold(ADNPointer<ADNSingleStrand> scaff, std::string seq, int routing_length) {
+void DASDaedalus::RouteScaffold(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> scaff, std::string seq, int routing_length) {
 
   unsigned int nt_id = 0;
 
@@ -771,7 +771,7 @@ void DASDaedalus::RouteScaffold(ADNPointer<ADNSingleStrand> scaff, std::string s
         ADNPointer<ADNBasePair> bp_cell = static_cast<ADNBasePair*>(cell());
         bp_cell->SetLeftNucleotide(nt);
       }
-      scaff->AddNucleotideThreePrime(nt);
+      part->RegisterNucleotideThreePrime(scaff, nt);
       bs = bs->GetNext();
     }
   }
@@ -829,7 +829,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateEdgeChain(ADNPointer<ADNPart> ori
     nt->SetBackbonePosition(bs->GetPosition());
     nt->SetSidechainPosition(bs->GetPosition());
     nt->SetBaseSegment(bs);
-    chain->AddNucleotideThreePrime(nt);
+    origami->RegisterNucleotideThreePrime(chain, nt);
     bs = bs->GetPrev();
   }
   // move base segment to other edge
@@ -856,7 +856,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateEdgeChain(ADNPointer<ADNPart> ori
     nt->SetSidechainPosition(bs->GetPosition());
     nt->SetBaseSegment(bs);
     
-    chain->AddNucleotideThreePrime(nt);
+    origami->RegisterNucleotideThreePrime(chain, nt);
 
     bs = bs->GetPrev();
   }
@@ -864,7 +864,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateEdgeChain(ADNPointer<ADNPart> ori
   return chain;
 }
 
-ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(int c_id, std::vector<DASHalfEdge*>ps, EdgeBps &lengths) {
+ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> part, int c_id, std::vector<DASHalfEdge*>ps, EdgeBps &lengths) {
   ADNPointer<ADNSingleStrand> chain = new ADNSingleStrand();
   chain->SetName("Vertex Staple " + std::to_string(c_id));
 
@@ -910,7 +910,8 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(int c_id, std::vector
       }
       
       nt->SetBaseSegment(bs);
-      chain->AddNucleotideFivePrime(nt);
+      
+      part->RegisterNucleotideFivePrime(chain, nt);
 
       next_nt = nt->GetNext();
       bs = bs->GetNext();

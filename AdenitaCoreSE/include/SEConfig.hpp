@@ -1,7 +1,6 @@
 #pragma once
 
-//#include <SAMSON.hpp>
-//#include "ANTAuxiliary.hpp"
+#include <SAMSON.hpp>
 #include <QFileInfo>
 #include <QFileSystemWatcher>
 #include "rapidjson/stringbuffer.h"
@@ -61,7 +60,7 @@ private:
   SEConfig();
   
   //const std::string DEFAULT_CONFIGPATH = SAMSON::getUserDataPath() + "/adenita_settings.json";
-  const std::string DEFAULT_CONFIGPATH = "adenita_settings.json";
+  const std::string DEFAULT_CONFIGPATH = SAMSON::getUserDataPath() + "/adenita_settings.json";
   Document setting_;
   QFileSystemWatcher configFileWatcher_;
 

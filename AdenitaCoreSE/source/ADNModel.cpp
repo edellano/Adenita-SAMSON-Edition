@@ -267,23 +267,6 @@ void ADNNucleotide::CopyAtoms(ADNPointer<ADNNucleotide> target) {
   target->SetSidechain(sc);
 }
 
-//ADNSingleStrand::ADNSingleStrand(int numNts) : Nameable(), Identifiable(), Collection<ADNNucleotide>() 
-//{
-//  for (int i = 0; i < numNts; ++i) {
-//    ADNPointer<ADNNucleotide> nt = ADNPointer<ADNNucleotide>(new ADNNucleotide());;
-//    nt->SetId(GetLastKey() + 1);
-//    AddNucleotideThreePrime(nt);
-//  }
-//}
-
-//ADNSingleStrand::ADNSingleStrand(std::vector<ADNPointer<ADNNucleotide>> nts) : Nameable(), Identifiable(), Collection<ADNNucleotide>()
-//{
-//  for (auto nt: nts) {
-//    nt->SetId(GetLastKey() + 1);
-//    AddNucleotideThreePrime(nt);
-//  }
-//}
-
 ADNSingleStrand::ADNSingleStrand(const ADNSingleStrand & other)
 {
   *this = other;
