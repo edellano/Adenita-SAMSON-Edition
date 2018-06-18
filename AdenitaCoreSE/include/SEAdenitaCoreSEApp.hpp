@@ -6,6 +6,7 @@
 #include "ADNSaveAndLoad.hpp"
 #include "DASDaedalus.hpp"
 #include "DASBackToTheAtom.hpp"
+#include "DASCadnano.hpp"
 #include "SEConfig.hpp"
 
 
@@ -36,6 +37,7 @@ public :
 
   void LoadPart(QString filename);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
+  void ImportFromCadnano(QString filename, ADNConstants::CadnanoLatticeType t);
 };
 
 

@@ -18,14 +18,6 @@
 #include <cmath>
 
 /* Physical info and maps */
-
-//enum DNABlocks {
-//  DA,
-//  DT,
-//  DC,
-//  DG,
-//  DN,
-//};
 using DNABlocks = SBResidue::ResidueType;
 
 enum End {
@@ -42,10 +34,6 @@ enum CellType {
   ALL = 99,
 };
 
-//enum NucleotideGroup {
-//  Backbone = 0,
-//  Sidechain = 1,
-//};
 using NucleotideGroup = SBNode::Type;
 
 static std::vector<std::string> backbone_names_ = std::vector<std::string>{ "P", "OP1", "OP2", "O5'", "C5'", "C4'",
@@ -311,8 +299,15 @@ public:
 
   CellType GetType() { return CellType::SkipPair; };
 
+  ADNPointer<ADNNucleotide> GetLeftSkip();
+  void SetLeftSkip(ADNPointer<ADNNucleotide> nt);
+  ADNPointer<ADNNucleotide> GetRightSkip();
+  void SetRightSkip(ADNPointer<ADNNucleotide> nt);
+
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
 private:
+  ADNPointer<ADNNucleotide> left_ = nullptr;
+  ADNPointer<ADNNucleotide> right_ = nullptr;
 };
 
 SB_REGISTER_TARGET_TYPE(ADNSkipPair, "ADNSkipPair", "65441545-3022-773B-49A5-FF39A89AE754");

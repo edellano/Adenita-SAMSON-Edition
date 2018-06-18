@@ -55,6 +55,7 @@ public slots:
   void onLoadPart();
   void onSavePart();
   void onLoadPLYFile();
+  void onImportFromCadnano();
 
 private:
 

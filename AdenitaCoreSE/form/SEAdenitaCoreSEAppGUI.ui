@@ -109,6 +109,55 @@
           </layout>
          </widget>
         </widget>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>160</y>
+           <width>421</width>
+           <height>121</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Cadnano</string>
+         </property>
+         <widget class="QWidget" name="formLayoutWidget_2">
+          <property name="geometry">
+           <rect>
+            <x>9</x>
+            <y>20</y>
+            <width>401</width>
+            <height>80</height>
+           </rect>
+          </property>
+          <layout class="QFormLayout" name="formLayout_2">
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="rdoCadnanoHoneycomb">
+             <property name="text">
+              <string>Honeycomb lattice</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QRadioButton" name="rdoCadnanoSquareLattice">
+             <property name="text">
+              <string>Square lattice</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QPushButton" name="btnImportFromCadnano">
+             <property name="text">
+              <string>Import from Cadnano</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </widget>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -171,10 +220,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnImportFromCadnano</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onImportFromCadnano()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>258</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onLoadPart()</slot>
   <slot>onSavePart()</slot>
   <slot>onLoadPLYFile()</slot>
+  <slot>onImportFromCadnano()</slot>
  </slots>
 </ui>
