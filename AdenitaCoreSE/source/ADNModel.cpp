@@ -807,48 +807,6 @@ void ADNLoop::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   removeChild(nt());
 }
 
-//void ADNLoop::PositionLoopNucleotides(ublas::vector<double> bsPositionPrev, ublas::vector<double> bsPositionNext) {
-//
-//  auto sz = GetCollection().size();
-//  if (sz == 0) return;
-//
-//  if (startNt_ != nullptr && endNt_ != nullptr) {
-//    ublas::vector<double> start_pos = bsPositionPrev;
-//    ublas::vector<double> end_pos = bsPositionNext;
-//    ublas::vector<double> shifted = end_pos - start_pos;
-//    ADNPointer<ADNNucleotide> nt = startNt_;
-//
-//    // this doesn't work because not all nt positions have been already determined
-//    /*ublas::vector<double> e1 = (startNt_->e1_ + endNt_->e1_)*0.5;
-//    ublas::vector<double> e2 = (startNt_->e2_ + endNt_->e2_)*0.5;*/
-//    ublas::vector<double> e3 = shifted / ADNVectorMath::CalculateVectorNorm(shifted);
-//    auto subspace = ADNVectorMath::FindOrthogonalSubspace(e3);
-//    ublas::vector<double> e1 = ublas::row(subspace, 0);
-//    ublas::vector<double> e2 = ublas::row(subspace, 1);
-//
-//    int i = 0;
-//    while (nt != endNt_->GetNext()) {
-//      float frac = float(i) / (sz + 1);
-//      ublas::vector<double> shift = shifted * frac;
-//      shift += start_pos;
-//
-//      nt->SetPosition(shift);
-//      nt->SetSidechainPosition(shift);
-//      nt->SetBackbonePosition(shift);
-//
-//      nt->SetE1(e1);
-//      nt->SetE2(e2);
-//      nt->SetE3(e3);
-//
-//      nt = nt->GetNext();
-//      i++;
-//    }
-//  }
-//  else {
-//    //if loop is at the beginning
-//  }
-//}
-
 bool ADNLoop::IsEmpty() {
   bool empty = true;
   if (GetNucleotides().size() > 0) empty = false;
@@ -981,7 +939,7 @@ ADNPointer<ADNNucleotide> ADNSidechain::GetNucleotide() const
 
 PositionableSB::PositionableSB()
 {
-  centerAtom_ = ADNPointer<ADNAtom>(new ADNAtom());
+  centerAtom_ = new ADNAtom();
 }
 
 PositionableSB::PositionableSB(const PositionableSB & other)

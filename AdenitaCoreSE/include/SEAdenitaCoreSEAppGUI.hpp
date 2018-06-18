@@ -54,6 +54,7 @@ public slots:
 
   void onLoadPart();
   void onSavePart();
+  void onLoadPLYFile();
 
 private:
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>457</width>
+    <width>459</width>
     <height>601</height>
    </rect>
   </property>
@@ -57,6 +57,58 @@
           </item>
          </layout>
         </widget>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>60</y>
+           <width>421</width>
+           <height>101</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Daedalus</string>
+         </property>
+         <widget class="QWidget" name="formLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>9</x>
+            <y>19</y>
+            <width>401</width>
+            <height>71</height>
+           </rect>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Minimum edge size (bp)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="spnDaedalusMinEdgeSize">
+             <property name="minimum">
+              <number>31</number>
+             </property>
+             <property name="maximum">
+              <number>600</number>
+             </property>
+             <property name="value">
+              <number>42</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QPushButton" name="btnLoadPLYFile">
+             <property name="text">
+              <string>Load PLY File</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </widget>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -103,9 +155,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnLoadPLYFile</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onLoadPLYFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>159</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onLoadPart()</slot>
   <slot>onSavePart()</slot>
+  <slot>onLoadPLYFile()</slot>
  </slots>
 </ui>

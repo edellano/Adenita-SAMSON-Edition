@@ -37,7 +37,6 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron &
   // origami.LogPolyhedron();
   CreateLinkGraphFromMesh(daedalus_part, fig);
   InitEdgeMap(daedalus_part, fig);
-  
 
   int r_length = RoutingLength(bpLengths_);
   if (r_length > seq.size()) {
@@ -581,6 +580,10 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
 
       coords += SBQuantity::angstrom(SS_PADDING * 0.5)*u.normalizedVersion();
       coords += SBQuantity::angstrom(BP_RISE)*dir;
+
+      ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
+      origami->RegisterDoubleStrand(ds);
+
       for (int i = 0; i < l; ++i) {
         // every step is a ANTBaseSegment
         ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
@@ -607,6 +610,8 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
           firstBasesHe_.insert(std::make_pair(he, bs));
         }
 
+        origami->RegisterBaseSegmentEnd(ds, bs);
+
         coords += SBQuantity::angstrom(BP_RISE)*dir;
       }
       he = he->next_;
@@ -623,38 +628,20 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
     ADNPointer<ADNBaseSegment> bs = begin;
     DASEdge* e = fhe->edge_;
     int length = bpLengths_.at(e) + 1;  // to include polyTs
-    ADNPointer<ADNBaseSegment> bs_pair = AdvanceBaseSegment(firstBasesHe_.at(she), length - 2); // since the last one is a PolyT
-
-    ADNPointer<ADNDoubleStrand> ds = nullptr;
-    if (registeredDs.find(fhe) == registeredDs.end()) {
-      ds = new ADNDoubleStrand();
-      origami->RegisterDoubleStrand(ds);
-      registeredDs.insert(std::make_pair(fhe, ds));
-    }
-    else {
-      ds = registeredDs.at(fhe);
-    }
-    
-    
-    ADNPointer<ADNDoubleStrand> ds_pair = nullptr;
-    if (registeredDs.find(she) == registeredDs.end()) {
-      ds_pair = new ADNDoubleStrand();
-      origami->RegisterDoubleStrand(ds_pair);
-      registeredDs.insert(std::make_pair(she, ds_pair));
-    }
-    else {
-      ds_pair = registeredDs.at(she);
-    }
+    ADNPointer<ADNBaseSegment> bs_pair = AdvanceBaseSegment(firstBasesHe_.at(she), length - 1); // since the last one is a PolyT
 
     for (int i = 0; i < length; ++i) {
-      if (bs->GetCell()->GetType() == CellType::BasePair) {
+      //if (bs->GetCell()->GetType() == CellType::BasePair) {
         // we only pair ANTBasePair
-        ds->AddBaseSegmentEnd(bs);
-        ds_pair->AddBaseSegmentEnd(firstBasesHe_.at(she));
-        bsPairs_.insert(std::make_pair(bs->getNodeIndex(), bs_pair->getNodeIndex()));
-        bsPairs_.insert(std::make_pair(bs_pair->getNodeIndex(), bs->getNodeIndex()));
-      }
+        //ds->AddBaseSegmentEnd(bs);
+        //ds_pair->AddBaseSegmentEnd(firstBasesHe_.at(she));
+      auto bsId = origami->GetBaseSegmentIndex(bs);
+      auto bsPairId = origami->GetBaseSegmentIndex(bs_pair);
+      bsPairs_.insert(std::make_pair(bsId, bsPairId));
+      bsPairs_.insert(std::make_pair(bsPairId, bsId));
+      //}
       bs = bs->GetNext();
+      bs_pair = bs_pair->GetPrev();
     }
   }
 }
@@ -1138,7 +1125,7 @@ SBVector3 DASDaedalus::GetPolygonNorm(DASPolygon * face)
 
 ADNPointer<ADNBaseSegment> DASDaedalus::FindBaseSegmentPair(ADNPointer<ADNPart> origami, ADNPointer<ADNBaseSegment> bs)
 {
-  int idx = bs->getNodeIndex();
+  int idx = origami->GetBaseSegmentIndex(bs);
   int pairIdx = bsPairs_.at(idx);
   auto bases = origami->GetBaseSegments();
 
