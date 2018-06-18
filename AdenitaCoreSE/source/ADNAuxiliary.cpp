@@ -252,7 +252,7 @@ ublas::vector<double> ADNAuxiliary::SBPositionToUblas(Position3D pos)
 
 std::vector<double> ADNAuxiliary::SBPositionToVector(Position3D pos)
 {
-  std::vector<double> v;
+  std::vector<double> v(3);
   v[0] = pos[0].getValue();
   v[1] = pos[1].getValue();
   v[2] = pos[2].getValue();

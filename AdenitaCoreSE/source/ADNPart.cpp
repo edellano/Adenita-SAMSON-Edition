@@ -39,11 +39,6 @@ CollectionMap<ADNBaseSegment> ADNPart::GetBaseSegments(CellType celltype) const
 {
   CollectionMap<ADNBaseSegment> bsList;
 
-  //SBMStructuralModelNodeRoot* root = getStructuralRoot();
-  //SBNodeIndexer nodeIndexer;
-
-  //root->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-
   SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegmentsIndex_) {
     if (celltype == ALL || bs->GetCellType() == celltype) {
       bsList.addReferenceTarget(bs());
@@ -107,18 +102,13 @@ int ADNPart::GetNumberOfBaseSegments()
 
 CollectionMap<ADNSingleStrand> ADNPart::GetSingleStrands() const
 {
-  CollectionMap<ADNSingleStrand> chainList;
+  CollectionMap<ADNSingleStrand> ssList;
 
-  SBMStructuralModelNodeRoot* root = getStructuralRoot();
-  SBNodeIndexer nodeIndexer;
-  root->getNodes(nodeIndexer, SBNode::IsType(SBNode::Chain));
-
-  SB_FOR(SBNode* n, nodeIndexer) {
-    ADNSingleStrand* a = static_cast<ADNSingleStrand*>(n);
-    chainList.addReferenceTarget(a);
+  SB_FOR(ADNPointer<ADNSingleStrand> bs, singleStrandsIndex_) {
+    ssList.addReferenceTarget(bs());
   }
 
-  return chainList;
+  return ssList;
 }
 
 CollectionMap<ADNDoubleStrand> ADNPart::GetDoubleStrands() const
@@ -126,13 +116,8 @@ CollectionMap<ADNDoubleStrand> ADNPart::GetDoubleStrands() const
   // todo: this will also return base segments since they are also subclassed from Structural Groups
   CollectionMap<ADNDoubleStrand> dsList;
 
-  SBMStructuralModelNodeRoot* root = getStructuralRoot();
-  SBNodeIndexer nodeIndexer;
-  root->getNodes(nodeIndexer, SBNode::IsType(SBNode::StructuralGroup));
-
-  SB_FOR(SBNode* n, nodeIndexer) {
-    ADNDoubleStrand* a = static_cast<ADNDoubleStrand*>(n);
-    dsList.addReferenceTarget(a);
+  SB_FOR(ADNPointer<ADNDoubleStrand> ds, doubleStrandsIndex_) {
+    dsList.addReferenceTarget(ds());
   }
 
   return dsList;
@@ -168,6 +153,8 @@ void ADNPart::DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss)
 {
   auto root = getStructuralRoot();
   root->removeChild(ss());
+
+  singleStrandsIndex_.removeReferenceTarget(ss());
 }
 
 void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
@@ -175,7 +162,7 @@ void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
   auto root = getStructuralRoot();
   root->removeChild(ds());
 
-
+  doubleStrandsIndex_.removeReferenceTarget(ds());
 }
 
 void ADNPart::RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss) 

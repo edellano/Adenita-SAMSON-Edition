@@ -37,9 +37,9 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
   std::string seq = "";
   auto part = alg->ApplyAlgorithm(seq, filename.toStdString());
 
-  /*DASBackToTheAtom btta = DASBackToTheAtom();
+  DASBackToTheAtom btta = DASBackToTheAtom();
   btta.SetNucleotidesPostions(part);
-  SEConfig& config = SEConfig::GetInstance();
+  /*SEConfig& config = SEConfig::GetInstance();
   if (config.use_atomic_details) {
     btta.SetAllAtomsPostions(part);
   }*/
