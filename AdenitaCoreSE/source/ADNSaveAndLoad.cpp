@@ -65,7 +65,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
       // pairing is done when parsing base segments
       int nextId = nexts.at(currId);   
       nt = nts.at(currId);
-      ss->AddNucleotideThreePrime(nt);
+      part->RegisterNucleotideThreePrime(ss, nt);
       currId = nextId;
     } while (currId != -1);
 
@@ -227,7 +227,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
     const Value& val_nucleotides = itr->value["nucleotides"];
     for (Value::ConstMemberIterator itr2 = val_nucleotides.MemberBegin(); itr2 != val_nucleotides.MemberEnd(); ++itr2) {
       ADNPointer<ADNNucleotide> nt = ADNPointer<ADNNucleotide>(new ADNNucleotide());
-      ss->AddNucleotideThreePrime(nt);
+      part->RegisterNucleotideThreePrime(ss, nt);
 
       nt->SetType(ADNModel::ResidueNameToType(itr2->value["type"].GetString()[0]));
       nt->SetE1(ADNAuxiliary::StringToUblasVector(itr2->value["e1"].GetString()));

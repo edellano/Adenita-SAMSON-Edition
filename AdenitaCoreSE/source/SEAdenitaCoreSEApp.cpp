@@ -39,10 +39,11 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
 
   DASBackToTheAtom btta = DASBackToTheAtom();
   btta.SetNucleotidesPostions(part);
-  /*SEConfig& config = SEConfig::GetInstance();
+  SEConfig& config = SEConfig::GetInstance();
   if (config.use_atomic_details) {
+    //btta.GenerateAllAtomModel(part);
     btta.SetAllAtomsPostions(part);
-  }*/
+  }
 
   SAMSON::beginHolding("Add model");
   part->create();
