@@ -930,6 +930,10 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
           seq += "T";
         }
         ADNPointer<ADNLoop> loop = DASEditor::CreateLoop(chain, next_nt, seq);
+        auto loopNts = loop->GetNucleotides();
+        SB_FOR(ADNPointer<ADNNucleotide> nt, loopNts) {
+          part->RegisterNucleotideFivePrime(chain, nt);
+        }
         loop->SetBaseSegment(bs);
         loop_cell->SetRightLoop(loop);
         next_nt = loop->GetStart();  // we move backwards

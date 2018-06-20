@@ -364,10 +364,14 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
         std::pair<int, int> rightKey = std::make_pair(ss_id_right, nt_id_right);
 
         if (origNucleotideId.find(leftKey) != origNucleotideId.end()) {
-          bp_cell->SetLeftNucleotide(origNucleotideId.at(leftKey));
+          auto nt = origNucleotideId.at(leftKey);
+          bp_cell->SetLeftNucleotide(nt);
+          nt->SetBaseSegment(bs);
         }
         if (origNucleotideId.find(rightKey) != origNucleotideId.end()) {
-          bp_cell->SetRightNucleotide(origNucleotideId.at(rightKey));
+          auto nt = origNucleotideId.at(rightKey);
+          bp_cell->SetRightNucleotide(nt);
+          nt->SetBaseSegment(bs);
         }
 
         bs->SetCell(bp_cell());
@@ -405,7 +409,9 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
             int ss_id = itr->value["strand_id"].GetInt();
             std::pair<int, int> ntKey = std::make_pair(ss_id, nt_id);
             if (origNucleotideId.find(ntKey) != origNucleotideId.end()) {
-              leftLoop->AddNucleotide(origNucleotideId.at(ntKey));
+              auto nt = origNucleotideId.at(ntKey);
+              leftLoop->AddNucleotide(nt);
+              nt->SetBaseSegment(bs);
             }
           }
 
@@ -439,7 +445,9 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
             int ss_id = itr->value["strand_id"].GetInt();
             std::pair<int, int> ntKey = std::make_pair(ss_id, nt_id);
             if (origNucleotideId.find(ntKey) != origNucleotideId.end()) {
-              rightLoop->AddNucleotide(origNucleotideId.at(ntKey));
+              auto nt = origNucleotideId.at(ntKey);
+              rightLoop->AddNucleotide(nt);
+              nt->SetBaseSegment(bs);
             }
           }
 
@@ -458,8 +466,11 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
       std::pair<int, int> ntKey = std::make_pair(ss_id, nt_id);
       if (origNucleotideId.find(ntKey) != origNucleotideId.end()) {
         auto nt = origNucleotideId.at(ntKey);
+        auto ntPair = nt->GetPair();
         bp_cell->SetLeftNucleotide(nt);
-        bp_cell->SetRightNucleotide(nt->GetPair());
+        bp_cell->SetRightNucleotide(ntPair);
+        nt->SetBaseSegment(bs);
+        if (ntPair != nullptr) ntPair->SetBaseSegment(bs);
       }
       bs->SetCell(bp_cell());
     }

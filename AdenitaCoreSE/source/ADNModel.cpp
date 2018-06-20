@@ -232,40 +232,40 @@ bool ADNNucleotide::GlobalBaseIsSet() {
   return set;
 }
 
-void ADNNucleotide::CopyAtoms(ADNPointer<ADNNucleotide> target) {
-
-  ADNPointer<ADNBackbone> bb(new ADNBackbone());
-  ADNPointer<ADNSidechain> sc(new ADNSidechain());
-
-  std::map<int, int> atomMap;
-
-  ADNPointer<ADNBackbone> bbO = GetBackbone();
-  auto bb0Atoms = bbO->GetAtoms();
-  SB_FOR(ADNPointer<ADNAtom> oat, bb0Atoms) {
-    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
-    bb->AddAtom(atom);
-    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
-  }
-  ADNPointer<ADNSidechain> scO = GetSidechain();
-  auto sc0Atoms = scO->GetAtoms();
-  SB_FOR(ADNPointer<ADNAtom> oat, sc0Atoms) {
-    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
-    sc->AddAtom(atom);
-    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
-  }
-
-  /*auto bonds = GetBonds();
-  for (auto b : bonds) {
-    ADNPointer<ADNAtom> b1 = b.first;
-    ADNPointer<ADNAtom> b2 = b.second;
-    auto newB1 = atomMap.at(b1);
-    auto newB2 = atomMap.at(b2);
-    target->AddBond(newB1, newB2);
-  }*/
-
-  target->SetBackbone(bb);
-  target->SetSidechain(sc);
-}
+//void ADNNucleotide::CopyAtoms(ADNPointer<ADNNucleotide> target) {
+//
+//  ADNPointer<ADNBackbone> bb(new ADNBackbone());
+//  ADNPointer<ADNSidechain> sc(new ADNSidechain());
+//
+//  std::map<int, int> atomMap;
+//
+//  ADNPointer<ADNBackbone> bbO = GetBackbone();
+//  auto bb0Atoms = bbO->GetAtoms();
+//  SB_FOR(ADNPointer<ADNAtom> oat, bb0Atoms) {
+//    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
+//    bb->AddAtom(atom);
+//    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
+//  }
+//  ADNPointer<ADNSidechain> scO = GetSidechain();
+//  auto sc0Atoms = scO->GetAtoms();
+//  SB_FOR(ADNPointer<ADNAtom> oat, sc0Atoms) {
+//    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
+//    sc->AddAtom(atom);
+//    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
+//  }
+//
+//  /*auto bonds = GetBonds();
+//  for (auto b : bonds) {
+//    ADNPointer<ADNAtom> b1 = b.first;
+//    ADNPointer<ADNAtom> b2 = b.second;
+//    auto newB1 = atomMap.at(b1);
+//    auto newB2 = atomMap.at(b2);
+//    target->AddBond(newB1, newB2);
+//  }*/
+//
+//  target->SetBackbone(bb);
+//  target->SetSidechain(sc);
+//}
 
 ADNSingleStrand::ADNSingleStrand(const ADNSingleStrand & other)
 {
@@ -514,6 +514,48 @@ bool ADNModel::IsAtomInBackboneByName(std::string name)
   }
   return res;
 
+}
+
+SBElement::Type ADNModel::GetElementType(std::string atomName)
+{
+  std::map<std::string, SBElement::Type> atomType = {
+    { "P", SBElement::Phosphorus },
+    { "OP1", SBElement::Oxygen },
+    { "O1P", SBElement::Oxygen },
+    { "OP2", SBElement::Oxygen },
+    { "O2P", SBElement::Oxygen },
+    { "O5'", SBElement::Oxygen },
+    { "O4'", SBElement::Oxygen },
+    { "O3'", SBElement::Oxygen },
+    { "O6", SBElement::Oxygen },
+    { "O4", SBElement::Oxygen },
+    { "O2", SBElement::Oxygen },
+    { "C5'", SBElement::Carbon },
+    { "C4'", SBElement::Carbon },
+    { "C3'", SBElement::Carbon },
+    { "C2'", SBElement::Carbon },
+    { "C1'", SBElement::Carbon },
+    { "C8", SBElement::Carbon },
+    { "C7", SBElement::Carbon },
+    { "C6", SBElement::Carbon },
+    { "C5", SBElement::Carbon },
+    { "C4", SBElement::Carbon },
+    { "C2", SBElement::Carbon },
+    { "N9", SBElement::Nitrogen },
+    { "N7", SBElement::Nitrogen },
+    { "N6", SBElement::Nitrogen },
+    { "N4", SBElement::Nitrogen },
+    { "N3", SBElement::Nitrogen },
+    { "N2", SBElement::Nitrogen },
+    { "N1", SBElement::Nitrogen }
+  };
+
+  SBElement::Type t = SBElement::Type::Unknown;
+  if (atomType.find(atomName) != atomType.end()) {
+    t = atomType.at(atomName);
+  }
+
+  return t;
 }
 
 ADNBaseSegment::ADNBaseSegment(const ADNBaseSegment & other) : PositionableSB(other), Orientable(other), SBStructuralGroup(other)
@@ -836,7 +878,6 @@ ADNBackbone::ADNBackbone() : PositionableSB(), SBBackbone()
 {
   auto cA = GetCenterAtom();
   cA->setElementType(SBElement::Einsteinium);
-  addChild(cA());
 }
 
 ADNBackbone::ADNBackbone(const ADNBackbone & other)
@@ -890,7 +931,6 @@ ADNSidechain::ADNSidechain() : PositionableSB(), SBSideChain()
 {
   auto cA = GetCenterAtom();
   cA->setElementType(SBElement::Fermium);
-  addChild(cA());
 }
 
 ADNSidechain::ADNSidechain(const ADNSidechain & other)
