@@ -52,6 +52,7 @@ namespace ADNModel {
   std::string CellTypeToString(CellType t);
   bool IsAtomInBackboneByName(std::string name);
   SBElement::Type GetElementType(std::string atomName);
+  std::map<std::string, std::vector<std::string>> GetNucleotideBonds(DNABlocks t);
 }
 
 /* Classes */
@@ -183,6 +184,7 @@ public:
   void AddAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
   void ADNNucleotide::DeleteAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
   CollectionMap<ADNAtom> GetAtoms();
+  CollectionMap<ADNAtom> GetAtomsByName(std::string name);
 
   // Local base is always the standard basis */
   ublas::matrix<double> GetGlobalBasisTransformation();

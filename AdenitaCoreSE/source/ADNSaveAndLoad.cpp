@@ -235,6 +235,8 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
       nt->SetE3(ADNAuxiliary::StringToUblasVector(itr2->value["e3"].GetString()));
       nt->SetPosition(ADNAuxiliary::StringToSBPosition(itr2->value["position"].GetString()));
 
+      nt->SetName(itr2->value["type"].GetString() + std::to_string(nt->getNodeIndex()));
+
       nt->SetBackbonePosition(ADNAuxiliary::StringToSBPosition(itr2->value["backboneCenter"].GetString()));
       nt->SetSidechainPosition(ADNAuxiliary::StringToSBPosition(itr2->value["sidechainCenter"].GetString()));
 
