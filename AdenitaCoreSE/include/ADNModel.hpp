@@ -51,6 +51,7 @@ namespace ADNModel {
   DNABlocks ResidueNameToType(char n);
   std::string CellTypeToString(CellType t);
   bool IsAtomInBackboneByName(std::string name);
+  SBElement::Type GetElementType(std::string atomName);
 }
 
 /* Classes */
@@ -186,10 +187,6 @@ public:
   // Local base is always the standard basis */
   ublas::matrix<double> GetGlobalBasisTransformation();
   bool GlobalBaseIsSet();
-  /**
-  * Copy atoms into ANTNucleotide target.
-  */
-  void CopyAtoms(ADNPointer<ADNNucleotide> target);
 
 private:
   ADNWeakPointer<ADNNucleotide> pair_;

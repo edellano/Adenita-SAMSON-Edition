@@ -28,7 +28,7 @@ public:
   void RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
   void RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
   void RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
-  void RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at);
+  void RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at, bool create = false);
 
   unsigned int GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs);
 
@@ -47,6 +47,7 @@ public:
 
   void DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
   void DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
+  void DeregisterAtom(ADNPointer<ADNAtom> atom);
 
 protected:
 private:

@@ -21,6 +21,14 @@ void SEAdenitaCoreSEApp::LoadPart(QString filename)
 {
   ADNPointer<ADNPart> part = ADNLoader::LoadPartFromJson(filename.toStdString());
 
+  DASBackToTheAtom btta = DASBackToTheAtom();
+  btta.SetNucleotidesPostions(part);
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.use_atomic_details) {
+    btta.GenerateAllAtomModel(part);
+    //btta.SetAllAtomsPostions(part);
+  }
+
   SAMSON::beginHolding("Add model");
   part->create();
   SAMSON::getActiveLayer()->addChild(part());
@@ -36,13 +44,14 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
   alg->SetMinEdgeLength(minEdgeSize);
   std::string seq = "";
   auto part = alg->ApplyAlgorithm(seq, filename.toStdString());
+  auto ntSize = part->GetNucleotides().size();
 
   DASBackToTheAtom btta = DASBackToTheAtom();
   btta.SetNucleotidesPostions(part);
   SEConfig& config = SEConfig::GetInstance();
   if (config.use_atomic_details) {
-    //btta.GenerateAllAtomModel(part);
-    btta.SetAllAtomsPostions(part);
+    btta.GenerateAllAtomModel(part);
+    //btta.SetAllAtomsPostions(part);
   }
 
   SAMSON::beginHolding("Add model");

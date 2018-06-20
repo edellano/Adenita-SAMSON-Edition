@@ -120,6 +120,12 @@ void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
   doubleStrandsIndex_.removeReferenceTarget(ds());
 }
 
+void ADNPart::DeregisterAtom(ADNPointer<ADNAtom> atom)
+{
+  atom->getParent()->removeChild(atom());
+  atomsIndex_.removeReferenceTarget(atom());
+}
+
 void ADNPart::RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss) 
 {
   auto root = getStructuralRoot();
@@ -142,11 +148,15 @@ void ADNPart::RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPoi
   nucleotidesIndex_.addReferenceTarget(nt());
 }
 
-void ADNPart::RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at)
+void ADNPart::RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at, bool create)
 {
   nt->AddAtom(g, at);
 
   atomsIndex_.addReferenceTarget(at());
+
+  if (create) {
+    at->create();
+  }
 }
 
 void ADNPart::RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs)

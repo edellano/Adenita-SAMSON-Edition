@@ -61,10 +61,15 @@ public:
   void PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosition3 bsPositionPrev, SBPosition3 bsPositionNext);
 
   void GenerateAllAtomModel(ADNPointer<ADNPart> origami);
-  void SetAllAtomsPostions(ADNPointer<ADNPart> origami);
+  void PopulateNucleotideWithAllAtoms(ADNPointer<ADNPart> origami, ADNPointer<ADNNucleotide> nt);
+  void FindAtomsPositions(ADNPointer<ADNNucleotide> nt);
+
+  void PopulateWithMockAtoms(ADNPointer<ADNPart> origami);
+
+  //void SetAllAtomsPostions(ADNPointer<ADNPart> origami);
   // for cadnano
-  void SetAllAtomsPostions2D(ADNPointer<ADNPart> origami);
-  void SetAllAtomsPostions1D(ADNPointer<ADNPart> origami);
+  /*void SetAllAtomsPostions2D(ADNPointer<ADNPart> origami);
+  void SetAllAtomsPostions1D(ADNPointer<ADNPart> origami);*/
 
   /**
    * Rotates a nucleotide along base-pair plane (defined by nt->e3_).
@@ -72,12 +77,12 @@ public:
    * \param the amount of degrees
    * \param wether to also rotate the pair
    */
-  void RotateNucleotide(ADNPointer<ADNNucleotide> nt, double angle, bool set_pair);
+  //void RotateNucleotide(ADNPointer<ADNNucleotide> nt, double angle, bool set_pair);
 
   /**
    * Loads a nucleotide or base pair into SAMSON for testing purposes
    */
-  void DisplayDNABlock(std::string block);
+  //void DisplayDNABlock(std::string block);
 
 private:
   ADNPointer<ADNNucleotide> da_;
@@ -103,8 +108,8 @@ private:
   */
   void FindAtomsPositions(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNNucleotide> nt);
   // for cadnano
-  void FindAtomsPositions2D(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNNucleotide> nt);
-  void FindAtomsPositions1D(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNNucleotide> nt);
+  //void FindAtomsPositions2D(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNNucleotide> nt);
+  //void FindAtomsPositions1D(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNNucleotide> nt);
   /*!
    * Calculate the center of mass of backbone and sidechain w.r.t. atom coordinates
    *  \param the nucleotide
@@ -122,6 +127,10 @@ private:
   /** Sets the positions of a list of atoms according to a matrix positions
   */
   int SetAtomsPositions(CollectionMap<ADNAtom> atoms, ublas::matrix<double> new_positions, int r_id);
+  /**
+   * 
+   */
+  ADNPointer<ADNAtom> CopyAtom(ADNPointer<ADNAtom> atom);
 };
 
 #endif
