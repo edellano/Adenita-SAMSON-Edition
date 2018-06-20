@@ -149,6 +149,27 @@ CollectionMap<ADNAtom> ADNNucleotide::GetAtoms()
   return atoms;
 }
 
+CollectionMap<ADNAtom> ADNNucleotide::GetAtomsByName(std::string name)
+{
+  CollectionMap<ADNAtom> res;
+  /*SBNodeIndexer atoms;
+  getNodes(atoms, SBNode::GetName() == name);
+
+  SB_FOR(SBNode* a, atoms) {
+    ADNPointer<ADNAtom> at = static_cast<ADNAtom*>(a);
+    res.addReferenceTarget(at());
+  }*/
+
+  auto atoms = GetAtoms();
+  SB_FOR(ADNPointer<ADNAtom> a, atoms) {
+    if (a->GetName() == name) {
+      res.addReferenceTarget(a());
+    }
+  }
+
+  return res;
+}
+
 ublas::matrix<double> ADNNucleotide::GetGlobalBasisTransformation() {
   ublas::matrix<double> transf(3, 3, 0.0);
   ublas::column(transf, 0) = GetE1();
@@ -558,6 +579,68 @@ SBElement::Type ADNModel::GetElementType(std::string atomName)
   return t;
 }
 
+std::map<std::string, std::vector<std::string>> ADNModel::GetNucleotideBonds(DNABlocks t)
+{
+  std::map<std::string, std::vector<std::string>> res;
+  // P
+  std::vector<std::string> pConn = {"OP2", "OP1", "O5'"};
+  res.insert(std::make_pair("P", pConn));
+  // OP2
+  std::vector<std::string> op2Conn = { "P" };
+  res.insert(std::make_pair("OP2", op2Conn));
+  // OP1
+  std::vector<std::string> op1Conn = { "P" };
+  res.insert(std::make_pair("OP1", op1Conn));
+  // O5'
+  std::vector<std::string> o5pConn = { "P",  "C5'"};
+  res.insert(std::make_pair("O5'", o5pConn));
+  // C5'
+  std::vector<std::string> c5pConn = { "O5'",  "C4'" };
+  res.insert(std::make_pair("C5'", c5pConn));
+  // C4'
+  std::vector<std::string> c4pConn = { "C5'",  "O4'", "C3'" };
+  res.insert(std::make_pair("C4'", c4pConn));
+  // C3'
+  std::vector<std::string> c3pConn = { "C4'",  "O3'", "C2'" };
+  res.insert(std::make_pair("C3'", c3pConn));
+  // O3'
+  std::vector<std::string> o3pConn = { "C3'" };
+  res.insert(std::make_pair("O3'", o3pConn));
+  // C2'
+  std::vector<std::string> c2pConn = { "C3'",  "C1'" };
+  res.insert(std::make_pair("C2'", c2pConn));
+  // C1'
+  std::vector<std::string> c1pConn = { "C2'",  "O4'" };
+  res.insert(std::make_pair("C1'", c1pConn));
+  // O4'
+  std::vector<std::string> o4pConn = { "C4'",  "C1'" };
+  res.insert(std::make_pair("O4'", o4pConn));
+
+  if (t == DNABlocks::DA || t == DNABlocks::DI) {
+    std::vector<std::string> c1pConn = { "C2'",  "O4'", "N9" };
+    res.insert(std::make_pair("C1'", c1pConn));
+    std::vector<std::string> c8Conn = { "N9",  "N7" };
+    res.insert(std::make_pair("C8", c8Conn));
+    std::vector<std::string> n7Conn = { "C8",  "C5" };
+    res.insert(std::make_pair("N7", n7Conn));
+    std::vector<std::string> c5Conn = { "C4",  "N7", "C6" };
+    res.insert(std::make_pair("C5", c5Conn));
+    std::vector<std::string> c4Conn = { "C5",  "N9", "N3" };
+    res.insert(std::make_pair("C4", c4Conn));
+    std::vector<std::string> n3Conn = { "C4",  "C2" };
+    res.insert(std::make_pair("N3", n3Conn));
+    std::vector<std::string> c2Conn = { "N3",  "N1" };
+    res.insert(std::make_pair("C2", c2Conn));
+    std::vector<std::string> n1Conn = { "C2",  "C6" };
+    res.insert(std::make_pair("N1", n1Conn));
+    std::vector<std::string> c6Conn = { "N1",  "C5", "N6" };
+    res.insert(std::make_pair("C6", c6Conn));
+    std::vector<std::string> n6Conn = { "C6" };
+    res.insert(std::make_pair("N6", n6Conn));
+  }
+  return res;
+}
+
 ADNBaseSegment::ADNBaseSegment(const ADNBaseSegment & other) : PositionableSB(other), Orientable(other), SBStructuralGroup(other)
 {
   *this = other;
@@ -909,8 +992,10 @@ CollectionMap<ADNAtom> ADNBackbone::GetAtoms() const
 
   auto children = *getChildren();
   SB_FOR(SBStructuralNode* n, children) {
-    ADNAtom* a = static_cast<ADNAtom*>(n);
-    atomList.addReferenceTarget(a);
+    if (n->getType() == SBNode::Atom) {
+      ADNAtom* a = static_cast<ADNAtom*>(n);
+      atomList.addReferenceTarget(a);
+    }
   }
   
   return atomList;
@@ -962,8 +1047,10 @@ CollectionMap<ADNAtom> ADNSidechain::GetAtoms()
 
   auto children = *getChildren();
   SB_FOR(SBStructuralNode* n, children) {
-    ADNAtom* a = static_cast<ADNAtom*>(n);
-    atomList.addReferenceTarget(a);
+    if (n->getType() == SBNode::Atom) {
+      ADNAtom* a = static_cast<ADNAtom*>(n);
+      atomList.addReferenceTarget(a);
+    }
   }
 
   return atomList;

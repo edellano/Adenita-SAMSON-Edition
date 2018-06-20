@@ -37,13 +37,6 @@ public:
   DASBackToTheAtom();
   ~DASBackToTheAtom();
 
-  /** Loads the four types of nucleotide as members
-   */
-  void LoadNucleotides();
-  /** Loads the four base pairs as members
-   */
-  void LoadNtPairs();
-
   /**
    * Sets the nucleotides backbone, sidechain and center of mass positions for an entire
    * double strand using the BaseSegment position information.
@@ -52,19 +45,9 @@ public:
   void SetDoubleStrandPositions(ADNPointer<ADNDoubleStrand> ds);
   void SetNucleotidesPostions(ADNPointer<ADNPart> part);
 
-  /** Sets the center of mass position, backbone c.o.m. and sidechain c.o.m. of
-  *  the nucleotides associated with a base (in global space).
-  */
-  void SetNucleotidePositionUnpaired(ADNPointer<ADNNucleotide> nt);
   void SetPositionLoopNucleotides(ADNPointer<ADNBaseSegment> bs);
-  void SetNucleotidePositionPaired(ADNPointer<ADNBaseSegment> bs, bool set_pair, double initialAngleDegrees = 0.0);
-  void PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosition3 bsPositionPrev, SBPosition3 bsPositionNext);
 
   void GenerateAllAtomModel(ADNPointer<ADNPart> origami);
-  void PopulateNucleotideWithAllAtoms(ADNPointer<ADNPart> origami, ADNPointer<ADNNucleotide> nt);
-  void FindAtomsPositions(ADNPointer<ADNNucleotide> nt);
-
-  void PopulateWithMockAtoms(ADNPointer<ADNPart> origami);
 
   //void SetAllAtomsPostions(ADNPointer<ADNPart> origami);
   // for cadnano
@@ -93,6 +76,12 @@ private:
   NtPair dt_da_;
   NtPair dc_dg_;
   NtPair dg_dc_;
+  /** Loads the four types of nucleotide as members
+  */
+  void LoadNucleotides();
+  /** Loads the four base pairs as members
+  */
+  void LoadNtPairs();
   /** Parses a nucleotide PDB file.
    *  \param a string with the location of the PDB.
    *  \return a nucleotide object.
@@ -103,13 +92,15 @@ private:
   *  \return a pair of nucleotide objects.
   */
   NtPair ParseBasePairPDB(std::string source);
-  /** Sets the center of mass position, backbone c.o.m. and sidechain c.o.m. of
-  *  the nucleotides associated with a base (in global space).
-  */
-  void FindAtomsPositions(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNNucleotide> nt);
-  // for cadnano
-  //void FindAtomsPositions2D(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNNucleotide> nt);
-  //void FindAtomsPositions1D(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNNucleotide> nt);
+
+  void SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool set_pair, double initialAngleDegrees = 0.0);
+  void PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosition3 bsPositionPrev, SBPosition3 bsPositionNext);
+
+  void PopulateNucleotideWithAllAtoms(ADNPointer<ADNPart> origami, ADNPointer<ADNNucleotide> nt);
+  void CreateBonds(ADNPointer<ADNPart> origami);
+  void FindAtomsPositions(ADNPointer<ADNNucleotide> nt);
+  void PopulateWithMockAtoms(ADNPointer<ADNPart> origami);
+
   /*!
    * Calculate the center of mass of backbone and sidechain w.r.t. atom coordinates
    *  \param the nucleotide
