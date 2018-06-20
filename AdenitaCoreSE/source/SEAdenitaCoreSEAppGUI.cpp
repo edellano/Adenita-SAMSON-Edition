@@ -42,6 +42,11 @@ void SEAdenitaCoreSEAppGUI::onLoadPart()
 
 void SEAdenitaCoreSEAppGUI::onSavePart()
 {
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save an ANTPart .json file"), QDir::currentPath(), tr("Json (*.json)"));
+  if (!filename.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->SavePart(filename);
+  }
 }
 
 void SEAdenitaCoreSEAppGUI::onLoadPLYFile()
