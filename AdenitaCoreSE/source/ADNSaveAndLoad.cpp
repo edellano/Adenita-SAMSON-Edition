@@ -169,7 +169,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
     do {
       int nextId = nextsBs.at(currId);
       bs = bss.at(currId);
-      ds->AddBaseSegmentEnd(bs);
+      part->RegisterBaseSegmentEnd(ds, bs);
       currId = nextId;
     } while (currId != -1);
 
@@ -309,7 +309,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
     ADNPointer<ADNBaseSegment> startBs = nullptr;
     for (int i = 0; i < size; ++i) {
       ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
-      ds->AddBaseSegmentEnd(bs);
+      part->RegisterBaseSegmentEnd(ds, bs);
       if (i == 0) {
         startBs = bs;
       }
