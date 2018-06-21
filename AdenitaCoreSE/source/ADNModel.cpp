@@ -509,7 +509,7 @@ DNABlocks ADNModel::ResidueNameToType(char n)
   else if (n == 'G') {
     t = SBResidue::ResidueType::DG;
   }
-  return DNABlocks();
+  return t;
 }
 
 std::string ADNModel::CellTypeToString(CellType t)
@@ -618,7 +618,7 @@ std::map<std::string, std::vector<std::string>> ADNModel::GetNucleotideBonds(DNA
 
   if (t == DNABlocks::DA || t == DNABlocks::DI) {
     std::vector<std::string> c1pConn = { "C2'",  "O4'", "N9" };
-    res.insert(std::make_pair("C1'", c1pConn));
+    res["C1'"] = c1pConn;
     std::vector<std::string> c8Conn = { "N9",  "N7" };
     res.insert(std::make_pair("C8", c8Conn));
     std::vector<std::string> n7Conn = { "C8",  "C5" };
@@ -635,8 +635,56 @@ std::map<std::string, std::vector<std::string>> ADNModel::GetNucleotideBonds(DNA
     res.insert(std::make_pair("N1", n1Conn));
     std::vector<std::string> c6Conn = { "N1",  "C5", "N6" };
     res.insert(std::make_pair("C6", c6Conn));
-    std::vector<std::string> n6Conn = { "C6" };
-    res.insert(std::make_pair("N6", n6Conn));
+  }
+  else if (t == DNABlocks::DG) {
+    std::vector<std::string> c1pConn = { "C2'",  "O4'", "N9" };
+    res["C1'"] = c1pConn;
+    std::vector<std::string> c8Conn = { "N9",  "N7" };
+    res.insert(std::make_pair("C8", c8Conn));
+    std::vector<std::string> n7Conn = { "C8",  "C5" };
+    res.insert(std::make_pair("N7", n7Conn));
+    std::vector<std::string> c5Conn = { "C4",  "N7", "C6" };
+    res.insert(std::make_pair("C5", c5Conn));
+    std::vector<std::string> c4Conn = { "C5",  "N9", "N3" };
+    res.insert(std::make_pair("C4", c4Conn));
+    std::vector<std::string> n3Conn = { "C4",  "C2" };
+    res.insert(std::make_pair("N3", n3Conn));
+    std::vector<std::string> c2Conn = { "N3",  "N2", "N1" };
+    res.insert(std::make_pair("C2", c2Conn));
+    std::vector<std::string> n1Conn = { "C2",  "C6" };
+    res.insert(std::make_pair("N1", n1Conn));
+    std::vector<std::string> c6Conn = { "N1",  "C5", "O6" };
+    res.insert(std::make_pair("C6", c6Conn));
+  }
+  else if (t == DNABlocks::DT) {
+    std::vector<std::string> c1pConn = { "C2'",  "O4'", "N1" };
+    res["C1'"] = c1pConn;
+    std::vector<std::string> c5Conn = { "C4",  "C6", "C7" };
+    res.insert(std::make_pair("C5", c5Conn));
+    std::vector<std::string> c4Conn = { "O4", "N3" };
+    res.insert(std::make_pair("C4", c4Conn));
+    std::vector<std::string> n3Conn = { "C2" };
+    res.insert(std::make_pair("N3", n3Conn));
+    std::vector<std::string> c2Conn = { "N1", "O2" };
+    res.insert(std::make_pair("C2", c2Conn));
+    std::vector<std::string> n1Conn = { "C6" };
+    res.insert(std::make_pair("N1", n1Conn));
+  }
+  else if (t == DNABlocks::DC) {
+    std::vector<std::string> c1pConn = { "C2'",  "O4'", "N1" };
+    res["C1'"] = c1pConn;
+    std::vector<std::string> c5Conn = { "C4",  "C6" };
+    res.insert(std::make_pair("C5", c5Conn));
+    std::vector<std::string> c4Conn = { "C5",  "N4", "N3" };
+    res.insert(std::make_pair("C4", c4Conn));
+    std::vector<std::string> n3Conn = { "C4",  "C2" };
+    res.insert(std::make_pair("N3", n3Conn));
+    std::vector<std::string> c2Conn = { "N3",  "N1", "O2" };
+    res.insert(std::make_pair("C2", c2Conn));
+    std::vector<std::string> n1Conn = { "C2",  "C6" };
+    res.insert(std::make_pair("N1", n1Conn));
+    std::vector<std::string> c6Conn = { "N1",  "C5" };
+    res.insert(std::make_pair("C6", c6Conn));
   }
   return res;
 }

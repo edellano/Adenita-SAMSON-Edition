@@ -228,8 +228,9 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
     for (Value::ConstMemberIterator itr2 = val_nucleotides.MemberBegin(); itr2 != val_nucleotides.MemberEnd(); ++itr2) {
       ADNPointer<ADNNucleotide> nt = ADNPointer<ADNNucleotide>(new ADNNucleotide());
       part->RegisterNucleotideThreePrime(ss, nt);
-
-      nt->SetType(ADNModel::ResidueNameToType(itr2->value["type"].GetString()[0]));
+      std::string test = itr2->value["type"].GetString();
+      auto test2 = test.c_str();
+      nt->SetType(ADNModel::ResidueNameToType(test2[0]));
       nt->SetE1(ADNAuxiliary::StringToUblasVector(itr2->value["e1"].GetString()));
       nt->SetE2(ADNAuxiliary::StringToUblasVector(itr2->value["e2"].GetString()));
       nt->SetE3(ADNAuxiliary::StringToUblasVector(itr2->value["e3"].GetString()));
