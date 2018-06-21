@@ -346,21 +346,20 @@ void DASBackToTheAtom::CreateBonds(ADNPointer<ADNPart> origami)
 
     SB_FOR(ADNPointer<ADNAtom> at, atoms) {
       ADNPointer<ADNAtom> atC = nullptr;
-      if (connections.find(at->GetName()) != connections.end()) {
+      std::string atName = at->GetName();
+      if (connections.find(atName) != connections.end()) {
         auto conns = connections.at(at->GetName());
         for (std::string name : conns) {
           auto lst = nt->GetAtomsByName(name);
           if (lst.size() == 1) {
             atC = *lst.begin();
-          }
-        }
-        if (atC != nullptr) {
-          SBPointer<SBBond> bond = new SBBond(at(), atC());
-          if (at->IsInBackbone()) {
-            bb->addChild(bond());
-          }
-          else {
-            sc->addChild(bond());
+            SBPointer<SBBond> bond = new SBBond(at(), atC());
+            if (at->IsInBackbone()) {
+              bb->addChild(bond());
+            }
+            else {
+              sc->addChild(bond());
+            }
           }
         }
       }
