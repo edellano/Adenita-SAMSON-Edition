@@ -26,10 +26,10 @@ void DASBackToTheAtom::SetDoubleStrandPositions(ADNPointer<ADNDoubleStrand> ds) 
   std::vector<ADNPointer<ADNBaseSegment>> loops;
   ADNLogger& logger = ADNLogger::GetLogger();
 
-  for (size_t i = 0; i < ds->GetSize(); ++i) {
+  for (size_t i = 0; i < ds->GetLength(); ++i) {
     if (bs == nullptr) {
       std::string msg = "SetDoubleStrandPositions() ERROR => nullptr BaseSegment on position " + std::to_string(i) 
-        + " of doubleStrand " + std::to_string(ds->getNodeIndex()) + "(size " + std::to_string(ds->GetSize()) + ")";
+        + " of doubleStrand " + std::to_string(ds->getNodeIndex()) + "(size " + std::to_string(ds->GetLength()) + ")";
       logger.Log(msg);
       break;
     }

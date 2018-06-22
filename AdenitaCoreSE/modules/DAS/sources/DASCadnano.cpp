@@ -256,11 +256,6 @@ void DASCadnano::CreateModel(ADNPointer<ADNPart> nanorobot, string seq, LatticeT
   //create the staple strands
   //find the number of staple
   CreateStaples(nanorobot);
-
-  //ShiftStructure(nanorobot);
-
-  //nanorobot.SetSingleStrands(chains_);
-  //nanorobot.SetScaffold(scaff->id_);
 }
 
 void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot) {
@@ -410,14 +405,11 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq
 
         //add first nucleotide to scaffold chain
         ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+        nanorobot->RegisterNucleotideThreePrime(scaffold, nt);
 
         int z = startVstrandPos;
-        //SBPosition3 pos1D = vGrid_.GetGridScaffoldPos1D(nt->id_);
-        //SBPosition3 pos2D = vGrid_.GetGridScaffoldCellPos2D(vStrandId, z);
         SBPosition3 pos3D = vGrid_.GetGridScaffoldCellPos3D(vStrandId, z, vstrand.row_, vstrand.col_);
 
-        //nt->SetPosition1D(pos1D);
-        //nt->SetPosition2D(pos2D);
         nt->SetPosition(pos3D);
         nt->SetBackbonePosition(pos3D);
         nt->SetSidechainPosition(pos3D);
@@ -484,8 +476,6 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq
         SBPosition3 leftPos2D = vGrid_.GetGridScaffoldCellPos2D(vStrandId, z);
         SBPosition3 leftPos3D = vGrid_.GetGridScaffoldCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
 
-        //leftSkip->SetPosition1D(leftPos1D);
-        //leftSkip->SetPosition2D(leftPos2D);
         leftSkip->SetPosition(leftPos3D);
         leftSkip->SetBackbonePosition(leftPos3D);
         leftSkip->SetSidechainPosition(leftPos3D);
@@ -515,6 +505,7 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq
     for (int k = 0; k <= max_iter; k++) {
       //add loop
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+      nanorobot->RegisterNucleotideThreePrime(scaffold, nt);
 
       //SBPosition3 pos1D = vGrid_.GetGridScaffoldPos1D(nt->id_);
       SBPosition3 pos2D = vGrid_.GetGridScaffoldCellPos2D(vStrandId, z);
@@ -565,12 +556,10 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq
         }
       }
       
-      //nt->SetPosition1D(pos1D);
-      //nt->SetPosition2D(pos2D);
       nt->SetPosition(pos3D);
       nt->SetBackbonePosition(pos3D);
       nt->SetSidechainPosition(pos3D);
-      nanorobot->RegisterNucleotideThreePrime(scaffold, nt);
+      
       auto helix_pos_loop = std::make_tuple(vStrandId, z, k);
       scaffold_nucleotides_.insert(std::make_pair(helix_pos_loop, nt));
 
@@ -644,12 +633,9 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart>nanorobot) {
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide(); //add starting nucleotide to chain
       nanorobot->RegisterNucleotideThreePrime(staple, nt);
 
-      //SBPosition3 pos1D = vGrid_.GetGridStaplePos1D(nt->id_, nt->strand_->id_);
       SBPosition3 pos2D = vGrid_.GetGridStapleCellPos2D(vStrandId, z);
       SBPosition3 pos3D = vGrid_.GetGridStapleCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
 
-      //nt->SetPosition1D(pos1D);
-      //nt->SetPosition2D(pos2D);
       nt->SetPosition(pos3D);
       nt->SetBackbonePosition(pos3D);
       nt->SetSidechainPosition(pos3D);
@@ -709,12 +695,9 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart>nanorobot) {
           ADNPointer<ADNNucleotide> rightSkip = new ADNNucleotide();
           rightSkip->SetBaseSegment(bs);
 
-          //SBPosition3 rightPos1D = vGrid_.GetGridStaplePos1D(nid, staple->id_);
           SBPosition3 rightPos2D = vGrid_.GetGridStapleCellPos2D(vStrandId, z);
           SBPosition3 rightPos3D = vGrid_.GetGridStapleCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
 
-          //rightSkip->SetPosition1D(rightPos1D);
-          //rightSkip->SetPosition2D(rightPos2D);
           rightSkip->SetPosition(rightPos3D);
           rightSkip->SetBackbonePosition(rightPos3D);
           rightSkip->SetSidechainPosition(rightPos3D);
@@ -741,6 +724,7 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart>nanorobot) {
       for (int k = 0; k <= max_iter; k++) {
         //add loop
         ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+        nanorobot->RegisterNucleotideThreePrime(staple, nt);
 
         //SBPosition3 pos1D = vGrid_.GetGridStaplePos1D(nt->id_, nt->strand_->id_);
         SBPosition3 pos2D = vGrid_.GetGridStapleCellPos2D(vStrandId, z);
@@ -784,14 +768,10 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart>nanorobot) {
           nt->SetType(GetComplementaryBase(scaff_nt->GetType()));
         }
 
-        //nt->SetPosition1D(pos1D);
-        //nt->SetPosition2D(pos2D);
         nt->SetPosition(pos3D);
         nt->SetBackbonePosition(pos3D);
         nt->SetSidechainPosition(pos3D);
         nt->SetBaseSegment(bs);
-
-        nanorobot->RegisterNucleotideThreePrime(staple, nt);
       }
 
       //find next stap element
@@ -803,520 +783,11 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart>nanorobot) {
         break;
       }
     }
-    //set color of strand
-    /*auto vstrandColors = json_.vstrands_[curStapleStart.n0].stap_colors_;
-    for (auto color : vstrandColors) {
-      if (color.n0 == curStapleStart.n1) {
-        int colorDec = color.n1;
-
-        stringstream ssHexColor;
-        ssHexColor << hex << colorDec;
-        string hexColor(ssHexColor.str());
-
-        while (hexColor.size() < 6) {
-          reverse(hexColor.begin(), hexColor.end());
-          hexColor += "0";
-          reverse(hexColor.begin(), hexColor.end());
-        }
-
-        string hexR = hexColor.substr(0, 2);
-        string hexG = hexColor.substr(2, 2);
-        string hexB = hexColor.substr(4, 2);
-
-        int decR;
-        std::stringstream ssDecR;
-        ssDecR << hexR;
-        ssDecR >> hex >> decR;
-        double r = decR / 255.0f;
-
-        int decG;
-        std::stringstream ssDecG;
-        ssDecG << hexG;
-        ssDecG >> hex >> decG;
-        double g = decG / 255.0f;;
-
-        int decB;
-        std::stringstream ssDecB;
-        ssDecB << hexB;
-        ssDecB >> hex >> decB;
-        double b = decB / 255.0f;;
-
-        staple->color_.setRed(r);
-        staple->color_.setGreen(g);
-        staple->color_.setBlue(b);
-        staple->color_.setAlpha(1.0f);
-        
-        break;
-      }
-    }
-    ++sid;*/
   }
 
   std::string msg = "numSkips (init) " + std::to_string(numSkips * 2);
   logger.Log(msg);
 }
-
-//void DASCadnano::ShiftStructure(ADNPointer<ADNPart> part) {
-//
-//  //calc center
-//  SBPosition3 center3DStructure;
-//  SBPosition3 center2DStructure;
-//  SBPosition3 center1DStructure;
-//
-//  int numNucleotides = 0;
-//  int numStapleNucleotides = 0;
-//  SB_FOR(ADNPointer<ADNSingleStrand> strand, chains_) {
-//    auto nts = strand->GetNucleotides();
-//    SB_FOR(ADNPointer<ADNNucleotide> nucleotide, nts) {
-//      SBPosition3 pos3D = nucleotide->GetPosition();
-//      //SBPosition3 pos2D = nucleotide.second->GetSBPosition2D();
-//      center3DStructure += pos3D;
-//      //center2DStructure += pos2D;
-//      ++numNucleotides;
-//    }
-//
-//    //1D positions don't take the scaffold into account
-//    //if (!strand->IsScaffold()) {
-//    //  for (auto nucleotide : strand->nucleotides_) {
-//    //    SBPosition3 pos1D = nucleotide.second->GetSBPosition1D();
-//    //    center1DStructure += pos1D;
-//    //    ++numStapleNucleotides;
-//    //  }
-//    //}
-//  }
-//
-//  center3DStructure /= numNucleotides;
-//  center2DStructure /= numNucleotides;
-//  center1DStructure /= numStapleNucleotides;
-//
-//  //shift entire structure to origin
-//
-//  for (auto chain : chains_) {
-//    auto strand = chain.second;
-//
-//    for (auto nucleotide : strand->nucleotides_) {
-//      auto nt = nucleotide.second;
-//      SBPosition3 pos3D = nucleotide.second->GetSBPosition();
-//      //SBPosition3 pos2D = nucleotide.second->GetSBPosition2D();
-//      //SBPosition3 pos1D = nucleotide.second->GetSBPosition1D();
-//      
-//      nt->SetPosition(pos3D - center3DStructure);
-//      nt->SetBackbonePosition(pos3D - center3DStructure);
-//      nt->SetSidechainPosition(pos3D - center3DStructure);
-//      //nt->SetPosition2D(pos2D - center2DStructure);
-//      //nt->SetPosition1D(pos1D - center1DStructure);
-//    }
-//  }
-//
-//  //shift positions of skips
-//  SBPosition3 centerSkips3D;
-//  SBPosition3 centerSkips2D;
-//  SBPosition3 centerSkips1D;
-//  int numSkips = 0;
-//  for (auto const &ent : part.GetBaseSegments()) {
-//    ADNBaseSegment * bs = ent.second;
-//
-//    if (bs->GetCell()->GetType() == CellType::SkipPair) {
-//
-//      ADNPointer<ADNSkipPair> sp = static_cast<ADNPointer<ADNSkipPair>>(bs->GetCell());
-//      ADNPointer<ADNNucleotide> left = sp->GetLeftSkip();
-//      ADNPointer<ADNNucleotide> right = sp->GetRightSkip();
-//
-//      if (left != nullptr) {
-//        centerSkips3D += left->GetSBPosition();
-//        centerSkips2D += left->GetSBPosition2D();
-//        centerSkips1D += left->GetSBPosition1D();
-//        numSkips++;
-//      }
-//      if (right != nullptr) {
-//        centerSkips3D += right->GetSBPosition();
-//        centerSkips2D += right->GetSBPosition2D();
-//        centerSkips1D += right->GetSBPosition1D();
-//        numSkips++;
-//      }
-//    }
-//  }
-//
-//  centerSkips3D /= numSkips;
-//  centerSkips2D /= numSkips;
-//  centerSkips1D /= numSkips;
-//
-//  for (auto const &ent : part.GetBaseSegments()) {
-//    ANTBaseSegment * bs = ent.second;
-//
-//    if (bs->GetCell()->GetType() == CellType::SkipPair) {
-//
-//      ADNPointer<ADNSkipPair> sp = static_cast<ADNPointer<ADNSkipPair>>(bs->GetCell());
-//      ADNPointer<ADNNucleotide> left = sp->GetLeftSkip();
-//      ADNPointer<ADNNucleotide> right = sp->GetRightSkip();
-//
-//      if (left != nullptr) {
-//        SBPosition3 left3D = left->GetSBPosition();
-//        SBPosition3 left2D = left->GetSBPosition2D();
-//        SBPosition3 left1D = left->GetSBPosition1D();
-//        left->SetPosition(left3D - centerSkips3D);
-//        left->SetPosition2D(left2D - centerSkips2D);
-//        left->SetPosition1D(left1D - centerSkips1D);
-//      }
-//      if (right != nullptr) {
-//        SBPosition3 right3D = right->GetSBPosition();
-//        SBPosition3 right2D = right->GetSBPosition2D();
-//        SBPosition3 right1D = right->GetSBPosition1D();
-//        right->SetPosition(right3D - centerSkips3D);
-//        right->SetPosition2D(right2D - centerSkips2D);
-//        right->SetPosition1D(right1D - centerSkips1D);
-//      }
-//    }
-//  }
-//}
-
-//void DASCadnano::CylinderToCadnano(ADNPointer<ADNPart> nanorobot) {
-//
-//  ADNLogger& logger = ADNLogger::GetLogger();
-//  //create the grid for fetching the position
-//  auto doubleStrands = nanorobot->GetDoubleStrands();
-//  size_t numVStrands = doubleStrands.size();
-//
-//  size_t numZ = 0;
-//  SB_FOR(auto did : doubleStrands) {
-//    ADNPointer<ADNDoubleStrand> doubleStrand = did.second;
-//    if (numZ < doubleStrand->size_) {
-//      numZ = doubleStrand->size_;
-//    }
-//  }
-//
-//  // closest multiple of 21 bigger than 21
-//  div_t d = div(numZ, 21);
-//  numZ = d.quot * 21;
-//  if (numZ < 42) numZ = 42;
-//
-//  json_.name_ = nanorobot->GetName();
-//  logger.Log(string("name: " + json_.name_));
-//
-//  for (unsigned int i = 0; i < numVStrands; i++) {
-//    Vstrand vstrand;
-//    vec2 col0;
-//    col0.n0 = 0;
-//    col0.n1 = 0;
-//
-//    vec2 col1;
-//    col1.n0 = 0;
-//    col1.n1 = 0;
-//
-//    vec2 col2;
-//    col2.n0 = 0;
-//    col2.n1 = 0;
-//
-//    vstrand.stap_colors_.push_back(col0);
-//    vstrand.stap_colors_.push_back(col1);
-//    vstrand.stap_colors_.push_back(col2);
-//
-//    //num
-//    vstrand.num_ = i;
-//    //logger.Log(string("\t num: " + to_string(vstrand.num_)));
-//
-//    //scafLoop todo
-//
-//    //stap
-//    for (unsigned int j = 0; j < numZ; j++) {
-//      
-//      vec4 elem;
-//      elem.n0 = -1;
-//      elem.n1 = -1;
-//      elem.n2 = -1;
-//      elem.n3 = -1;
-//      vstrand.stap_.push_back(elem);
-//
-//    }
-//
-//    //skip
-//    for (unsigned int j = 0; j < numZ; j++) {
-//      vstrand.skip_.push_back(0);
-//    }
-//
-//    //scaf
-//    for (unsigned int j = 0; j < numZ; j++) {
-//      vec4 elem;
-//      elem.n0 = -1;
-//      elem.n1 = -1;
-//      elem.n2 = -1;
-//      elem.n3 = -1;
-//      vstrand.scaf_.push_back(elem);
-//
-//    }
-//
-//    //col todo
-//    vstrand.col_ = i;
-//
-//    //stapLoop todo
-//
-//    //row todo
-//    vstrand.row_ = i;
-//
-//    //loop
-//    for (unsigned int j = 0; j < numZ; j++) {
-//      vstrand.loop_.push_back(0);
-//
-//    }
-//
-//    json_.vstrands_.push_back(vstrand);
-//
-//  }
-//  vGrid_.ConstructGridAndLattice(numVStrands, numZ, LatticeType::LatticeFree, json_);
-//  
-//  //set to hexacomb when there are 6vstrands
-//  if (numVStrands == 6) {
-//    json_.vstrands_[0].col_ = 2;
-//    json_.vstrands_[0].row_ = 0;
-//
-//    json_.vstrands_[1].col_ = 3;
-//    json_.vstrands_[1].row_ = 0;
-//
-//    json_.vstrands_[2].col_ = 3;
-//    json_.vstrands_[2].row_ = 1;
-//
-//    json_.vstrands_[3].col_ = 2;
-//    json_.vstrands_[3].row_ = 1;
-//
-//    json_.vstrands_[4].col_ = 1;
-//    json_.vstrands_[4].row_ = 1;
-//
-//    json_.vstrands_[5].col_ = 1;
-//    json_.vstrands_[5].row_ = 0;
-//  }
-//  else if (numVStrands == 4) {
-//    json_.vstrands_[0].col_ = 0;
-//    json_.vstrands_[0].row_ = 0;
-//
-//    json_.vstrands_[1].col_ = 1;
-//    json_.vstrands_[1].row_ = 0;
-//
-//    json_.vstrands_[2].col_ = 1;
-//    json_.vstrands_[2].row_ = 1;
-//
-//    json_.vstrands_[3].col_ = 0;
-//    json_.vstrands_[3].row_ = 1;
-//  }
-//
-//  //trace double strands and set vStrands pos
-//  for (auto did : doubleStrands) {
-//    ADNPointer<ADNDoubleStrand> doubleStrand = did.second;
-//    int vStrandId = doubleStrand->id_;
-//    logger.Log(string("vStrandId: "), false);
-//    logger.Log(QString::number(vStrandId));
-//
-//    ADNPointer<ADNBaseSegment> startBs = doubleStrand->start_;
-//    ADNPointer<ADNBaseSegment> bs = startBs;
-//    ADNPointer<ADNBaseSegment> lastBs = doubleStrand->GetLastBaseSegment();
-//
-//    unsigned int i = 0;
-//    while (bs != nullptr && i < doubleStrand->size_) { // because of daedalus (bs->next_ is never null)
-//      int z = bs->number_;
-//
-//      //logger.Log(QString::number(curBS->id_));
-//      //logger.Log(string("z: "), false);
-//      //logger.Log(QString::number(z));
-//      
-//      ADNPointer<ADNNucleotide> sc = nullptr;
-//      ADNPointer<ADNNucleotide> st = nullptr;
-//
-//      ADNPointer<ADNNucleotide> bsNt = bs->GetNucleotide();
-//      if (bsNt->strand_->isScaffold_) {
-//        sc = bsNt;
-//        st = bsNt->pair_;
-//      }
-//      else {
-//        sc = bsNt->pair_;
-//        st = bsNt;
-//      }
-//
-//      //trace on vStrand
-//      vec4 & scaf = json_.vstrands_[vStrandId].scaf_[z];
-//      vec4 & stap = json_.vstrands_[vStrandId].stap_[z];
-//
-//      if (bs != startBs && bs != lastBs) {
-//        scaf.n0 = vStrandId;
-//        scaf.n1 = z - 1;
-//        scaf.n2 = vStrandId;
-//        scaf.n3 = z + 1;
-//
-//        stap.n0 = vStrandId;
-//        stap.n1 = z + 1;
-//        stap.n2 = vStrandId;
-//        stap.n3 = z - 1;
-//      }
-//      else if (bs == startBs) {
-//        scaf.n0 = vStrandId;
-//        scaf.n1 = z - 1;
-//        scaf.n2 = -1;
-//        scaf.n3 = -1;
-//
-//        stap.n0 = vStrandId;
-//        stap.n1 = z + 1;
-//        stap.n2 = -1;
-//        stap.n3 = -1;
-//      }
-//      else if (bs == lastBs) {
-//        scaf.n0 = -1;
-//        scaf.n1 = -1;
-//        scaf.n2 = vStrandId;
-//        scaf.n3 = z + 1;
-//
-//        stap.n0 = -1;
-//        stap.n1 = -1;
-//        stap.n2 = vStrandId;
-//        stap.n3 = z - 1;
-//      }
-//
-//      if (vStrandId % 2 != 0) {
-//        vec4 temp = stap;
-//        stap = scaf;
-//        scaf = temp;
-//      }
-//      
-//      //set 2D positions
-//      SBPosition3 scPos = vGrid_.GetGridScaffoldCellPos2D(vStrandId, z);
-//      SBPosition3 stPos = vGrid_.GetGridStapleCellPos2D(vStrandId, z);
-//
-//      sc->SetPosition2D(scPos);
-//      st->SetPosition2D(stPos);
-//      
-//      bs = bs->next_;
-//      i++;
-//    } 
-//
-//  }
-//
-//  WriteJSON();
-//
-//  //get the shift to origin
-//  {
-//    SBPosition3 c3D;
-//    SBPosition3 c2D;
-//    int n = 0;
-//    for (auto & sid : nanorobot.GetSingleStrands()) {
-//      ADNPointer<ADNSingleStrand> singleStrand = sid.second;
-//      ANTNucleotideList nucleotides = singleStrand->nucleotides_;
-//
-//      for (auto & nit : nucleotides) {
-//        ADNPointer<ADNNucleotide> nucleotide = nit.second;
-//        c3D += nucleotide->GetSBPosition();
-//        c2D += nucleotide->GetSBPosition2D();
-//        ++n;
-//      }
-//    }
-//
-//    c3D /= n;
-//    c2D /= n;
-//
-//    SBPosition3 shift = c3D - c2D;
-//
-//    //get the rotation of the plane the cylinder unfolds to
-//    ublas::vector<double> cylinderDir = nanorobot.e3_;
-//    ublas::vector<double> planeDir = ublas::zero_vector<double>(3);; //plane normal
-//    planeDir[0] = 1;
-//
-//    double dot = cylinderDir[0] * planeDir[0] + cylinderDir[1] * planeDir[1] + cylinderDir[2] * planeDir[2];
-//    double len_cylinderDir = cylinderDir[0] * cylinderDir[0] + cylinderDir[1] * cylinderDir[1] + cylinderDir[2] * cylinderDir[2];
-//    double len_normal = planeDir[0] * planeDir[0] + planeDir[1] * planeDir[1] + planeDir[2] * planeDir[2];
-//    double theta = acos(dot / sqrt(len_cylinderDir * len_normal));
-//
-//    logger.LogVector("e3", cylinderDir);
-//    logger.LogVector("normal", planeDir);
-//
-//    ublas::vector<double> rotDir = ANTVectorMath::CrossProduct(cylinderDir, planeDir);
-//    ublas::matrix<double> rotMat = ANTVectorMath::MakeRotationMatrix(rotDir, theta);
-//
-//    //apply shift and initial orientation of plane
-//    for (auto & sid : nanorobot.GetSingleStrands()) {
-//      ADNPointer<ADNSingleStrand> singleStrand = sid.second;
-//      ANTNucleotideList nucleotides = singleStrand->nucleotides_;
-//
-//      for (auto & nit : nucleotides) {
-//        ADNPointer<ADNNucleotide> nucleotide = nit.second;
-//        SBPosition3 pos2D = nucleotide->GetSBPosition2D();
-//
-//        pos2D -= c2D;
-//
-//        ublas::vector<double> pos = ANTVectorMath::CreateBoostVector(pos2D);
-//        ublas::vector<double> newPos = ublas::prod(rotMat, pos);
-//
-//        pos2D = ANTVectorMath::CreateSBPosition(newPos);
-//
-//        pos2D += c2D;
-//
-//        pos2D += shift;
-//
-//        nucleotide->SetPosition2D(pos2D);
-//
-//      }
-//    }
-//  }
-//
-//  {
-//    //rotation the plane to opposite of the cylinder cut
-//    SBPosition3 c3D;
-//    SBPosition3 c2D;
-//    int n = 0;
-//    for (auto & sid : nanorobot.GetSingleStrands()) {
-//      ADNPointer<ADNSingleStrand> singleStrand = sid.second;
-//      ANTNucleotideList nucleotides = singleStrand->nucleotides_;
-//
-//      for (auto & nit : nucleotides) {
-//        ADNPointer<ADNNucleotide> nucleotide = nit.second;
-//        c3D += nucleotide->GetSBPosition();
-//        c2D += nucleotide->GetSBPosition2D();
-//        ++n;
-//      }
-//    }
-//
-//    c3D /= n;
-//    c2D /= n;
-//
-//    auto pos1 = doubleStrands[0]->start_->GetNucleotide()->GetSBPosition();
-//    auto pos2 = doubleStrands[0]->GetLastBaseSegment()->GetNucleotide()->GetSBPosition();
-//    SBPosition3 pos3 = (pos1 + pos2) / 2;
-//
-//    ublas::vector<double> rotDir = nanorobot.e3_;
-//    ublas::vector<double> dirToPlane = ANTVectorMath::CreateBoostVector(c3D - c2D); 
-//    ublas::vector<double> dirToCut = ANTVectorMath::CreateBoostVector(pos3 - c3D); 
-//    
-//    SBPosition3 shift = c2D - pos3;
-//
-//    double dot = dirToPlane[0] * dirToCut[0] + dirToPlane[1] * dirToCut[1] + dirToPlane[2] * dirToCut[2];
-//    double len_dirToPlane = dirToPlane[0] * dirToPlane[0] + dirToPlane[1] * dirToPlane[1] + dirToPlane[2] * dirToPlane[2];
-//    double len_dirToCut = dirToCut[0] * dirToCut[0] + dirToCut[1] * dirToCut[1] + dirToCut[2] * dirToCut[2];
-//    double theta = acos(dot / sqrt(len_dirToPlane * len_dirToCut));
-//
-//    logger.LogVector("dirToPlane", dirToPlane);
-//    logger.LogVector("dirToCut", dirToCut);
-//
-//    //ublas::vector<double> rotDir = ANTVectorMath::CrossProduct(dirToPlane, dirToCut);
-//    ublas::matrix<double> rotMat = ANTVectorMath::MakeRotationMatrix(rotDir, theta);
-//
-//    for (auto & sid : nanorobot.GetSingleStrands()) {
-//      ADNPointer<ADNSingleStrand> singleStrand = sid.second;
-//      ANTNucleotideList nucleotides = singleStrand->nucleotides_;
-//
-//      for (auto & nit : nucleotides) {
-//        ADNPointer<ADNNucleotide> nucleotide = nit.second;
-//        SBPosition3 pos2D = nucleotide->GetSBPosition2D();
-//
-//        pos2D -= c2D;
-//
-//        ublas::vector<double> pos = ANTVectorMath::CreateBoostVector(pos2D);
-//        ublas::vector<double> newPos = ublas::prod(rotMat, pos);
-//
-//        pos2D = ANTVectorMath::CreateSBPosition(newPos);
-//
-//        pos2D += c2D;
-//        pos2D += shift;
-//
-//        nucleotide->SetPosition2D(pos2D);
-//      }
-//    }
-//  }
-//}
 
 DNABlocks DASCadnano::GetComplementaryBase(DNABlocks type) {
   return ADNModel::GetComplementaryBase(type);

@@ -46,7 +46,9 @@ public:
   int GetNumberOfBaseSegments();
 
   void DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
+  void DeregisterNucleotide(ADNPointer<ADNNucleotide> nt);
   void DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
+  void DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs);
   void DeregisterAtom(ADNPointer<ADNAtom> atom);
 
 protected:

@@ -39,6 +39,9 @@ public :
   void SavePart(QString filename);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename, ADNConstants::CadnanoLatticeType t);
+
+private:
+  void AddPartToActiveLayer(ADNPointer<ADNPart> part);
 };
 
 

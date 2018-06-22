@@ -155,6 +155,8 @@ public:
 
   void SetType(DNABlocks t);
   DNABlocks GetType();
+  DNABlocks getNucleotideType() const;
+
   void SetPair(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetPair();
 
@@ -278,8 +280,10 @@ public:
   CellType GetType() { return CellType::BasePair; };
 
   ADNPointer<ADNNucleotide> GetLeftNucleotide();
+  SBNode* getLeft() const;
   void SetLeftNucleotide(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetRightNucleotide();
+  SBNode* getRight() const;
   void SetRightNucleotide(ADNPointer<ADNNucleotide> nt);
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
 private:
@@ -411,7 +415,8 @@ public:
   void SetInitialTwistAngle(double angle);
   double GetInitialTwistAngle() const;
 
-  int GetSize() const;
+  int GetLength() const;
+  int getLength() const;
 
   CollectionMap<ADNBaseSegment> GetBaseSegments() const;
   ADNPointer<ADNBaseSegment> GetNthBaseSegment(int n);  // return the base segment by position in the double strand

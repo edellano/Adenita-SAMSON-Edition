@@ -63,9 +63,15 @@ ADNNucleotide & ADNNucleotide::operator=(const ADNNucleotide & other) {
 void ADNNucleotide::SetType(DNABlocks t)
 {
   setResidueType(t);
+  SetName(ADNModel::GetResidueName(t) + std::to_string(getNodeIndex()));
 }
 
 DNABlocks ADNNucleotide::GetType()
+{
+  return getResidueType();
+}
+
+DNABlocks ADNNucleotide::getNucleotideType() const
 {
   return getResidueType();
 }
@@ -491,7 +497,12 @@ DNABlocks ADNModel::GetComplementaryBase(DNABlocks base) {
 char ADNModel::GetResidueName(DNABlocks t)
 {
   std::string name = SBResidue::getResidueTypeString(t);
-  return name[0];
+  char n = name[0];
+  if (name.size() > 0) n = name[1];
+
+  if (n == 'I') n = 'N';
+
+  return n;
 }
 
 DNABlocks ADNModel::ResidueNameToType(char n)
@@ -792,9 +803,14 @@ double ADNDoubleStrand::GetInitialTwistAngle() const
   return initialTwistAngle_;
 }
 
-int ADNDoubleStrand::GetSize() const
+int ADNDoubleStrand::GetLength() const
 {
   return boost::numeric_cast<int>(GetBaseSegments().size());
+}
+
+int ADNDoubleStrand::getLength() const
+{
+  return GetLength();
 }
 
 CollectionMap<ADNBaseSegment> ADNDoubleStrand::GetBaseSegments() const
@@ -864,6 +880,11 @@ ADNPointer<ADNNucleotide> ADNBasePair::GetLeftNucleotide() {
   return left_;
 }
 
+SBNode* ADNBasePair::getLeft() const
+{
+  return left_();
+}
+
 void ADNBasePair::SetLeftNucleotide(ADNPointer<ADNNucleotide> nt) {
   if (right_ != nullptr && right_->GetPair() != nt) {
     std::string msg = "Forming an ANTBasePair with unpaired nucleotides.";
@@ -876,6 +897,11 @@ void ADNBasePair::SetLeftNucleotide(ADNPointer<ADNNucleotide> nt) {
 
 ADNPointer<ADNNucleotide> ADNBasePair::GetRightNucleotide() {
   return right_;
+}
+
+SBNode* ADNBasePair::getRight() const
+{
+  return right_();
 }
 
 void ADNBasePair::SetRightNucleotide(ADNPointer<ADNNucleotide> nt) {
