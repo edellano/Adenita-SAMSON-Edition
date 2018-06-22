@@ -112,12 +112,24 @@ void ADNPart::DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss)
   singleStrandsIndex_.removeReferenceTarget(ss());
 }
 
+void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt)
+{
+  nt->getParent()->removeChild(nt());
+  nucleotidesIndex_.removeReferenceTarget(nt());
+}
+
 void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
 {
   auto root = getStructuralRoot();
   root->removeChild(ds());
 
   doubleStrandsIndex_.removeReferenceTarget(ds());
+}
+
+void ADNPart::DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs)
+{
+  bs->getParent()->removeChild(bs());
+  baseSegmentsIndex_.removeReferenceTarget(bs());
 }
 
 void ADNPart::DeregisterAtom(ADNPointer<ADNAtom> atom)

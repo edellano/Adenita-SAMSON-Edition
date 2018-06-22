@@ -21,18 +21,7 @@ void SEAdenitaCoreSEApp::LoadPart(QString filename)
 {
   ADNPointer<ADNPart> part = ADNLoader::LoadPartFromJson(filename.toStdString());
 
-  DASBackToTheAtom btta = DASBackToTheAtom();
-  btta.SetNucleotidesPostions(part);
-  SEConfig& config = SEConfig::GetInstance();
-  if (config.use_atomic_details) {
-    btta.GenerateAllAtomModel(part);
-    //btta.SetAllAtomsPostions(part);
-  }
-
-  SAMSON::beginHolding("Add model");
-  part->create();
-  SAMSON::getActiveLayer()->addChild(part());
-  SAMSON::endHolding();
+  AddPartToActiveLayer(part);
 }
 
 void SEAdenitaCoreSEApp::SavePart(QString filename)
@@ -62,20 +51,8 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
   alg->SetMinEdgeLength(minEdgeSize);
   std::string seq = "";
   auto part = alg->ApplyAlgorithm(seq, filename.toStdString());
-  auto ntSize = part->GetNucleotides().size();
 
-  DASBackToTheAtom btta = DASBackToTheAtom();
-  btta.SetNucleotidesPostions(part);
-  SEConfig& config = SEConfig::GetInstance();
-  if (config.use_atomic_details) {
-    btta.GenerateAllAtomModel(part);
-    //btta.SetAllAtomsPostions(part);
-  }
-
-  SAMSON::beginHolding("Add model");
-  part->create();
-  SAMSON::getActiveLayer()->addChild(part());
-  SAMSON::endHolding();
+  AddPartToActiveLayer(part);
 }
 
 void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename, ADNConstants::CadnanoLatticeType t)
@@ -87,12 +64,17 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename, ADNConstants::Cadna
   cad.ParseJSON(filename.toStdString());
   cad.CreateModel(part, seq, t);
   
+  AddPartToActiveLayer(part);
+}
+
+void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
+{
   DASBackToTheAtom btta = DASBackToTheAtom();
   btta.SetNucleotidesPostions(part);
-  /*SEConfig& config = SEConfig::GetInstance();
+  SEConfig& config = SEConfig::GetInstance();
   if (config.use_atomic_details) {
-  btta.SetAllAtomsPostions(part);
-  }*/
+    btta.GenerateAllAtomModel(part);
+  }
 
   SAMSON::beginHolding("Add model");
   part->create();
