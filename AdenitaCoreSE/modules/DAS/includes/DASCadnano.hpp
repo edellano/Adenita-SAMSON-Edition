@@ -246,7 +246,7 @@ struct VGrid {
     VCellPos cPos = vDoubleStrands_[vStrandId].vBasePairs_[z].stapleCell.pos_;
     LatticeCell lc = lattice_.GetLatticeCell(row, column);
     //SBPosition3 pos = SBPosition3(SBQuantity::nanometer(cPos.z_), SBQuantity::nanometer(-lc.x_ + 0.5f), SBQuantity::nanometer(lc.y_));
-    SBPosition3 pos = SBPosition3(SBQuantity::nanometer(cPos.z_), SBQuantity::nanometer(lc.x_ + 0.5f), SBQuantity::nanometer(lc.y_));
+    SBPosition3 pos = SBPosition3(SBQuantity::nanometer(cPos.z_), SBQuantity::nanometer(lc.x_), SBQuantity::nanometer(lc.y_));
     return pos;
   }
 
