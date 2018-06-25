@@ -24,6 +24,7 @@
 #include "SBMolecule.hpp"
 #include "ADNNanorobot.hpp"
 #include "ADNVectorMath.hpp"
+#include "ADNBasicOperations.hpp"
 #include "DASPolyhedron.hpp"
 
 

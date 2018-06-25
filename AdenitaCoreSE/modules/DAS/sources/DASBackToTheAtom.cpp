@@ -298,15 +298,16 @@ void DASBackToTheAtom::PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosit
   ADNPointer<ADNNucleotide> startNt = loop->GetStart();
   ADNPointer<ADNNucleotide> endNt = loop->GetEnd();
 
+  auto order = ADNBasicOperations::OrderNucleotides(startNt, endNt);
+  startNt = order.first;
+  endNt = order.second;
+
   if (startNt != nullptr && endNt != nullptr) {
     SBPosition3 start_pos = bsPositionPrev;
     SBPosition3 end_pos = bsPositionNext;
     SBPosition3 shifted = end_pos - start_pos;
     ADNPointer<ADNNucleotide> nt = startNt;
 
-    // this doesn't work because not all nt positions have been already determined
-    /*ublas::vector<double> e1 = (startNt_->e1_ + endNt_->e1_)*0.5;
-    ublas::vector<double> e2 = (startNt_->e2_ + endNt_->e2_)*0.5;*/
     ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(shifted.normalizedVersion());
     auto subspace = ADNVectorMath::FindOrthogonalSubspace(e3);
     ublas::vector<double> e1 = ublas::row(subspace, 0);

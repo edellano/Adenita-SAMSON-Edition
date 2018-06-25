@@ -27,4 +27,7 @@ namespace ADNBasicOperations {
 
   // Geometric operations
   void TwistDoubleHelix(ADNPointer<ADNDoubleStrand> ds, double deg);
+
+  // Ordering
+  std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> OrderNucleotides(ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2);
 }

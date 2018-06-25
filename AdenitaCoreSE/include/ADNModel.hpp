@@ -163,6 +163,7 @@ public:
   ADNPointer<ADNNucleotide> GetPrev();
   ADNPointer<ADNNucleotide> GetNext();
   ADNPointer<ADNSingleStrand> GetStrand();
+  SBNode* getSingleStrand() const;
 
   void SetBaseSegment(ADNPointer<ADNBaseSegment> bs);
   ADNPointer<ADNBaseSegment> GetBaseSegment();
@@ -341,6 +342,7 @@ public:
 private:
   ADNPointer<ADNNucleotide> startNt_ = nullptr;
   ADNPointer<ADNNucleotide> endNt_ = nullptr;
+  CollectionMap<ADNNucleotide> nucleotides_;
 };
 
 SB_REGISTER_TARGET_TYPE(ADNLoop, "ADNLoop", "8531205A-01B2-C438-1E26-A50699CA6678");
@@ -355,8 +357,10 @@ public:
   CellType GetType() { return CellType::LoopPair; };
 
   ADNPointer<ADNLoop> GetLeftLoop();
+  SBNode* getLeft() const;
   void SetLeftLoop(ADNPointer<ADNLoop> lp);
   ADNPointer<ADNLoop> GetRightLoop();
+  SBNode* getRight() const;
   void SetRightLoop(ADNPointer<ADNLoop> lp);
 
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);

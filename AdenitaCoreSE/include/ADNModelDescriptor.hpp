@@ -76,6 +76,7 @@ SB_CLASS_BEGIN(ADNNucleotide);
   SB_INTERFACE_BEGIN;
 
     SB_ATTRIBUTE_READ_ONLY(DNABlocks, ADNNucleotide, NucleotideType, "Type", "Nucleotide type");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, SingleStrand, "Single Strand", "Single Strand");
 
   SB_INTERFACE_END;
 
@@ -169,6 +170,9 @@ SB_CLASS_BEGIN(ADNLoopPair);
   SB_FACTORY_END;
 
   SB_INTERFACE_BEGIN;
+
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoopPair, Left, "Left", "Left loop");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoopPair, Right, "Right", "Right loop");
 
   SB_INTERFACE_END;
 
