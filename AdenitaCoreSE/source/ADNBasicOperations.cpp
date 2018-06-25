@@ -320,4 +320,30 @@ void ADNBasicOperations::TwistDoubleHelix(ADNPointer<ADNDoubleStrand> ds, double
   ds->SetInitialTwistAngle(deg);
 }
 
+std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> ADNBasicOperations::OrderNucleotides(ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2)
+{
+  std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> res = std::make_pair(nullptr, nullptr);
+
+  if (nt1->GetStrand() != nt2->GetStrand()) return res;
+
+  ADNPointer<ADNSingleStrand> ss = nt1->GetStrand();
+  ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
+
+  std::vector<ADNPointer<ADNNucleotide>> list;
+  while (nt != nullptr) {
+    if (nt == nt1 || nt == nt2) {
+      list.push_back(nt);
+    }
+
+    nt = nt->GetNext();
+  }
+
+  if (list.size() != 2) return res;
+
+  res.first = list[0];
+  res.second = list[1];
+
+  return res;
+}
+
 
