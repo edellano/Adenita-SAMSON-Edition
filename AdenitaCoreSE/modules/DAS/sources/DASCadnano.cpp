@@ -579,7 +579,7 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq
   scaffold->SetSequence(seq);
 }
 
-void DASCadnano::CreateStaples(ADNPointer<ADNPart>nanorobot) {
+void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot) {
 
   ADNLogger& logger = ADNLogger::GetLogger();
   //find number of staples and their starting points
@@ -626,6 +626,7 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart>nanorobot) {
 
     ADNPointer<ADNSingleStrand> staple = new ADNSingleStrand();
     staple->SetName("Staple" + to_string(sid));
+    ++sid;
     staple->IsScaffold(false);
     nanorobot->RegisterSingleStrand(staple);
     
