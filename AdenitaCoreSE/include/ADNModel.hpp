@@ -23,7 +23,8 @@ using DNABlocks = SBResidue::ResidueType;
 enum End {
   ThreePrime = 3,
   FivePrime = 5,
-  NotEnd = 0
+  NotEnd = 0,
+  FiveAndThreePrime = 8,
 };
 
 enum CellType {
