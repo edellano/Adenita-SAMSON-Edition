@@ -377,27 +377,33 @@ ADNPointer<ADNNucleotide> ADNSingleStrand::GetNucleotide(unsigned int id) const
 void ADNSingleStrand::AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt)
 {
   if (threePrime_ != nullptr) {
-    threePrime_->SetEnd(NotEnd);
+    if (threePrime_->GetEnd() == FiveAndThreePrime) threePrime_->SetEnd(FivePrime);
+    else threePrime_->SetEnd(NotEnd);
+    nt->SetEnd(ThreePrime);
   }
   else {
     // nt is also fivePrime_
     fivePrime_ = nt;
+    nt->SetEnd(FiveAndThreePrime);
   }
-  nt->SetEnd(ThreePrime);
+  auto sz = GetNucleotides().size();
   addChild(nt());
+  auto test = nt->GetPrev();
   threePrime_ = nt;
 }
 
 void ADNSingleStrand::AddNucleotideFivePrime(ADNPointer<ADNNucleotide> nt)
 {
   if (fivePrime_ != nullptr) {
-    fivePrime_->SetEnd(NotEnd);
+    if (fivePrime_->GetEnd() == FiveAndThreePrime) fivePrime_->SetEnd(ThreePrime);
+    else fivePrime_->SetEnd(NotEnd);
+    nt->SetEnd(FivePrime);
   }
   else {
     // nt is also fivePrime_
     threePrime_ = nt;
+    nt->SetEnd(FiveAndThreePrime);
   }
-  nt->SetEnd(FivePrime);
   addChild(nt(), fivePrime_());
   fivePrime_ = nt;
 }
@@ -463,13 +469,9 @@ void ADNSingleStrand::SetSequence(std::string seq) {
   while (nt != nullptr) {
     DNABlocks type = ADNModel::ResidueNameToType(seq[count]);
     nt->SetType(type);
-    //std::string name = seq[count] + std::to_string(nt->GetId());
-    //nt->SetName(name);
     if (isScaffold_ && nt->GetPair() != nullptr) {
       DNABlocks compType = ADNModel::GetComplementaryBase(type);
       nt->GetPair()->SetType(compType);
-      //std::string namePair = std::string(1, residue_names_.left.at(compType)) + std::to_string(nt->GetPair()->GetId());
-      //nt->pair_->SetName(namePair);
     }
     nt = nt->GetNext();
     ++count;
