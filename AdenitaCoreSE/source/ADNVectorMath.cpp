@@ -38,7 +38,6 @@ namespace ADNVectorMath {
   }
 
   ublas::vector<double> CalculateCM(ublas::matrix<double> positions) {
-    //ublas::vector<double> vec(positions.size2());
     ublas::vector<double> vec = InitializeVector(positions.size2());
     for (ublas::matrix<double>::iterator1 it1 = positions.begin1(); it1 != positions.end1(); ++it1) {
       // iteration over rows
@@ -47,6 +46,19 @@ namespace ADNVectorMath {
     }
     size_t n = positions.size1();
     vec *= (1.0 / n);
+    return vec;
+  }
+
+  ublas::vector<double> CalculateCM(ublas::matrix<double> weightedPositions, double totalMass)
+  {
+    ublas::vector<double> vec = InitializeVector(weightedPositions.size2());
+    for (ublas::matrix<double>::iterator1 it1 = weightedPositions.begin1(); it1 != weightedPositions.end1(); ++it1) {
+      // iteration over rows
+      ublas::vector<double> r = ublas::row(weightedPositions, it1.index1());
+      vec += r;
+    }
+    size_t n = weightedPositions.size1();
+    vec /= totalMass;
     return vec;
   }
 

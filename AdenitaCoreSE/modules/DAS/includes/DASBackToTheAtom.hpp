@@ -1,10 +1,3 @@
-/** \file
- *   \brief    Retrieving all atom structure for DASDaedalus.
- *   \details  From the DASDaedalus routing and stapling list, this
- *             infers the all-atom structure of the object if formed properly.
- *             Stand back, I'm going to try math.
- *   \author   Elisa de Llano <elisa.dellano.fl@ait.ac.at>
- */
 #pragma once
 #ifndef BACKTOTHEATOM_H
 #define BACKTOTHEATOM_H
@@ -49,7 +42,8 @@ public:
   void SetPositionLoopNucleotides(ADNPointer<ADNBaseSegment> bs);
 
   void GenerateAllAtomModel(ADNPointer<ADNPart> origami);
-
+  
+  void CheckDistances(ADNPointer<ADNPart> part);
   //void SetAllAtomsPostions(ADNPointer<ADNPart> origami);
   // for cadnano
   /*void SetAllAtomsPostions2D(ADNPointer<ADNPart> origami);
@@ -108,6 +102,7 @@ private:
    *  \return tuple with center values. first is total c.o.m., second is backbone, third is sidechain.
    */
   static std::tuple<SBPosition3, SBPosition3, SBPosition3> CalculateCenters(ADNPointer<ADNNucleotide> nt);
+  static std::tuple<SBPosition3, SBPosition3, SBPosition3> CalculateCentersOfMass(ADNPointer<ADNNucleotide> nt);
   /*!
    * Generate a SBPosition from a ublas vector assuming picometers -> angstrom conversion
    */
