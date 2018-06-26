@@ -1,5 +1,7 @@
 /// \headerfile SEAdenitaCoreSEAppDescriptor.hpp "SEAdenitaCoreSEAppDescriptor.hpp"
 #include "SEAdenitaCoreSEAppDescriptor.hpp"
+#include "SEAdenitaVisualModelDescriptor.hpp"
+#include "SEAdenitaVisualModelPropertiesDescriptor.hpp"
 #include "ADNModelDescriptor.hpp"
 #include "ADNPartDescriptor.hpp"
 
@@ -30,6 +32,8 @@ SB_ELEMENT_CLASSES_BEGIN;
   SB_ELEMENT_CLASS(ADNBaseSegment);
   SB_ELEMENT_CLASS(ADNDoubleStrand);
   SB_ELEMENT_CLASS(ADNPart);
+  SB_ELEMENT_CLASS(SEAdenitaVisualModel);
+  SB_ELEMENT_CLASS(SEAdenitaVisualModelProperties);
 
 SB_ELEMENT_CLASSES_END;
 
