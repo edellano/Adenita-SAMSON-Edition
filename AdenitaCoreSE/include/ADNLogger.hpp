@@ -40,6 +40,6 @@ public:
 private:
   ADNLogger() = default;
 
-  std::string logPath_ = "adenita_log.txt";
+  std::string logPath_ = SAMSON::getUserDataPath() + "/adenita.log";
 };
 

@@ -249,12 +249,12 @@ private:
   DOTNode* GetNodeById(int id) const;
   DOTLink* GetLinkByNodes(DOTNode* v, DOTNode* w) const;
   void SetEdgeBps(int min_edge_bp, ADNPointer<ADNPart> part, DASPolyhedron &fig);
-  void RouteScaffold(ADNPointer<ADNSingleStrand> scaff, std::string seq, int routing_length);
+  void RouteScaffold(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> scaff, std::string seq, int routing_length);
   std::string GetChainSequence(int c_id);
   ADNPointer<ADNBaseSegment> AdvanceBaseSegment(ADNPointer<ADNBaseSegment> bs, int pos);
   ADNPointer<ADNBaseSegment> MoveBackBaseSegment(ADNPointer<ADNBaseSegment> bs, int pos);
   ADNPointer<ADNSingleStrand> CreateEdgeChain(ADNPointer<ADNPart> origami, ADNPointer<ADNBaseSegment> bs, int c_id, int pos_span, int neg_span);
-  ADNPointer<ADNSingleStrand> CreateVertexChain(int c_id, std::vector<DASHalfEdge*>ps, EdgeBps &lengths);
+  ADNPointer<ADNSingleStrand> CreateVertexChain(ADNPointer<ADNPart> part, int c_id, std::vector<DASHalfEdge*>ps, EdgeBps &lengths);
   void LogEdgeMap(ADNPointer<ADNPart> origami);
   static SBVector3 SBCrossProduct(SBVector3 v, SBVector3 w);
   double SBInnerProduct(SBVector3 v, SBVector3 w);

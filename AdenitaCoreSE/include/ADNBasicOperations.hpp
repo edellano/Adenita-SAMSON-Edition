@@ -5,7 +5,10 @@
 namespace ADNBasicOperations {
   // Concatenate
   ADNPointer<ADNSingleStrand> MergeSingleStrands(ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand);
+  ADNPointer<ADNSingleStrand> MergeSingleStrands(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand);
   ADNPointer<ADNDoubleStrand> MergeDoubleStrand(ADNPointer<ADNDoubleStrand> first_strand, ADNPointer<ADNDoubleStrand> second_strand);
+  ADNPointer<ADNDoubleStrand> MergeDoubleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNDoubleStrand> first_strand, ADNPointer<ADNDoubleStrand> second_strand);
+  ADNPointer<ADNPart> MergeParts(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2);
 
   // Break
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> BreakSingleStrand(ADNPointer<ADNNucleotide> nt);
@@ -23,5 +26,8 @@ namespace ADNBasicOperations {
   void MutateBasePairIntoLoopPair(ADNPointer<ADNBaseSegment> bs);
 
   // Geometric operations
-  void TwistDoubleHelix(double deg);
+  void TwistDoubleHelix(ADNPointer<ADNDoubleStrand> ds, double deg);
+
+  // Ordering
+  std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> OrderNucleotides(ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2);
 }

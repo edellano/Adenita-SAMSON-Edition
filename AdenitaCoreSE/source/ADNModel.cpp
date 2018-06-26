@@ -39,6 +39,7 @@ bool ADNAtom::IsInBackbone()
 
 ADNNucleotide::ADNNucleotide() : PositionableSB(), SBResidue(), Orientable()
 {
+  SetType(DNABlocks::DI);
   ADNPointer<ADNBackbone> bb = new ADNBackbone();
   bb->setName(getName() + " " + "Backbone");
   ADNPointer<ADNSidechain> sc = new ADNSidechain();
@@ -63,9 +64,15 @@ ADNNucleotide & ADNNucleotide::operator=(const ADNNucleotide & other) {
 void ADNNucleotide::SetType(DNABlocks t)
 {
   setResidueType(t);
+  SetName(ADNModel::GetResidueName(t) + std::to_string(getNodeIndex()));
 }
 
 DNABlocks ADNNucleotide::GetType()
+{
+  return getResidueType();
+}
+
+DNABlocks ADNNucleotide::getNucleotideType() const
 {
   return getResidueType();
 }
@@ -96,6 +103,11 @@ ADNPointer<ADNSingleStrand> ADNNucleotide::GetStrand()
 {
   auto p = static_cast<ADNSingleStrand*>(getParent());
   return ADNPointer<ADNSingleStrand>(p);
+}
+
+SBNode* ADNNucleotide::getSingleStrand() const
+{
+  return getParent();
 }
 
 void ADNNucleotide::SetBaseSegment(ADNPointer<ADNBaseSegment> bs) {
@@ -147,6 +159,27 @@ CollectionMap<ADNAtom> ADNNucleotide::GetAtoms()
   SB_FOR(ADNPointer<ADNAtom> a, scAtoms) atoms.addReferenceTarget(a());
 
   return atoms;
+}
+
+CollectionMap<ADNAtom> ADNNucleotide::GetAtomsByName(std::string name)
+{
+  CollectionMap<ADNAtom> res;
+  /*SBNodeIndexer atoms;
+  getNodes(atoms, SBNode::GetName() == name);
+
+  SB_FOR(SBNode* a, atoms) {
+    ADNPointer<ADNAtom> at = static_cast<ADNAtom*>(a);
+    res.addReferenceTarget(at());
+  }*/
+
+  auto atoms = GetAtoms();
+  SB_FOR(ADNPointer<ADNAtom> a, atoms) {
+    if (a->GetName() == name) {
+      res.addReferenceTarget(a());
+    }
+  }
+
+  return res;
 }
 
 ublas::matrix<double> ADNNucleotide::GetGlobalBasisTransformation() {
@@ -232,56 +265,39 @@ bool ADNNucleotide::GlobalBaseIsSet() {
   return set;
 }
 
-void ADNNucleotide::CopyAtoms(ADNPointer<ADNNucleotide> target) {
-
-  ADNPointer<ADNBackbone> bb(new ADNBackbone());
-  ADNPointer<ADNSidechain> sc(new ADNSidechain());
-
-  std::map<int, int> atomMap;
-
-  ADNPointer<ADNBackbone> bbO = GetBackbone();
-  auto bb0Atoms = bbO->GetAtoms();
-  SB_FOR(ADNPointer<ADNAtom> oat, bb0Atoms) {
-    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
-    bb->AddAtom(atom);
-    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
-  }
-  ADNPointer<ADNSidechain> scO = GetSidechain();
-  auto sc0Atoms = scO->GetAtoms();
-  SB_FOR(ADNPointer<ADNAtom> oat, sc0Atoms) {
-    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
-    sc->AddAtom(atom);
-    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
-  }
-
-  /*auto bonds = GetBonds();
-  for (auto b : bonds) {
-    ADNPointer<ADNAtom> b1 = b.first;
-    ADNPointer<ADNAtom> b2 = b.second;
-    auto newB1 = atomMap.at(b1);
-    auto newB2 = atomMap.at(b2);
-    target->AddBond(newB1, newB2);
-  }*/
-
-  target->SetBackbone(bb);
-  target->SetSidechain(sc);
-}
-
-//ADNSingleStrand::ADNSingleStrand(int numNts) : Nameable(), Identifiable(), Collection<ADNNucleotide>() 
-//{
-//  for (int i = 0; i < numNts; ++i) {
-//    ADNPointer<ADNNucleotide> nt = ADNPointer<ADNNucleotide>(new ADNNucleotide());;
-//    nt->SetId(GetLastKey() + 1);
-//    AddNucleotideThreePrime(nt);
+//void ADNNucleotide::CopyAtoms(ADNPointer<ADNNucleotide> target) {
+//
+//  ADNPointer<ADNBackbone> bb(new ADNBackbone());
+//  ADNPointer<ADNSidechain> sc(new ADNSidechain());
+//
+//  std::map<int, int> atomMap;
+//
+//  ADNPointer<ADNBackbone> bbO = GetBackbone();
+//  auto bb0Atoms = bbO->GetAtoms();
+//  SB_FOR(ADNPointer<ADNAtom> oat, bb0Atoms) {
+//    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
+//    bb->AddAtom(atom);
+//    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
 //  }
-//}
-
-//ADNSingleStrand::ADNSingleStrand(std::vector<ADNPointer<ADNNucleotide>> nts) : Nameable(), Identifiable(), Collection<ADNNucleotide>()
-//{
-//  for (auto nt: nts) {
-//    nt->SetId(GetLastKey() + 1);
-//    AddNucleotideThreePrime(nt);
+//  ADNPointer<ADNSidechain> scO = GetSidechain();
+//  auto sc0Atoms = scO->GetAtoms();
+//  SB_FOR(ADNPointer<ADNAtom> oat, sc0Atoms) {
+//    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
+//    sc->AddAtom(atom);
+//    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
 //  }
+//
+//  /*auto bonds = GetBonds();
+//  for (auto b : bonds) {
+//    ADNPointer<ADNAtom> b1 = b.first;
+//    ADNPointer<ADNAtom> b2 = b.second;
+//    auto newB1 = atomMap.at(b1);
+//    auto newB2 = atomMap.at(b2);
+//    target->AddBond(newB1, newB2);
+//  }*/
+//
+//  target->SetBackbone(bb);
+//  target->SetSidechain(sc);
 //}
 
 ADNSingleStrand::ADNSingleStrand(const ADNSingleStrand & other)
@@ -361,28 +377,35 @@ ADNPointer<ADNNucleotide> ADNSingleStrand::GetNucleotide(unsigned int id) const
 
 void ADNSingleStrand::AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt)
 {
+  auto sz = GetNucleotides().size();
+  addChild(nt());
   if (threePrime_ != nullptr) {
-    threePrime_->SetEnd(NotEnd);
+    if (threePrime_->GetEnd() == FiveAndThreePrime) threePrime_->SetEnd(FivePrime);
+    else threePrime_->SetEnd(NotEnd);
+    nt->SetEnd(ThreePrime);
   }
   else {
     // nt is also fivePrime_
     fivePrime_ = nt;
+    nt->SetEnd(FiveAndThreePrime);
   }
-  nt->SetEnd(ThreePrime);
-  addChild(nt());
+  auto test = nt->GetPrev();
+  sz = GetNucleotides().size();
   threePrime_ = nt;
 }
 
 void ADNSingleStrand::AddNucleotideFivePrime(ADNPointer<ADNNucleotide> nt)
 {
   if (fivePrime_ != nullptr) {
-    fivePrime_->SetEnd(NotEnd);
+    if (fivePrime_->GetEnd() == FiveAndThreePrime) fivePrime_->SetEnd(ThreePrime);
+    else fivePrime_->SetEnd(NotEnd);
+    nt->SetEnd(FivePrime);
   }
   else {
     // nt is also fivePrime_
     threePrime_ = nt;
+    nt->SetEnd(FiveAndThreePrime);
   }
-  nt->SetEnd(FivePrime);
   addChild(nt(), fivePrime_());
   fivePrime_ = nt;
 }
@@ -438,6 +461,9 @@ double ADNSingleStrand::GetGCContent() {
 }
 
 void ADNSingleStrand::SetSequence(std::string seq) {
+
+  if (seq.empty()) return;
+
   if (isScaffold_ != true) {
     std::string msg = "Forcing sequence on staple " + GetName();
     ADNLogger& logger = ADNLogger::GetLogger();
@@ -448,13 +474,9 @@ void ADNSingleStrand::SetSequence(std::string seq) {
   while (nt != nullptr) {
     DNABlocks type = ADNModel::ResidueNameToType(seq[count]);
     nt->SetType(type);
-    //std::string name = seq[count] + std::to_string(nt->GetId());
-    //nt->SetName(name);
     if (isScaffold_ && nt->GetPair() != nullptr) {
       DNABlocks compType = ADNModel::GetComplementaryBase(type);
       nt->GetPair()->SetType(compType);
-      //std::string namePair = std::string(1, residue_names_.left.at(compType)) + std::to_string(nt->GetPair()->GetId());
-      //nt->pair_->SetName(namePair);
     }
     nt = nt->GetNext();
     ++count;
@@ -487,7 +509,12 @@ DNABlocks ADNModel::GetComplementaryBase(DNABlocks base) {
 char ADNModel::GetResidueName(DNABlocks t)
 {
   std::string name = SBResidue::getResidueTypeString(t);
-  return name[0];
+  char n = name[0];
+  if (name.size() > 0) n = name[1];
+
+  if (n == 'I') n = 'N';
+
+  return n;
 }
 
 DNABlocks ADNModel::ResidueNameToType(char n)
@@ -505,7 +532,7 @@ DNABlocks ADNModel::ResidueNameToType(char n)
   else if (n == 'G') {
     t = SBResidue::ResidueType::DG;
   }
-  return DNABlocks();
+  return t;
 }
 
 std::string ADNModel::CellTypeToString(CellType t)
@@ -531,6 +558,158 @@ bool ADNModel::IsAtomInBackboneByName(std::string name)
   }
   return res;
 
+}
+
+SBElement::Type ADNModel::GetElementType(std::string atomName)
+{
+  std::map<std::string, SBElement::Type> atomType = {
+    { "P", SBElement::Phosphorus },
+    { "OP1", SBElement::Oxygen },
+    { "O1P", SBElement::Oxygen },
+    { "OP2", SBElement::Oxygen },
+    { "O2P", SBElement::Oxygen },
+    { "O5'", SBElement::Oxygen },
+    { "O4'", SBElement::Oxygen },
+    { "O3'", SBElement::Oxygen },
+    { "O6", SBElement::Oxygen },
+    { "O4", SBElement::Oxygen },
+    { "O2", SBElement::Oxygen },
+    { "C5'", SBElement::Carbon },
+    { "C4'", SBElement::Carbon },
+    { "C3'", SBElement::Carbon },
+    { "C2'", SBElement::Carbon },
+    { "C1'", SBElement::Carbon },
+    { "C8", SBElement::Carbon },
+    { "C7", SBElement::Carbon },
+    { "C6", SBElement::Carbon },
+    { "C5", SBElement::Carbon },
+    { "C4", SBElement::Carbon },
+    { "C2", SBElement::Carbon },
+    { "N9", SBElement::Nitrogen },
+    { "N7", SBElement::Nitrogen },
+    { "N6", SBElement::Nitrogen },
+    { "N4", SBElement::Nitrogen },
+    { "N3", SBElement::Nitrogen },
+    { "N2", SBElement::Nitrogen },
+    { "N1", SBElement::Nitrogen }
+  };
+
+  SBElement::Type t = SBElement::Type::Unknown;
+  if (atomType.find(atomName) != atomType.end()) {
+    t = atomType.at(atomName);
+  }
+
+  return t;
+}
+
+std::map<std::string, std::vector<std::string>> ADNModel::GetNucleotideBonds(DNABlocks t)
+{
+  std::map<std::string, std::vector<std::string>> res;
+  // P
+  std::vector<std::string> pConn = {"OP2", "OP1", "O5'"};
+  res.insert(std::make_pair("P", pConn));
+  // OP2
+  std::vector<std::string> op2Conn = { "P" };
+  res.insert(std::make_pair("OP2", op2Conn));
+  // OP1
+  std::vector<std::string> op1Conn = { "P" };
+  res.insert(std::make_pair("OP1", op1Conn));
+  // O5'
+  std::vector<std::string> o5pConn = { "P",  "C5'"};
+  res.insert(std::make_pair("O5'", o5pConn));
+  // C5'
+  std::vector<std::string> c5pConn = { "O5'",  "C4'" };
+  res.insert(std::make_pair("C5'", c5pConn));
+  // C4'
+  std::vector<std::string> c4pConn = { "C5'",  "O4'", "C3'" };
+  res.insert(std::make_pair("C4'", c4pConn));
+  // C3'
+  std::vector<std::string> c3pConn = { "C4'",  "O3'", "C2'" };
+  res.insert(std::make_pair("C3'", c3pConn));
+  // O3'
+  std::vector<std::string> o3pConn = { "C3'" };
+  res.insert(std::make_pair("O3'", o3pConn));
+  // C2'
+  std::vector<std::string> c2pConn = { "C3'",  "C1'" };
+  res.insert(std::make_pair("C2'", c2pConn));
+  // C1'
+  std::vector<std::string> c1pConn = { "C2'",  "O4'" };
+  res.insert(std::make_pair("C1'", c1pConn));
+  // O4'
+  std::vector<std::string> o4pConn = { "C4'",  "C1'" };
+  res.insert(std::make_pair("O4'", o4pConn));
+
+  if (t == DNABlocks::DA || t == DNABlocks::DI) {
+    std::vector<std::string> c1pConn = { "C2'",  "O4'", "N9" };
+    res["C1'"] = c1pConn;
+    std::vector<std::string> c8Conn = { "N9",  "N7" };
+    res.insert(std::make_pair("C8", c8Conn));
+    std::vector<std::string> n7Conn = { "C8",  "C5" };
+    res.insert(std::make_pair("N7", n7Conn));
+    std::vector<std::string> c5Conn = { "C4",  "N7", "C6" };
+    res.insert(std::make_pair("C5", c5Conn));
+    std::vector<std::string> c4Conn = { "C5",  "N9", "N3" };
+    res.insert(std::make_pair("C4", c4Conn));
+    std::vector<std::string> n3Conn = { "C4",  "C2" };
+    res.insert(std::make_pair("N3", n3Conn));
+    std::vector<std::string> c2Conn = { "N3",  "N1" };
+    res.insert(std::make_pair("C2", c2Conn));
+    std::vector<std::string> n1Conn = { "C2",  "C6" };
+    res.insert(std::make_pair("N1", n1Conn));
+    std::vector<std::string> c6Conn = { "N1",  "C5", "N6" };
+    res.insert(std::make_pair("C6", c6Conn));
+  }
+  else if (t == DNABlocks::DG) {
+    std::vector<std::string> c1pConn = { "C2'",  "O4'", "N9" };
+    res["C1'"] = c1pConn;
+    std::vector<std::string> c8Conn = { "N9",  "N7" };
+    res.insert(std::make_pair("C8", c8Conn));
+    std::vector<std::string> n7Conn = { "C8",  "C5" };
+    res.insert(std::make_pair("N7", n7Conn));
+    std::vector<std::string> c5Conn = { "C4",  "N7", "C6" };
+    res.insert(std::make_pair("C5", c5Conn));
+    std::vector<std::string> c4Conn = { "C5",  "N9", "N3" };
+    res.insert(std::make_pair("C4", c4Conn));
+    std::vector<std::string> n3Conn = { "C4",  "C2" };
+    res.insert(std::make_pair("N3", n3Conn));
+    std::vector<std::string> c2Conn = { "N3",  "N2", "N1" };
+    res.insert(std::make_pair("C2", c2Conn));
+    std::vector<std::string> n1Conn = { "C2",  "C6" };
+    res.insert(std::make_pair("N1", n1Conn));
+    std::vector<std::string> c6Conn = { "N1",  "C5", "O6" };
+    res.insert(std::make_pair("C6", c6Conn));
+  }
+  else if (t == DNABlocks::DT) {
+    std::vector<std::string> c1pConn = { "C2'",  "O4'", "N1" };
+    res["C1'"] = c1pConn;
+    std::vector<std::string> c5Conn = { "C4",  "C6", "C7" };
+    res.insert(std::make_pair("C5", c5Conn));
+    std::vector<std::string> c4Conn = { "O4", "N3" };
+    res.insert(std::make_pair("C4", c4Conn));
+    std::vector<std::string> n3Conn = { "C2" };
+    res.insert(std::make_pair("N3", n3Conn));
+    std::vector<std::string> c2Conn = { "N1", "O2" };
+    res.insert(std::make_pair("C2", c2Conn));
+    std::vector<std::string> n1Conn = { "C6" };
+    res.insert(std::make_pair("N1", n1Conn));
+  }
+  else if (t == DNABlocks::DC) {
+    std::vector<std::string> c1pConn = { "C2'",  "O4'", "N1" };
+    res["C1'"] = c1pConn;
+    std::vector<std::string> c5Conn = { "C4",  "C6" };
+    res.insert(std::make_pair("C5", c5Conn));
+    std::vector<std::string> c4Conn = { "C5",  "N4", "N3" };
+    res.insert(std::make_pair("C4", c4Conn));
+    std::vector<std::string> n3Conn = { "C4",  "C2" };
+    res.insert(std::make_pair("N3", n3Conn));
+    std::vector<std::string> c2Conn = { "N3",  "N1", "O2" };
+    res.insert(std::make_pair("C2", c2Conn));
+    std::vector<std::string> n1Conn = { "C2",  "C6" };
+    res.insert(std::make_pair("N1", n1Conn));
+    std::vector<std::string> c6Conn = { "N1",  "C5" };
+    res.insert(std::make_pair("C6", c6Conn));
+  }
+  return res;
 }
 
 ADNBaseSegment::ADNBaseSegment(const ADNBaseSegment & other) : PositionableSB(other), Orientable(other), SBStructuralGroup(other)
@@ -636,9 +815,14 @@ double ADNDoubleStrand::GetInitialTwistAngle() const
   return initialTwistAngle_;
 }
 
-int ADNDoubleStrand::GetSize() const
+int ADNDoubleStrand::GetLength() const
 {
   return boost::numeric_cast<int>(GetBaseSegments().size());
+}
+
+int ADNDoubleStrand::getLength() const
+{
+  return GetLength();
 }
 
 CollectionMap<ADNBaseSegment> ADNDoubleStrand::GetBaseSegments() const
@@ -708,6 +892,11 @@ ADNPointer<ADNNucleotide> ADNBasePair::GetLeftNucleotide() {
   return left_;
 }
 
+SBNode* ADNBasePair::getLeft() const
+{
+  return left_();
+}
+
 void ADNBasePair::SetLeftNucleotide(ADNPointer<ADNNucleotide> nt) {
   if (right_ != nullptr && right_->GetPair() != nt) {
     std::string msg = "Forming an ANTBasePair with unpaired nucleotides.";
@@ -720,6 +909,11 @@ void ADNBasePair::SetLeftNucleotide(ADNPointer<ADNNucleotide> nt) {
 
 ADNPointer<ADNNucleotide> ADNBasePair::GetRightNucleotide() {
   return right_;
+}
+
+SBNode* ADNBasePair::getRight() const
+{
+  return right_();
 }
 
 void ADNBasePair::SetRightNucleotide(ADNPointer<ADNNucleotide> nt) {
@@ -739,6 +933,26 @@ void ADNBasePair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   else if (right_ == nt) {
     right_ = nullptr;
   }
+}
+
+ADNPointer<ADNNucleotide> ADNSkipPair::GetLeftSkip()
+{
+  return left_;
+}
+
+void ADNSkipPair::SetLeftSkip(ADNPointer<ADNNucleotide> nt)
+{
+  left_ = nt;
+}
+
+ADNPointer<ADNNucleotide> ADNSkipPair::GetRightSkip()
+{
+  return right_;
+}
+
+void ADNSkipPair::SetRightSkip(ADNPointer<ADNNucleotide> nt)
+{
+  right_ = nt;
 }
 
 void ADNSkipPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
@@ -788,12 +1002,16 @@ void ADNLoop::SetBaseSegment(ADNPointer<ADNBaseSegment> bs, bool setPositions)
 
 CollectionMap<ADNNucleotide> ADNLoop::GetNucleotides() const
 {
+  //return nucleotides_;
+
   CollectionMap<ADNNucleotide> ntList;
 
   auto children = *getChildren();
   SB_FOR(SBStructuralNode* n, children) {
-    ADNPointer<ADNNucleotide> a = static_cast<ADNNucleotide*>(n);
-    ntList.addReferenceTarget(a());
+    if (n->getType() == SBNode::Residue) {
+      ADNNucleotide* nt = static_cast<ADNNucleotide*>(n);
+      ntList.addReferenceTarget(nt);
+    }
   }
 
   return ntList;
@@ -801,10 +1019,12 @@ CollectionMap<ADNNucleotide> ADNLoop::GetNucleotides() const
 
 void ADNLoop::AddNucleotide(ADNPointer<ADNNucleotide> nt) {
   addChild(nt());
+  //nucleotides_.addReferenceTarget(nt());
 }
 
 void ADNLoop::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   removeChild(nt());
+  //nucleotides_.removeReferenceTarget(nt());
 }
 
 bool ADNLoop::IsEmpty() {
@@ -817,23 +1037,36 @@ ADNPointer<ADNLoop> ADNLoopPair::GetLeftLoop() {
   return left_;
 }
 
+SBNode* ADNLoopPair::getLeft() const
+{
+  return left_();
+}
+
 void ADNLoopPair::SetLeftLoop(ADNPointer<ADNLoop> lp) {
   left_ = lp;
+  addChild(lp());
+  lp->setName("Left Loop " + std::to_string(lp->getNodeIndex()));
 }
 
 ADNPointer<ADNLoop> ADNLoopPair::GetRightLoop() {
   return right_;
 }
 
+SBNode* ADNLoopPair::getRight() const
+{
+  return right_();
+}
+
 void ADNLoopPair::SetRightLoop(ADNPointer<ADNLoop> lp) {
   right_ = lp;
+  addChild(lp());
+  lp->setName("Right Loop " + std::to_string(lp->getNodeIndex()));
 }
 
 ADNBackbone::ADNBackbone() : PositionableSB(), SBBackbone()
 {
   auto cA = GetCenterAtom();
   cA->setElementType(SBElement::Einsteinium);
-  addChild(cA());
 }
 
 ADNBackbone::ADNBackbone(const ADNBackbone & other)
@@ -865,8 +1098,10 @@ CollectionMap<ADNAtom> ADNBackbone::GetAtoms() const
 
   auto children = *getChildren();
   SB_FOR(SBStructuralNode* n, children) {
-    ADNAtom* a = static_cast<ADNAtom*>(n);
-    atomList.addReferenceTarget(a);
+    if (n->getType() == SBNode::Atom) {
+      ADNAtom* a = static_cast<ADNAtom*>(n);
+      atomList.addReferenceTarget(a);
+    }
   }
   
   return atomList;
@@ -887,7 +1122,6 @@ ADNSidechain::ADNSidechain() : PositionableSB(), SBSideChain()
 {
   auto cA = GetCenterAtom();
   cA->setElementType(SBElement::Fermium);
-  addChild(cA());
 }
 
 ADNSidechain::ADNSidechain(const ADNSidechain & other)
@@ -919,8 +1153,10 @@ CollectionMap<ADNAtom> ADNSidechain::GetAtoms()
 
   auto children = *getChildren();
   SB_FOR(SBStructuralNode* n, children) {
-    ADNAtom* a = static_cast<ADNAtom*>(n);
-    atomList.addReferenceTarget(a);
+    if (n->getType() == SBNode::Atom) {
+      ADNAtom* a = static_cast<ADNAtom*>(n);
+      atomList.addReferenceTarget(a);
+    }
   }
 
   return atomList;

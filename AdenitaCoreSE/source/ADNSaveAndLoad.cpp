@@ -65,7 +65,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
       // pairing is done when parsing base segments
       int nextId = nexts.at(currId);   
       nt = nts.at(currId);
-      ss->AddNucleotideThreePrime(nt);
+      part->RegisterNucleotideThreePrime(ss, nt);
       currId = nextId;
     } while (currId != -1);
 
@@ -169,7 +169,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
     do {
       int nextId = nextsBs.at(currId);
       bs = bss.at(currId);
-      ds->AddBaseSegmentEnd(bs);
+      part->RegisterBaseSegmentEnd(ds, bs);
       currId = nextId;
     } while (currId != -1);
 
@@ -227,13 +227,16 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
     const Value& val_nucleotides = itr->value["nucleotides"];
     for (Value::ConstMemberIterator itr2 = val_nucleotides.MemberBegin(); itr2 != val_nucleotides.MemberEnd(); ++itr2) {
       ADNPointer<ADNNucleotide> nt = ADNPointer<ADNNucleotide>(new ADNNucleotide());
-      ss->AddNucleotideThreePrime(nt);
-
-      nt->SetType(ADNModel::ResidueNameToType(itr2->value["type"].GetString()[0]));
+      part->RegisterNucleotideThreePrime(ss, nt);
+      std::string test = itr2->value["type"].GetString();
+      auto test2 = test.c_str();
+      nt->SetType(ADNModel::ResidueNameToType(test2[0]));
       nt->SetE1(ADNAuxiliary::StringToUblasVector(itr2->value["e1"].GetString()));
       nt->SetE2(ADNAuxiliary::StringToUblasVector(itr2->value["e2"].GetString()));
       nt->SetE3(ADNAuxiliary::StringToUblasVector(itr2->value["e3"].GetString()));
       nt->SetPosition(ADNAuxiliary::StringToSBPosition(itr2->value["position"].GetString()));
+
+      nt->SetName(itr2->value["type"].GetString() + std::to_string(nt->getNodeIndex()));
 
       nt->SetBackbonePosition(ADNAuxiliary::StringToSBPosition(itr2->value["backboneCenter"].GetString()));
       nt->SetSidechainPosition(ADNAuxiliary::StringToSBPosition(itr2->value["sidechainCenter"].GetString()));
@@ -309,7 +312,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
     ADNPointer<ADNBaseSegment> startBs = nullptr;
     for (int i = 0; i < size; ++i) {
       ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
-      ds->AddBaseSegmentEnd(bs);
+      part->RegisterBaseSegmentEnd(ds, bs);
       if (i == 0) {
         startBs = bs;
       }
@@ -364,10 +367,14 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
         std::pair<int, int> rightKey = std::make_pair(ss_id_right, nt_id_right);
 
         if (origNucleotideId.find(leftKey) != origNucleotideId.end()) {
-          bp_cell->SetLeftNucleotide(origNucleotideId.at(leftKey));
+          auto nt = origNucleotideId.at(leftKey);
+          bp_cell->SetLeftNucleotide(nt);
+          nt->SetBaseSegment(bs);
         }
         if (origNucleotideId.find(rightKey) != origNucleotideId.end()) {
-          bp_cell->SetRightNucleotide(origNucleotideId.at(rightKey));
+          auto nt = origNucleotideId.at(rightKey);
+          bp_cell->SetRightNucleotide(nt);
+          nt->SetBaseSegment(bs);
         }
 
         bs->SetCell(bp_cell());
@@ -405,7 +412,9 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
             int ss_id = itr->value["strand_id"].GetInt();
             std::pair<int, int> ntKey = std::make_pair(ss_id, nt_id);
             if (origNucleotideId.find(ntKey) != origNucleotideId.end()) {
-              leftLoop->AddNucleotide(origNucleotideId.at(ntKey));
+              auto nt = origNucleotideId.at(ntKey);
+              leftLoop->AddNucleotide(nt);
+              nt->SetBaseSegment(bs);
             }
           }
 
@@ -439,7 +448,9 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
             int ss_id = itr->value["strand_id"].GetInt();
             std::pair<int, int> ntKey = std::make_pair(ss_id, nt_id);
             if (origNucleotideId.find(ntKey) != origNucleotideId.end()) {
-              rightLoop->AddNucleotide(origNucleotideId.at(ntKey));
+              auto nt = origNucleotideId.at(ntKey);
+              rightLoop->AddNucleotide(nt);
+              nt->SetBaseSegment(bs);
             }
           }
 
@@ -458,8 +469,11 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
       std::pair<int, int> ntKey = std::make_pair(ss_id, nt_id);
       if (origNucleotideId.find(ntKey) != origNucleotideId.end()) {
         auto nt = origNucleotideId.at(ntKey);
+        auto ntPair = nt->GetPair();
         bp_cell->SetLeftNucleotide(nt);
-        bp_cell->SetRightNucleotide(nt->GetPair());
+        bp_cell->SetRightNucleotide(ntPair);
+        nt->SetBaseSegment(bs);
+        if (ntPair != nullptr) ntPair->SetBaseSegment(bs);
       }
       bs->SetCell(bp_cell());
     }
@@ -468,6 +482,79 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
   fclose(fp);
 
   return part;
+}
+
+void ADNLoader::OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options)
+{
+  std::string fnameConf = "config.conf";
+  std::ofstream outConf = CreateOutputFile(fnameConf, folder);
+  std::string fnameTopo = "topo.top";
+  std::ofstream outTopo = CreateOutputFile(fnameTopo, folder);
+
+  // config file header
+  std::string timeStep = "0";
+  std::string boxSizeX = std::to_string(options.boxSizeX_);
+  std::string boxSizeY = std::to_string(options.boxSizeY_);
+  std::string boxSizeZ = std::to_string(options.boxSizeZ_);
+  auto energies = std::tuple<std::string, std::string, std::string>("0.0", "0.0", "0.0");
+
+  outConf << "t = " + timeStep << std::endl;
+  outConf << "b = " + boxSizeX + " " + boxSizeY + " " + boxSizeZ << std::endl;
+  outConf << "E = " + std::get<0>(energies) + " " + std::get<1>(energies) + " " + std::get<2>(energies) << std::endl;
+
+  // topology file header
+  std::string numberNucleotides = std::to_string(part->GetNumberOfNucleotides());
+  std::string numberStrands = std::to_string(part->GetNumberOfSingleStrands());
+
+  outTopo << numberNucleotides << " " << numberStrands << std::endl;
+
+  // config file: velocity and angular velocity are zero for all
+  std::string L = "0 0 0";
+  std::string v = "0 0 0";
+
+  // we assign new ids
+  unsigned int strandId = 1;
+  unsigned int ntId = 0;
+  auto singleStrands = part->GetSingleStrands();
+  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+    ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
+    do {
+      // config file info
+      SBPosition3 pos = nt->GetPosition();
+      ublas::vector<double> bbVector = nt->GetE2() * (-1.0);
+      ublas::vector<double> normal = nt->GetE1() * (-1.0);
+
+      // box size is in nm, so position of nt has to be too
+      std::string positionVector = std::to_string(pos[0].getValue() / 100.0) + " " + std::to_string(pos[1].getValue() / 100.0) + " " + std::to_string(pos[2].getValue() / 100.0);
+      std::string backboneBaseVector = std::to_string(bbVector[0]) + " " + std::to_string(bbVector[1]) + " " + std::to_string(bbVector[2]);
+      std::string normalVector = std::to_string(normal[0]) + " " + std::to_string(normal[1]) + " " + std::to_string(normal[2]);
+
+      outConf << positionVector + " " + backboneBaseVector + " " + normalVector + " " + v + " " + L << std::endl;
+
+      // topology file info
+      std::string base(1, ADNModel::GetResidueName(nt->GetType()));
+      std::string threePrime = "-1";
+      if (nt->GetPrev() != nullptr) threePrime = std::to_string(ntId - 1);
+      std::string fivePrime = "-1";
+      if (nt->GetNext() != nullptr) fivePrime = std::to_string(ntId + 1);
+
+      outTopo << std::to_string(strandId) + " " + base + " " + threePrime + " " + fivePrime << std::endl;
+
+      nt = nt->GetNext();
+      ntId++;
+    } while (nt != nullptr);
+
+    ++strandId;
+  }
+
+  outConf.close();
+  outTopo.close();
+}
+
+std::ofstream ADNLoader::CreateOutputFile(std::string fname, std::string folder)
+{
+  std::ofstream output(folder + "/" + fname);
+  return output;
 }
 
 void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)

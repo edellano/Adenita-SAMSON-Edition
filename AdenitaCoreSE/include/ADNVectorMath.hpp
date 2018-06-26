@@ -17,6 +17,7 @@ namespace ADNVectorMath {
   std::vector<double> CreateStdVector(ublas::vector<double> vec);
   ublas::matrix<double> CreateBoostMatrix(std::vector<std::vector<double>> vecovec);
   ublas::vector<double> CalculateCM(ublas::matrix<double> positions);
+  ublas::vector<double> CalculateCM(ublas::matrix<double> weightedPositions, double totalMass);
   ublas::vector<double> CrossProduct(ublas::vector<double> v, ublas::vector<double> w);
   ublas::vector<double> DirectionVector(ublas::vector<double> p, ublas::vector<double> q);
   double DegToRad(double degree);
