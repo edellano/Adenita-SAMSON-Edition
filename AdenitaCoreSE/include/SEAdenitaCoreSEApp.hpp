@@ -44,6 +44,8 @@ public :
 
 private:
   void AddPartToActiveLayer(ADNPointer<ADNPart> part);
+
+  ADNNanorobot* nanorobot_ = nullptr;
 };
 
 
