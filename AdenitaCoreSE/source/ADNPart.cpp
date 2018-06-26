@@ -29,19 +29,17 @@ void ADNPart::SetName(const std::string & name)
   setName(name);
 }
 
-ADNPointer<ADNDoubleStrand> ADNPart::GetDoubleStrand(int id)
-{
-  auto dsList = GetDoubleStrands();
-  return dsList[id];
-}
-
 CollectionMap<ADNBaseSegment> ADNPart::GetBaseSegments(CellType celltype) const 
 {
   CollectionMap<ADNBaseSegment> bsList;
-
-  SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegmentsIndex_) {
-    if (celltype == ALL || bs->GetCellType() == celltype) {
-      bsList.addReferenceTarget(bs());
+  if (celltype == ALL) {
+    bsList = baseSegmentsIndex_;
+  }
+  else {
+    SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegmentsIndex_) {
+      if (bs->GetCellType() == celltype) {
+        bsList.addReferenceTarget(bs());
+      }
     }
   }
 
@@ -52,14 +50,9 @@ CollectionMap<ADNSingleStrand> ADNPart::GetScaffolds() const
 {
   CollectionMap<ADNSingleStrand> chainList;
 
-  SBMStructuralModelNodeRoot* root = getStructuralRoot();
-  SBNodeIndexer nodeIndexer;
-  root->getNodes(nodeIndexer, SBNode::IsType(SBNode::Chain));
-
-  SB_FOR(SBNode* n, nodeIndexer) {
-    ADNSingleStrand* a = static_cast<ADNSingleStrand*>(n);
-    if (a->IsScaffold()) {
-      chainList.addReferenceTarget(a);
+  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrandsIndex_) {
+    if (ss->IsScaffold()) {
+      chainList.addReferenceTarget(ss());
     }
   }
 
@@ -68,21 +61,7 @@ CollectionMap<ADNSingleStrand> ADNPart::GetScaffolds() const
 
 CollectionMap<ADNNucleotide> ADNPart::GetNucleotides(CellType celltype) const
 {
-  CollectionMap<ADNNucleotide> nucleotides;
-
-  SBMStructuralModelNodeRoot* root = getStructuralRoot();
-  SBNodeIndexer nodeIndexer;
-  root->getNodes(nodeIndexer, SBNode::IsType(SBNode::Chain));
-
-  SB_FOR(SBNode* n, nodeIndexer) {
-    ADNPointer<ADNNucleotide> a = static_cast<ADNNucleotide*>(n);
-    ADNPointer<ADNBaseSegment> bs = a->GetBaseSegment();
-    if (bs->GetCellType() == celltype) {
-      nucleotides.addReferenceTarget(a());
-    }
-  }
-
-  return nucleotides;
+  return nucleotidesIndex_;
 }
 
 int ADNPart::GetNumberOfNucleotides() 
@@ -102,41 +81,17 @@ int ADNPart::GetNumberOfBaseSegments()
 
 CollectionMap<ADNSingleStrand> ADNPart::GetSingleStrands() const
 {
-  CollectionMap<ADNSingleStrand> ssList;
-
-  SB_FOR(ADNPointer<ADNSingleStrand> bs, singleStrandsIndex_) {
-    ssList.addReferenceTarget(bs());
-  }
-
-  return ssList;
+  return singleStrandsIndex_;
 }
 
 CollectionMap<ADNDoubleStrand> ADNPart::GetDoubleStrands() const
 {
-  // todo: this will also return base segments since they are also subclassed from Structural Groups
-  CollectionMap<ADNDoubleStrand> dsList;
-
-  SB_FOR(ADNPointer<ADNDoubleStrand> ds, doubleStrandsIndex_) {
-    dsList.addReferenceTarget(ds());
-  }
-
-  return dsList;
+  return doubleStrandsIndex_;
 }
 
 CollectionMap<ADNAtom> ADNPart::GetAtoms() const
 {
-  CollectionMap<ADNAtom> aList;
-
-  SBMStructuralModelNodeRoot* root = getStructuralRoot();
-  SBNodeIndexer nodeIndexer;
-  root->getNodes(nodeIndexer, SBNode::IsType(SBNode::Atom));
-
-  SB_FOR(SBNode* n, nodeIndexer) {
-    ADNAtom* a = static_cast<ADNAtom*>(n);
-    aList.addReferenceTarget(a);
-  }
-
-  return aList;
+  return atomsIndex_;
 }
 
 int ADNPart::GetNumberOfDoubleStrands()
@@ -157,6 +112,12 @@ void ADNPart::DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss)
   singleStrandsIndex_.removeReferenceTarget(ss());
 }
 
+void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt)
+{
+  nt->getParent()->removeChild(nt());
+  nucleotidesIndex_.removeReferenceTarget(nt());
+}
+
 void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
 {
   auto root = getStructuralRoot();
@@ -165,12 +126,49 @@ void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
   doubleStrandsIndex_.removeReferenceTarget(ds());
 }
 
+void ADNPart::DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs)
+{
+  bs->getParent()->removeChild(bs());
+  baseSegmentsIndex_.removeReferenceTarget(bs());
+}
+
+void ADNPart::DeregisterAtom(ADNPointer<ADNAtom> atom)
+{
+  atom->getParent()->removeChild(atom());
+  atomsIndex_.removeReferenceTarget(atom());
+}
+
 void ADNPart::RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss) 
 {
   auto root = getStructuralRoot();
   root->addChild(ss());
 
   singleStrandsIndex_.addReferenceTarget(ss());
+}
+
+void ADNPart::RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt)
+{
+  ss->AddNucleotideThreePrime(nt);
+
+  nucleotidesIndex_.addReferenceTarget(nt());
+}
+
+void ADNPart::RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt)
+{
+  ss->AddNucleotideFivePrime(nt);
+
+  nucleotidesIndex_.addReferenceTarget(nt());
+}
+
+void ADNPart::RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at, bool create)
+{
+  nt->AddAtom(g, at);
+
+  atomsIndex_.addReferenceTarget(at());
+
+  if (create) {
+    at->create();
+  }
 }
 
 void ADNPart::RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs)
@@ -192,10 +190,4 @@ void ADNPart::RegisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
   root->addChild(ds());
 
   doubleStrandsIndex_.addReferenceTarget(ds());
-}
-
-ADNPointer<ADNSingleStrand> ADNPart::GetSingleStrand(int c_id)
-{
-  auto ssList = GetSingleStrands();
-  return ssList[c_id];
 }

@@ -55,6 +55,9 @@ public slots:
   void onLoadPart();
   void onSavePart();
   void onLoadPLYFile();
+  void onImportFromCadnano();
+  void onExportToOxDNA();
+  void onSetScaffold();
 
 private:
 

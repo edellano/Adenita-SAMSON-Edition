@@ -1,13 +1,12 @@
-#ifndef CADNANO_H
-#define CADNANO_H
+#pragma once
 
-#include "ANTNanorobot.hpp"
+#include "ADNNanorobot.hpp"
 #include "rapidjson/reader.h"
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
-#include "ANTAuxiliary.hpp"
-#include "ANTConstants.hpp"
+#include "ADNAuxiliary.hpp"
+#include "ADNConstants.hpp"
 #include <iostream>
 #include "rapidjson/filereadstream.h"
 #include <boost/numeric/ublas/matrix.hpp>
@@ -21,10 +20,10 @@
 using namespace std;
 using namespace rapidjson;
 
-double const bp_rise_ = ANTConstants::BP_RISE; // nm
-double const bp_rot_ = ANTConstants::BP_ROT; // rotation in degrees of nts around Z axis
-double const dh_diameter_ = ANTConstants::DH_DIAMETER; // nm
-double const bp_cadnano_dist_ = ANTConstants::BP_CADNANO_DIST; //0.25 * dh_diameter_; //nm
+double const bp_rise_ = ADNConstants::BP_RISE; // nm
+double const bp_rot_ = ADNConstants::BP_ROT; // rotation in degrees of nts around Z axis
+double const dh_diameter_ = ADNConstants::DH_DIAMETER; // nm
+double const bp_cadnano_dist_ = ADNConstants::BP_CADNANO_DIST; //0.25 * dh_diameter_; //nm
 
 //JSON Parsing
 struct vec2 {
@@ -63,11 +62,12 @@ struct CadnanoJSONFile {
 //Grid from caDNAno
 namespace ublas = boost::numeric::ublas;
 
-enum LatticeType {
-  Honeycomb = 0,
-  Square = 1,
-  LatticeFree = 2
-};
+//enum LatticeType {
+//  Honeycomb = 0,
+//  Square = 1,
+//  LatticeFree = 2
+//};
+using LatticeType = ADNConstants::CadnanoLatticeType;
 
 struct LatticeCell {
   //positions by taking LatticeType into account 
@@ -96,8 +96,8 @@ struct Lattice {
   void CreateHoneycombLattice() {
     mat_ = ublas::matrix<LatticeCell>(30, 32); // in cadnano 2.0 square lattice is 50x50, honeycomb is 30 x 32
     double angle = 120.0;  // deg
-    double delt_y = dh_diameter_ * sin(ANTVectorMath::DegToRad(angle - 90)) * 0.5;
-    double delt_x = dh_diameter_ * cos(ANTVectorMath::DegToRad(angle - 90));
+    double delt_y = dh_diameter_ * sin(ADNVectorMath::DegToRad(angle - 90)) * 0.5;
+    double delt_x = dh_diameter_ * cos(ADNVectorMath::DegToRad(angle - 90));
     double offset = delt_y;
 
     for (unsigned int row = 0; row < mat_.size1(); ++row) {
@@ -115,9 +115,10 @@ struct Lattice {
   LatticeCell GetLatticeCell(unsigned int row, unsigned int column) {
     size_t rSize = mat_.size1();
     size_t cSize = mat_.size2();
+    ADNLogger& logger = ADNLogger::GetLogger();
     if (row >= rSize || column >= cSize) {
       std::string msg = "Lattice overflow. Probably worng lattice type was selected.";
-      ANTAuxiliary::log(msg);
+      logger.Log(msg);
     }
     return mat_(row, column);
   }
@@ -245,7 +246,7 @@ struct VGrid {
     VCellPos cPos = vDoubleStrands_[vStrandId].vBasePairs_[z].stapleCell.pos_;
     LatticeCell lc = lattice_.GetLatticeCell(row, column);
     //SBPosition3 pos = SBPosition3(SBQuantity::nanometer(cPos.z_), SBQuantity::nanometer(-lc.x_ + 0.5f), SBQuantity::nanometer(lc.y_));
-    SBPosition3 pos = SBPosition3(SBQuantity::nanometer(cPos.z_), SBQuantity::nanometer(lc.x_ + 0.5f), SBQuantity::nanometer(lc.y_));
+    SBPosition3 pos = SBPosition3(SBQuantity::nanometer(cPos.z_), SBQuantity::nanometer(lc.x_), SBQuantity::nanometer(lc.y_));
     return pos;
   }
 
@@ -256,7 +257,7 @@ struct VGrid {
   }
    
   SBPosition3 GetGridStaplePos1D(int nucleotideId, int strandId) {
-    SBPosition3 pos = SBPosition3(SBQuantity::nanometer(strandId * ANTConstants::DH_DIAMETER), SBQuantity::nanometer(-nucleotideId / 2.0f), SBQuantity::nanometer(0));
+    SBPosition3 pos = SBPosition3(SBQuantity::nanometer(strandId * ADNConstants::DH_DIAMETER), SBQuantity::nanometer(-nucleotideId / 2.0f), SBQuantity::nanometer(0));
     return pos;
   }
 };
@@ -264,32 +265,26 @@ struct VGrid {
 class DASCadnano {
 
 private:
-
-  SEConfig* configuration_;
-
   CadnanoJSONFile json_;
-  std::map<int, ANTSingleStrand*> chains_;
   VGrid vGrid_;
-  std::map<Vstrand*, std::map<std::pair<int, int>, ANTBaseSegment*>> cellBsMap_;
+  std::map<Vstrand*, std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>>> cellBsMap_;
   //std::tuple<int, int, int> triple;
-  std::map<std::tuple<int, int, int>, ANTNucleotide*> scaffold_nucleotides_;
+  std::map<std::tuple<int, int, int>, ADNPointer<ADNNucleotide>> scaffold_nucleotides_;
   // copied from Daedalus
   static DNABlocks GetComplementaryBase(DNABlocks type);
   bool IsThereBase(vec4 data);
 
 public:
-  DASCadnano() { configuration_ = new SEConfig(); };
+  DASCadnano() = default;
   ~DASCadnano() = default;
 
   void ParseJSON(string file);
   void WriteJSON();
 
-  void CreateModel(ANTPart & nanorobot, string seq, LatticeType lattice);
-  void CreateEdgeMap(ANTPart& nanorobot);
-  void CreateScaffold(ANTSingleStrand & scaffold, string seq, ANTPart& nanorobot);
-  void CreateStaples(ANTPart & nanorobot);
-  void ShiftStructure(ANTPart & nanorobot);
-  void CylinderToCadnano(ANTPart & nanorobot);
+  void CreateModel(ADNPointer<ADNPart> nanorobot, string seq, LatticeType lattice);
+  void CreateEdgeMap(ADNPointer<ADNPart> nanorobot);
+  void CreateScaffold(string seq, ADNPointer<ADNPart> nanorobot);
+  void CreateStaples(ADNPointer<ADNPart> nanorobot);
+  //void ShiftStructure(ADNPointer<ADNPart> nanorobot);
+  //void CylinderToCadnano(ADNPointer<ADNPart> nanorobot);
 };
-
-#endif

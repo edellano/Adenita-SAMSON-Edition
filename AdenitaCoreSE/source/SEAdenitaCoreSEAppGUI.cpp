@@ -38,10 +38,17 @@ void SEAdenitaCoreSEAppGUI::onLoadPart()
     SEAdenitaCoreSEApp* t = getApp();
     t->LoadPart(filename);
   }
+
+  SAMSON::getActiveCamera()->center();
 }
 
 void SEAdenitaCoreSEAppGUI::onSavePart()
 {
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save an ANTPart .json file"), QDir::currentPath(), tr("Json (*.json)"));
+  if (!filename.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->SavePart(filename);
+  }
 }
 
 void SEAdenitaCoreSEAppGUI::onLoadPLYFile()
@@ -54,6 +61,63 @@ void SEAdenitaCoreSEAppGUI::onLoadPLYFile()
   }
 
   SAMSON::getActiveCamera()->center();
+}
+
+void SEAdenitaCoreSEAppGUI::onImportFromCadnano()
+{
+  ADNConstants::CadnanoLatticeType typ = ADNConstants::CadnanoLatticeType::Honeycomb;
+  if (ui.rdoCadnanoSquareLattice->isChecked()) {
+    typ = ADNConstants::CadnanoLatticeType::Square;
+  }
+  QString filename = QFileDialog::getOpenFileName(this, tr("Select a .json file"), QDir::currentPath(), tr("Cadnano (*.json)"));
+  if (!filename.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->ImportFromCadnano(filename, typ);
+  }
+
+  SAMSON::getActiveCamera()->center();
+}
+
+void SEAdenitaCoreSEAppGUI::onExportToOxDNA()
+{
+  ADNAuxiliary::OxDNAOptions options;
+
+  options.boxSizeX_ = ui.spnBoxSizeX->value();
+  options.boxSizeY_ = ui.spnBoxSizeY->value();
+  options.boxSizeZ_ = ui.spnBoxSizeZ->value();
+
+  QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
+  if (!folder.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->ExportToOxDNA(folder, options);
+  }
+}
+
+void SEAdenitaCoreSEAppGUI::onSetScaffold()
+{
+  std::string filename = "";
+  ADNAuxiliary::ScaffoldSeq type = ADNAuxiliary::ScaffoldSeq(ui.cmbScaffolds->currentIndex());
+  if (type == ADNAuxiliary::m13mp18) {
+    filename = SB_ELEMENT_PATH + "/Data/m13mp18.fasta";
+  }
+  else if (type == ADNAuxiliary::p7249) {
+    filename = SB_ELEMENT_PATH + "/Data/p7249.fasta";
+  }
+
+  if (filename.size() > 0) {
+    SEAdenitaCoreSEApp *t = getApp();
+    std::string s = "";
+    std::vector<std::string> lines;
+    SBIFileReader::getFileLines(filename, lines);
+    for (unsigned int i = 1; i < lines.size(); i++) {
+      std::string line = lines[i];
+      if (line[0] != '>') {
+        s.append(line);
+      }
+    }
+    t->SetScaffoldSequence(s);
+  }
+
 }
 
 SBCContainerUUID SEAdenitaCoreSEAppGUI::getUUID() const { return SBCContainerUUID( "386506A7-DD8B-69DD-4599-F136C1B91610" );}

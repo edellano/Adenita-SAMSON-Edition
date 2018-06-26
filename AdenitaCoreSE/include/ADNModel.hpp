@@ -18,20 +18,13 @@
 #include <cmath>
 
 /* Physical info and maps */
-
-//enum DNABlocks {
-//  DA,
-//  DT,
-//  DC,
-//  DG,
-//  DN,
-//};
 using DNABlocks = SBResidue::ResidueType;
 
 enum End {
   ThreePrime = 3,
   FivePrime = 5,
-  NotEnd = 0
+  NotEnd = 0,
+  FiveAndThreePrime = 8,
 };
 
 enum CellType {
@@ -42,10 +35,6 @@ enum CellType {
   ALL = 99,
 };
 
-//enum NucleotideGroup {
-//  Backbone = 0,
-//  Sidechain = 1,
-//};
 using NucleotideGroup = SBNode::Type;
 
 static std::vector<std::string> backbone_names_ = std::vector<std::string>{ "P", "OP1", "OP2", "O5'", "C5'", "C4'",
@@ -63,6 +52,8 @@ namespace ADNModel {
   DNABlocks ResidueNameToType(char n);
   std::string CellTypeToString(CellType t);
   bool IsAtomInBackboneByName(std::string name);
+  SBElement::Type GetElementType(std::string atomName);
+  std::map<std::string, std::vector<std::string>> GetNucleotideBonds(DNABlocks t);
 }
 
 /* Classes */
@@ -165,12 +156,15 @@ public:
 
   void SetType(DNABlocks t);
   DNABlocks GetType();
+  DNABlocks getNucleotideType() const;
+
   void SetPair(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetPair();
 
   ADNPointer<ADNNucleotide> GetPrev();
   ADNPointer<ADNNucleotide> GetNext();
   ADNPointer<ADNSingleStrand> GetStrand();
+  SBNode* getSingleStrand() const;
 
   void SetBaseSegment(ADNPointer<ADNBaseSegment> bs);
   ADNPointer<ADNBaseSegment> GetBaseSegment();
@@ -194,14 +188,11 @@ public:
   void AddAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
   void ADNNucleotide::DeleteAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
   CollectionMap<ADNAtom> GetAtoms();
+  CollectionMap<ADNAtom> GetAtomsByName(std::string name);
 
   // Local base is always the standard basis */
   ublas::matrix<double> GetGlobalBasisTransformation();
   bool GlobalBaseIsSet();
-  /**
-  * Copy atoms into ANTNucleotide target.
-  */
-  void CopyAtoms(ADNPointer<ADNNucleotide> target);
 
 private:
   ADNWeakPointer<ADNNucleotide> pair_;
@@ -291,8 +282,10 @@ public:
   CellType GetType() { return CellType::BasePair; };
 
   ADNPointer<ADNNucleotide> GetLeftNucleotide();
+  SBNode* getLeft() const;
   void SetLeftNucleotide(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetRightNucleotide();
+  SBNode* getRight() const;
   void SetRightNucleotide(ADNPointer<ADNNucleotide> nt);
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
 private:
@@ -311,8 +304,15 @@ public:
 
   CellType GetType() { return CellType::SkipPair; };
 
+  ADNPointer<ADNNucleotide> GetLeftSkip();
+  void SetLeftSkip(ADNPointer<ADNNucleotide> nt);
+  ADNPointer<ADNNucleotide> GetRightSkip();
+  void SetRightSkip(ADNPointer<ADNNucleotide> nt);
+
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
 private:
+  ADNPointer<ADNNucleotide> left_ = nullptr;
+  ADNPointer<ADNNucleotide> right_ = nullptr;
 };
 
 SB_REGISTER_TARGET_TYPE(ADNSkipPair, "ADNSkipPair", "65441545-3022-773B-49A5-FF39A89AE754");
@@ -343,6 +343,7 @@ public:
 private:
   ADNPointer<ADNNucleotide> startNt_ = nullptr;
   ADNPointer<ADNNucleotide> endNt_ = nullptr;
+  CollectionMap<ADNNucleotide> nucleotides_;
 };
 
 SB_REGISTER_TARGET_TYPE(ADNLoop, "ADNLoop", "8531205A-01B2-C438-1E26-A50699CA6678");
@@ -357,8 +358,10 @@ public:
   CellType GetType() { return CellType::LoopPair; };
 
   ADNPointer<ADNLoop> GetLeftLoop();
+  SBNode* getLeft() const;
   void SetLeftLoop(ADNPointer<ADNLoop> lp);
   ADNPointer<ADNLoop> GetRightLoop();
+  SBNode* getRight() const;
   void SetRightLoop(ADNPointer<ADNLoop> lp);
 
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
@@ -417,7 +420,8 @@ public:
   void SetInitialTwistAngle(double angle);
   double GetInitialTwistAngle() const;
 
-  int GetSize() const;
+  int GetLength() const;
+  int getLength() const;
 
   CollectionMap<ADNBaseSegment> GetBaseSegments() const;
   ADNPointer<ADNBaseSegment> GetNthBaseSegment(int n);  // return the base segment by position in the double strand

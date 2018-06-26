@@ -109,11 +109,157 @@
           </layout>
          </widget>
         </widget>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>160</y>
+           <width>421</width>
+           <height>121</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Cadnano</string>
+         </property>
+         <widget class="QWidget" name="formLayoutWidget_2">
+          <property name="geometry">
+           <rect>
+            <x>9</x>
+            <y>20</y>
+            <width>401</width>
+            <height>80</height>
+           </rect>
+          </property>
+          <layout class="QFormLayout" name="formLayout_2">
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="rdoCadnanoHoneycomb">
+             <property name="text">
+              <string>Honeycomb lattice</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QRadioButton" name="rdoCadnanoSquareLattice">
+             <property name="text">
+              <string>Square lattice</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QPushButton" name="btnImportFromCadnano">
+             <property name="text">
+              <string>Import from Cadnano</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>280</y>
+           <width>421</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Output to oxDNA</string>
+         </property>
+         <widget class="QWidget" name="gridLayoutWidget_2">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>401</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Box (nm)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QSpinBox" name="spnBoxSizeZ">
+             <property name="maximum">
+              <number>1000</number>
+             </property>
+             <property name="value">
+              <number>150</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="spnBoxSizeX">
+             <property name="maximum">
+              <number>1000</number>
+             </property>
+             <property name="value">
+              <number>150</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QSpinBox" name="spnBoxSizeY">
+             <property name="maximum">
+              <number>1000</number>
+             </property>
+             <property name="value">
+              <number>150</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="4">
+            <widget class="QPushButton" name="btnExportToOxDNA">
+             <property name="text">
+              <string>Export to oxDNA</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </widget>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
-         <string>Tab 2</string>
+         <string>Modifications</string>
         </attribute>
+        <widget class="QWidget" name="gridLayoutWidget_3">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>431</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QComboBox" name="cmbScaffolds">
+            <item>
+             <property name="text">
+              <string>m13mp18</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="btnSetScaffold">
+            <property name="text">
+             <string>Set Scaffold</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
      </item>
@@ -171,10 +317,61 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnImportFromCadnano</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onImportFromCadnano()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>258</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnExportToOxDNA</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onExportToOxDNA()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>222</x>
+     <y>369</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSetScaffold</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onSetScaffold()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>336</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onLoadPart()</slot>
   <slot>onSavePart()</slot>
   <slot>onLoadPLYFile()</slot>
+  <slot>onImportFromCadnano()</slot>
+  <slot>onExportToOxDNA()</slot>
+  <slot>onSetScaffold()</slot>
  </slots>
 </ui>

@@ -6,6 +6,7 @@
 #include "ADNSaveAndLoad.hpp"
 #include "DASDaedalus.hpp"
 #include "DASBackToTheAtom.hpp"
+#include "DASCadnano.hpp"
 #include "SEConfig.hpp"
 
 
@@ -35,7 +36,14 @@ public :
 	//@}
 
   void LoadPart(QString filename);
+  void SavePart(QString filename);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
+  void ImportFromCadnano(QString filename, ADNConstants::CadnanoLatticeType t);
+  void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options);
+  void SetScaffoldSequence(std::string seq);
+
+private:
+  void AddPartToActiveLayer(ADNPointer<ADNPart> part);
 };
 
 
