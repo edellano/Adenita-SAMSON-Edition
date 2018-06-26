@@ -283,7 +283,7 @@ public:
 
   void CreateModel(ADNPointer<ADNPart> nanorobot, string seq, LatticeType lattice);
   void CreateEdgeMap(ADNPointer<ADNPart> nanorobot);
-  void CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq, ADNPointer<ADNPart> nanorobot);
+  void CreateScaffold(string seq, ADNPointer<ADNPart> nanorobot);
   void CreateStaples(ADNPointer<ADNPart> nanorobot);
   //void ShiftStructure(ADNPointer<ADNPart> nanorobot);
   //void CylinderToCadnano(ADNPointer<ADNPart> nanorobot);

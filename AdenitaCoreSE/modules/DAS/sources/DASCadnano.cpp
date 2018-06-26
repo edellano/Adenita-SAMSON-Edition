@@ -242,16 +242,9 @@ void DASCadnano::CreateModel(ADNPointer<ADNPart> nanorobot, string seq, LatticeT
   size_t numVStrands = json_.vstrands_.size();
   size_t numZ = json_.vstrands_[0].scaf_.size();
   vGrid_.ConstructGridAndLattice(numVStrands, numZ, lattice, json_);
-  //ConstructBaseSegments(nanorobot);
-
-  //create the scaffold strand
-  ADNPointer<ADNSingleStrand> scaff = new ADNSingleStrand();
-  scaff->SetName("Scaffold");
-  scaff->IsScaffold(true);
-  nanorobot->RegisterSingleStrand(scaff);
 
   CreateEdgeMap(nanorobot);
-  CreateScaffold(scaff, seq, nanorobot);
+  CreateScaffold(seq, nanorobot);
 
   //create the staple strands
   //find the number of staple
@@ -371,7 +364,7 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot) {
   }
 }
 
-void DASCadnano::CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq, ADNPointer<ADNPart> nanorobot) {
+void DASCadnano::CreateScaffold(string seq, ADNPointer<ADNPart> nanorobot) {
 
   //look for stating point of scaffold in vstrand
   int startVstrand = 0;
@@ -381,6 +374,12 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq
   curVstrandElem.n1 = -1;
 
   ADNLogger& logger = ADNLogger::GetLogger();
+
+  //create the scaffold strand
+  ADNPointer<ADNSingleStrand> scaff = new ADNSingleStrand();
+  scaff->SetName("Scaffold");
+  scaff->IsScaffold(true);
+  nanorobot->RegisterSingleStrand(scaff);
 
   int vStrandId = 0;
   for (auto &vstrand : json_.vstrands_) {
@@ -405,7 +404,7 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq
 
         //add first nucleotide to scaffold chain
         ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
-        nanorobot->RegisterNucleotideThreePrime(scaffold, nt);
+        nanorobot->RegisterNucleotideThreePrime(scaff, nt);
 
         int z = startVstrandPos;
         SBPosition3 pos3D = vGrid_.GetGridScaffoldCellPos3D(vStrandId, z, vstrand.row_, vstrand.col_);
@@ -505,7 +504,7 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq
     for (int k = 0; k <= max_iter; k++) {
       //add loop
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
-      nanorobot->RegisterNucleotideThreePrime(scaffold, nt);
+      nanorobot->RegisterNucleotideThreePrime(scaff, nt);
 
       //SBPosition3 pos1D = vGrid_.GetGridScaffoldPos1D(nt->id_);
       SBPosition3 pos2D = vGrid_.GetGridScaffoldCellPos2D(vStrandId, z);
@@ -576,7 +575,7 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNSingleStrand> scaffold, string seq
 
   logger.Log(string("num of nucleotides " + to_string(nid)));
 
-  scaffold->SetSequence(seq);
+  scaff->SetSequence(seq);
 }
 
 void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot) {

@@ -39,6 +39,7 @@ bool ADNAtom::IsInBackbone()
 
 ADNNucleotide::ADNNucleotide() : PositionableSB(), SBResidue(), Orientable()
 {
+  SetType(DNABlocks::DI);
   ADNPointer<ADNBackbone> bb = new ADNBackbone();
   bb->setName(getName() + " " + "Backbone");
   ADNPointer<ADNSidechain> sc = new ADNSidechain();
@@ -376,6 +377,8 @@ ADNPointer<ADNNucleotide> ADNSingleStrand::GetNucleotide(unsigned int id) const
 
 void ADNSingleStrand::AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt)
 {
+  auto sz = GetNucleotides().size();
+  addChild(nt());
   if (threePrime_ != nullptr) {
     if (threePrime_->GetEnd() == FiveAndThreePrime) threePrime_->SetEnd(FivePrime);
     else threePrime_->SetEnd(NotEnd);
@@ -386,9 +389,8 @@ void ADNSingleStrand::AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt)
     fivePrime_ = nt;
     nt->SetEnd(FiveAndThreePrime);
   }
-  auto sz = GetNucleotides().size();
-  addChild(nt());
   auto test = nt->GetPrev();
+  sz = GetNucleotides().size();
   threePrime_ = nt;
 }
 
@@ -459,6 +461,9 @@ double ADNSingleStrand::GetGCContent() {
 }
 
 void ADNSingleStrand::SetSequence(std::string seq) {
+
+  if (seq.empty()) return;
+
   if (isScaffold_ != true) {
     std::string msg = "Forcing sequence on staple " + GetName();
     ADNLogger& logger = ADNLogger::GetLogger();
