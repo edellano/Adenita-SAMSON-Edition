@@ -307,7 +307,7 @@ void DASBackToTheAtom::CheckDistances(ADNPointer<ADNPart> part)
     {
       if (start != 0) {
         auto distance = (prevPos - nt->GetPosition()).norm();
-        if (distance > SBQuantity::nanometer(ADNConstants::BP_RISE)) {
+        if (!ADNVectorMath::IsNearlyZero(distance.getValue() - ADNConstants::BP_RISE * 1000)) {
           std::string msg = "\tNucleotides " + prevName + " and " + nt->GetName() + " too further away: " + std::to_string(distance.getValue()) + "pm";
           logger.Log(msg);
         }
@@ -818,7 +818,7 @@ void DASBackToTheAtom::LoadNucleotides() {
     ublas::matrix<double> new_positions = ADNVectorMath::CenterSystem(positions_matrix);
     int r_id = SetAtomsPositions(atoms, new_positions, 0);
     // nt->SetReferenceFrame();
-    auto nt_cms = CalculateCentersOfMass(nt);
+    auto nt_cms = CalculateCenters(nt);
     nt->SetPosition(std::get<0>(nt_cms));
     nt->SetBackbonePosition(std::get<1>(nt_cms));
     nt->SetSidechainPosition(std::get<2>(nt_cms));
@@ -852,8 +852,8 @@ void DASBackToTheAtom::LoadNtPairs() {
     SetReferenceFrame(nt_pair);
 
     // Set positions
-    auto nt_right_cms = CalculateCentersOfMass(nt_right);
-    auto nt_left_cms = CalculateCentersOfMass(nt_left);
+    auto nt_right_cms = CalculateCenters(nt_right);
+    auto nt_left_cms = CalculateCenters(nt_left);
     nt_right->SetPosition(std::get<0>(nt_right_cms));
     nt_left->SetPosition(std::get<0>(nt_left_cms));
     nt_right->SetBackbonePosition(std::get<1>(nt_right_cms));
