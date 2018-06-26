@@ -19,6 +19,20 @@ ADNNanorobot & ADNNanorobot::operator=(const ADNNanorobot& other)
   return *this;
 }
 
+CollectionMap<ADNSingleStrand> ADNNanorobot::GetSingleStrands() const
+{
+  CollectionMap<ADNSingleStrand> singleStrands;
+
+  SBNodeIndexer nodeIndexer;
+  SAMSON::getActiveDocument()->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNSingleStrand")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  SB_FOR(SBNode* n, nodeIndexer) {
+    singleStrands.addReferenceTarget(static_cast<ADNSingleStrand*>(n));
+  }
+
+  return singleStrands;
+}
+
 int ADNNanorobot::GetNumberOfDoubleStrands()
 {
   auto parts = GetParts();
@@ -72,11 +86,10 @@ CollectionMap<ADNPart> ADNNanorobot::GetParts() const
   CollectionMap<ADNPart> parts;
 
   SBNodeIndexer nodeIndexer;
-  SAMSON::getActiveDocument()->getNodes(nodeIndexer, SBNode::IsType(SBNode::StructuralModel));
+  SAMSON::getActiveDocument()->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")) );
 
   SB_FOR(SBNode* n, nodeIndexer) {
-    ADNPointer<ADNPart> a = static_cast<ADNPart*>(n);
-    parts.addReferenceTarget(a());
+    parts.addReferenceTarget(static_cast<ADNPart*>(n));
   }
 
   return parts;

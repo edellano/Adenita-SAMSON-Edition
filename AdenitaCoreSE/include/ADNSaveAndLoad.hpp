@@ -18,12 +18,10 @@ namespace ADNLoader {
 
   // oxdna
   void OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options);
-  void CreateOxDNAConfAndTopoFile(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options);
+  void OutputToOxDNA(ADNNanorobot* nanorobot, std::string folder, ADNAuxiliary::OxDNAOptions options);
+  void SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrands, std::ofstream& outConf, std::ofstream& outTopo, ADNAuxiliary::OxDNAOptions options);
   std::ofstream CreateOutputFile(std::string fname, std::string folder);
-    //void OutputToOxDNA(std::string folder, ANTAuxiliary::OxDNAOptions options);
-    //void CreateOxDNAInputFile(std::string folder, ANTAuxiliary::OxDNAOptions options);
-    //void CreateOxDNAConfAndTopoFile(std::string folder, ANTAuxiliary::OxDNAOptions options);
-    //std::ofstream CreateOutputFile(std::string fname, std::string folder);
+
 
   // generic functions
   ADNPointer<ADNPart> GeneratePartFromAtomic();
