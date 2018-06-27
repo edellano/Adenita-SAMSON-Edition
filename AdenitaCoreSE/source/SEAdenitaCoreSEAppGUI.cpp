@@ -120,6 +120,13 @@ void SEAdenitaCoreSEAppGUI::onSetScaffold()
 
 }
 
+void SEAdenitaCoreSEAppGUI::onCenterPart()
+{
+  SEAdenitaCoreSEApp *t = getApp();
+  t->CenterPart();
+  SAMSON::getActiveCamera()->center();
+}
+
 SBCContainerUUID SEAdenitaCoreSEAppGUI::getUUID() const { return SBCContainerUUID( "386506A7-DD8B-69DD-4599-F136C1B91610" );}
 
 QPixmap SEAdenitaCoreSEAppGUI::getLogo() const { 
