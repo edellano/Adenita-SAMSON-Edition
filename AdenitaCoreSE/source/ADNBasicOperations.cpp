@@ -321,6 +321,36 @@ void ADNBasicOperations::TwistDoubleHelix(ADNPointer<ADNDoubleStrand> ds, double
   ds->SetInitialTwistAngle(deg);
 }
 
+void ADNBasicOperations::CenterPart(ADNPointer<ADNPart> part)
+{
+  SBPosition3 trans = -CalculateCenterOfMass(part);
+  auto baseSegments = part->GetBaseSegments();
+  SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
+    bs->SetPosition(bs->GetPosition() + trans);
+    auto nucleotides = bs->GetNucleotides();
+    SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+      nt->SetPosition(nt->GetPosition() + trans);
+      nt->SetBackbonePosition(nt->GetBackbonePosition() + trans);
+      nt->SetSidechainPosition(nt->GetSidechainPosition() + trans);
+      auto atoms = nt->GetAtoms();
+      SB_FOR(ADNPointer<ADNAtom> a, atoms) {
+        a->SetPosition(a->GetPosition() + trans);
+      }
+    }
+  }
+}
+
+SBPosition3 ADNBasicOperations::CalculateCenterOfMass(ADNPointer<ADNPart> part)
+{
+  auto atoms = part->GetAtoms();
+  SBPosition3 cm;
+  SB_FOR(ADNPointer<ADNAtom> a, atoms) {
+    cm += a->GetPosition();
+  }
+  cm /= boost::numeric_cast<int>(atoms.size());
+  return cm;
+}
+
 std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> ADNBasicOperations::OrderNucleotides(ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2)
 {
   std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> res = std::make_pair(nullptr, nullptr);

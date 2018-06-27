@@ -767,6 +767,11 @@ ADNPointer<ADNDoubleStrand> ADNBaseSegment::GetDoubleStrand()
   return ADNPointer<ADNDoubleStrand>(p);
 }
 
+CollectionMap<ADNNucleotide> ADNBaseSegment::GetNucleotides()
+{
+  return cell_->GetNucleotides();
+}
+
 void ADNBaseSegment::SetCell(ADNCell* c) {
   cell_ = ADNPointer<ADNCell>(c);
   std::string type = ADNModel::CellTypeToString(cell_->GetType());
@@ -898,11 +903,6 @@ SBNode* ADNBasePair::getLeft() const
 }
 
 void ADNBasePair::SetLeftNucleotide(ADNPointer<ADNNucleotide> nt) {
-  if (right_ != nullptr && right_->GetPair() != nt) {
-    std::string msg = "Forming an ANTBasePair with unpaired nucleotides.";
-    ADNLogger& logger = ADNLogger::GetLogger();
-    logger.Log(msg);
-  }
   left_ = nt;
   addChild(left_());
 }
@@ -917,13 +917,16 @@ SBNode* ADNBasePair::getRight() const
 }
 
 void ADNBasePair::SetRightNucleotide(ADNPointer<ADNNucleotide> nt) {
-  if (left_ != nullptr && left_->GetPair() != nt) {
-    std::string msg = "Forming an ANTBasePair with unpaired nucleotides.";
-    ADNLogger& logger = ADNLogger::GetLogger();
-    logger.Log(msg);
-  }
   right_ = nt;
   addChild(right_());
+}
+
+void ADNBasePair::AddPair(ADNPointer<ADNNucleotide> left, ADNPointer<ADNNucleotide> right)
+{
+  SetLeftNucleotide(left);
+  SetRightNucleotide(right);
+  left->SetPair(right);
+  right->SetPair(left);
 }
 
 void ADNBasePair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
@@ -933,6 +936,14 @@ void ADNBasePair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   else if (right_ == nt) {
     right_ = nullptr;
   }
+}
+
+CollectionMap<ADNNucleotide> ADNBasePair::GetNucleotides()
+{
+  CollectionMap<ADNNucleotide> nts;
+  nts.addReferenceTarget(left_());
+  nts.addReferenceTarget(right_());
+  return nts;
 }
 
 ADNPointer<ADNNucleotide> ADNSkipPair::GetLeftSkip()
@@ -965,6 +976,27 @@ void ADNLoopPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   if (right_ != nullptr) {
     right_->RemoveNucleotide(nt);
   }
+}
+
+CollectionMap<ADNNucleotide> ADNLoopPair::GetNucleotides()
+{
+  CollectionMap<ADNNucleotide> nts;
+  
+  if (left_ != nullptr) {
+    auto leftNts = left_->GetNucleotides();
+    SB_FOR(ADNPointer<ADNNucleotide> n, leftNts) {
+      nts.addReferenceTarget(n());
+    }
+  }
+  
+  if (right_ != nullptr) {
+    auto rightNts = right_->GetNucleotides();
+    SB_FOR(ADNPointer<ADNNucleotide> n, rightNts) {
+      nts.addReferenceTarget(n());
+    }
+  }
+
+  return nts;
 }
 
 void ADNLoop::SetStart(ADNPointer<ADNNucleotide> nt)

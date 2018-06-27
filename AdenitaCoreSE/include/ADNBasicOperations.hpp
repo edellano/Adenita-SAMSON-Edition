@@ -27,6 +27,8 @@ namespace ADNBasicOperations {
 
   // Geometric operations
   void TwistDoubleHelix(ADNPointer<ADNDoubleStrand> ds, double deg);
+  void CenterPart(ADNPointer<ADNPart> part);
+  SBPosition3 CalculateCenterOfMass(ADNPointer<ADNPart> part);
 
   // Ordering
   std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> OrderNucleotides(ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2);

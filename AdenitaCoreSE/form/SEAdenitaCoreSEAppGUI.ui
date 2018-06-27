@@ -25,7 +25,7 @@
      <item>
       <widget class="QTabWidget" name="tabFile">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -238,7 +238,7 @@
            <x>0</x>
            <y>0</y>
            <width>431</width>
-           <height>41</height>
+           <height>81</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
@@ -255,6 +255,13 @@
            <widget class="QPushButton" name="btnSetScaffold">
             <property name="text">
              <string>Set Scaffold</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QPushButton" name="btnCenterPart">
+            <property name="text">
+             <string>Center Part</string>
             </property>
            </widget>
           </item>
@@ -365,6 +372,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnCenterPart</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCenterPart()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>227</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onLoadPart()</slot>
@@ -373,5 +396,6 @@
   <slot>onImportFromCadnano()</slot>
   <slot>onExportToOxDNA()</slot>
   <slot>onSetScaffold()</slot>
+  <slot>onCenterPart()</slot>
  </slots>
 </ui>
