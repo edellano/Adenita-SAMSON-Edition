@@ -11,6 +11,8 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
   if (config.clear_log_file) {
     logger.ClearLog();
   }
+
+  nanorobot_ = new ADNNanorobot();
 }
 
 SEAdenitaCoreSEApp::~SEAdenitaCoreSEApp() {
@@ -123,7 +125,18 @@ void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOption
     }
   }
 
-  ADNLoader::OutputToOxDNA(part, folder.toStdString(), options);
+  if (part == nullptr) {
+    // nothing selected: export all
+    ADNLoader::OutputToOxDNA(nanorobot_, folder.toStdString(), options);
+  }
+  else {
+    ADNLoader::OutputToOxDNA(part, folder.toStdString(), options);
+  }
+}
+
+ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
+{
+  return nanorobot_;
 }
 
 void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
