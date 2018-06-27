@@ -134,6 +134,11 @@ void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOption
   }
 }
 
+ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
+{
+  return nanorobot_;
+}
+
 void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
 {
   DASBackToTheAtom btta = DASBackToTheAtom();

@@ -42,6 +42,8 @@ public :
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options);
   void SetScaffoldSequence(std::string seq);
 
+  ADNNanorobot* GetNanorobot();
+
 private:
   void AddPartToActiveLayer(ADNPointer<ADNPart> part);
 
