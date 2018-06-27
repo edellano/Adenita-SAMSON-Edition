@@ -35,6 +35,17 @@ void SEConfig::loadConfig() {
     writer.Double(animation_step_size);
 
     writeDoubleArray(writer, "double_helix_V_color", double_helix_V_color, 4);
+    writeDoubleArray(writer, "nucleotide_E_Color", nucleotide_E_Color, 4);
+    writeDoubleArray(writer, "staple_colors", staple_colors, 48);
+    
+    writer.Key("nucleotide_V_radius");
+    writer.Double(nucleotide_V_radius);
+
+    writer.Key("nucleotide_E_radius");
+    writer.Double(nucleotide_E_radius);
+    
+    writer.Key("num_staple_colors");
+    writer.Double(num_staple_colors);
 
     writer.Key("automatic_camera");
     writer.Bool(automatic_camera);
@@ -125,6 +136,18 @@ void SEConfig::updateConfig() {
 
     Value& double_helix_V_colorVal = setting_["double_helix_V_color"];
     readDoubleArray(double_helix_V_colorVal, double_helix_V_color, 4);
+
+    Value& nucleotide_E_ColorVal = setting_["nucleotide_E_Color"];
+    readDoubleArray(nucleotide_E_ColorVal, nucleotide_E_Color, 4);
+
+    Value& staple_colorsVal = setting_["staple_colors"];
+    readDoubleArray(staple_colorsVal, staple_colors, 48);
+
+    nucleotide_V_radius = setting_["nucleotide_V_radius"].GetDouble();
+    nucleotide_E_radius = setting_["nucleotide_E_radius"].GetDouble();
+    num_staple_colors = setting_["num_staple_colors"].GetDouble();
+    
+    
   }
 }
 

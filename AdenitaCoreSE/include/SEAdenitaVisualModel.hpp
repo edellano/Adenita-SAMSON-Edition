@@ -1,6 +1,8 @@
 #pragma once 
 
 #include "SBMVisualModel.hpp"
+#include "SBGApp.hpp" 
+#include "SEAdenitaCoreSEApp.hpp"
 
 #include "SBBaseEvent.hpp"
 #include "SBDocumentEvent.hpp"
@@ -49,9 +51,9 @@ public :
 
 	/// \name Rendering
 	//@{
-
-
-	virtual void												display();																///< Displays the visual model
+  virtual void												changeScale(double scale);																///< Displays the visual model
+	
+  virtual void												display();																///< Displays the visual model
 	virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
 
@@ -75,7 +77,11 @@ private:
   virtual ADNArray<unsigned int>      getNucleotideIndices();
   virtual void												prepareArraysForDisplay(); // Prepare the arrays for displaying (this separates the interpolation from display)
   virtual void												prepareScale6to7(double iv, bool forSelection = false); // scale 7 -> 8: transition single strands to duplex representation
+  SEAdenitaCoreSEApp*									getAdenitaApp() const;															///< Returns a pointer to the app
 
+  double scale_;
+
+  ADNNanorobot * nanorobot_;
 
   // current arrays for being displayed (only spheres and cylinders)
   unsigned int nPositions_;
