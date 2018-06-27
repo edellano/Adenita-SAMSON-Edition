@@ -19,6 +19,7 @@ public:
   int GetNumberOfNucleotides();
 
   CollectionMap<ADNPart> GetParts() const;
+  CollectionMap<ADNSingleStrand> GetSingleStrands() const;
 
 private:
 //  /* Getters */
