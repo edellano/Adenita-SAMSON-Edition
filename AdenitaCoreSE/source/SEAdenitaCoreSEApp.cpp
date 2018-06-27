@@ -11,6 +11,8 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
   if (config.clear_log_file) {
     logger.ClearLog();
   }
+
+  nanorobot_ = new ADNNanorobot();
 }
 
 SEAdenitaCoreSEApp::~SEAdenitaCoreSEApp() {
@@ -123,7 +125,36 @@ void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOption
     }
   }
 
-  ADNLoader::OutputToOxDNA(part, folder.toStdString(), options);
+  if (part == nullptr) {
+    // nothing selected: export all
+    ADNLoader::OutputToOxDNA(nanorobot_, folder.toStdString(), options);
+  }
+  else {
+    ADNLoader::OutputToOxDNA(part, folder.toStdString(), options);
+  }
+}
+
+void SEAdenitaCoreSEApp::CenterPart()
+{
+  // get selected part
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  ADNPointer<ADNPart> part = nullptr;
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      part = static_cast<ADNPart*>(node);
+    }
+  }
+
+  if (part != nullptr) ADNBasicOperations::CenterPart(part);
+}
+
+ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
+{
+  return nanorobot_;
 }
 
 void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
