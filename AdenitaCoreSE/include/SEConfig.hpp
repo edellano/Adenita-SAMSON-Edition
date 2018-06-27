@@ -32,6 +32,25 @@ public:
   bool interpolate_dimensions = true;
   float animation_step_size = 0.0f;
   double double_helix_V_color[4] = { 0.0f, 0.43f, 0.86f, 1.0f };
+  double nucleotide_E_Color[4] = { 0.59f, 0.63f, 0.8f, 1.0f };
+  float nucleotide_V_radius = 160.0f;
+  float nucleotide_E_radius = 32.0f;
+  unsigned int num_staple_colors = 12;
+  double staple_colors[48] = { 
+    0.65f, 0.80f, 0.89f, 1.0f, 
+    0.12f, 0.47f, 0.71f, 1.0f,
+    0.70f, 0.87f, 0.54f, 1.0f,
+    0.20f, 0.63f, 0.17f, 1.0f,
+    0.98f, 0.60f, 0.60f, 1.0f,
+    0.89f, 0.10f, 0.11f, 1.0f,
+    0.99f, 0.75f, 0.44f, 1.0f,
+    1.00f, 0.50f, 0.00f, 1.0f,
+    0.79f, 0.70f, 0.84f, 1.0f,
+    0.42f, 0.24f, 0.60f, 1.0f,
+    1.00f, 1.00f, 0.60f, 1.0f,
+    0.69f, 0.35f, 0.16f, 1.0f,
+  };
+
   bool automatic_camera = true;  // adjusting camera according to dimension 
   bool preview_editor = true;  // adjusting camera according to dimension
   // structure prediction and algorithms
