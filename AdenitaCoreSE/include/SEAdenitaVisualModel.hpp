@@ -5,6 +5,12 @@
 #include "SBBaseEvent.hpp"
 #include "SBDocumentEvent.hpp"
 #include "SBStructuralEvent.hpp"
+#include "ADNAuxiliary.hpp"
+#include "ADNArray.hpp"
+#include "ADNMixins.hpp"
+#include "ADNPart.hpp"
+#include "ADNNanorobot.hpp"
+#include "SEConfig.hpp"
 
 
 /// This class implements a visual model
@@ -44,6 +50,7 @@ public :
 	/// \name Rendering
 	//@{
 
+
 	virtual void												display();																///< Displays the visual model
 	virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
@@ -63,6 +70,24 @@ public :
 
 	//@}
 
+private:
+  virtual void												initArraysForDisplay(unsigned int nPositions, unsigned int nCylinders); // Clear the arrays for displaying 
+  virtual ADNArray<unsigned int>      getNucleotideIndices();
+  virtual void												prepareArraysForDisplay(); // Prepare the arrays for displaying (this separates the interpolation from display)
+  virtual void												prepareScale6to7(double iv, bool forSelection = false); // scale 7 -> 8: transition single strands to duplex representation
+
+
+  // current arrays for being displayed (only spheres and cylinders)
+  unsigned int nPositions_;
+  unsigned int nCylinders_;
+  ADNArray<float> colorsV_;
+  ADNArray<float> colorsE_;
+  ADNArray<float> positions_;
+  ADNArray<float> radiiV_;
+  ADNArray<float> radiiE_;
+  ADNArray<unsigned int> flags_;
+  ADNArray<unsigned int> nodeIndices_;
+  ADNArray<unsigned int> indices_;
 
 };
 
