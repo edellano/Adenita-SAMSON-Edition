@@ -268,6 +268,7 @@ public:
   virtual ~ADNCell() {};
   virtual CellType GetType() { return CellType::Undefined; };
   virtual void RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {};
+  virtual CollectionMap<ADNNucleotide> GetNucleotides() { return CollectionMap<ADNNucleotide>(); };
 };
 
 SB_REGISTER_TARGET_TYPE(ADNCell, "ADNCell", "E6BFD315-2734-B4A6-5808-E784AA4102EF");
@@ -287,7 +288,9 @@ public:
   ADNPointer<ADNNucleotide> GetRightNucleotide();
   SBNode* getRight() const;
   void SetRightNucleotide(ADNPointer<ADNNucleotide> nt);
+  void AddPair(ADNPointer<ADNNucleotide> left, ADNPointer<ADNNucleotide> right);
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
+  CollectionMap<ADNNucleotide> GetNucleotides();
 private:
   ADNPointer<ADNNucleotide> left_ = nullptr;
   ADNPointer<ADNNucleotide> right_ = nullptr;
@@ -365,7 +368,7 @@ public:
   void SetRightLoop(ADNPointer<ADNLoop> lp);
 
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
-
+  CollectionMap<ADNNucleotide> GetNucleotides();
 private:
   ADNPointer<ADNLoop> left_ = nullptr;
   ADNPointer<ADNLoop> right_ = nullptr;
@@ -394,6 +397,7 @@ public:
   ADNPointer<ADNBaseSegment> GetNext();
 
   ADNPointer<ADNDoubleStrand> GetDoubleStrand();
+  CollectionMap<ADNNucleotide> GetNucleotides();
 
   void SetCell(ADNCell* c);  // we use raw pointers so subclassing will work
   ADNPointer<ADNCell> GetCell() const;
