@@ -249,6 +249,16 @@
               <string>m13mp18</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>p7249</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Custom...</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="0" column="1">

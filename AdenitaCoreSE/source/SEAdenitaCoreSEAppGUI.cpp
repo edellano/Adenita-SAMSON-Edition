@@ -103,6 +103,10 @@ void SEAdenitaCoreSEAppGUI::onSetScaffold()
   else if (type == ADNAuxiliary::p7249) {
     filename = SB_ELEMENT_PATH + "/Data/p7249.fasta";
   }
+  else if (type == ADNAuxiliary::Custom) {
+    QString fname = QFileDialog::getOpenFileName(this, tr("Select a .fasta file"), QDir::currentPath(), tr("Scaffold (*.fasta)"));
+    if (!fname.isEmpty()) filename = fname.toStdString();
+  }
 
   if (filename.size() > 0) {
     SEAdenitaCoreSEApp *t = getApp();

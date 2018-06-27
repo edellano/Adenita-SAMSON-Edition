@@ -281,7 +281,7 @@ void ADNBasicOperations::SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss,
   ADNPointer<ADNNucleotide> nt = fivePrime;
   int count = 0;
 
-  while (nt != nullptr) {
+  while (count < seq.size() && nt != nullptr) {
     DNABlocks t = ADNModel::ResidueNameToType(seq[count]);
     MutateNucleotide(nt, t, changePair);
     ++count;
