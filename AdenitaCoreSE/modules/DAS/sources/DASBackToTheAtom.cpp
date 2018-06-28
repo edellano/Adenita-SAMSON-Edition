@@ -308,7 +308,7 @@ void DASBackToTheAtom::CheckDistances(ADNPointer<ADNPart> part)
       if (start != 0) {
         auto distance = (prevPos - nt->GetPosition()).norm();
         if (!ADNVectorMath::IsNearlyZero(distance.getValue() - ADNConstants::BP_RISE * 1000)) {
-          std::string msg = "\tNucleotides " + prevName + " and " + nt->GetName() + " too further away: " + std::to_string(distance.getValue()) + "pm";
+          std::string msg = "\tNucleotides " + prevName + " and " + nt->GetName() + " too close or too further away: " + std::to_string(distance.getValue()) + "pm";
           logger.Log(msg);
         }
       }
