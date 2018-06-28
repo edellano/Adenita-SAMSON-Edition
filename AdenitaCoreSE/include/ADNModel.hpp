@@ -78,6 +78,9 @@ public:
   Position3D const & GetPosition() const;
   void SetPosition(Position3D const &newPosition);
 
+  SBNode* getNt() const;
+  SBNode* getNtGroup() const;
+
   bool IsInBackbone();
 };
 
@@ -168,6 +171,7 @@ public:
 
   void SetBaseSegment(ADNPointer<ADNBaseSegment> bs);
   ADNPointer<ADNBaseSegment> GetBaseSegment();
+  SBNode* getBaseSegment() const;
 
   End GetEnd();
   void SetEnd(End e);
@@ -333,8 +337,10 @@ public:
 
   void SetStart(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetStart();
+  SBNode* getStartNucleotide() const;
   void SetEnd(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetEnd();
+  SBNode* getEndNucleotide() const;
   void SetBaseSegment(ADNPointer<ADNBaseSegment> bs, bool setPositions = false);
 
   CollectionMap<ADNNucleotide> GetNucleotides() const;

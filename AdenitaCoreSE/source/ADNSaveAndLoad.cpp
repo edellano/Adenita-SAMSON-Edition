@@ -97,14 +97,17 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
         const Value& right = c["right"];
         int nt_id_left = left.GetInt();
         int nt_id_right = right.GetInt();
-        ADNPointer<ADNNucleotide> ntLeft = nts.at(nt_id_left);
-        ADNPointer<ADNNucleotide> ntRight = nts.at(nt_id_right);
-        ntLeft->SetPair(ntRight);
-        ntRight->SetPair(ntLeft);
-        bp_cell->SetLeftNucleotide(ntLeft);
-        bp_cell->SetRightNucleotide(ntRight);
-        ntLeft->SetBaseSegment(bs);
-        ntRight->SetBaseSegment(bs);
+        ADNPointer<ADNNucleotide> ntLeft = nullptr;
+        if (nt_id_left > -1) {
+          ntLeft = nts.at(nt_id_left);
+          ntLeft->SetBaseSegment(bs);
+        }
+        ADNPointer<ADNNucleotide> ntRight = nullptr;
+        if (nt_id_right > -1) {
+          ntRight = nts.at(nt_id_right);
+          ntRight->SetBaseSegment(bs);
+        }
+        bp_cell->AddPair(ntLeft, ntRight);
         bs->SetCell(bp_cell());
       }
       else if (typ == LoopPair) {
