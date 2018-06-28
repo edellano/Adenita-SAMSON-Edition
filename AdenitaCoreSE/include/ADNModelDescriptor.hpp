@@ -21,6 +21,10 @@ SB_CLASS_BEGIN(ADNAtom);
 
   SB_INTERFACE_BEGIN;
 
+    SB_ATTRIBUTE_READ_WRITE(SBElement::Type, ADNAtom, ElementType, "Atom", "Type of atom");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, Nt, "Nucleotide", "Nucleotide to which the atom belongs");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, NtGroup, "Nucleotide group", "Nucleotide group to which the atom belongs");
+
   SB_INTERFACE_END;
 
 SB_CLASS_END(ADNAtom);
@@ -77,6 +81,7 @@ SB_CLASS_BEGIN(ADNNucleotide);
 
     SB_ATTRIBUTE_READ_ONLY(DNABlocks, ADNNucleotide, NucleotideType, "Type", "Nucleotide type");
     SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, SingleStrand, "Single Strand", "Single Strand");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, BaseSegment, "Base segment", "Base segment");
 
   SB_INTERFACE_END;
 
@@ -191,6 +196,9 @@ SB_CLASS_BEGIN(ADNLoop);
   SB_FACTORY_END;
 
   SB_INTERFACE_BEGIN;
+
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoop, StartNucleotide, "Start nucleotide", "Beggining of loop");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoop, EndNucleotide, "End nucleotide", "End of loop");
 
   SB_INTERFACE_END;
 
