@@ -6,10 +6,6 @@
 #include "SBMStructuralModelNodeRoot.hpp"
 
 
-using BaseSegments = std::map<int, ADNBaseSegment*>;
-using NtSegments = std::map<ADNNucleotide*, ADNBaseSegment*>;
-using NTMap = boost::bimap<unsigned int, ADNNucleotide*>;
-
 class ADNPart : public Orientable, public PositionableSB, public SBStructuralModel {
   SB_CLASS
 public:
@@ -28,6 +24,7 @@ public:
   void RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
   void RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
   void RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
+  void RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, ADNPointer<ADNNucleotide> ntNext);
   void RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at, bool create = false);
 
   unsigned int GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs);

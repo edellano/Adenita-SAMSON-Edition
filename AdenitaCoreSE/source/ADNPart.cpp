@@ -160,6 +160,13 @@ void ADNPart::RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPoi
   nucleotidesIndex_.addReferenceTarget(nt());
 }
 
+void ADNPart::RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, ADNPointer<ADNNucleotide> ntNext)
+{
+  ss->AddNucleotide(nt, ntNext);
+
+  nucleotidesIndex_.addReferenceTarget(nt());
+}
+
 void ADNPart::RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at, bool create)
 {
   nt->AddAtom(g, at);

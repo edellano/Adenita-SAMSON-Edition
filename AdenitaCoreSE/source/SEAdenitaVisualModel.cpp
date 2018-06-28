@@ -99,21 +99,7 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
   unsigned int nCylinders = boost::numeric_cast<unsigned int>(nPositions - singleStrands.size());
 
   ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
-
-  /*std::map<ADNPointer<ADNNucleotide>, unsigned int> ntMap;
-
-  unsigned int index = 0;
-
-  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-
-    auto nucleotides = ss->GetNucleotides();
-
-    SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-      ntMap.insert(make_pair(nt, index));
-      ++index;
-    }
-  }*/
-
+  
   size_t sumNumEdges = 0;
 
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {

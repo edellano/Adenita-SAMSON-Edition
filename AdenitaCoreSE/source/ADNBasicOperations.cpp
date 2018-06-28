@@ -281,7 +281,7 @@ void ADNBasicOperations::SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss,
   ADNPointer<ADNNucleotide> nt = fivePrime;
   int count = 0;
 
-  while (nt != nullptr) {
+  while (count < seq.size() && nt != nullptr) {
     DNABlocks t = ADNModel::ResidueNameToType(seq[count]);
     MutateNucleotide(nt, t, changePair);
     ++count;
@@ -319,6 +319,40 @@ void ADNBasicOperations::MutateBasePairIntoLoopPair(ADNPointer<ADNBaseSegment> b
 void ADNBasicOperations::TwistDoubleHelix(ADNPointer<ADNDoubleStrand> ds, double deg)
 {
   ds->SetInitialTwistAngle(deg);
+}
+
+void ADNBasicOperations::CenterPart(ADNPointer<ADNPart> part)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  SBPosition3 trans = -CalculateCenterOfMass(part);
+  auto baseSegments = part->GetBaseSegments();
+  SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
+    bs->SetPosition(bs->GetPosition() + trans);
+    auto nucleotides = bs->GetNucleotides();
+    SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+      nt->SetPosition(nt->GetPosition() + trans);
+      nt->SetBackbonePosition(nt->GetBackbonePosition() + trans);
+      nt->SetSidechainPosition(nt->GetSidechainPosition() + trans);
+      if (config.use_atomic_details) {
+        auto atoms = nt->GetAtoms();
+        SB_FOR(ADNPointer<ADNAtom> a, atoms) {
+          a->SetPosition(a->GetPosition() + trans);
+        }
+      }
+    }
+  }
+}
+
+SBPosition3 ADNBasicOperations::CalculateCenterOfMass(ADNPointer<ADNPart> part)
+{
+  auto atoms = part->GetAtoms();
+  SBPosition3 cm(SBQuantity::picometer(0.0));
+  SB_FOR(ADNPointer<ADNAtom> a, atoms) {
+    cm += a->GetPosition();
+  }
+  auto sz = atoms.size();
+  cm *= (1.0 / sz);
+  return cm;
 }
 
 std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> ADNBasicOperations::OrderNucleotides(ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2)
