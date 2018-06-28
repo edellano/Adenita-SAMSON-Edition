@@ -103,6 +103,10 @@ void SEAdenitaCoreSEAppGUI::onSetScaffold()
   else if (type == ADNAuxiliary::p7249) {
     filename = SB_ELEMENT_PATH + "/Data/p7249.fasta";
   }
+  else if (type == ADNAuxiliary::Custom) {
+    QString fname = QFileDialog::getOpenFileName(this, tr("Select a .fasta file"), QDir::currentPath(), tr("Scaffold (*.fasta)"));
+    if (!fname.isEmpty()) filename = fname.toStdString();
+  }
 
   if (filename.size() > 0) {
     SEAdenitaCoreSEApp *t = getApp();
@@ -118,6 +122,13 @@ void SEAdenitaCoreSEAppGUI::onSetScaffold()
     t->SetScaffoldSequence(s);
   }
 
+}
+
+void SEAdenitaCoreSEAppGUI::onCenterPart()
+{
+  SEAdenitaCoreSEApp *t = getApp();
+  t->CenterPart();
+  SAMSON::getActiveCamera()->center();
 }
 
 SBCContainerUUID SEAdenitaCoreSEAppGUI::getUUID() const { return SBCContainerUUID( "386506A7-DD8B-69DD-4599-F136C1B91610" );}

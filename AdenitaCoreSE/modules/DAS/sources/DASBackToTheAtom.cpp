@@ -2,7 +2,7 @@
 
 
 DASBackToTheAtom::DASBackToTheAtom() {
-  LoadNucleotides();
+  //LoadNucleotides();
   LoadNtPairs();
 }
 
@@ -308,7 +308,7 @@ void DASBackToTheAtom::CheckDistances(ADNPointer<ADNPart> part)
       if (start != 0) {
         auto distance = (prevPos - nt->GetPosition()).norm();
         if (!ADNVectorMath::IsNearlyZero(distance.getValue() - ADNConstants::BP_RISE * 1000)) {
-          std::string msg = "\tNucleotides " + prevName + " and " + nt->GetName() + " too further away: " + std::to_string(distance.getValue()) + "pm";
+          std::string msg = "\tNucleotides " + prevName + " and " + nt->GetName() + " too close or too further away: " + std::to_string(distance.getValue()) + "pm";
           logger.Log(msg);
         }
       }
@@ -318,6 +318,39 @@ void DASBackToTheAtom::CheckDistances(ADNPointer<ADNPart> part)
       prevPos = nt->GetPosition();
       prevName = nt->GetName();
       nt = nt->GetNext();
+    }
+  }
+
+  auto baseSegments = part->GetBaseSegments();
+  msg = "Checking distances between base segments...";
+  logger.Log(msg);
+  SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
+    auto bsNext = bs->GetNext();
+    if (bsNext != nullptr) {
+      SBPosition3 nextPos = bsNext->GetPosition();
+      std::string nextName = bs->getName();
+      auto distance = (nextPos - bs->GetPosition()).norm();
+      if (!ADNVectorMath::IsNearlyZero(distance.getValue() - ADNConstants::BP_RISE * 1000)) {
+        msg = "\tBase Segments " + nextName + " and " + bs->getName() + " too close or too further away: " + std::to_string(distance.getValue()) + "pm";
+        logger.Log(msg);
+      }
+      if (bs->GetCellType() == BasePair && bsNext->GetCellType() == BasePair) {
+        ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(bs->GetCell()());
+        ADNPointer<ADNBasePair> bpNext = static_cast<ADNBasePair*>(bsNext->GetCell()());
+        ADNPointer<ADNNucleotide> left = bp->GetLeftNucleotide();
+        ADNPointer<ADNNucleotide> right = bp->GetRightNucleotide();
+        ADNPointer<ADNNucleotide> leftNext = bpNext->GetLeftNucleotide();
+        ADNPointer<ADNNucleotide> rightNext = bpNext->GetRightNucleotide();
+        if (left != nullptr && right != nullptr && leftNext != nullptr && rightNext != nullptr) {
+          auto basePairCenterPosition = (left->GetPosition() + right->GetPosition())*0.5;
+          auto basePairCenterPositionNext = (leftNext->GetPosition() + rightNext->GetPosition())*0.5;
+          auto bpDistance = (basePairCenterPosition - basePairCenterPositionNext).norm();
+          if (!ADNVectorMath::IsNearlyZero(bpDistance.getValue() - ADNConstants::BP_RISE * 1000)) {
+            msg = "\tBase Pairs " + nextName + " and " + bs->getName() + " too close or too further away: " + std::to_string(distance.getValue()) + "pm";
+            logger.Log(msg);
+          }
+        }
+      }
     }
   }
 }
@@ -818,7 +851,7 @@ void DASBackToTheAtom::LoadNucleotides() {
     ublas::matrix<double> new_positions = ADNVectorMath::CenterSystem(positions_matrix);
     int r_id = SetAtomsPositions(atoms, new_positions, 0);
     // nt->SetReferenceFrame();
-    auto nt_cms = CalculateCenters(nt);
+    auto nt_cms = CalculateCentersOfMass(nt);
     nt->SetPosition(std::get<0>(nt_cms));
     nt->SetBackbonePosition(std::get<1>(nt_cms));
     nt->SetSidechainPosition(std::get<2>(nt_cms));
@@ -852,14 +885,17 @@ void DASBackToTheAtom::LoadNtPairs() {
     SetReferenceFrame(nt_pair);
 
     // Set positions
-    auto nt_right_cms = CalculateCenters(nt_right);
-    auto nt_left_cms = CalculateCenters(nt_left);
-    nt_right->SetPosition(std::get<0>(nt_right_cms));
-    nt_left->SetPosition(std::get<0>(nt_left_cms));
-    nt_right->SetBackbonePosition(std::get<1>(nt_right_cms));
-    nt_left->SetBackbonePosition(std::get<1>(nt_left_cms));
-    nt_right->SetSidechainPosition(std::get<2>(nt_right_cms));
-    nt_left->SetSidechainPosition(std::get<2>(nt_left_cms));
+    auto nt_right_cms = CalculateCentersOfMass(nt_right);
+    auto nt_left_cms = CalculateCentersOfMass(nt_left);
+    // center pair
+    auto total_cms = (std::get<0>(nt_right_cms) + std::get<0>(nt_left_cms))*0.5;
+
+    nt_right->SetPosition(std::get<0>(nt_right_cms) - total_cms);
+    nt_left->SetPosition(std::get<0>(nt_left_cms) - total_cms);
+    nt_right->SetBackbonePosition(std::get<1>(nt_right_cms) - total_cms);
+    nt_left->SetBackbonePosition(std::get<1>(nt_left_cms) - total_cms);
+    nt_right->SetSidechainPosition(std::get<2>(nt_right_cms) - total_cms);
+    nt_left->SetSidechainPosition(std::get<2>(nt_left_cms) - total_cms);
 
 
     if (it->left == std::make_pair(DNABlocks::DA, DNABlocks::DT)) {

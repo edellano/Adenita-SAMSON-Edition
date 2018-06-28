@@ -134,6 +134,24 @@ void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOption
   }
 }
 
+void SEAdenitaCoreSEApp::CenterPart()
+{
+  // get selected part
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  ADNPointer<ADNPart> part = nullptr;
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      part = static_cast<ADNPart*>(node);
+    }
+  }
+
+  if (part != nullptr) ADNBasicOperations::CenterPart(part);
+}
+
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
 {
   return nanorobot_;
@@ -142,12 +160,12 @@ ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
 void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
 {
   DASBackToTheAtom btta = DASBackToTheAtom();
-  btta.CheckDistances(part);
   btta.SetNucleotidesPostions(part);
   SEConfig& config = SEConfig::GetInstance();
   if (config.use_atomic_details) {
     btta.GenerateAllAtomModel(part);
   }
+  btta.CheckDistances(part);
 
   SAMSON::beginHolding("Add model");
   part->create();

@@ -446,13 +446,17 @@ ADNPointer<ADNSingleStrand> DASEditor::CreateSingleStrand(int length, SBPosition
   return ss;
 }
 
-ADNPointer<ADNLoop> DASEditor::CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq)
+ADNPointer<ADNLoop> DASEditor::CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq, ADNPointer<ADNPart> part)
 {
   ADNPointer<ADNLoop> loop = new ADNLoop();
 
   for (size_t k = 0; k < seq.size(); ++k) {
     ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
-    ss->AddNucleotide(nt, nextNt);
+    if (part != nullptr) {
+      part->RegisterNucleotide(ss, nt, nextNt);
+    }else {
+      ss->AddNucleotide(nt, nextNt);
+    }
     nt->SetType(ADNModel::ResidueNameToType(seq[k]));
     loop->AddNucleotide(nt);
     if (k == 0) loop->SetStart(nt);

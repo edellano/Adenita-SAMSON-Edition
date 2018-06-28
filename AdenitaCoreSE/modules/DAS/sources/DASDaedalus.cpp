@@ -628,9 +628,9 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
     ADNPointer<ADNBaseSegment> bs = begin;
     DASEdge* e = fhe->edge_;
     int length = bpLengths_.at(e) + 1;  // to include polyTs
-    ADNPointer<ADNBaseSegment> bs_pair = AdvanceBaseSegment(firstBasesHe_.at(she), length - 1); // since the last one is a PolyT
+    ADNPointer<ADNBaseSegment> bs_pair = AdvanceBaseSegment(firstBasesHe_.at(she), length - 2); // since the last one is a PolyT
 
-    for (int i = 0; i < length; ++i) {
+    for (int i = 0; i < length - 1; ++i) {
       //if (bs->GetCell()->GetType() == CellType::BasePair) {
         // we only pair ANTBasePair
         //ds->AddBaseSegmentEnd(bs);
@@ -871,7 +871,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
   int len = 0;
 
   bool fst = true; // we can change it for polyT to int = 0, 1, 2
-  ADNPointer<ADNNucleotide> next_nt = new ADNNucleotide();
+  ADNPointer<ADNNucleotide> prev_nt = new ADNNucleotide();
 
   int count = 0;
   for (auto pit = ps.begin(); pit != ps.end(); ++pit) {
@@ -912,7 +912,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
       
       nt->SetBaseSegment(bs);
 
-      next_nt = nt->GetNext();
+      prev_nt = nt;
       bs = bs->GetNext();
     }
     if (count % 2 != 0) {
@@ -928,14 +928,10 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
         for (int i = 0; i < num_poly_t_; ++i) {
           seq += "T";
         }
-        ADNPointer<ADNLoop> loop = DASEditor::CreateLoop(chain, next_nt, seq);
-        auto loopNts = loop->GetNucleotides();
-        SB_FOR(ADNPointer<ADNNucleotide> nt, loopNts) {
-          part->RegisterNucleotideFivePrime(chain, nt);
-        }
+        ADNPointer<ADNLoop> loop = DASEditor::CreateLoop(chain, prev_nt, seq, part);
         loop->SetBaseSegment(bs);
         loop_cell->SetRightLoop(loop);
-        next_nt = loop->GetStart();  // we move backwards
+        prev_nt = loop->GetStart();  // we move backwards
         bs = bs->GetNext();
       }
     }

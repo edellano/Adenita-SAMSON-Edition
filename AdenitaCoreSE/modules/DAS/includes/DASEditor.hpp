@@ -26,7 +26,7 @@ namespace DASEditor {
   ADNPointer<ADNDoubleStrand> CreateDoubleStrand(int length, SBPosition3 start, SBVector3 direction);
   ADNPointer<ADNSingleStrand> CreateSingleStrand(int length, SBPosition3 start, SBVector3 direction);
 
-  ADNPointer<ADNLoop> CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq);
+  ADNPointer<ADNLoop> CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq, ADNPointer<ADNPart> part = nullptr);
 
   ///**
   // * Creates a straight double helix between the given spatial points
