@@ -228,7 +228,7 @@ void SEAdenitaVisualModel::prepareArraysForDisplay()
 
 }
 
-void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection /*= false*/)
+void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 {
   SEConfig& config = SEConfig::GetInstance();
 
@@ -240,6 +240,22 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection /*= fal
   initArraysForDisplay(nPositions, nCylinders);
 
   unsigned int index = 0;
+
+  /*SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+
+    auto nucleotides = ss->GetNucleotides();
+
+    ADNPointer<ADNNucleotide> cur = ss->GetFivePrime();
+
+    size_t curNCylinders = nucleotides.size() - 1;
+    ADNArray<unsigned int> curIndices = ADNArray<unsigned int>(2 * curNCylinders);
+
+    unsigned int j = 0;
+
+    while (cur->GetNext() != nullptr) {
+
+    }
+  }*/
 
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
 
@@ -271,14 +287,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection /*= fal
 
         //if (config.interpolate_dimensions) interpolateDimension(pos1D, pos2D, pos3D, positions_, index);
 
-        /*if (config.show_nucleobase_text) {
-          SBPosition3 curPos = SBPosition3(SBQuantity::picometer(positions_(index, 0)),
-            SBQuantity::picometer(positions_(index, 1)),
-            SBQuantity::picometer(positions_(index, 2))
-            );
-          displayText(curPos, nucleotide);
-        }*/
-
         float minVColorR;
         float minVColorG;
         float minVColorB;
@@ -293,23 +301,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection /*= fal
 
         if (ss->IsScaffold())
         {
-          //if (showMeltingTemperature_ || showGibbsFreeEnergy_) {
-          //  minVColorR = propertyNucleotideColorsV_(index, 0);
-          //  minVColorG = propertyNucleotideColorsV_(index, 1);
-          //  minVColorB = propertyNucleotideColorsV_(index, 2);
-          //  minVColorA = propertyNucleotideColorsV_(index, 3);
-
-          //  maxVColorR = propertyNucleotideColorsV_(index, 0);
-          //  maxVColorG = propertyNucleotideColorsV_(index, 1);
-          //  maxVColorB = propertyNucleotideColorsV_(index, 2);
-          //  maxVColorA = propertyNucleotideColorsV_(index, 3);
-
-          //  colorsE_(index, 0) = propertyNucleotideColorsV_(index, 0);
-          //  colorsE_(index, 1) = propertyNucleotideColorsV_(index, 1);
-          //  colorsE_(index, 2) = propertyNucleotideColorsV_(index, 2);
-          //  colorsE_(index, 3) = propertyNucleotideColorsV_(index, 3);
-          //}
-          //else {
             minVColorR = config.nucleotide_E_Color[0];
             minVColorG = config.nucleotide_E_Color[1];
             minVColorB = config.nucleotide_E_Color[2];
@@ -325,7 +316,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection /*= fal
             colorsE_(index, 2) = config.nucleotide_E_Color[2];
             colorsE_(index, 3) = config.nucleotide_E_Color[3];
 
-          //}
         }
         else
         {
@@ -338,23 +328,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection /*= fal
           colorsE_(index, 1) = maxVColorG;
           colorsE_(index, 2) = maxVColorB;
           colorsE_(index, 3) = maxVColorA;
-          /*
-                    if (showMeltingTemperature_ || showGibbsFreeEnergy_) {
-                      minVColorR = propertyNucleotideColorsV_(index, 0);
-                      minVColorG = propertyNucleotideColorsV_(index, 1);
-                      minVColorB = propertyNucleotideColorsV_(index, 2);
-                      minVColorA = propertyNucleotideColorsV_(index, 3);
-
-                      maxVColorR = propertyNucleotideColorsV_(index, 0);
-                      maxVColorG = propertyNucleotideColorsV_(index, 1);
-                      maxVColorB = propertyNucleotideColorsV_(index, 2);
-                      maxVColorA = propertyNucleotideColorsV_(index, 3);
-
-                      colorsE_(index, 0) = propertyNucleotideColorsV_(index, 0);
-                      colorsE_(index, 1) = propertyNucleotideColorsV_(index, 1);
-                      colorsE_(index, 2) = propertyNucleotideColorsV_(index, 2);
-                      colorsE_(index, 3) = propertyNucleotideColorsV_(index, 3);
-                    }*/
         }
 
         colorsV_(index, 0) = minVColorR + iv * (maxVColorR - minVColorR);
