@@ -160,12 +160,12 @@ ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
 void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
 {
   DASBackToTheAtom btta = DASBackToTheAtom();
-  btta.CheckDistances(part);
   btta.SetNucleotidesPostions(part);
   SEConfig& config = SEConfig::GetInstance();
   if (config.use_atomic_details) {
     btta.GenerateAllAtomModel(part);
   }
+  btta.CheckDistances(part);
 
   SAMSON::beginHolding("Add model");
   part->create();

@@ -628,9 +628,9 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
     ADNPointer<ADNBaseSegment> bs = begin;
     DASEdge* e = fhe->edge_;
     int length = bpLengths_.at(e) + 1;  // to include polyTs
-    ADNPointer<ADNBaseSegment> bs_pair = AdvanceBaseSegment(firstBasesHe_.at(she), length - 1); // since the last one is a PolyT
+    ADNPointer<ADNBaseSegment> bs_pair = AdvanceBaseSegment(firstBasesHe_.at(she), length - 2); // since the last one is a PolyT
 
-    for (int i = 0; i < length; ++i) {
+    for (int i = 0; i < length - 1; ++i) {
       //if (bs->GetCell()->GetType() == CellType::BasePair) {
         // we only pair ANTBasePair
         //ds->AddBaseSegmentEnd(bs);
