@@ -70,6 +70,9 @@ public:
 
 	};
 
+public slots:
+  void                              onSliderScaleChanged(int val);
+
 private:
 
 	friend class SEAdenitaVisualModel;

@@ -239,31 +239,20 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
   initArraysForDisplay(nPositions, nCylinders);
 
-  unsigned int index = 0;
-
-  /*SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-
-    auto nucleotides = ss->GetNucleotides();
-
-    ADNPointer<ADNNucleotide> cur = ss->GetFivePrime();
-
-    size_t curNCylinders = nucleotides.size() - 1;
-    ADNArray<unsigned int> curIndices = ADNArray<unsigned int>(2 * curNCylinders);
-
-    unsigned int j = 0;
-
-    while (cur->GetNext() != nullptr) {
-
-    }
-  }*/
-
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
 
     if (ss->isVisible()) {
 
       auto nucleotides = ss->GetNucleotides();
 
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+      ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
+
+      unsigned int j = 0;
+
+      while (nt->GetNext() != nullptr) {
+
+        unsigned int index;
+        nucleotides.getIndex(nt(), index);
 
         radiiV_(index) = config.nucleotide_V_radius;
 
@@ -301,20 +290,20 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
         if (ss->IsScaffold())
         {
-            minVColorR = config.nucleotide_E_Color[0];
-            minVColorG = config.nucleotide_E_Color[1];
-            minVColorB = config.nucleotide_E_Color[2];
-            minVColorA = config.nucleotide_E_Color[3];
+          minVColorR = config.nucleotide_E_Color[0];
+          minVColorG = config.nucleotide_E_Color[1];
+          minVColorB = config.nucleotide_E_Color[2];
+          minVColorA = config.nucleotide_E_Color[3];
 
-            maxVColorR = config.nucleotide_E_Color[0];
-            maxVColorG = config.nucleotide_E_Color[1];
-            maxVColorB = config.nucleotide_E_Color[2];
-            maxVColorA = config.nucleotide_E_Color[3];
+          maxVColorR = config.nucleotide_E_Color[0];
+          maxVColorG = config.nucleotide_E_Color[1];
+          maxVColorB = config.nucleotide_E_Color[2];
+          maxVColorA = config.nucleotide_E_Color[3];
 
-            colorsE_(index, 0) = config.nucleotide_E_Color[0];
-            colorsE_(index, 1) = config.nucleotide_E_Color[1];
-            colorsE_(index, 2) = config.nucleotide_E_Color[2];
-            colorsE_(index, 3) = config.nucleotide_E_Color[3];
+          colorsE_(index, 0) = config.nucleotide_E_Color[0];
+          colorsE_(index, 1) = config.nucleotide_E_Color[1];
+          colorsE_(index, 2) = config.nucleotide_E_Color[2];
+          colorsE_(index, 3) = config.nucleotide_E_Color[3];
 
         }
         else
@@ -342,10 +331,12 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
           radiiE_(index) = config.nucleotide_E_radius;
         }
 
-        ++index;
+        nt = nt->GetNext();
+
       }
     }
   }
+
 }
 
 SEAdenitaCoreSEApp* SEAdenitaVisualModel::getAdenitaApp() const
