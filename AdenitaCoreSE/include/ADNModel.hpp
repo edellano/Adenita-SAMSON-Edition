@@ -231,6 +231,7 @@ public:
 
   void IsScaffold(bool b);
   bool IsScaffold();
+  int getNumberOfNucleotides() const;
   CollectionMap<ADNNucleotide> GetNucleotides() const;
   ADNPointer<ADNNucleotide> GetNucleotide(unsigned int id) const;
   void AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt);  // add nucleotide to the three prime end
@@ -399,8 +400,8 @@ public:
   void setNumber(int n);
   int getNumber() const;
 
-  ADNPointer<ADNBaseSegment> GetPrev();
-  ADNPointer<ADNBaseSegment> GetNext();
+  ADNPointer<ADNBaseSegment> GetPrev() const;
+  ADNPointer<ADNBaseSegment> GetNext() const;
 
   ADNPointer<ADNDoubleStrand> GetDoubleStrand();
   CollectionMap<ADNNucleotide> GetNucleotides();
@@ -408,6 +409,7 @@ public:
   void SetCell(ADNCell* c);  // we use raw pointers so subclassing will work
   ADNPointer<ADNCell> GetCell() const;
   CellType GetCellType() const;
+  std::string getCellType() const;
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
 
 private:
@@ -429,6 +431,7 @@ public:
 
   void SetInitialTwistAngle(double angle);
   double GetInitialTwistAngle() const;
+  double getInitialTwistAngle() const;
 
   int GetLength() const;
   int getLength() const;
@@ -436,8 +439,10 @@ public:
   CollectionMap<ADNBaseSegment> GetBaseSegments() const;
   ADNPointer<ADNBaseSegment> GetNthBaseSegment(int n);  // return the base segment by position in the double strand
 
-  ADNPointer<ADNBaseSegment> GetFirstBaseSegment();
-  ADNPointer<ADNBaseSegment> GetLastBaseSegment();
+  ADNPointer<ADNBaseSegment> GetFirstBaseSegment() const;
+  SBNode* getFirstBaseSegment() const;
+  ADNPointer<ADNBaseSegment> GetLastBaseSegment() const;
+  SBNode* getLastBaseSegment() const;
 
   void AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs);
   void AddBaseSegmentEnd(ADNPointer<ADNBaseSegment> bs);

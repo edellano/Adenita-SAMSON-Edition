@@ -371,6 +371,11 @@ bool ADNSingleStrand::IsScaffold()
   return isScaffold_;
 }
 
+int ADNSingleStrand::getNumberOfNucleotides() const
+{
+  return boost::numeric_cast<int>(GetNucleotides().size());
+}
+
 CollectionMap<ADNNucleotide> ADNSingleStrand::GetNucleotides() const
 {
   CollectionMap<ADNNucleotide> ntList;
@@ -764,13 +769,13 @@ int ADNBaseSegment::getNumber() const
   return GetNumber();
 }
 
-ADNPointer<ADNBaseSegment> ADNBaseSegment::GetPrev()
+ADNPointer<ADNBaseSegment> ADNBaseSegment::GetPrev() const
 {
   auto p = static_cast<ADNBaseSegment*>(getPreviousStructuralNode());
   return ADNPointer<ADNBaseSegment>(p);
 }
 
-ADNPointer<ADNBaseSegment> ADNBaseSegment::GetNext()
+ADNPointer<ADNBaseSegment> ADNBaseSegment::GetNext() const
 {
   auto p = static_cast<ADNBaseSegment*>(getNextStructuralNode());
   return ADNPointer<ADNBaseSegment>(p);
@@ -804,6 +809,12 @@ CellType ADNBaseSegment::GetCellType() const
   return cell->GetType();
 }
 
+std::string ADNBaseSegment::getCellType() const
+{
+  auto t = GetCellType();
+  return ADNModel::CellTypeToString(t);
+}
+
 void ADNBaseSegment::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   ADNPointer<ADNCell> cell = GetCell();
   cell->RemoveNucleotide(nt);
@@ -833,6 +844,11 @@ void ADNDoubleStrand::SetInitialTwistAngle(double angle)
 double ADNDoubleStrand::GetInitialTwistAngle() const
 {
   return initialTwistAngle_;
+}
+
+double ADNDoubleStrand::getInitialTwistAngle() const
+{
+  return GetInitialTwistAngle();
 }
 
 int ADNDoubleStrand::GetLength() const
@@ -867,14 +883,24 @@ ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetNthBaseSegment(int n)
   return bs;
 }
 
-ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetFirstBaseSegment()
+ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetFirstBaseSegment() const
 {
   return start_;
 }
 
-ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetLastBaseSegment()
+SBNode * ADNDoubleStrand::getFirstBaseSegment() const
+{
+  return GetFirstBaseSegment()();
+}
+
+ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetLastBaseSegment() const
 {
   return end_;
+}
+
+SBNode * ADNDoubleStrand::getLastBaseSegment() const
+{
+  return GetLastBaseSegment()();
 }
 
 void ADNDoubleStrand::AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs)
