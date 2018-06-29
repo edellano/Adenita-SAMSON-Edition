@@ -1,21 +1,18 @@
 #pragma once
 
-#include "ADNNanorobot.hpp"
 #include "rapidjson/reader.h"
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
-#include "ADNAuxiliary.hpp"
-#include "ADNConstants.hpp"
-#include <iostream>
+#include "rapidjson/pointer.h"
 #include "rapidjson/filereadstream.h"
+#include <iostream>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <string>
+#include "ADNNanorobot.hpp"
+#include "ADNAuxiliary.hpp"
+#include "ADNConstants.hpp"
 
-// include Daedalus header for useful functions
-// todo:
-// put this functions outside module and into core or DASHelpers
-// #include "DASDaedalus.hpp" // can't be included because boost foreach conflicts
 
 using namespace std;
 using namespace rapidjson;
@@ -24,6 +21,10 @@ double const bp_rise_ = ADNConstants::BP_RISE; // nm
 double const bp_rot_ = ADNConstants::BP_ROT; // rotation in degrees of nts around Z axis
 double const dh_diameter_ = ADNConstants::DH_DIAMETER; // nm
 double const bp_cadnano_dist_ = ADNConstants::BP_CADNANO_DIST; //0.25 * dh_diameter_; //nm
+
+using LatticeType = ADNConstants::CadnanoLatticeType;
+
+namespace ublas = boost::numeric::ublas;
 
 //JSON Parsing
 struct vec2 {
@@ -37,6 +38,45 @@ struct vec4 {
   int n2;
   int n3;
 };
+
+using Vec4List = std::map<int, vec4>;
+
+struct Vstrand2 {
+  int totalLength_;  // total length, including positions without nothing
+  int num_;  // identification
+  Vec4List scaf_;  // key is position that scaffold base occupies in the vhelix
+  Vec4List stap_;
+  int col_;  // row and column
+  int row_;
+  std::map<int, int> loops_;
+  std::map<int, int> skips_;
+};
+
+struct CadnanoJSONFile2 {
+  string name_;
+  std::map<int, Vstrand2> vstrands_;  // key is vStrand num
+  LatticeType lType_;
+  std::pair<int, int> scaffoldStartPosition_;  // first is vhelix num, second is position  within it
+};
+
+//Grid from caDNAno
+struct LatticeCell {
+  double x_;
+  double y_;
+};
+
+struct Lattice {
+  ublas::matrix<LatticeCell> mat_;
+
+  void CreateSquareLattice();
+  void CreateHoneycombLattice();
+
+  LatticeCell GetLatticeCell(unsigned int row, unsigned int column);
+
+  size_t GetNumberRows();
+  size_t GetNumberCols();
+};
+
 
 struct Vstrand {
   //order is the same as in the cadnano 2.0 json format
@@ -58,79 +98,23 @@ struct CadnanoJSONFile {
   std::map<int, int> numToIdMap_; //id != num in vstrand. the mapping is saved to speed up the lookup
 };
 
-
-//Grid from caDNAno
-namespace ublas = boost::numeric::ublas;
-
-//enum LatticeType {
-//  Honeycomb = 0,
-//  Square = 1,
-//  LatticeFree = 2
-//};
-using LatticeType = ADNConstants::CadnanoLatticeType;
-
-struct LatticeCell {
-  //positions by taking LatticeType into account 
-
-  double x_;
-  double y_;
+struct VTube {
+  int vStrandId_;
+  int initPos_;
+  int endPos_;
 };
 
-struct Lattice {
-  ublas::matrix<LatticeCell> mat_;
-  
-  void CreateSquareLattice() {
-    mat_ = ublas::matrix<LatticeCell>(55, 55); // in cadnano 2.0 square lattice is 50x50, honeycomb is 30 x 32
+struct VGrid2 {
+  std::vector<VTube> vDoubleStrands_; // = vstrands
+  Lattice lattice_;
 
-    for (unsigned row = 0; row < mat_.size1(); ++row) {
-      for (unsigned column = 0; column < mat_.size2(); ++column) {
-        //todo
-        LatticeCell lc;
-        lc.x_ = row * dh_diameter_;
-        lc.y_ = column * dh_diameter_;
-        mat_(row, column) = lc;
-      }
-    }
-  }
+  void CreateLattice(LatticeType lType);
 
-  void CreateHoneycombLattice() {
-    mat_ = ublas::matrix<LatticeCell>(30, 32); // in cadnano 2.0 square lattice is 50x50, honeycomb is 30 x 32
-    double angle = 120.0;  // deg
-    double delt_y = dh_diameter_ * sin(ADNVectorMath::DegToRad(angle - 90)) * 0.5;
-    double delt_x = dh_diameter_ * cos(ADNVectorMath::DegToRad(angle - 90));
-    double offset = delt_y;
+  void AddTube(VTube tube);
 
-    for (unsigned int row = 0; row < mat_.size1(); ++row) {
-      for (unsigned int column = 0; column < mat_.size2(); ++column) {
-        double off = offset;
-        if ((row + column) % 2 == 0) off *= -1;
-        LatticeCell lc;
-        lc.x_ = column * delt_x;
-        lc.y_ = row * (dh_diameter_ + 2 * delt_y) + off;
-        mat_(row, column) = lc;
-      }
-    }
-  }
-
-  LatticeCell GetLatticeCell(unsigned int row, unsigned int column) {
-    size_t rSize = mat_.size1();
-    size_t cSize = mat_.size2();
-    ADNLogger& logger = ADNLogger::GetLogger();
-    if (row >= rSize || column >= cSize) {
-      std::string msg = "Lattice overflow. Probably worng lattice type was selected.";
-      logger.Log(msg);
-    }
-    return mat_(row, column);
-  }
-
-  size_t GetNumberRows() {
-    return mat_.size1();
-  }
-
-  size_t GetNumberCols() {
-    return mat_.size2();
-  }
+  SBPosition3 GetGridCellPos3D(int vStrandId, int z, unsigned int row, unsigned int column);
 };
+
 
 struct VCellPos {
   double h_;
@@ -265,6 +249,20 @@ struct VGrid {
 class DASCadnano {
 
 private:
+  // refactoring members
+  CadnanoJSONFile2 json2_;
+  VGrid2 vGrid2_;
+
+  // refactoring methods
+  void ParseJSON2(std::string filename);
+  void ParseCadnanoFormat3(Document& d);
+  void ParseCadnanoLegacy(Document& d);
+
+  ADNPointer<ADNPart> CreateCadnanoModel();
+  void CreateEdgeMap2(ADNPointer<ADNPart> nanorobot);
+  void CreateScaffold2(ADNPointer<ADNPart> nanorobot);
+  void CreateStaples2(ADNPointer<ADNPart> nanorobot);
+
   CadnanoJSONFile json_;
   VGrid vGrid_;
   std::map<Vstrand*, std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>>> cellBsMap_;
@@ -278,8 +276,10 @@ public:
   DASCadnano() = default;
   ~DASCadnano() = default;
 
+  // refactoring methods
+  ADNPointer<ADNPart> CreateCadnanoPart(std::string file);
+
   void ParseJSON(string file);
-  void WriteJSON();
 
   void CreateModel(ADNPointer<ADNPart> nanorobot, string seq, LatticeType lattice);
   void CreateEdgeMap(ADNPointer<ADNPart> nanorobot);
