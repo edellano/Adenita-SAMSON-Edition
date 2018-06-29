@@ -346,9 +346,19 @@ ADNPointer<ADNNucleotide> ADNSingleStrand::GetFivePrime()
   return fivePrime_;
 }
 
+SBNode * ADNSingleStrand::getFivePrime() const
+{
+  return fivePrime_();
+}
+
 ADNPointer<ADNNucleotide> ADNSingleStrand::GetThreePrime()
 {
   return threePrime_;
+}
+
+SBNode * ADNSingleStrand::getThreePrime() const
+{
+  return threePrime_();
 }
 
 void ADNSingleStrand::SetFivePrime(ADNPointer<ADNNucleotide> nt)
@@ -457,7 +467,8 @@ void ADNSingleStrand::ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq) {
   }
 }
 
-std::string ADNSingleStrand::GetSequence() {
+std::string ADNSingleStrand::GetSequence() const
+{
   std::string seq = "";
   ADNPointer<ADNNucleotide> nt = fivePrime_;
   while (nt != nullptr) {
@@ -467,7 +478,13 @@ std::string ADNSingleStrand::GetSequence() {
   return seq;
 }
 
-double ADNSingleStrand::GetGCContent() {
+std::string ADNSingleStrand::getSequence() const
+{
+  return GetSequence();
+}
+
+double ADNSingleStrand::GetGCContent() const
+{
   double gcCont = 0.0;
   auto nucleotides = GetNucleotides();
 
@@ -478,6 +495,11 @@ double ADNSingleStrand::GetGCContent() {
   }
   gcCont /= nucleotides.size();
   return gcCont;
+}
+
+double ADNSingleStrand::getGCContent() const
+{
+  return GetGCContent();
 }
 
 void ADNSingleStrand::SetSequence(std::string seq) {
@@ -1070,6 +1092,24 @@ SBNode * ADNLoop::getEndNucleotide() const
   return endNt_();
 }
 
+int ADNLoop::getNumberOfNucleotides() const
+{
+  return boost::numeric_cast<int>(GetNucleotides().size());
+}
+
+std::string ADNLoop::getLoopSequence() const
+{
+  std::string seq = "";
+  ADNPointer<ADNNucleotide> nt = startNt_;
+  while(nt != endNt_->GetNext()) {
+    DNABlocks t = nt->GetType();
+    seq += ADNModel::GetResidueName(t);
+    nt = nt->GetNext();
+  }
+
+  return seq;
+}
+
 void ADNLoop::SetBaseSegment(ADNPointer<ADNBaseSegment> bs, bool setPositions)
 {
   auto nts = GetNucleotides();
@@ -1163,6 +1203,11 @@ bool ADNBackbone::DeleteAtom(ADNPointer<ADNAtom> atom)
   return removeChild(atom());
 }
 
+int ADNBackbone::getNumberOfAtoms() const
+{
+  return boost::numeric_cast<int>(GetAtoms().size());
+}
+
 CollectionMap<ADNAtom> ADNBackbone::GetAtoms() const
 {
   CollectionMap<ADNAtom> atomList;
@@ -1218,7 +1263,12 @@ bool ADNSidechain::DeleteAtom(ADNPointer<ADNAtom> atom)
   return removeChild(atom());
 }
 
-CollectionMap<ADNAtom> ADNSidechain::GetAtoms()
+int ADNSidechain::getNumberOfAtoms() const
+{
+  return boost::numeric_cast<int>(GetAtoms().size());
+}
+
+CollectionMap<ADNAtom> ADNSidechain::GetAtoms() const
 {
   CollectionMap<ADNAtom> atomList;
 
