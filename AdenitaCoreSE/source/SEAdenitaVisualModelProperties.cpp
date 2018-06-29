@@ -90,7 +90,7 @@ bool SEAdenitaVisualModelProperties::setup() {
 		visualModel = static_cast<SEAdenitaVisualModel*>((nodeIndexer)[0]);
 		visualModel->connectBaseSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onBaseEvent));
 		visualModel->connectVisualSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onVisualEvent));
-    connect(ui.hslScale, SIGNAL(valueChanged(int)), this, SLOT(onSliderScaleChanged(int)));
+    connect(ui.hslScale, SIGNAL(sliderMoved(int)), this, SLOT(onSliderScaleChanged(int)));
 
 		return true;
 
@@ -109,6 +109,7 @@ bool SEAdenitaVisualModelProperties::setup(SBNode* node) {
 	visualModel = static_cast<SEAdenitaVisualModel*>(node);
 	visualModel->connectBaseSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onBaseEvent));
 	visualModel->connectVisualSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onVisualEvent));
+  connect(ui.hslScale, SIGNAL(sliderMoved(int)), this, SLOT(onSliderScaleChanged(int)));
 
 	return true;
 
