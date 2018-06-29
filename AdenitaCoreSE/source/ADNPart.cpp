@@ -64,19 +64,34 @@ CollectionMap<ADNNucleotide> ADNPart::GetNucleotides(CellType celltype) const
   return nucleotidesIndex_;
 }
 
-int ADNPart::GetNumberOfNucleotides() 
+int ADNPart::GetNumberOfNucleotides() const
 {
   return boost::numeric_cast<int>(GetNucleotides().size());
 }
 
-int ADNPart::GetNumberOfAtoms() 
+int ADNPart::getNumberOfNucleotides() const
+{
+  return GetNumberOfNucleotides();
+}
+
+int ADNPart::GetNumberOfAtoms() const
 {
   return boost::numeric_cast<int>(GetAtoms().size());
 }
 
-int ADNPart::GetNumberOfBaseSegments() 
+int ADNPart::getNumberOfAtoms() const
+{
+  return GetNumberOfAtoms();
+}
+
+int ADNPart::GetNumberOfBaseSegments() const
 {
   return boost::numeric_cast<int>(GetBaseSegments().size());
+}
+
+int ADNPart::getNumberOfBaseSegments() const
+{
+  return GetNumberOfBaseSegments();
 }
 
 CollectionMap<ADNSingleStrand> ADNPart::GetSingleStrands() const
@@ -94,14 +109,24 @@ CollectionMap<ADNAtom> ADNPart::GetAtoms() const
   return atomsIndex_;
 }
 
-int ADNPart::GetNumberOfDoubleStrands()
+int ADNPart::GetNumberOfDoubleStrands() const
 {
   return boost::numeric_cast<int>(GetDoubleStrands().size());
 }
 
-int ADNPart::GetNumberOfSingleStrands()
+int ADNPart::getNumberOfDoubleStrands() const
+{
+  return GetNumberOfDoubleStrands();
+}
+
+int ADNPart::GetNumberOfSingleStrands() const
 {
   return boost::numeric_cast<int>(GetSingleStrands().size());
+}
+
+int ADNPart::getNumberOfSingleStrands() const
+{
+  return GetNumberOfSingleStrands();
 }
 
 void ADNPart::DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss) 
