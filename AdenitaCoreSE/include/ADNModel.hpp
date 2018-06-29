@@ -118,6 +118,7 @@ public:
   bool AddAtom(ADNPointer<ADNAtom> atom);
   bool DeleteAtom(ADNPointer<ADNAtom> atom);
   CollectionMap<ADNAtom> GetAtoms() const;
+  int getNumberOfAtoms() const;
 
   NucleotideGroup GetGroupType();
 
@@ -138,7 +139,8 @@ public:
 
   bool AddAtom(ADNPointer<ADNAtom> atom);
   bool DeleteAtom(ADNPointer<ADNAtom> atom);
-  CollectionMap<ADNAtom> GetAtoms();
+  CollectionMap<ADNAtom> GetAtoms() const;
+  int getNumberOfAtoms() const;
 
   NucleotideGroup GetGroupType();
 
@@ -223,7 +225,9 @@ public:
   void SetName(const std::string &name);
 
   ADNPointer<ADNNucleotide> GetFivePrime();
+  SBNode* getFivePrime() const;
   ADNPointer<ADNNucleotide> GetThreePrime();
+  SBNode* getThreePrime() const;
 
   // if using these functions, make sure nucleotides are properly added
   void SetFivePrime(ADNPointer<ADNNucleotide> nt);
@@ -248,11 +252,13 @@ public:
   * Returns the sequence of the strand
   * \param sequence from 5' to 3'
   */
-  std::string GetSequence();
+  std::string GetSequence() const;
+  std::string getSequence() const;
   /**
   * Returns GC content as a % in this strand
   */
-  double GetGCContent();
+  double GetGCContent() const;
+  double getGCContent() const;
 
   void SetSequence(std::string seq);
   void SetDefaultName();
@@ -343,6 +349,8 @@ public:
   ADNPointer<ADNNucleotide> GetEnd();
   SBNode* getEndNucleotide() const;
   void SetBaseSegment(ADNPointer<ADNBaseSegment> bs, bool setPositions = false);
+  int getNumberOfNucleotides() const;
+  std::string getLoopSequence() const;
 
   CollectionMap<ADNNucleotide> GetNucleotides() const;
 
