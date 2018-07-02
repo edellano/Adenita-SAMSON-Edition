@@ -1,5 +1,6 @@
 #include "SEAdenitaVisualModel.hpp"
 #include "SAMSON.hpp"
+#include "ADNLogger.hpp"
 
 
 SEAdenitaVisualModel::SEAdenitaVisualModel() {
@@ -281,6 +282,8 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
   initArraysForDisplay(nPositions, nCylinders);
 
+  unsigned int index = 0;
+
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
 
     if (ss->isVisible()) {
@@ -289,13 +292,9 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
       ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
 
-      unsigned int index = 0;
 
-      while (nt->GetNext() != nullptr) {
-
-        //unsigned int index;
-        //nucleotides.getIndex(nt(), index);
-
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) { 
+        
         radiiV_(index) = config.nucleotide_V_radius;
 
         radiiE_(index) = config.nucleotide_V_radius;
@@ -373,8 +372,8 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
           radiiE_(index) = config.nucleotide_E_radius;
         }
 
-        nt = nt->GetNext();
-        index++;
+        //nt = nt->GetNext();
+        ++index;
       }
     }
   }
