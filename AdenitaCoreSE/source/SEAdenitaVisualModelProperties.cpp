@@ -118,7 +118,7 @@ bool SEAdenitaVisualModelProperties::setup(SBNode* node) {
 
 void SEAdenitaVisualModelProperties::onSliderScaleChanged(int val)
 {
-  //visualModel->changeScale(val / 10.0f);
+  visualModel->changeScale(val / 10.0f);
 }
 
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
