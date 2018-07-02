@@ -12,7 +12,7 @@
 SB_CLASS_BEGIN(SEAdenitaVisualModelProperties);
 
 	SB_CLASS_TYPE(SBCClass::Properties);
-	SB_CLASS_DESCRIPTION("SEAdenitaVisualModelProperties : SAMSON Element generator pro tip: modify me");
+	SB_CLASS_DESCRIPTION("SEAdenitaVisualModelProperties");
 
 	SB_FACTORY_BEGIN;
 
