@@ -100,6 +100,20 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 
   ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
   
+  std::map<ADNNucleotide*, unsigned int> ntMap;
+
+  unsigned int index = 0;
+  //this init can be optimized in the future
+  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+    auto nucleotides = ss->GetNucleotides();
+
+    SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+
+      ntMap.insert(make_pair(nt(), index));
+      ++index;
+    }
+  }
+
   size_t sumNumEdges = 0;
 
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
@@ -116,10 +130,12 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
     while (cur->GetNext() != nullptr) {
 
       unsigned int curIndex;
-      nucleotides.getIndex(cur(), curIndex);
-      
+      //nucleotides.getIndex(cur(), curIndex);
+      curIndex = ntMap[cur()];
+
       unsigned int nextIndex;
-      nucleotides.getIndex(cur->GetNext()(), nextIndex);
+      //nucleotides.getIndex(cur->GetNext()(), nextIndex);
+      nextIndex = ntMap[cur->GetNext()()];
 
       curIndices(2 * j) = curIndex;
       curIndices(2 * j + 1) = nextIndex;
@@ -146,9 +162,7 @@ void SEAdenitaVisualModel::prepareArraysForDisplay()
   SEConfig& config = SEConfig::GetInstance();
 
   if (nanorobot_ == nullptr) return;
-
-  prepareScale6to7(0.01);
-
+  
   //if (!allScalesInitialized_) {
   //  return;
   //}
@@ -164,16 +178,15 @@ void SEAdenitaVisualModel::prepareArraysForDisplay()
 
   //scale_ += animation_step_size;
 
-  //if (scale_ > 9.9) scale_ = 9.9;
+  if (scale_ > MAX_SCALE) scale_ = MAX_SCALE;
 
-  //float interpolated = 1.0f - (ceil(scale_) - scale_);
+  float interpolated = 1.0f - (ceil(scale_) - scale_);
 
-  //if (scale_ < (float)ALL_ATOMS_STICKS) {
-  //  //0 - 9
-  //  if (config.show_atomic_scales) {
-  //    displayScale0to1(interpolated);
-  //  }
-  //}
+  if (scale_ < (float)ALL_ATOMS_STICKS) {
+    //0 - 9
+    prepareScale0to1(interpolated);
+    
+  }
   //else if (scale_ < (float)ALL_ATOMS_BALLS) {
   //  //10 - 19
   //  if (config.show_atomic_scales) {
@@ -204,12 +217,11 @@ void SEAdenitaVisualModel::prepareArraysForDisplay()
   //  if (config.display_base_pairing) displayBasePairConnections(scale_);
   //  //displaySkips(scale_, dimension_);
   //}
-  //else if (scale_ < (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
-  //  //60 - 69
-  //  prepareScale6to7(interpolated);
-  //  if (config.display_base_pairing) displayBasePairConnections(scale_);
-  //  //displaySkips(scale_, dimension_);
-  //}
+  else if (scale_ < (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+    //60 - 69
+    prepareScale6to7(interpolated);
+    //if (config.display_base_pairing) displayBasePairConnections(scale_);
+  }
   //else if (scale_ < (float)DOUBLE_HELIX_PATH) {
   //  //70 - 79
   //  prepareScale7to8(interpolated); //todo
@@ -225,6 +237,36 @@ void SEAdenitaVisualModel::prepareArraysForDisplay()
   //}
   //else {
   //}
+
+}
+
+void SEAdenitaVisualModel::prepareScale0to1(double iv, bool forSelection /*= false*/)
+{
+  initArraysForDisplay(0, 0);
+}
+
+void SEAdenitaVisualModel::prepareScale1to2(double iv, bool forSelection /*= false*/)
+{
+
+}
+
+void SEAdenitaVisualModel::prepareScale2to3(double iv, bool forSelection /*= false*/)
+{
+
+}
+
+void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= false*/)
+{
+
+}
+
+void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= false*/)
+{
+
+}
+
+void SEAdenitaVisualModel::prepareScale5to6(double iv, bool forSelection /*= false*/)
+{
 
 }
 
@@ -247,12 +289,12 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
       ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
 
-      unsigned int j = 0;
+      unsigned int index = 0;
 
       while (nt->GetNext() != nullptr) {
 
-        unsigned int index;
-        nucleotides.getIndex(nt(), index);
+        //unsigned int index;
+        //nucleotides.getIndex(nt(), index);
 
         radiiV_(index) = config.nucleotide_V_radius;
 
@@ -332,10 +374,25 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
         }
 
         nt = nt->GetNext();
-
+        index++;
       }
     }
   }
+
+}
+
+void SEAdenitaVisualModel::prepareScale7to8(double iv, bool forSelection /*= false*/)
+{
+
+}
+
+void SEAdenitaVisualModel::prepareScale8to9(double iv, bool forSelection /*= false*/)
+{
+
+}
+
+void SEAdenitaVisualModel::prepareScale9(bool forSelection /*= false*/)
+{
 
 }
 
