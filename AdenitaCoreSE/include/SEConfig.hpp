@@ -22,7 +22,7 @@ public:
   // deleted functions should be public for better error message handling
   SEConfig(SEConfig const& c) = delete;
   void operator=(SEConfig const& c) = delete;
-  
+
   static SEConfig& GetInstance();
 
   // visual_model settin
@@ -33,6 +33,27 @@ public:
   float animation_step_size = 0.0f;
   double double_helix_V_color[4] = { 0.0f, 0.43f, 0.86f, 1.0f };
   double nucleotide_E_Color[4] = { 0.59f, 0.63f, 0.8f, 1.0f };
+  double adenine_color[4] = { 
+    102.0f / 255.0f, 
+    194.0f / 255.0f, 
+    165.0f / 255.0f, 
+    1.0f };
+  double thymine_color[4] = { 
+    252.0f / 255.0f, 
+    141.0f / 255.0f, 
+    98.0f / 255.0f, 
+    1.0f };
+  double guanine_color[4] = {
+    231.0f / 255.0f,
+    138.0f / 255.0f,
+    195.0f / 255.0f,
+    1.0f };
+  double cytosine_color[4] = {
+    252.0f / 255.0f,
+    141.0f / 255.0f,
+    98.0f / 255.0f,
+    1.0f };
+
   float nucleotide_V_radius = 160.0f;
   float nucleotide_E_radius = 32.0f;
   unsigned int num_staple_colors = 12;
