@@ -7,6 +7,14 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
 
 	ui.setupUi( this );
 
+  //change icons
+  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/";
+
+  QIcon loadIcon;
+  loadIcon.addFile(string(iconPath + "load.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnLoad->setIcon(loadIcon);
+  ui.btnLoad->setIconSize(QSize(40, 40));
+
 }
 
 SEAdenitaCoreSEAppGUI::~SEAdenitaCoreSEAppGUI() {
