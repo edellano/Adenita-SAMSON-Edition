@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>459</width>
+    <width>917</width>
     <height>601</height>
    </rect>
   </property>
@@ -25,7 +25,7 @@
      <item>
       <widget class="QTabWidget" name="tabFile">
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -176,7 +176,7 @@
             <x>10</x>
             <y>20</y>
             <width>401</width>
-            <height>51</height>
+            <height>59</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -272,6 +272,36 @@
            <widget class="QPushButton" name="btnCenterPart">
             <property name="text">
              <string>Center Part</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab_3">
+        <attribute name="title">
+         <string>Page</string>
+        </attribute>
+        <widget class="QWidget" name="gridLayoutWidget_4">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>411</width>
+           <height>161</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <widget class="QToolButton" name="btnLoad">
+            <property name="text">
+             <string>Load</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
            </widget>
           </item>
