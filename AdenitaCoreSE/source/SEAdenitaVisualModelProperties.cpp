@@ -83,13 +83,15 @@ QString SEAdenitaVisualModelProperties::getCitation() const {
 bool SEAdenitaVisualModelProperties::setup() {
 
 	SBNodeIndexer nodeIndexer;
-	SB_FOR(SBNode* node, *SAMSON::getActiveDocument()->getSelectedNodes()) node->getNodes(nodeIndexer, SBNode::GetClass() == std::string("SEAdenitaVisualModel") && SBNode::GetElement() == std::string("SEAdenita") && SBNode::GetElementUUID() == SBUUID(SB_ELEMENT_UUID));
-
+  SB_FOR(SBNode* node, *SAMSON::getActiveDocument()->getSelectedNodes()) {
+    node->getNodes(nodeIndexer, SBNode::GetClass() == std::string("SEAdenitaVisualModel") && SBNode::GetElement() == std::string("SEAdenitaCoreSE") && SBNode::GetElementUUID() == SBUUID(SB_ELEMENT_UUID));
+  }
 	if (nodeIndexer.size() == 1) {
 
 		visualModel = static_cast<SEAdenitaVisualModel*>((nodeIndexer)[0]);
 		visualModel->connectBaseSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onBaseEvent));
 		visualModel->connectVisualSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onVisualEvent));
+    connect(ui.hslScale, SIGNAL(sliderMoved(int)), this, SLOT(onSliderScaleChanged(int)));
 
 		return true;
 
@@ -102,15 +104,21 @@ bool SEAdenitaVisualModelProperties::setup() {
 bool SEAdenitaVisualModelProperties::setup(SBNode* node) {
 
 	if (node->getProxy()->getName() != "SEAdenitaVisualModel") return false;
-	if (node->getProxy()->getElement() != "SEAdenita") return false;
+	if (node->getProxy()->getElement() != "SEAdenitaCoreSE") return false;
 	if (node->getProxy()->getElementUUID() != SBUUID(SB_ELEMENT_UUID)) return false;
 
 	visualModel = static_cast<SEAdenitaVisualModel*>(node);
 	visualModel->connectBaseSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onBaseEvent));
 	visualModel->connectVisualSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onVisualEvent));
+  connect(ui.hslScale, SIGNAL(sliderMoved(int)), this, SLOT(onSliderScaleChanged(int)));
 
 	return true;
 
+}
+
+void SEAdenitaVisualModelProperties::onSliderScaleChanged(int val)
+{
+  visualModel->changeScale(val / 10.0f);
 }
 
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
