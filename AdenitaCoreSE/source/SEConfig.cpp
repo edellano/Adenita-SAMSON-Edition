@@ -36,6 +36,10 @@ void SEConfig::loadConfig() {
 
     writeDoubleArray(writer, "double_helix_V_color", double_helix_V_color, 4);
     writeDoubleArray(writer, "nucleotide_E_Color", nucleotide_E_Color, 4);
+    writeDoubleArray(writer, "adenine_color", adenine_color, 4);
+    writeDoubleArray(writer, "thymine_color", thymine_color, 4);
+    writeDoubleArray(writer, "guanine_color", guanine_color, 4);
+    writeDoubleArray(writer, "cytosine_color", cytosine_color, 4);
     writeDoubleArray(writer, "staple_colors", staple_colors, 48);
     
     writer.Key("nucleotide_V_radius");
@@ -139,6 +143,18 @@ void SEConfig::updateConfig() {
 
     Value& nucleotide_E_ColorVal = setting_["nucleotide_E_Color"];
     readDoubleArray(nucleotide_E_ColorVal, nucleotide_E_Color, 4);
+
+    Value& adenine_colorVal = setting_["adenine_color"];
+    readDoubleArray(adenine_colorVal, adenine_color, 4);
+
+    Value& thymine_colorVal = setting_["thymine_color"];
+    readDoubleArray(thymine_colorVal, thymine_color, 4);
+
+    Value& guanine_colorVal = setting_["guanine_color"];
+    readDoubleArray(guanine_colorVal, guanine_color, 4);
+
+    Value& cytosine_colorVal = setting_["cytosine_color"];
+    readDoubleArray(cytosine_colorVal, cytosine_color, 4);
 
     Value& staple_colorsVal = setting_["staple_colors"];
     readDoubleArray(staple_colorsVal, staple_colors, 48);
