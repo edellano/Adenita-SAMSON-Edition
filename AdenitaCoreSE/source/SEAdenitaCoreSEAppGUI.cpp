@@ -2,6 +2,7 @@
 #include "SEAdenitaCoreSEApp.hpp"
 #include "SAMSON.hpp"
 #include "SBGWindow.hpp"
+#include <QInputDialog>
 
 SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( t ) {
 
@@ -102,6 +103,54 @@ void SEAdenitaCoreSEAppGUI::saveSettings( SBGSettings *settings ) {
 
 	// SAMSON Element generator pro tip: complete this function so your app can save its GUI state from one session to the next
 
+}
+
+void SEAdenitaCoreSEAppGUI::onLoadFile()
+{
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open document: caDNAno, mesh (ply), Adenita document"), QDir::currentPath(), tr("(Documents *.json *.ply)"));
+  if (!filename.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+
+    if (filename.endsWith(".json")) {
+
+      //cadnano file
+      ADNConstants::CadnanoLatticeType typ = ADNConstants::CadnanoLatticeType::Honeycomb;
+
+      QStringList items;
+      items << "Honeycomb" << "Square";
+
+      bool ok;
+      QString item = QInputDialog::getItem(this, "CaDNAno structure",
+        "Lattice:", items, 0, false, &ok);
+
+      if (ok && !item.isEmpty()) {
+        if (item == "Honeycomb") {
+          typ = ADNConstants::CadnanoLatticeType::Honeycomb;
+        }
+        else if (item == "Square") {
+          typ = ADNConstants::CadnanoLatticeType::Square;
+        }
+                
+        t->ImportFromCadnano(filename, typ);
+        
+      }
+    }
+    else if(filename.endsWith(".ply")){
+
+      bool ok;
+      int i = QInputDialog::getInt(this, tr("Wireframe structure (Daedalus)"),
+        tr("Minimum edge size (bp): "), 42, 0, 500, 1, &ok);
+      if (ok) {
+        t->LoadPartWithDaedalus(filename, i);
+      }
+
+    }
+    else if (filename.endsWith(".adn")) {
+      t->LoadPart(filename);
+    }
+  }
+
+  SAMSON::getActiveCamera()->center();
 }
 
 void SEAdenitaCoreSEAppGUI::onLoadPart()

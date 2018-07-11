@@ -52,6 +52,7 @@ public:
 
 public slots:
 
+  void onLoadFile();
   void onLoadPart();
   void onSavePart();
   void onLoadPLYFile();
