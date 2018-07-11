@@ -7,6 +7,79 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
 
 	ui.setupUi( this );
 
+  //change icons
+  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/";
+
+  QIcon loadIcon;
+  loadIcon.addFile(string(iconPath + "load.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnLoad->setIcon(loadIcon);
+
+  QIcon saveIcon;
+  saveIcon.addFile(string(iconPath + "save.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnSave->setIcon(saveIcon);
+
+  QIcon exportIcon;
+  exportIcon.addFile(string(iconPath + "export.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnExport->setIcon(exportIcon);
+
+  QIcon searchIcon;
+  searchIcon.addFile(string(iconPath + "search.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnSearch->setIcon(searchIcon);
+
+  QIcon createIcon;
+  createIcon.addFile(string(iconPath + "create.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnCreate->setIcon(createIcon);
+
+  QIcon setScaffIcon;
+  setScaffIcon.addFile(string(iconPath + "setScaffold.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnSetScaff->setIcon(setScaffIcon);
+
+  QIcon breakIcon;
+  breakIcon.addFile(string(iconPath + "break.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnBreak->setIcon(breakIcon);
+
+  QIcon connectSSIcon;
+  connectSSIcon.addFile(string(iconPath + "connectSS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnConnectSS->setIcon(connectSSIcon);
+
+  QIcon connectDSIcon;
+  connectDSIcon.addFile(string(iconPath + "connectDS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnConnectDS->setIcon(connectDSIcon);
+
+  QIcon mutateIcon;
+  mutateIcon.addFile(string(iconPath + "mutate.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnMutate->setIcon(mutateIcon);
+
+  QIcon insertIcon;
+  insertIcon.addFile(string(iconPath + "insert.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnInsert->setIcon(insertIcon);
+
+  QIcon deleteIcon;
+  deleteIcon.addFile(string(iconPath + "delete.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnDelete->setIcon(deleteIcon);
+
+  QIcon addLoopIcon;
+  addLoopIcon.addFile(string(iconPath + "addLoop.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnAddLoop->setIcon(addLoopIcon);
+
+  QIcon addSkipIcon;
+  addSkipIcon.addFile(string(iconPath + "addSkip.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnAddSkip->setIcon(addSkipIcon);
+
+  QIcon mapToAminoAcidIcon;
+  mapToAminoAcidIcon.addFile(string(iconPath + "mapToAminoAcid.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnMapToAminoAcids->setIcon(mapToAminoAcidIcon);
+
+  QIcon editAtomsIcon;
+  editAtomsIcon.addFile(string(iconPath + "editAtoms.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnEditAtoms->setIcon(editAtomsIcon);
+
+  QIcon paintIcon;
+  paintIcon.addFile(string(iconPath + "paint.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnPaint->setIcon(paintIcon);
+
+
+
 }
 
 SEAdenitaCoreSEAppGUI::~SEAdenitaCoreSEAppGUI() {
