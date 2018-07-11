@@ -252,6 +252,8 @@ private:
   // refactoring members
   CadnanoJSONFile2 json2_;
   VGrid2 vGrid2_;
+  std::map<Vstrand2*, std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>>> cellBsMap2_;
+
 
   // refactoring methods
   void ParseJSON2(std::string filename);

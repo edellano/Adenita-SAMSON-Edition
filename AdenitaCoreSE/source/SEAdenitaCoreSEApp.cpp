@@ -68,8 +68,9 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename, ADNConstants::Cadna
   ADNPointer<ADNPart> part = new ADNPart();
   std::string seq = "";
 
-  cad.ParseJSON(filename.toStdString());
-  cad.CreateModel(part, seq, t);
+  /*cad.ParseJSON(filename.toStdString());
+  cad.CreateModel(part, seq, t);*/
+  part = cad.CreateCadnanoPart(filename.toStdString());
   
   AddPartToActiveLayer(part);
 }
