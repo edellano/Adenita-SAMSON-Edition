@@ -57,6 +57,7 @@ struct CadnanoJSONFile2 {
   std::map<int, Vstrand2> vstrands_;  // key is vStrand num
   LatticeType lType_;
   std::pair<int, int> scaffoldStartPosition_;  // first is vhelix num, second is position  within it
+  std::vector<vec2> stapleStarts_;  // list of staple starts
 };
 
 //Grid from caDNAno
@@ -287,6 +288,4 @@ public:
   void CreateEdgeMap(ADNPointer<ADNPart> nanorobot);
   void CreateScaffold(string seq, ADNPointer<ADNPart> nanorobot);
   void CreateStaples(ADNPointer<ADNPart> nanorobot);
-  //void ShiftStructure(ADNPointer<ADNPart> nanorobot);
-  //void CylinderToCadnano(ADNPointer<ADNPart> nanorobot);
 };
