@@ -407,7 +407,6 @@ ADNPointer<ADNNucleotide> ADNSingleStrand::GetNucleotide(unsigned int id) const
 
 void ADNSingleStrand::AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt)
 {
-  auto sz = GetNucleotides().size();
   addChild(nt());
   if (threePrime_ != nullptr) {
     if (threePrime_->GetEnd() == FiveAndThreePrime) threePrime_->SetEnd(FivePrime);
@@ -420,7 +419,6 @@ void ADNSingleStrand::AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt)
     nt->SetEnd(FiveAndThreePrime);
   }
   auto test = nt->GetPrev();
-  sz = GetNucleotides().size();
   threePrime_ = nt;
 }
 
