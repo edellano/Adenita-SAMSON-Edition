@@ -38,7 +38,7 @@ public :
   void LoadPart(QString filename);
   void SavePart(QString filename);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
-  void ImportFromCadnano(QString filename, ADNConstants::CadnanoLatticeType t);
+  void ImportFromCadnano(QString filename);
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options);
   void SetScaffoldSequence(std::string seq);
   void CenterPart();

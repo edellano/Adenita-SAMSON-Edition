@@ -65,14 +65,10 @@ void SEAdenitaCoreSEAppGUI::onLoadPLYFile()
 
 void SEAdenitaCoreSEAppGUI::onImportFromCadnano()
 {
-  ADNConstants::CadnanoLatticeType typ = ADNConstants::CadnanoLatticeType::Honeycomb;
-  if (ui.rdoCadnanoSquareLattice->isChecked()) {
-    typ = ADNConstants::CadnanoLatticeType::Square;
-  }
   QString filename = QFileDialog::getOpenFileName(this, tr("Select a .json file"), QDir::currentPath(), tr("Cadnano (*.json)"));
   if (!filename.isEmpty()) {
     SEAdenitaCoreSEApp* t = getApp();
-    t->ImportFromCadnano(filename, typ);
+    t->ImportFromCadnano(filename);
   }
 
   SAMSON::getActiveCamera()->center();
