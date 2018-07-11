@@ -8,6 +8,38 @@ SEWireframeEditorGUI::SEWireframeEditorGUI(SEWireframeEditor* editor) {
 	ui.setupUi( this );
 	this->editor = editor;
 
+  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/";
+
+  QIcon tetrahedronIcon;
+  tetrahedronIcon.addFile(QString(string(iconPath + "tetrahedron.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbTetrahedron->setIcon(tetrahedronIcon);
+
+  QIcon cubeIcon;
+  cubeIcon.addFile(QString(string(iconPath + "cube.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbCube->setIcon(cubeIcon);
+  
+  QIcon cuboctahedronIcon;
+  cuboctahedronIcon.addFile(QString(string(iconPath + "cuboctahedron.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbCuboctahedron->setIcon(cuboctahedronIcon);
+
+  QIcon dodecahedronIcon;
+  dodecahedronIcon.addFile(QString(string(iconPath + "dodecahedron.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbDodecahedron->setIcon(dodecahedronIcon);
+
+  QIcon icosahedronIcon;
+  icosahedronIcon.addFile(QString(string(iconPath + "icosahedron.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbIcosahedron->setIcon(icosahedronIcon);
+
+  QIcon icosidodecahedronIcon;
+  icosidodecahedronIcon.addFile(QString(string(iconPath + "icosidodecahedron.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbIcosidodecahedron->setIcon(icosidodecahedronIcon);
+
+  QIcon octahedronIcon;
+  octahedronIcon.addFile(QString(string(iconPath + "octahedron.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbOctahedron->setIcon(octahedronIcon);
+
+  ui.rdbCuboid->setIcon(cubeIcon);
+
 }
 
 SEWireframeEditorGUI::~SEWireframeEditorGUI() {
