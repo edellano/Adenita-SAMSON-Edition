@@ -634,8 +634,8 @@
    <slot>onSavePart()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>113</x>
-     <y>76</y>
+     <x>327</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
      <x>228</x>
@@ -650,8 +650,8 @@
    <slot>onLoadPLYFile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>122</x>
-     <y>145</y>
+     <x>123</x>
+     <y>173</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -682,8 +682,8 @@
    <slot>onExportToOxDNA()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>366</y>
+     <x>124</x>
+     <y>394</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -698,8 +698,8 @@
    <slot>onSetScaffold()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>113</x>
-     <y>66</y>
+     <x>332</x>
+     <y>70</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -714,8 +714,8 @@
    <slot>onCenterPart()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>113</x>
-     <y>66</y>
+     <x>114</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -739,6 +739,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnSave</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onSavePart()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>79</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>8</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSetScaff</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onSetScaffold()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>367</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>7</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnCreate</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCreate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>270</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>8</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onLoadPart()</slot>
@@ -749,5 +797,6 @@
   <slot>onSetScaffold()</slot>
   <slot>onCenterPart()</slot>
   <slot>onLoadFile()</slot>
+  <slot>onCreate()</slot>
  </slots>
 </ui>
