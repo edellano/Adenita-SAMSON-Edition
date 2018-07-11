@@ -3,6 +3,7 @@
 #include "SAMSON.hpp"
 #include "SBGWindow.hpp"
 #include <QInputDialog>
+#include "SEWireframeEditor.hpp"
 
 SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( t ) {
 
@@ -103,6 +104,16 @@ void SEAdenitaCoreSEAppGUI::saveSettings( SBGSettings *settings ) {
 
 	// SAMSON Element generator pro tip: complete this function so your app can save its GUI state from one session to the next
 
+}
+
+void SEAdenitaCoreSEAppGUI::onCreate()
+{
+  SBProxy* weClassProxy = SAMSON::getProxy("SEWireframeEditor");
+  SEWireframeEditor* we = static_cast<SEWireframeEditor*>(SAMSON::getEditor(weClassProxy->getUUID(), weClassProxy->getElementUUID()));
+  
+  SAMSON::setActiveEditor(we);
+  SAMSON::setActiveEditor(we); //has to be set active twice in order for ther popertyDialog to show up
+  
 }
 
 void SEAdenitaCoreSEAppGUI::onLoadFile()
