@@ -57,7 +57,6 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
 
       //start point
       if (elem.n0 == -1 && elem.n1 == -1 && elem.n2 != -1 && elem.n3 != -1) {
-        // if that was defined throw error?
         json2_.scaffoldStartPosition_ = std::make_pair(vstrand.num_, count);
       }
 
@@ -65,7 +64,7 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
     }
 
     totalCount = count + 1;  // all vhelix have the same count
-    vstrand.totalLength_ = count + 1;
+    vstrand.totalLength_ = totalCount;
 
     Value& stapVals = vstrandVal["stap"];
     count = 0;
@@ -77,6 +76,15 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
       elem.n2 = a[2].GetInt();
       elem.n3 = a[3].GetInt();
       vstrand.stap_.insert(std::make_pair(count, elem));
+
+      if (elem.n0 == -1 && elem.n1 == -1 && elem.n2 != -1 && elem.n3 != -1) {
+        vec2 stapleStart;
+        stapleStart.n0 = vstrand.num_;
+        stapleStart.n1 = count;
+
+        json2_.stapleStarts_.push_back(stapleStart);
+      }
+
       ++count;
     }
 
@@ -143,6 +151,7 @@ ADNPointer<ADNPart> DASCadnano::CreateCadnanoModel()
 
   CreateEdgeMap2(part);
   CreateScaffold2(part);
+  CreateStaples2(part);
 
   return part;
 }
@@ -340,47 +349,22 @@ void DASCadnano::CreateStaples2(ADNPointer<ADNPart> nanorobot)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
   //find number of staples and their starting points
-  vector<vec2> stapleStarts; //vstrand id and position on vstrand
-
-  for (auto vp : json2_.vstrands_) {
-
-    auto vStrandId = vp.first;
-    auto vstrand = vp.second;
-    //starting point of staple in vstrand must be 0 == -1, 1 == -1, 2 != -1, 3 != -1 
-    //multiple staples per cadnano are not considered yet
-    int posAtVstrand = 0;
-    for (auto sp : vstrand.stap_) {
-      auto stap = sp.second;
-      if (stap.n0 == -1 && stap.n1 == -1 && stap.n2 != -1 && stap.n3 != -1) {
-        vec2 stapleStart;
-        stapleStart.n0 = vStrandId;
-        stapleStart.n1 = posAtVstrand;
-
-        stapleStarts.push_back(stapleStart);
-        //logger.Log(string("found starting point of staple at " + to_string(stapleStart.n0) + " " + to_string(stapleStart.n1)));
-      }
-
-      ++posAtVstrand;
-    }
-    ++vStrandId;
-  }
-
-  string numStaplesString;
+  std::vector<vec2> stapleStarts = json2_.stapleStarts_; //vstrand id and position on vstrand
+  std::string numStaplesString;
   numStaplesString += "num of staple strands ";
   numStaplesString += to_string(stapleStarts.size());
   logger.Log(numStaplesString);
 
-  auto vstrands = json_.vstrands_;
+  auto vstrands = json2_.vstrands_;
   int sid = 1; //because scaffold is chain 0
   int numSkips = 0;
 
   for (vec2 curStapleStart : stapleStarts) {
-    auto vstrands = json_.vstrands_;
-    vec4 curVstrandElem = json_.vstrands_[curStapleStart.n0].stap_[curStapleStart.n1];
+    vec4 curVstrandElem = vstrands[curStapleStart.n0].stap_[curStapleStart.n1];
     int vStrandId = curStapleStart.n0;
     int z = curStapleStart.n1;
 
-    std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> bs_positions = cellBsMap_.at(&json_.vstrands_[vStrandId]);
+    std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> bs_positions = cellBsMap2_.at(&json2_.vstrands_[vStrandId]);
 
     ADNPointer<ADNSingleStrand> staple = new ADNSingleStrand();
     staple->SetName("Staple" + to_string(sid));
@@ -388,12 +372,12 @@ void DASCadnano::CreateStaples2(ADNPointer<ADNPart> nanorobot)
     staple->IsScaffold(false);
     nanorobot->RegisterSingleStrand(staple);
 
-    if (vstrands[vStrandId].skip_[z] == 0) { //skip at the staple start
+    if (vstrands[vStrandId].skips_[z] == 0) { //skip at the staple start
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide(); //add starting nucleotide to chain
       nanorobot->RegisterNucleotideThreePrime(staple, nt);
 
-      SBPosition3 pos2D = vGrid_.GetGridStapleCellPos2D(vStrandId, z);
-      SBPosition3 pos3D = vGrid_.GetGridStapleCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
+      //SBPosition3 pos2D = vGrid_.GetGridStapleCellPos2D(vStrandId, z);
+      SBPosition3 pos3D = vGrid2_.GetGridCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
 
       nt->SetPosition(pos3D);
       nt->SetBackbonePosition(pos3D);
@@ -426,16 +410,16 @@ void DASCadnano::CreateStaples2(ADNPointer<ADNPart> nanorobot)
     }
 
     int nid = 1;
-    if (vstrands[vStrandId].skip_[z] == -1) nid = 0; //start the id at 0 if the first nucleotide was skipped
+    if (vstrands[vStrandId].skips_[z] == -1) nid = 0; //start the id at 0 if the first nucleotide was skipped
 
     while (true) {
-      int vStrandId = json_.numToIdMap_[curVstrandElem.n2];
+      int vStrandId = curVstrandElem.n2;
       int z = curVstrandElem.n3;
       if (z == -1) break;
 
-      bs_positions = cellBsMap_.at(&json_.vstrands_[vStrandId]);
+      bs_positions = cellBsMap2_.at(&json2_.vstrands_[vStrandId]);
 
-      if (vstrands[vStrandId].skip_[z] == -1) {
+      if (vstrands[vStrandId].skips_[z] == -1) {
         //add skips
         auto nextVstrand = vstrands[json_.numToIdMap_[curVstrandElem.n2]];
         vec4 nextVstrandElem = nextVstrand.stap_[curVstrandElem.n3];
@@ -454,8 +438,8 @@ void DASCadnano::CreateStaples2(ADNPointer<ADNPart> nanorobot)
           ADNPointer<ADNNucleotide> rightSkip = new ADNNucleotide();
           rightSkip->SetBaseSegment(bs);
 
-          SBPosition3 rightPos2D = vGrid_.GetGridStapleCellPos2D(vStrandId, z);
-          SBPosition3 rightPos3D = vGrid_.GetGridStapleCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
+          //SBPosition3 rightPos2D = vGrid_.GetGridStapleCellPos2D(vStrandId, z);
+          SBPosition3 rightPos3D = vGrid2_.GetGridCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
 
           rightSkip->SetPosition(rightPos3D);
           rightSkip->SetBackbonePosition(rightPos3D);
@@ -474,7 +458,7 @@ void DASCadnano::CreateStaples2(ADNPointer<ADNPart> nanorobot)
       int max_iter = 0;
 
       if (z != -1) {
-        max_iter = vstrands[vStrandId].loop_[z];
+        max_iter = vstrands[vStrandId].loops_[z];
       }
       else {
         break;
@@ -486,10 +470,10 @@ void DASCadnano::CreateStaples2(ADNPointer<ADNPart> nanorobot)
         nanorobot->RegisterNucleotideThreePrime(staple, nt);
 
         //SBPosition3 pos1D = vGrid_.GetGridStaplePos1D(nt->id_, nt->strand_->id_);
-        SBPosition3 pos2D = vGrid_.GetGridStapleCellPos2D(vStrandId, z);
-        SBPosition3 delta2D = SBPosition3(SBQuantity::picometer(0.5f), SBQuantity::picometer(0), SBQuantity::picometer(0));
-        pos2D = pos2D + delta2D; //make a parametric function
-        SBPosition3 pos3D = vGrid_.GetGridStapleCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
+        //SBPosition3 pos2D = vGrid_.GetGridStapleCellPos2D(vStrandId, z);
+        //SBPosition3 delta2D = SBPosition3(SBQuantity::picometer(0.5f), SBQuantity::picometer(0), SBQuantity::picometer(0));
+        //pos2D = pos2D + delta2D; //make a parametric function
+        SBPosition3 pos3D = vGrid2_.GetGridCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
 
         ADNPointer<ADNBaseSegment> bs = nullptr;
         int p = 0;
@@ -534,7 +518,7 @@ void DASCadnano::CreateStaples2(ADNPointer<ADNPart> nanorobot)
       }
 
       //find next stap element
-      auto nextVstrand = vstrands[json_.numToIdMap_[curVstrandElem.n2]];
+      auto nextVstrand = vstrands[curVstrandElem.n2];
       vec4 nextVstrandElem = nextVstrand.stap_[curVstrandElem.n3];
       curVstrandElem = nextVstrandElem;
 
