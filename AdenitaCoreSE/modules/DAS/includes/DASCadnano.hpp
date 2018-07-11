@@ -265,6 +265,7 @@ private:
   void CreateEdgeMap2(ADNPointer<ADNPart> nanorobot);
   void CreateScaffold2(ADNPointer<ADNPart> nanorobot);
   void CreateStaples2(ADNPointer<ADNPart> nanorobot);
+  void TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> nanorobot, bool left = true);
 
   CadnanoJSONFile json_;
   VGrid vGrid_;
