@@ -4,6 +4,7 @@
 #include "SEAdenitaVisualModelPropertiesDescriptor.hpp"
 #include "ADNModelDescriptor.hpp"
 #include "ADNPartDescriptor.hpp"
+#include "SEWireframeEditorDescriptor.hpp"
 
 
 
@@ -34,6 +35,7 @@ SB_ELEMENT_CLASSES_BEGIN;
   SB_ELEMENT_CLASS(ADNPart);
   SB_ELEMENT_CLASS(SEAdenitaVisualModel);
   SB_ELEMENT_CLASS(SEAdenitaVisualModelProperties);
+  SB_ELEMENT_CLASS(SEWireframeEditor);
 
 SB_ELEMENT_CLASSES_END;
 
