@@ -54,10 +54,7 @@ public slots:
 
   void onCreate();
   void onLoadFile();
-  void onLoadPart();
   void onSavePart();
-  void onLoadPLYFile();
-  void onImportFromCadnano();
   void onExportToOxDNA();
   void onSetScaffold();
   void onCenterPart();

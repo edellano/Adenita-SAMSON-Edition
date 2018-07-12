@@ -1002,8 +1002,8 @@ void ADNBasePair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
 CollectionMap<ADNNucleotide> ADNBasePair::GetNucleotides()
 {
   CollectionMap<ADNNucleotide> nts;
-  nts.addReferenceTarget(left_());
-  nts.addReferenceTarget(right_());
+  if (left_ != nullptr) nts.addReferenceTarget(left_());
+  if (right_ != nullptr) nts.addReferenceTarget(right_());
   return nts;
 }
 

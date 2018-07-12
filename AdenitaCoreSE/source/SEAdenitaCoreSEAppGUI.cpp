@@ -123,38 +123,16 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
     SEAdenitaCoreSEApp* t = getApp();
 
     if (filename.endsWith(".json")) {
-
-      //cadnano file
-      ADNConstants::CadnanoLatticeType typ = ADNConstants::CadnanoLatticeType::Honeycomb;
-
-      QStringList items;
-      items << "Honeycomb" << "Square";
-
-      bool ok;
-      QString item = QInputDialog::getItem(this, "CaDNAno structure",
-        "Lattice:", items, 0, false, &ok);
-
-      if (ok && !item.isEmpty()) {
-        if (item == "Honeycomb") {
-          typ = ADNConstants::CadnanoLatticeType::Honeycomb;
-        }
-        else if (item == "Square") {
-          typ = ADNConstants::CadnanoLatticeType::Square;
-        }
-                
-        t->ImportFromCadnano(filename, typ);
-        
-      }
+      // either cadnano or old Adenita format
+      t->ImportFromCadnano(filename);
     }
     else if(filename.endsWith(".ply")){
-
       bool ok;
       int i = QInputDialog::getInt(this, tr("Wireframe structure (Daedalus)"),
         tr("Minimum edge size (bp): "), 42, 0, 500, 1, &ok);
       if (ok) {
         t->LoadPartWithDaedalus(filename, i);
       }
-
     }
     else if (filename.endsWith(".adn")) {
       t->LoadPart(filename);
@@ -164,47 +142,13 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
   SAMSON::getActiveCamera()->center();
 }
 
-void SEAdenitaCoreSEAppGUI::onLoadPart()
-{
-  QString filename = QFileDialog::getOpenFileName(this, tr("Select an ANTPart .json file"), QDir::currentPath(), tr("Json (*.json)"));
-  if (!filename.isEmpty()) {
-    SEAdenitaCoreSEApp* t = getApp();
-    t->LoadPart(filename);
-  }
-
-  SAMSON::getActiveCamera()->center();
-}
-
 void SEAdenitaCoreSEAppGUI::onSavePart()
 {
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save an ANTPart .json file"), QDir::currentPath(), tr("Json (*.json)"));
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save an ANTPart .adn file"), QDir::currentPath(), tr("Adenita json (*.adn)"));
   if (!filename.isEmpty()) {
     SEAdenitaCoreSEApp* t = getApp();
     t->SavePart(filename);
   }
-}
-
-void SEAdenitaCoreSEAppGUI::onLoadPLYFile()
-{
-  int minEdgeSize = ui.spnDaedalusMinEdgeSize->value();
-  QString filename = QFileDialog::getOpenFileName(this, tr("Select a .ply file"), QDir::currentPath(), tr("Mesh (*.ply)"));
-  if (!filename.isEmpty()) {
-    SEAdenitaCoreSEApp* t = getApp();
-    t->LoadPartWithDaedalus(filename, minEdgeSize);
-  }
-
-  SAMSON::getActiveCamera()->center();
-}
-
-void SEAdenitaCoreSEAppGUI::onImportFromCadnano()
-{
-  QString filename = QFileDialog::getOpenFileName(this, tr("Select a .json file"), QDir::currentPath(), tr("Cadnano (*.json)"));
-  if (!filename.isEmpty()) {
-    SEAdenitaCoreSEApp* t = getApp();
-    t->ImportFromCadnano(filename);
-  }
-
-  SAMSON::getActiveCamera()->center();
 }
 
 void SEAdenitaCoreSEAppGUI::onExportToOxDNA()
