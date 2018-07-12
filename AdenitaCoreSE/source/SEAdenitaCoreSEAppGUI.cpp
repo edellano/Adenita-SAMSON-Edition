@@ -129,9 +129,11 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
     else if(filename.endsWith(".ply")){
       bool ok;
       int i = QInputDialog::getInt(this, tr("Wireframe structure (Daedalus)"),
-        tr("Minimum edge size (bp): "), 42, 0, 500, 1, &ok);
+        tr("Minimum edge size (bp): "), 42, 31, 1050, 1, &ok);
       if (ok) {
-        t->LoadPartWithDaedalus(filename, i);
+        div_t d = div(i, 10.5);
+        int minSize = floor(d.quot * 10.5);
+        t->LoadPartWithDaedalus(filename, minSize);
       }
     }
     else if (filename.endsWith(".adn")) {
