@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>459</width>
+    <width>1351</width>
     <height>601</height>
    </rect>
   </property>
@@ -23,9 +23,9 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QTabWidget" name="tabFile">
+      <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -176,7 +176,7 @@
             <x>10</x>
             <y>20</y>
             <width>401</width>
-            <height>51</height>
+            <height>59</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -278,6 +278,331 @@
          </layout>
         </widget>
        </widget>
+       <widget class="QWidget" name="tab_3">
+        <attribute name="title">
+         <string>New UI</string>
+        </attribute>
+        <widget class="QWidget" name="gridLayoutWidget_4">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>1261</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QToolButton" name="btnLoad">
+            <property name="text">
+             <string>Load</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnSave">
+            <property name="text">
+             <string>Save</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnSearch">
+            <property name="text">
+             <string>Search</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnExport">
+            <property name="text">
+             <string>Export Seq</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnCreate">
+            <property name="text">
+             <string>Create</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnSetScaff">
+            <property name="text">
+             <string>Set Scaffold</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnBreak">
+            <property name="text">
+             <string>Break</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnConnectSS">
+            <property name="text">
+             <string>Connect ssDNA</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnConnectDS">
+            <property name="text">
+             <string>Connect dsDNA</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnMutate">
+            <property name="text">
+             <string>Mutate</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnInsert">
+            <property name="text">
+             <string>Insert</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnDelete">
+            <property name="text">
+             <string>Delete</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnAddLoop">
+            <property name="text">
+             <string>Add Loop</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnAddSkip">
+            <property name="text">
+             <string>Add Skip</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+S</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnMapToAminoAcids">
+            <property name="text">
+             <string>Map to Amino Acids</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnEditAtoms">
+            <property name="text">
+             <string>Edit Atoms</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnPaint">
+            <property name="text">
+             <string>Paint</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -293,8 +618,8 @@
    <slot>onLoadPart()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>117</x>
-     <y>66</y>
+     <x>113</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel">
      <x>228</x>
@@ -309,8 +634,8 @@
    <slot>onSavePart()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>330</x>
-     <y>66</y>
+     <x>327</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
      <x>228</x>
@@ -325,8 +650,8 @@
    <slot>onLoadPLYFile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>223</x>
-     <y>159</y>
+     <x>123</x>
+     <y>173</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -341,8 +666,8 @@
    <slot>onImportFromCadnano()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>223</x>
-     <y>258</y>
+     <x>122</x>
+     <y>246</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -357,8 +682,8 @@
    <slot>onExportToOxDNA()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>222</x>
-     <y>369</y>
+     <x>124</x>
+     <y>394</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -373,8 +698,8 @@
    <slot>onSetScaffold()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>336</x>
-     <y>51</y>
+     <x>332</x>
+     <y>70</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -389,12 +714,76 @@
    <slot>onCenterPart()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>227</x>
-     <y>90</y>
+     <x>114</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
      <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnLoad</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onLoadFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>32</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSave</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onSavePart()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>79</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>8</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSetScaff</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onSetScaffold()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>367</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>7</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnCreate</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCreate()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>270</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>8</x>
+     <y>218</y>
     </hint>
    </hints>
   </connection>
@@ -407,5 +796,7 @@
   <slot>onExportToOxDNA()</slot>
   <slot>onSetScaffold()</slot>
   <slot>onCenterPart()</slot>
+  <slot>onLoadFile()</slot>
+  <slot>onCreate()</slot>
  </slots>
 </ui>
