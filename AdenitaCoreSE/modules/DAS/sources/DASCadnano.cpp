@@ -150,6 +150,7 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
 ADNPointer<ADNPart> DASCadnano::CreateCadnanoModel()
 {
   ADNPointer<ADNPart> part = new ADNPart();
+  part->SetName(json2_.name_);
 
   CreateEdgeMap2(part);
   CreateScaffold2(part);
