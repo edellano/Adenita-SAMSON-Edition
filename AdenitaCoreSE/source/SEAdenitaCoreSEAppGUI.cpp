@@ -2,10 +2,85 @@
 #include "SEAdenitaCoreSEApp.hpp"
 #include "SAMSON.hpp"
 #include "SBGWindow.hpp"
+#include <QInputDialog>
+#include "SEWireframeEditor.hpp"
 
 SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( t ) {
 
 	ui.setupUi( this );
+
+  //change icons
+  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/";
+
+  QIcon loadIcon;
+  loadIcon.addFile(string(iconPath + "load.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnLoad->setIcon(loadIcon);
+
+  QIcon saveIcon;
+  saveIcon.addFile(string(iconPath + "save.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnSave->setIcon(saveIcon);
+
+  QIcon exportIcon;
+  exportIcon.addFile(string(iconPath + "export.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnExport->setIcon(exportIcon);
+
+  QIcon searchIcon;
+  searchIcon.addFile(string(iconPath + "search.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnSearch->setIcon(searchIcon);
+
+  QIcon createIcon;
+  createIcon.addFile(string(iconPath + "create.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnCreate->setIcon(createIcon);
+
+  QIcon setScaffIcon;
+  setScaffIcon.addFile(string(iconPath + "setScaffold.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnSetScaff->setIcon(setScaffIcon);
+
+  QIcon breakIcon;
+  breakIcon.addFile(string(iconPath + "break.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnBreak->setIcon(breakIcon);
+
+  QIcon connectSSIcon;
+  connectSSIcon.addFile(string(iconPath + "connectSS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnConnectSS->setIcon(connectSSIcon);
+
+  QIcon connectDSIcon;
+  connectDSIcon.addFile(string(iconPath + "connectDS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnConnectDS->setIcon(connectDSIcon);
+
+  QIcon mutateIcon;
+  mutateIcon.addFile(string(iconPath + "mutate.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnMutate->setIcon(mutateIcon);
+
+  QIcon insertIcon;
+  insertIcon.addFile(string(iconPath + "insert.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnInsert->setIcon(insertIcon);
+
+  QIcon deleteIcon;
+  deleteIcon.addFile(string(iconPath + "delete.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnDelete->setIcon(deleteIcon);
+
+  QIcon addLoopIcon;
+  addLoopIcon.addFile(string(iconPath + "addLoop.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnAddLoop->setIcon(addLoopIcon);
+
+  QIcon addSkipIcon;
+  addSkipIcon.addFile(string(iconPath + "addSkip.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnAddSkip->setIcon(addSkipIcon);
+
+  QIcon mapToAminoAcidIcon;
+  mapToAminoAcidIcon.addFile(string(iconPath + "mapToAminoAcid.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnMapToAminoAcids->setIcon(mapToAminoAcidIcon);
+
+  QIcon editAtomsIcon;
+  editAtomsIcon.addFile(string(iconPath + "editAtoms.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnEditAtoms->setIcon(editAtomsIcon);
+
+  QIcon paintIcon;
+  paintIcon.addFile(string(iconPath + "paint.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnPaint->setIcon(paintIcon);
+
+
 
 }
 
@@ -29,6 +104,64 @@ void SEAdenitaCoreSEAppGUI::saveSettings( SBGSettings *settings ) {
 
 	// SAMSON Element generator pro tip: complete this function so your app can save its GUI state from one session to the next
 
+}
+
+void SEAdenitaCoreSEAppGUI::onCreate()
+{
+  SBProxy* weClassProxy = SAMSON::getProxy("SEWireframeEditor");
+  SEWireframeEditor* we = static_cast<SEWireframeEditor*>(SAMSON::getEditor(weClassProxy->getUUID(), weClassProxy->getElementUUID()));
+  
+  SAMSON::setActiveEditor(we);
+  SAMSON::setActiveEditor(we); //has to be set active twice in order for ther popertyDialog to show up
+  
+}
+
+void SEAdenitaCoreSEAppGUI::onLoadFile()
+{
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open document: caDNAno, mesh (ply), Adenita document"), QDir::currentPath(), tr("(Documents *.json *.ply)"));
+  if (!filename.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+
+    if (filename.endsWith(".json")) {
+
+      //cadnano file
+      ADNConstants::CadnanoLatticeType typ = ADNConstants::CadnanoLatticeType::Honeycomb;
+
+      QStringList items;
+      items << "Honeycomb" << "Square";
+
+      bool ok;
+      QString item = QInputDialog::getItem(this, "CaDNAno structure",
+        "Lattice:", items, 0, false, &ok);
+
+      if (ok && !item.isEmpty()) {
+        if (item == "Honeycomb") {
+          typ = ADNConstants::CadnanoLatticeType::Honeycomb;
+        }
+        else if (item == "Square") {
+          typ = ADNConstants::CadnanoLatticeType::Square;
+        }
+                
+        t->ImportFromCadnano(filename, typ);
+        
+      }
+    }
+    else if(filename.endsWith(".ply")){
+
+      bool ok;
+      int i = QInputDialog::getInt(this, tr("Wireframe structure (Daedalus)"),
+        tr("Minimum edge size (bp): "), 42, 0, 500, 1, &ok);
+      if (ok) {
+        t->LoadPartWithDaedalus(filename, i);
+      }
+
+    }
+    else if (filename.endsWith(".adn")) {
+      t->LoadPart(filename);
+    }
+  }
+
+  SAMSON::getActiveCamera()->center();
 }
 
 void SEAdenitaCoreSEAppGUI::onLoadPart()
