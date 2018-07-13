@@ -49,6 +49,12 @@ public:
   */
   SBPosition3 GetNucleotidePosition(ADNPointer<ADNNucleotide> nt);
 
+  //! Hides center "mock" atom
+  /*!
+    \param a ADNPointer to a ADNNucleotide
+  */
+  void HideCenterAtoms(ADNPointer<ADNNucleotide> nt);
+
 private:
   CollectionMap<ADNPart> partsIndex_;
 };

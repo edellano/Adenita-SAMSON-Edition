@@ -171,6 +171,16 @@ CollectionMap<ADNAtom> ADNNucleotide::GetAtoms()
   return atoms;
 }
 
+void ADNNucleotide::HideCenterAtoms()
+{
+  auto bb = GetBackbone();
+  auto sc = GetSidechain();
+
+  HideCenterAtom();
+  bb->HideCenterAtom();
+  sc->HideCenterAtom();
+}
+
 CollectionMap<ADNAtom> ADNNucleotide::GetAtomsByName(std::string name)
 {
   CollectionMap<ADNAtom> res;
@@ -1295,7 +1305,6 @@ ADNPointer<ADNNucleotide> ADNSidechain::GetNucleotide() const
 PositionableSB::PositionableSB()
 {
   centerAtom_ = new ADNAtom();
-  centerAtom_->setVisibilityFlag(false);
 }
 
 PositionableSB::PositionableSB(const PositionableSB & other)
@@ -1332,4 +1341,9 @@ ADNPointer<ADNAtom> PositionableSB::GetCenterAtom() const
 void PositionableSB::SetCenterAtom(ADNPointer<ADNAtom> centerAtom)
 {
   centerAtom_ = centerAtom;
+}
+
+void PositionableSB::HideCenterAtom()
+{
+  centerAtom_->setVisibilityFlag(false);
 }
