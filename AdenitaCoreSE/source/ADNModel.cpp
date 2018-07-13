@@ -1295,6 +1295,7 @@ ADNPointer<ADNNucleotide> ADNSidechain::GetNucleotide() const
 PositionableSB::PositionableSB()
 {
   centerAtom_ = new ADNAtom();
+  centerAtom_->setVisibilityFlag(false);
 }
 
 PositionableSB::PositionableSB(const PositionableSB & other)
