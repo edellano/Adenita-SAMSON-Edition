@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ADNNanorobot.hpp"
+#include "ADNBasicOperations.hpp"
 #include "rapidjson/document.h"
 #include "rapidjson/pointer.h"
 #include "rapidjson/writer.h"

@@ -402,12 +402,18 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
           int endNtSsId = endNt["strand_id"].GetInt();
           std::pair<int, int> endKey = std::make_pair(endNtSsId, endNtId);
 
+          ADNPointer<ADNNucleotide> sNt;
+          ADNPointer<ADNNucleotide> eNt;
           if (origNucleotideId.find(startKey) != origNucleotideId.end()) {
-            leftLoop->SetStart(origNucleotideId.at(startKey));
+            sNt = origNucleotideId.at(startKey);
           }
           if (origNucleotideId.find(endKey) != origNucleotideId.end()) {
-            leftLoop->SetEnd(origNucleotideId.at(endKey));
+            eNt = origNucleotideId.at(endKey);
           }
+
+          auto order = ADNBasicOperations::OrderNucleotides(sNt, eNt);
+          leftLoop->SetStart(order.first);
+          leftLoop->SetEnd(order.second);
 
           const Value& nucleotides = left["nucleotides_list"];
           for (Value::ConstMemberIterator itr = nucleotides.MemberBegin(); itr != nucleotides.MemberEnd(); ++itr) {
@@ -438,12 +444,18 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
           int endNtSsId = endNt["strand_id"].GetInt();
           std::pair<int, int> endKey = std::make_pair(endNtSsId, endNtId);
 
+          ADNPointer<ADNNucleotide> sNt;
+          ADNPointer<ADNNucleotide> eNt;
           if (origNucleotideId.find(startKey) != origNucleotideId.end()) {
-            rightLoop->SetStart(origNucleotideId.at(startKey));
+            sNt = origNucleotideId.at(startKey);
           }
           if (origNucleotideId.find(endKey) != origNucleotideId.end()) {
-            rightLoop->SetEnd(origNucleotideId.at(endKey));
+            eNt = origNucleotideId.at(endKey);
           }
+
+          auto order = ADNBasicOperations::OrderNucleotides(sNt, eNt);
+          rightLoop->SetStart(order.first);
+          rightLoop->SetEnd(order.second);
 
           const Value& nucleotides = right["nucleotides_list"];
           for (Value::ConstMemberIterator itr = nucleotides.MemberBegin(); itr != nucleotides.MemberEnd(); ++itr) {
