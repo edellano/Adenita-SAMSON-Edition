@@ -24,7 +24,9 @@ public:
   void SetLogPath(std::string path);
 
   // logging functions
+
   void ClearLog();
+  void Log(int value);
   void Log(std::string value);
   void Log(QString value);
   void LogVector(ublas::vector<double> v);
