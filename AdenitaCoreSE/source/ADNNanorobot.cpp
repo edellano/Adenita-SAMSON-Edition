@@ -1554,6 +1554,46 @@ CollectionMap<ADNPart> ADNNanorobot::GetParts() const
 //  }
 //}
 
+CollectionMap<ADNNucleotide> ADNNanorobot::GetSingleStrandNucleotides(ADNPointer<ADNSingleStrand> ss)
+{
+  return ss->GetNucleotides();
+}
+
+ADNPointer<ADNNucleotide> ADNNanorobot::GetSingleStrandFivePrime(ADNPointer<ADNSingleStrand> ss)
+{
+  return ss->GetFivePrime();
+}
+
+bool ADNNanorobot::IsScaffold(ADNPointer<ADNSingleStrand> ss)
+{
+  return ss->IsScaffold();
+}
+
+End ADNNanorobot::GetNucleotideEnd(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetEnd();
+}
+
+ADNPointer<ADNNucleotide> ADNNanorobot::GetNucleotideNext(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetNext();
+}
+
+SBPosition3 ADNNanorobot::GetNucleotidePosition(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetPosition();
+}
+
+SBPosition3 ADNNanorobot::GetNucleotideBackbonePosition(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetBackbonePosition();
+}
+
+SBPosition3 ADNNanorobot::GetNucleotideSidechainPosition(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetSidechainPosition();
+}
+
 void ADNNanorobot::HideCenterAtoms(ADNPointer<ADNNucleotide> nt)
 {
   nt->HideCenterAtoms();

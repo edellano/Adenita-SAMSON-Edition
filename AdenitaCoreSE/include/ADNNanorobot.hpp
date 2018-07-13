@@ -42,12 +42,61 @@ public:
   */
   void DeregisterPart(ADNPointer<ADNPart> part);
 
+  //! Return the nucleotides of a single strand
+  /*!
+    \param a ADNPointer to a ADNSingleStrand
+    \return a CollectionMap of ADNNucleotides
+  */
+  CollectionMap<ADNNucleotide> GetSingleStrandNucleotides(ADNPointer<ADNSingleStrand> ss);
+
+  //! Return the single strand five prime nucleotide
+  /*!
+    \param a ADNPointer to a ADNSingleStrand
+    \return a ADNPointer to the five prime ADNNucleotide
+  */
+  ADNPointer<ADNNucleotide> GetSingleStrandFivePrime(ADNPointer<ADNSingleStrand> ss);
+
+  //! Return whether a single strand is a scaffold
+  /*!
+    \param a ADNPointer to a ADNSingleStrand
+    \return a bool value true if it is a scaffold
+  */
+  bool IsScaffold(ADNPointer<ADNSingleStrand> ss);
+
+  //! Return if the nucleotide is 5', 3', neither or both
+  /*!
+    \param a ADNPointer to a ADNNucleotide
+    \return the End position on the strand
+  */
+  End GetNucleotideEnd(ADNPointer<ADNNucleotide> nt);
+
+  //! Return the nucleotide next on the single strand
+  /*!
+    \param a ADNPointer to a ADNNucleotide
+    \return a ADNPointer to the ADNNucleotide next on the single strand
+  */
+  ADNPointer<ADNNucleotide> GetNucleotideNext(ADNPointer<ADNNucleotide> nt);
+
   //! Return the position of a nucleotide
   /*!
     \param a ADNPointer to a ADNNucleotide
     \return the positon of the nucleotide as SBPosition3
   */
   SBPosition3 GetNucleotidePosition(ADNPointer<ADNNucleotide> nt);
+
+  //! Return the position of the backbone of a nucleotide
+  /*!
+    \param a ADNPointer to a ADNNucleotide
+    \return the positon of the backbone of the nucleotide as SBPosition3
+  */
+  SBPosition3 GetNucleotideBackbonePosition(ADNPointer<ADNNucleotide> nt);
+
+  //! Return the position of the sidechain of a nucleotide
+  /*!
+    \param a ADNPointer to a ADNNucleotide
+    \return the positon of the sidechain of the nucleotide as SBPosition3
+  */
+  SBPosition3 GetNucleotideSidechainPosition(ADNPointer<ADNNucleotide> nt);
 
   //! Hides center "mock" atom
   /*!
