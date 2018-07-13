@@ -167,6 +167,8 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
   }
   btta.CheckDistances(part);
 
+  nanorobot_->RegisterPart(part);
+
   SAMSON::beginHolding("Add model");
   part->create();
   SAMSON::getActiveLayer()->addChild(part());
