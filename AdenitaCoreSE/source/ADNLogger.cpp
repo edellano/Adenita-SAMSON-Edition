@@ -20,6 +20,11 @@ void ADNLogger::ClearLog()
   file.close();
 }
 
+void ADNLogger::Log(int value)
+{
+  Log(to_string(value));
+}
+
 void ADNLogger::Log(std::string value)
 {
   QString qs = QString::fromStdString(value);
