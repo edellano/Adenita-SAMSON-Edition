@@ -11,6 +11,7 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
   if (config.clear_log_file) {
     logger.ClearLog();
   }
+  logger.LogDateTime();
 
   nanorobot_ = new ADNNanorobot();
 }
