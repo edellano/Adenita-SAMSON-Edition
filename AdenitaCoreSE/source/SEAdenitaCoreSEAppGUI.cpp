@@ -124,7 +124,18 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
 
     if (filename.endsWith(".json")) {
       // either cadnano or old Adenita format
-      t->ImportFromCadnano(filename);
+      std::string format = IsJsonCadnano(filename);
+      if (format == "cadnano") {
+        t->ImportFromCadnano(filename);
+      }
+      else if (format == "adenita") {
+        t->LoadPart(filename);
+      }
+      else {
+        QMessageBox msgBox;
+        msgBox.setText("Unknown json format. Current supported formats include Cadnano and legacy Adenita parts");
+        msgBox.exec();
+      }
     }
     else if(filename.endsWith(".ply")){
       bool ok;
@@ -204,6 +215,27 @@ void SEAdenitaCoreSEAppGUI::onCenterPart()
   SEAdenitaCoreSEApp *t = getApp();
   t->CenterPart();
   SAMSON::getActiveCamera()->center();
+}
+
+std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
+{
+  std::string format = "unknown";
+
+  FILE* fp;
+  fopen_s(&fp, filename.toStdString().c_str(), "rb");
+  char readBuffer[65536];
+  FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+  Document d;
+  d.ParseStream(is);
+
+  if (d.HasMember("vstrands")) {
+    format = "cadnano";
+  }
+  else if (d.HasMember("doubleStrands")) {
+    format = "adenita";
+  }
+
+  return format;
 }
 
 SBCContainerUUID SEAdenitaCoreSEAppGUI::getUUID() const { return SBCContainerUUID( "386506A7-DD8B-69DD-4599-F136C1B91610" );}
