@@ -101,6 +101,7 @@ public:
 
   ADNPointer<ADNAtom> GetCenterAtom() const;
   void SetCenterAtom(ADNPointer<ADNAtom> centerAtom);
+  void HideCenterAtom();
 
 private:
   ADNPointer<ADNAtom> centerAtom_;
@@ -195,6 +196,7 @@ public:
   void ADNNucleotide::DeleteAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
   CollectionMap<ADNAtom> GetAtoms();
   CollectionMap<ADNAtom> GetAtomsByName(std::string name);
+  void HideCenterAtoms();
 
   // Local base is always the standard basis */
   ublas::matrix<double> GetGlobalBasisTransformation();

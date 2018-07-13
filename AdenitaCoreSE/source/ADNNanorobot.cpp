@@ -1553,3 +1553,8 @@ CollectionMap<ADNPart> ADNNanorobot::GetParts() const
 //    }
 //  }
 //}
+
+void ADNNanorobot::HideCenterAtoms(ADNPointer<ADNNucleotide> nt)
+{
+  nt->HideCenterAtoms();
+}
