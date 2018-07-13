@@ -499,6 +499,272 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
   return part;
 }
 
+void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, rapidjson::Writer<StringBuffer>& writer)
+{
+
+  std::string st_position = ADNAuxiliary::SBPositionToString(p->GetPosition());
+
+  writer.Key("position");
+  writer.String(st_position.c_str());
+
+  writer.Key("name");
+  writer.String(p->GetName().c_str());
+
+  auto doubleStrands = p->GetDoubleStrands();
+  writer.Key("doubleStrands");
+  writer.StartObject();
+  SB_FOR(SBStructuralNode* p, doubleStrands) {
+    ADNPointer<ADNDoubleStrand> ds = static_cast<ADNDoubleStrand*>(p);
+
+    std::string key = std::to_string(ds->getNodeIndex());
+    writer.Key(key.c_str());
+    writer.StartObject();
+
+    writer.Key("firstBaseSegment");
+    writer.Int(ds->GetFirstBaseSegment()->getNodeIndex());
+
+    writer.Key("lastBaseSegment");
+    writer.Int(ds->GetLastBaseSegment()->getNodeIndex());
+
+    writer.Key("initialTwistAngle");
+    writer.Double(ds->GetInitialTwistAngle());
+
+    auto bases = ds->GetBaseSegments();
+    writer.Key("bases");
+    writer.StartObject();
+    SB_FOR(SBStructuralNode* pair, bases) {
+      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(pair);
+
+      std::string key = std::to_string(bs->getNodeIndex());
+      writer.Key(key.c_str());
+      writer.StartObject();
+
+      writer.Key("number");
+      writer.Int(bs->GetNumber());
+
+      writer.Key("position");
+      writer.String(ADNAuxiliary::SBPositionToString(bs->GetPosition()).c_str());
+
+      int nextId = -1;
+      if (bs->GetNext() != nullptr) nextId = bs->GetNext()->getNodeIndex();
+      writer.Key("next");
+      writer.Int(nextId);
+
+      int prevId = -1;
+      if (bs->GetPrev() != nullptr) prevId = bs->GetPrev()->getNodeIndex();
+      writer.Key("previous");
+      writer.Int(prevId);
+
+      writer.Key("e1");
+      writer.String(ADNAuxiliary::UblasVectorToString(bs->GetE1()).c_str());
+
+      writer.Key("e2");
+      writer.String(ADNAuxiliary::UblasVectorToString(bs->GetE2()).c_str());
+
+      writer.Key("e3");
+      writer.String(ADNAuxiliary::UblasVectorToString(bs->GetE3()).c_str());
+
+      writer.Key("cell");
+      writer.StartObject();
+
+      auto type = bs->GetCellType();
+      writer.Key("type");
+      writer.Int(type);
+
+      ADNPointer<ADNCell> cell = bs->GetCell();
+      if (type == CellType::BasePair) {
+        ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(cell());
+
+        int idLeft = -1;
+        if (bp->GetLeftNucleotide() != nullptr) idLeft = bp->GetLeftNucleotide()->getNodeIndex();
+        writer.Key("left");
+        writer.Int(idLeft);
+
+        int idRight = -1;
+        if (bp->GetRightNucleotide() != nullptr) idRight = bp->GetRightNucleotide()->getNodeIndex();
+        writer.Key("right");
+        writer.Int(idRight);
+      }
+      else if (type == CellType::LoopPair) {
+        ADNPointer<ADNLoopPair> lp = static_cast<ADNLoopPair*>(cell());
+
+        ADNPointer<ADNLoop> left = lp->GetLeftLoop();
+        writer.Key("leftLoop");
+        writer.StartObject();
+
+        if (left != nullptr) {
+          int startNtId = -1;
+          if (left->GetStart() != nullptr) startNtId = left->GetStart()->getNodeIndex();
+          writer.Key("startNt");
+          writer.Int(startNtId);
+
+          int endNtId = -1;
+          if (left->GetEnd() != nullptr) endNtId = left->GetEnd()->getNodeIndex();
+          writer.Key("endNt");
+          writer.Int(endNtId);
+
+          auto nts = left->GetNucleotides();
+          std::vector<int> ntList;
+          writer.Key("nucleotides");
+          SB_FOR(SBStructuralNode* n, nts) {
+            ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(n);
+            ntList.push_back(nt->getNodeIndex());
+          }
+          std::string str = ADNAuxiliary::VectorToString(ntList);
+          writer.String(str.c_str());
+        }
+
+        writer.EndObject();  // end left loop
+
+        ADNPointer<ADNLoop> right = lp->GetRightLoop();
+        writer.Key("rightLoop");
+        writer.StartObject();
+
+        if (right != nullptr) {
+          int startNtId = -1;
+          if (right->GetStart() != nullptr) startNtId = right->GetStart()->getNodeIndex();
+          writer.Key("startNt");
+          writer.Int(startNtId);
+
+          int endNtId = -1;
+          if (right->GetEnd() != nullptr) endNtId = right->GetEnd()->getNodeIndex();
+          writer.Key("endNt");
+          writer.Int(endNtId);
+
+          auto nts = right->GetNucleotides();
+          std::vector<int> ntList;
+          writer.Key("nucleotides");
+          SB_FOR(SBStructuralNode* n, nts) {
+            ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(n);
+            ntList.push_back(nt->getNodeIndex());
+          }
+          std::string strRight = ADNAuxiliary::VectorToString(ntList);
+          writer.String(strRight.c_str());
+        }
+        writer.EndObject();  // end right loop
+      }
+
+      writer.EndObject();  // end cell
+
+      writer.EndObject();  // end base segment
+    }
+    writer.EndObject();  // end bases
+
+    writer.EndObject();  // end of ds
+  }
+  writer.EndObject();  // end of double strands
+
+  auto singleStrands = p->GetSingleStrands();
+  writer.Key("singleStrands");
+  writer.StartObject();
+  SB_FOR(SBStructuralNode* p, singleStrands) {
+    ADNPointer<ADNSingleStrand> ss = static_cast<ADNSingleStrand*>(p);
+
+    std::string key = std::to_string(ss->getNodeIndex());
+    writer.Key(key.c_str());
+    writer.StartObject();
+
+    writer.Key("chainName");
+    writer.String(ss->GetName().c_str());
+
+    writer.Key("isScaffold");
+    writer.Bool(ss->IsScaffold());
+
+    writer.Key("fivePrimeId");
+    writer.Int(ss->GetFivePrime()->getNodeIndex());
+
+    writer.Key("threePrimeId");
+    writer.Int(ss->GetThreePrime()->getNodeIndex());
+
+    auto nucleotides = ss->GetNucleotides();
+    writer.Key("nucleotides");
+    writer.StartObject();
+    SB_FOR(SBStructuralNode* pair, nucleotides) {
+      ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(pair);
+
+      std::string key = std::to_string(nt->getNodeIndex());
+      writer.Key(key.c_str());
+      writer.StartObject();
+
+      writer.Key("type");
+      char t = ADNModel::ResidueNameToType(nt->GetType());
+      std::string typ = std::string(&t, 0, 1);
+      writer.String(typ.c_str());
+
+      int pairId = -1;
+      if (nt->GetPair() != nullptr) pairId = nt->GetPair()->getNodeIndex();
+      writer.Key("pair");
+      writer.Int(pairId);
+
+      int prevId = -1;
+      if (nt->GetPrev() != nullptr) prevId = nt->GetPrev()->getNodeIndex();
+      writer.Key("prev");
+      writer.Int(prevId);
+
+      int nextId = -1;
+      if (nt->GetNext() != nullptr) nextId = nt->GetNext()->getNodeIndex();
+      writer.Key("next");
+      writer.Int(nextId);
+
+      writer.Key("e1");
+      writer.String(ADNAuxiliary::UblasVectorToString(nt->GetE1()).c_str());
+
+      writer.Key("e2");
+      writer.String(ADNAuxiliary::UblasVectorToString(nt->GetE2()).c_str());
+
+      writer.Key("e3");
+      writer.String(ADNAuxiliary::UblasVectorToString(nt->GetE3()).c_str());
+
+      writer.Key("position");
+      writer.String(ADNAuxiliary::SBPositionToString(nt->GetPosition()).c_str());
+
+      writer.Key("backboneCenter");
+      writer.String(ADNAuxiliary::SBPositionToString(nt->GetBackbonePosition()).c_str());
+
+      writer.Key("sidechainCenter");
+      writer.String(ADNAuxiliary::SBPositionToString(nt->GetSidechainPosition()).c_str());
+
+      writer.EndObject();  // end nt
+    }
+    writer.EndObject();  // end nucleotides
+
+    writer.EndObject();  // end ss
+  }
+  writer.EndObject();
+}
+
+void ADNLoader::SaveNanorobotToJson(ADNNanorobot * nr, std::string filename)
+{
+  StringBuffer s;
+  rapidjson::Writer<StringBuffer> writer(s);
+  writer.StartObject();
+
+  writer.Key("version");
+  writer.Double(ADNConstants::JSON_FORMAT_VERSION);
+
+  auto parts = nr->GetParts();
+  writer.Key("doubleStrands");
+  writer.StartObject();
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    SavePartToJson(p, writer);
+  }
+
+  writer.EndObject();  // end parts
+
+  writer.EndObject();  // end json document
+
+  QIODevice::OpenModeFlag mode = QIODevice::WriteOnly;
+
+  QFile file(QString::fromStdString(filename));
+  file.open(mode);
+
+  QTextStream out(&file);
+
+  out << s.GetString();
+
+  file.close();
+}
+
 void ADNLoader::OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options)
 {
   std::string fnameConf = "config.conf";
@@ -657,236 +923,8 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
   writer.Key("version");
 	writer.Double(ADNConstants::JSON_FORMAT_VERSION);
 	
-  std::string st_position = ADNAuxiliary::SBPositionToString(p->GetPosition());
-	
-	writer.Key("position");
-	writer.String(st_position.c_str());
-	
-	writer.Key("name");
-	writer.String(p->GetName().c_str());
+  SavePartToJson(p, writer);
 
-  auto doubleStrands = p->GetDoubleStrands();
-  writer.Key("doubleStrands");
-  writer.StartObject();
-  SB_FOR(SBStructuralNode* p, doubleStrands) {
-    ADNPointer<ADNDoubleStrand> ds = static_cast<ADNDoubleStrand*>(p);
-    
-    std::string key = std::to_string(ds->getNodeIndex());
-    writer.Key(key.c_str());
-    writer.StartObject();
-
-    writer.Key("firstBaseSegment");
-    writer.Int(ds->GetFirstBaseSegment()->getNodeIndex());
-
-    writer.Key("lastBaseSegment");
-    writer.Int(ds->GetLastBaseSegment()->getNodeIndex());
-
-    writer.Key("initialTwistAngle");
-    writer.Double(ds->GetInitialTwistAngle());
-
-    auto bases = ds->GetBaseSegments();
-    writer.Key("bases");
-    writer.StartObject();
-    SB_FOR(SBStructuralNode* pair, bases) {
-      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(pair);
-
-      std::string key = std::to_string(bs->getNodeIndex());
-      writer.Key(key.c_str());
-      writer.StartObject();
-
-      writer.Key("number");
-      writer.Int(bs->GetNumber());
-
-      writer.Key("position");
-      writer.String(ADNAuxiliary::SBPositionToString(bs->GetPosition()).c_str());
-
-      int nextId = -1;
-      if (bs->GetNext() != nullptr) nextId = bs->GetNext()->getNodeIndex();
-      writer.Key("next");
-      writer.Int(nextId);
-
-      int prevId = -1;
-      if (bs->GetPrev() != nullptr) prevId = bs->GetPrev()->getNodeIndex();
-      writer.Key("previous");
-      writer.Int(prevId);
-
-      writer.Key("e1");
-      writer.String(ADNAuxiliary::UblasVectorToString(bs->GetE1()).c_str());
-
-      writer.Key("e2");
-      writer.String(ADNAuxiliary::UblasVectorToString(bs->GetE2()).c_str());
-
-      writer.Key("e3");
-      writer.String(ADNAuxiliary::UblasVectorToString(bs->GetE3()).c_str());
-
-      writer.Key("cell");
-      writer.StartObject();
-      
-      auto type = bs->GetCellType();
-      writer.Key("type");
-      writer.Int(type);
-
-      ADNPointer<ADNCell> cell = bs->GetCell();
-      if (type == CellType::BasePair) {
-        ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(cell());
-
-        int idLeft = -1;
-        if (bp->GetLeftNucleotide() != nullptr) idLeft = bp->GetLeftNucleotide()->getNodeIndex();
-        writer.Key("left");
-        writer.Int(idLeft);
-
-        int idRight = -1;
-        if (bp->GetRightNucleotide() != nullptr) idRight = bp->GetRightNucleotide()->getNodeIndex();
-        writer.Key("right");
-        writer.Int(idRight);
-      }
-      else if (type == CellType::LoopPair) {
-        ADNPointer<ADNLoopPair> lp = static_cast<ADNLoopPair*>(cell());
-
-        ADNPointer<ADNLoop> left = lp->GetLeftLoop();
-        writer.Key("leftLoop");
-        writer.StartObject();
-        
-        if (left != nullptr) {
-          int startNtId = -1;
-          if (left->GetStart() != nullptr) startNtId = left->GetStart()->getNodeIndex();
-          writer.Key("startNt");
-          writer.Int(startNtId);
-
-          int endNtId = -1;
-          if (left->GetEnd() != nullptr) endNtId = left->GetEnd()->getNodeIndex();
-          writer.Key("endNt");
-          writer.Int(endNtId);
-
-          auto nts = left->GetNucleotides();
-          std::vector<int> ntList;
-          writer.Key("nucleotides");
-          SB_FOR(SBStructuralNode* n, nts) {
-            ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(n);
-            ntList.push_back(nt->getNodeIndex());
-          }
-          std::string str = ADNAuxiliary::VectorToString(ntList);
-          writer.String(str.c_str());
-        }
-
-        writer.EndObject();  // end left loop
-
-        ADNPointer<ADNLoop> right = lp->GetRightLoop();
-        writer.Key("rightLoop");
-        writer.StartObject();
-        
-        if (right != nullptr) {
-          int startNtId = -1;
-          if (right->GetStart() != nullptr) startNtId = right->GetStart()->getNodeIndex();
-          writer.Key("startNt");
-          writer.Int(startNtId);
-
-          int endNtId = -1;
-          if (right->GetEnd() != nullptr) endNtId = right->GetEnd()->getNodeIndex();
-          writer.Key("endNt");
-          writer.Int(endNtId);
-
-          auto nts = right->GetNucleotides();
-          std::vector<int> ntList;
-          writer.Key("nucleotides");
-          SB_FOR(SBStructuralNode* n, nts) {
-            ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(n);
-            ntList.push_back(nt->getNodeIndex());
-          }
-          std::string strRight = ADNAuxiliary::VectorToString(ntList);
-          writer.String(strRight.c_str());
-        }
-        writer.EndObject();  // end right loop
-      }
-
-      writer.EndObject();  // end cell
-
-      writer.EndObject();  // end base segment
-    }
-    writer.EndObject();  // end bases
-
-    writer.EndObject();  // end of ds
-  }
-  writer.EndObject();  // end of double strands
-
-  auto singleStrands = p->GetSingleStrands();
-  writer.Key("singleStrands");
-  writer.StartObject();
-  SB_FOR(SBStructuralNode* p, singleStrands) {
-    ADNPointer<ADNSingleStrand> ss = static_cast<ADNSingleStrand*>(p);
-    
-    std::string key = std::to_string(ss->getNodeIndex());
-    writer.Key(key.c_str());
-    writer.StartObject();
-
-    writer.Key("chainName");
-    writer.String(ss->GetName().c_str());
-
-    writer.Key("isScaffold");
-    writer.Bool(ss->IsScaffold());
-
-    writer.Key("fivePrimeId");
-    writer.Int(ss->GetFivePrime()->getNodeIndex());
-
-    writer.Key("threePrimeId");
-    writer.Int(ss->GetThreePrime()->getNodeIndex());
-
-    auto nucleotides = ss->GetNucleotides();
-    writer.Key("nucleotides");
-    writer.StartObject();
-    SB_FOR(SBStructuralNode* pair, nucleotides) {
-      ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(pair);
-      
-      std::string key = std::to_string(nt->getNodeIndex());
-      writer.Key(key.c_str());
-      writer.StartObject();
-
-      writer.Key("type");
-      char t = ADNModel::ResidueNameToType(nt->GetType());
-      std::string typ = std::string(&t, 0, 1);
-      writer.String(typ.c_str());
-
-      int pairId = -1;
-      if (nt->GetPair() != nullptr) pairId = nt->GetPair()->getNodeIndex();
-      writer.Key("pair");
-      writer.Int(pairId);
-
-      int prevId = -1;
-      if (nt->GetPrev() != nullptr) prevId = nt->GetPrev()->getNodeIndex();
-      writer.Key("prev");
-      writer.Int(prevId);
-
-      int nextId = -1;
-      if (nt->GetNext() != nullptr) nextId = nt->GetNext()->getNodeIndex();
-      writer.Key("next");
-      writer.Int(nextId);
-
-      writer.Key("e1");
-      writer.String(ADNAuxiliary::UblasVectorToString(nt->GetE1()).c_str());
-
-      writer.Key("e2");
-      writer.String(ADNAuxiliary::UblasVectorToString(nt->GetE2()).c_str());
-
-      writer.Key("e3");
-      writer.String(ADNAuxiliary::UblasVectorToString(nt->GetE3()).c_str());
-
-      writer.Key("position");
-      writer.String(ADNAuxiliary::SBPositionToString(nt->GetPosition()).c_str());
-
-      writer.Key("backboneCenter");
-      writer.String(ADNAuxiliary::SBPositionToString(nt->GetBackbonePosition()).c_str());
-
-      writer.Key("sidechainCenter");
-      writer.String(ADNAuxiliary::SBPositionToString(nt->GetSidechainPosition()).c_str());
-
-      writer.EndObject();  // end nt
-    }
-    writer.EndObject();  // end nucleotides
-
-    writer.EndObject();  // end ss
-  }
-  writer.EndObject();
-	
   writer.EndObject();  // end json document
 	
 	QIODevice::OpenModeFlag mode = QIODevice::WriteOnly;

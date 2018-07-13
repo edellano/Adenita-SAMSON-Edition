@@ -13,6 +13,9 @@ namespace ADNLoader {
   ADNPointer<ADNPart> LoadPartFromJson(std::string filename);
   ADNPointer<ADNPart> LoadPartFromJsonLegacy(std::string filename);
   void SavePartToJson(ADNPointer<ADNPart> p, std::string filename);
+  //! Writes a part to a string buffer for rapidjson
+  void SavePartToJson(ADNPointer<ADNPart> p, rapidjson::Writer<StringBuffer>& s);
+  void SaveNanorobotToJson(ADNNanorobot* nr, std::string filename);
 
   // pdb
   ADNPointer<ADNPart> LoadPartFromPDB(std::string filename, int id = -1);
