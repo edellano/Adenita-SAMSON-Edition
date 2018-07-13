@@ -118,7 +118,7 @@ void SEAdenitaCoreSEAppGUI::onCreate()
 
 void SEAdenitaCoreSEAppGUI::onLoadFile()
 {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open document: caDNAno, mesh (ply), Adenita document"), QDir::currentPath(), tr("(Documents *.json *.ply)"));
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open document: caDNAno, mesh (ply), Adenita document (adn, adnpart)"), QDir::currentPath(), tr("(Documents *.json *.ply *.adn *.adnpart)"));
   if (!filename.isEmpty()) {
     SEAdenitaCoreSEApp* t = getApp();
 
@@ -147,7 +147,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
         t->LoadPartWithDaedalus(filename, minSize);
       }
     }
-    else if (filename.endsWith(".adn")) {
+    else if (filename.endsWith(".adnpart")) {
       t->LoadPart(filename);
     }
   }
@@ -157,7 +157,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
 
 void SEAdenitaCoreSEAppGUI::onSavePart()
 {
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save an ANTPart .adn file"), QDir::currentPath(), tr("Adenita json (*.adn)"));
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save an ANTPart .adnpart file"), QDir::currentPath(), tr("Adenita json (*.adnpart)"));
   if (!filename.isEmpty()) {
     SEAdenitaCoreSEApp* t = getApp();
     t->SavePart(filename);
