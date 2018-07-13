@@ -53,6 +53,30 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   guanineColor_(2) = config.guanine_color[2];
   guanineColor_(3) = config.guanine_color[3];
 
+
+  SBNodeIndexer residues;
+  SB_FOR(SBNode* node, nodeIndexer)
+    node->getNodes(residues, SBNode::IsType(SBNode::Residue));
+
+  SB_FOR(SBNode* node, residues) {
+    SBResidue* residue = static_cast<SBResidue*>(node);
+
+    //connect signals
+    residue->connectBaseSignalToSlot(
+      this,
+      SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
+
+    residue->connectStructuralSignalToSlot(
+      this, // the pointer to the app
+      SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent) // the slot
+      );
+
+
+  }
+
+
+
+
   changeScale(6);
 }
 
@@ -559,6 +583,24 @@ void SEAdenitaVisualModel::displayForSelection() {
 	// Implement this function so that your visual model can be selected (if you render its own index) or can be used to select other objects (if you render 
 	// the other objects' indices), for example thanks to the utility functions provided by SAMSON (e.g. displaySpheresSelection, displayTrianglesSelection, etc.)
 
+  if (nanorobot_ == nullptr) return;
+
+  SAMSON::displaySpheresSelection(
+    nPositions_,
+    positions_.GetArray(),
+    radiiV_.GetArray(),
+    nodeIndices_.GetArray()
+    );
+  if (nCylinders_ > 0) {
+    SAMSON::displayCylindersSelection(
+      nCylinders_,
+      nPositions_,
+      indices_.GetArray(),
+      positions_.GetArray(),
+      radiiE_.GetArray(),
+      nullptr,
+      nodeIndices_.GetArray());
+  }
 }
 
 void SEAdenitaVisualModel::expandBounds(SBIAPosition3& bounds) const {
@@ -590,6 +632,10 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle base events (e.g. when a node for which you provide a visual representation emits a base signal, such as when it is erased)
 
+  if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged || baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged) {
+    //flags have to be changed
+    changeScale(scale_);
+  }
 }
 
 void SEAdenitaVisualModel::onDocumentEvent(SBDocumentEvent* documentEvent) {
