@@ -1,6 +1,6 @@
 #include "DASCadnano.hpp"
 
-void DASCadnano::ParseJSON2(std::string filename)
+void DASCadnano::ParseJSON(std::string filename)
 {
   FILE* fp;
   fopen_s(&fp, filename.c_str(), "rb");
@@ -33,14 +33,14 @@ void DASCadnano::ParseCadnanoFormat3(Document & d)
 
 void DASCadnano::ParseCadnanoLegacy(Document& d)
 {
-  json2_.name_ = d["name"].GetString();
+  json_.name_ = d["name"].GetString();
   Value& vstrandsVal = d["vstrands"];
 
   int totalCount;
   for (unsigned int i = 0; i < vstrandsVal.Size(); i++) {
 
     Value& vstrandVal = vstrandsVal[i];
-    Vstrand2 vstrand;
+    Vstrand vstrand;
     
     vstrand.num_ = vstrandVal["num"].GetInt();
     vstrand.col_ = vstrandVal["col"].GetInt();
@@ -59,7 +59,7 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
 
       //start point
       if (elem.n0 == -1 && elem.n1 == -1 && elem.n2 != -1 && elem.n3 != -1) {
-        json2_.scaffoldStartPosition_ = std::make_pair(vstrand.num_, count);
+        json_.scaffoldStartPosition_ = std::make_pair(vstrand.num_, count);
       }
 
       ++count;
@@ -84,7 +84,7 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
         stapleStart.n0 = vstrand.num_;
         stapleStart.n1 = count;
 
-        json2_.stapleStarts_.push_back(stapleStart);
+        json_.stapleStarts_.push_back(stapleStart);
       }
 
       ++count;
@@ -126,56 +126,56 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
           tube.vStrandId_ = vstrand.num_;
           tube.initPos_ = init_pos;
           tube.endPos_ = end_pos;
-          vGrid2_.AddTube(tube);
+          vGrid_.AddTube(tube);
           init_pos = -1;
         }
       }
     }
 
-    json2_.vstrands_.insert(std::make_pair(vstrand.num_, vstrand));
+    json_.vstrands_.insert(std::make_pair(vstrand.num_, vstrand));
   }
 
   if (totalCount % 32 == 0) {
-    json2_.lType_ = LatticeType::Square;
+    json_.lType_ = LatticeType::Square;
   }
   else if (totalCount % 21 == 0) {
-    json2_.lType_ = LatticeType::Honeycomb;
+    json_.lType_ = LatticeType::Honeycomb;
   }
   else {
     // error
   }
-  vGrid2_.CreateLattice(json2_.lType_);
+  vGrid_.CreateLattice(json_.lType_);
 }
 
 ADNPointer<ADNPart> DASCadnano::CreateCadnanoModel()
 {
   ADNPointer<ADNPart> part = new ADNPart();
-  part->SetName(json2_.name_);
+  part->SetName(json_.name_);
 
-  CreateEdgeMap2(part);
-  CreateScaffold2(part);
-  CreateStaples2(part);
+  CreateEdgeMap(part);
+  CreateScaffold(part);
+  CreateStaples(part);
 
   return part;
 }
 
-void DASCadnano::CreateEdgeMap2(ADNPointer<ADNPart> nanorobot)
+void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
 {
-  auto tubes = vGrid2_.vDoubleStrands_;
+  auto tubes = vGrid_.vDoubleStrands_;
   for (auto &tube : tubes) {
     // every tube is a double strand
     ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
     nanorobot->RegisterDoubleStrand(ds);
     bool firstBs = true;
 
-    Vstrand2* vs = &json2_.vstrands_[tube.vStrandId_];
-    SBPosition3 initPos = vGrid2_.GetGridCellPos3D(tube.vStrandId_, tube.initPos_, vs->row_, vs->col_);
-    SBPosition3 endPos = vGrid2_.GetGridCellPos3D(tube.vStrandId_, tube.endPos_, vs->row_, vs->col_);
+    Vstrand* vs = &json_.vstrands_[tube.vStrandId_];
+    SBPosition3 initPos = vGrid_.GetGridCellPos3D(tube.vStrandId_, tube.initPos_, vs->row_, vs->col_);
+    SBPosition3 endPos = vGrid_.GetGridCellPos3D(tube.vStrandId_, tube.endPos_, vs->row_, vs->col_);
     int length = tube.endPos_ - tube.initPos_ + 1;
     SBVector3 dir = (endPos - initPos).normalizedVersion();
 
     std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> positions;
-    if (cellBsMap2_.find(vs) != cellBsMap2_.end()) positions = cellBsMap2_.at(vs);
+    if (cellBsMap_.find(vs) != cellBsMap_.end()) positions = cellBsMap_.at(vs);
 
     SEConfig& config = SEConfig::GetInstance();
     int magic_number = config.magic_number;  //  this is a magic number to fix crossovers
@@ -191,7 +191,7 @@ void DASCadnano::CreateEdgeMap2(ADNPointer<ADNPart> nanorobot)
       int max_iter = vs->loops_[tube.initPos_ + i];
       if (max_iter > 0) max_iter = 1;  // a loop is contained in a base segment
       for (int k = 0; k <= max_iter; k++) {
-        fp = vGrid2_.GetGridCellPos3D(tube.vStrandId_, tube.initPos_ + i, vs->row_, vs->col_);
+        fp = vGrid_.GetGridCellPos3D(tube.vStrandId_, tube.initPos_ + i, vs->row_, vs->col_);
         double factor = 1.0;
         if ((vs->row_ + vs->col_) % 2 == 0) factor = -1.0;
 
@@ -213,15 +213,15 @@ void DASCadnano::CreateEdgeMap2(ADNPointer<ADNPart> nanorobot)
       }
       ++bs_number;
     }
-    cellBsMap2_[vs] = positions;
+    cellBsMap_[vs] = positions;
   }
 }
 
-void DASCadnano::CreateScaffold2(ADNPointer<ADNPart> nanorobot)
+void DASCadnano::CreateScaffold(ADNPointer<ADNPart> nanorobot)
 {
   //look for stating point of scaffold in vstrand
-  int startVstrand = json2_.scaffoldStartPosition_.first;
-  int startVstrandPos = json2_.scaffoldStartPosition_.second;
+  int startVstrand = json_.scaffoldStartPosition_.first;
+  int startVstrandPos = json_.scaffoldStartPosition_.second;
 
   ADNLogger& logger = ADNLogger::GetLogger();
 
@@ -235,17 +235,17 @@ void DASCadnano::CreateScaffold2(ADNPointer<ADNPart> nanorobot)
   TraceSingleStrand(startVstrand, startVstrandPos, scaff, nanorobot);
 }
 
-void DASCadnano::CreateStaples2(ADNPointer<ADNPart> nanorobot)
+void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
   //find number of staples and their starting points
-  std::vector<vec2> stapleStarts = json2_.stapleStarts_; //vstrand id and position on vstrand
+  std::vector<vec2> stapleStarts = json_.stapleStarts_; //vstrand id and position on vstrand
   std::string numStaplesString;
   numStaplesString += "num of staple strands ";
   numStaplesString += to_string(stapleStarts.size());
   logger.Log(numStaplesString);
 
-  auto& vstrands = json2_.vstrands_;
+  auto& vstrands = json_.vstrands_;
   int sid = 1; //because scaffold is chain 0
   int numSkips = 0;
 
@@ -254,7 +254,7 @@ void DASCadnano::CreateStaples2(ADNPointer<ADNPart> nanorobot)
     int z = curStapleStart.n1;
     vec4 curVstrandElem = vstrands[vStrandId].stap_[z];
     
-    std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> bs_positions = cellBsMap2_.at(&vstrands[vStrandId]);
+    std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> bs_positions = cellBsMap_.at(&vstrands[vStrandId]);
 
     ADNPointer<ADNSingleStrand> staple = new ADNSingleStrand();
     staple->SetName("Staple" + to_string(sid));
@@ -273,7 +273,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
 {
   ADNLogger& logger = ADNLogger::GetLogger();
   //trace scaffold through vstrands
-  auto& vstrands = json2_.vstrands_;
+  auto& vstrands = json_.vstrands_;
   vec4 curVstrandElem;
   if (left) curVstrandElem = vstrands[startVStrand].scaf_[startVStrandPos];
   else curVstrandElem = vstrands[startVStrand].stap_[startVStrandPos];
@@ -285,7 +285,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
     int z = curVstrandElem.n3;
 
     //find next scaf element and check if it is last
-    auto nextVstrand = json2_.vstrands_[curVstrandElem.n2];
+    auto nextVstrand = json_.vstrands_[curVstrandElem.n2];
     vec4 nextVstrandElem;
     if (left) nextVstrandElem = nextVstrand.scaf_[curVstrandElem.n3];
     else nextVstrandElem = nextVstrand.stap_[curVstrandElem.n3];
@@ -294,7 +294,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
       last_it = true;
     }
 
-    std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> bs_positions = cellBsMap2_.at(&json2_.vstrands_[vStrandId]);
+    std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> bs_positions = cellBsMap_.at(&json_.vstrands_[vStrandId]);
 
     if (vstrands[vStrandId].skips_[z] == -1) {
       ADNPointer<ADNBaseSegment> bs = nullptr;
@@ -311,7 +311,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
         
         ADNPointer<ADNNucleotide> skip = new ADNNucleotide();
 
-        SBPosition3 leftPos3D = vGrid2_.GetGridCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
+        SBPosition3 leftPos3D = vGrid_.GetGridCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
 
         skip->SetPosition(leftPos3D);
         skip->SetBackbonePosition(leftPos3D);
@@ -330,7 +330,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
         ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
         nanorobot->RegisterNucleotideThreePrime(ss, nt);
 
-        SBPosition3 pos3D = vGrid2_.GetGridCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
+        SBPosition3 pos3D = vGrid_.GetGridCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
 
         // fetch base segment
         int p = 0;
@@ -400,7 +400,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
 
 ADNPointer<ADNPart> DASCadnano::CreateCadnanoPart(std::string file)
 {
-  ParseJSON2(file);
+  ParseJSON(file);
   return CreateCadnanoModel();
 }
 
@@ -473,7 +473,7 @@ size_t Lattice::GetNumberCols()
   return mat_.size2();
 }
 
-void VGrid2::CreateLattice(LatticeType lType)
+void VGrid::CreateLattice(LatticeType lType)
 {
   lattice_ = Lattice();
   if (lType == LatticeType::Honeycomb) {
@@ -484,12 +484,12 @@ void VGrid2::CreateLattice(LatticeType lType)
   }
 }
 
-void VGrid2::AddTube(VTube tube)
+void VGrid::AddTube(VTube tube)
 {
   vDoubleStrands_.push_back(tube);
 }
 
-SBPosition3 VGrid2::GetGridCellPos3D(int vStrandId, int z, unsigned int row, unsigned int column)
+SBPosition3 VGrid::GetGridCellPos3D(int vStrandId, int z, unsigned int row, unsigned int column)
 {
   auto zPos = z * bp_rise_;
   LatticeCell lc = lattice_.GetLatticeCell(row, column);

@@ -40,7 +40,7 @@ struct vec4 {
 
 using Vec4List = std::map<int, vec4>;
 
-struct Vstrand2 {
+struct Vstrand {
   int totalLength_;  // total length, including positions without nothing
   int num_;  // identification
   Vec4List scaf_;  // key is position that scaffold base occupies in the vhelix
@@ -51,9 +51,9 @@ struct Vstrand2 {
   std::map<int, int> skips_;
 };
 
-struct CadnanoJSONFile2 {
+struct CadnanoJSONFile {
   string name_;
-  std::map<int, Vstrand2> vstrands_;  // key is vStrand num
+  std::map<int, Vstrand> vstrands_;  // key is vStrand num
   LatticeType lType_;
   std::pair<int, int> scaffoldStartPosition_;  // first is vhelix num, second is position  within it
   std::vector<vec2> stapleStarts_;  // list of staple starts
@@ -83,7 +83,7 @@ struct VTube {
   int endPos_;
 };
 
-struct VGrid2 {
+struct VGrid {
   std::vector<VTube> vDoubleStrands_; // = vstrands
   Lattice lattice_;
 
@@ -97,21 +97,18 @@ struct VGrid2 {
 class DASCadnano {
 
 private:
-  // refactoring members
-  CadnanoJSONFile2 json2_;
-  VGrid2 vGrid2_;
-  std::map<Vstrand2*, std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>>> cellBsMap2_;
+  CadnanoJSONFile json_;
+  VGrid vGrid_;
+  std::map<Vstrand*, std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>>> cellBsMap_;
 
-
-  // refactoring methods
-  void ParseJSON2(std::string filename);
+  void ParseJSON(std::string filename);
   void ParseCadnanoFormat3(Document& d);
   void ParseCadnanoLegacy(Document& d);
 
   ADNPointer<ADNPart> CreateCadnanoModel();
-  void CreateEdgeMap2(ADNPointer<ADNPart> nanorobot);
-  void CreateScaffold2(ADNPointer<ADNPart> nanorobot);
-  void CreateStaples2(ADNPointer<ADNPart> nanorobot);
+  void CreateEdgeMap(ADNPointer<ADNPart> nanorobot);
+  void CreateScaffold(ADNPointer<ADNPart> nanorobot);
+  void CreateStaples(ADNPointer<ADNPart> nanorobot);
   void TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> nanorobot, bool left = true);
 
   static DNABlocks GetComplementaryBase(DNABlocks type);
@@ -121,6 +118,5 @@ public:
   DASCadnano() = default;
   ~DASCadnano() = default;
 
-  // refactoring methods
   ADNPointer<ADNPart> CreateCadnanoPart(std::string file);
 };
