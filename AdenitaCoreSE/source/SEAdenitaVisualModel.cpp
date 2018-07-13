@@ -166,8 +166,9 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
     auto nucleotides = ss->GetNucleotides();
 
     SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-
+      
       ntMap.insert(make_pair(nt(), index));
+      
       ++index;
     }
   }
@@ -193,10 +194,17 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 
       unsigned int nextIndex;
       //nucleotides.getIndex(cur->GetNext()(), nextIndex);
-      nextIndex = ntMap[cur->GetNext()()];
+      auto next = cur->GetNext()();
+      nextIndex = ntMap[next];
 
-      curIndices(2 * j) = curIndex;
-      curIndices(2 * j + 1) = nextIndex;
+      if (next->isVisible()) {
+        curIndices(2 * j) = curIndex;
+        curIndices(2 * j + 1) = nextIndex;
+      }
+      else {
+        curIndices(2 * j) = curIndex;
+        curIndices(2 * j + 1) = nextIndex;
+      }
       j++;
 
       cur = cur->GetNext();
@@ -387,7 +395,7 @@ void SEAdenitaVisualModel::prepareScale5to6(double iv, bool forSelection /*= fal
 void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 {
   SEConfig& config = SEConfig::GetInstance();
-
+  ADNLogger& logger = ADNLogger::GetLogger();
   auto singleStrands = nanorobot_->GetSingleStrands();
 
   unsigned int nPositions = nanorobot_->GetNumberOfNucleotides();
@@ -399,14 +407,12 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
 
-    if (ss->isVisible()) {
+    auto nucleotides = ss->GetNucleotides();
 
-      auto nucleotides = ss->GetNucleotides();
-
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) { 
+    SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) { 
         
+      if (nt->isVisible()) {
         radiiV_(index) = config.nucleotide_V_radius;
-
         radiiE_(index) = config.nucleotide_V_radius;
 
         flags_(index) = nt->getInheritedFlags() | getInheritedFlags();
@@ -481,11 +487,10 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
         if (nt->GetEnd() == End::ThreePrime) {
           radiiE_(index) = config.nucleotide_E_radius;
         }
-
-        //nt = nt->GetNext();
-        ++index;
       }
+      ++index;
     }
+    
   }
 
 }
@@ -632,9 +637,10 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle base events (e.g. when a node for which you provide a visual representation emits a base signal, such as when it is erased)
 
-  if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged || baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged) {
+  if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged || baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged || baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
     //flags have to be changed
     changeScale(scale_);
+
   }
 }
 
