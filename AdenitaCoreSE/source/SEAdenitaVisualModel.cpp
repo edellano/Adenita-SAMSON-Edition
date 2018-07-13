@@ -167,6 +167,8 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 
     SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
       
+      // hide nucleotides
+      nanorobot_->HideCenterAtoms(nt);
       ntMap.insert(make_pair(nt(), index));
       
       ++index;
