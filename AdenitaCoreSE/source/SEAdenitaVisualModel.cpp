@@ -197,14 +197,8 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
       auto next = cur->GetNext()();
       nextIndex = ntMap[next];
 
-      if (next->isVisible()) {
-        curIndices(2 * j) = curIndex;
-        curIndices(2 * j + 1) = nextIndex;
-      }
-      else {
-        curIndices(2 * j) = curIndex;
-        curIndices(2 * j + 1) = nextIndex;
-      }
+      curIndices(2 * j) = curIndex;
+      curIndices(2 * j + 1) = nextIndex;
       j++;
 
       cur = cur->GetNext();
@@ -411,83 +405,88 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
     SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) { 
         
-      if (nt->isVisible()) {
-        radiiV_(index) = config.nucleotide_V_radius;
-        radiiE_(index) = config.nucleotide_V_radius;
+      
+      radiiV_(index) = config.nucleotide_V_radius;
+      radiiE_(index) = config.nucleotide_V_radius;
 
-        flags_(index) = nt->getInheritedFlags() | getInheritedFlags();
-        nodeIndices_(index) = nt->getNodeIndex();
+      flags_(index) = nt->getInheritedFlags() | getInheritedFlags();
+      nodeIndices_(index) = nt->getNodeIndex();
 
-        SBPosition3 min = nt->GetSidechainPosition();
-        SBPosition3 max = nt->GetBackbonePosition();
+      SBPosition3 min = nt->GetSidechainPosition();
+      SBPosition3 max = nt->GetBackbonePosition();
 
-        SBPosition3 iPos = min + iv * (max - min);
+      SBPosition3 iPos = min + iv * (max - min);
 
-        positions_(index, 0) = iPos[0].getValue();
-        positions_(index, 1) = iPos[1].getValue();
-        positions_(index, 2) = iPos[2].getValue();
+      positions_(index, 0) = iPos[0].getValue();
+      positions_(index, 1) = iPos[1].getValue();
+      positions_(index, 2) = iPos[2].getValue();
 
-        SBPosition3 pos3D = nt->GetPosition();
-        //SBPosition3 pos2D = nucleotide->GetSBPosition2D();
-        //SBPosition3 pos1D = nucleotide->GetSBPosition1D();
+      SBPosition3 pos3D = nt->GetPosition();
+      //SBPosition3 pos2D = nucleotide->GetSBPosition2D();
+      //SBPosition3 pos1D = nucleotide->GetSBPosition1D();
 
-        //if (config.interpolate_dimensions) interpolateDimension(pos1D, pos2D, pos3D, positions_, index);
+      //if (config.interpolate_dimensions) interpolateDimension(pos1D, pos2D, pos3D, positions_, index);
 
-        float minVColorR;
-        float minVColorG;
-        float minVColorB;
-        float minVColorA;
+      float minVColorR;
+      float minVColorG;
+      float minVColorB;
+      float minVColorA;
 
-        int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
+      int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
 
-        float maxVColorR = config.staple_colors[stapleColorNum * 4 + 0];
-        float maxVColorG = config.staple_colors[stapleColorNum * 4 + 1];
-        float maxVColorB = config.staple_colors[stapleColorNum * 4 + 2];
-        float maxVColorA = config.staple_colors[stapleColorNum * 4 + 3];
+      float maxVColorR = config.staple_colors[stapleColorNum * 4 + 0];
+      float maxVColorG = config.staple_colors[stapleColorNum * 4 + 1];
+      float maxVColorB = config.staple_colors[stapleColorNum * 4 + 2];
+      float maxVColorA = config.staple_colors[stapleColorNum * 4 + 3];
 
-        if (ss->IsScaffold())
-        {
-          minVColorR = config.nucleotide_E_Color[0];
-          minVColorG = config.nucleotide_E_Color[1];
-          minVColorB = config.nucleotide_E_Color[2];
-          minVColorA = config.nucleotide_E_Color[3];
+      if (ss->IsScaffold())
+      {
+        minVColorR = config.nucleotide_E_Color[0];
+        minVColorG = config.nucleotide_E_Color[1];
+        minVColorB = config.nucleotide_E_Color[2];
+        minVColorA = config.nucleotide_E_Color[3];
 
-          maxVColorR = config.nucleotide_E_Color[0];
-          maxVColorG = config.nucleotide_E_Color[1];
-          maxVColorB = config.nucleotide_E_Color[2];
-          maxVColorA = config.nucleotide_E_Color[3];
+        maxVColorR = config.nucleotide_E_Color[0];
+        maxVColorG = config.nucleotide_E_Color[1];
+        maxVColorB = config.nucleotide_E_Color[2];
+        maxVColorA = config.nucleotide_E_Color[3];
 
-          colorsE_(index, 0) = config.nucleotide_E_Color[0];
-          colorsE_(index, 1) = config.nucleotide_E_Color[1];
-          colorsE_(index, 2) = config.nucleotide_E_Color[2];
-          colorsE_(index, 3) = config.nucleotide_E_Color[3];
+        colorsE_(index, 0) = config.nucleotide_E_Color[0];
+        colorsE_(index, 1) = config.nucleotide_E_Color[1];
+        colorsE_(index, 2) = config.nucleotide_E_Color[2];
+        colorsE_(index, 3) = config.nucleotide_E_Color[3];
 
-        }
-        else
-        {
-          minVColorR = maxVColorR;
-          minVColorG = maxVColorG;
-          minVColorB = maxVColorB;
-          minVColorA = maxVColorA;
-
-          colorsE_(index, 0) = maxVColorR;
-          colorsE_(index, 1) = maxVColorG;
-          colorsE_(index, 2) = maxVColorB;
-          colorsE_(index, 3) = maxVColorA;
-        }
-
-        colorsV_(index, 0) = minVColorR + iv * (maxVColorR - minVColorR);
-        colorsV_(index, 1) = minVColorG + iv * (maxVColorG - minVColorG);
-        colorsV_(index, 2) = minVColorB + iv * (maxVColorB - minVColorB);
-        colorsV_(index, 3) = minVColorA + iv * (maxVColorA - minVColorA);
-
-        //highlightStrands(colorsV_, colorsE_, index, nucleotide);
-
-        //strand direction
-        if (nt->GetEnd() == End::ThreePrime) {
-          radiiE_(index) = config.nucleotide_E_radius;
-        }
       }
+      else
+      {
+        minVColorR = maxVColorR;
+        minVColorG = maxVColorG;
+        minVColorB = maxVColorB;
+        minVColorA = maxVColorA;
+
+        colorsE_(index, 0) = maxVColorR;
+        colorsE_(index, 1) = maxVColorG;
+        colorsE_(index, 2) = maxVColorB;
+        colorsE_(index, 3) = maxVColorA;
+      }
+
+      colorsV_(index, 0) = minVColorR + iv * (maxVColorR - minVColorR);
+      colorsV_(index, 1) = minVColorG + iv * (maxVColorG - minVColorG);
+      colorsV_(index, 2) = minVColorB + iv * (maxVColorB - minVColorB);
+      colorsV_(index, 3) = minVColorA + iv * (maxVColorA - minVColorA);
+
+      //highlightStrands(colorsV_, colorsE_, index, nucleotide);
+
+      //strand direction
+      if (nt->GetEnd() == End::ThreePrime) {
+        radiiE_(index) = config.nucleotide_E_radius;
+      }
+      
+      if (!nt->isVisible()) {
+        radiiV_(index) = 0;
+        radiiE_(index) = 0;
+      }
+
       ++index;
     }
     
