@@ -52,6 +52,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   guanineColor_(1) = config.guanine_color[1];
   guanineColor_(2) = config.guanine_color[2];
   guanineColor_(3) = config.guanine_color[3];
+  ADNLogger& logger = ADNLogger::GetLogger();
 
   auto parts = nanorobot_->GetParts();
 
@@ -80,9 +81,11 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
       SB_FOR(auto nucleotide, nucleotides) {
         // hide nucleotides
         //nanorobot_->HideCenterAtoms(nucleotide);
-        //nucleotide->setVisibilityFlag(false);
-        //nucleotide->GetBackbone()->setVisibilityFlag(false);
-        //nucleotide->GetSidechain()->setVisibilityFlag(false);
+        clock_t start = clock();
+        nucleotide->setVisibilityFlag(false);
+        nucleotide->GetBackbone()->setVisibilityFlag(false);
+        nucleotide->GetSidechain()->setVisibilityFlag(false);
+        start = logger.LogPassedMilliseconds(start, "GetSidechain");
         nucleotide->connectBaseSignalToSlot(
           this,
           SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
