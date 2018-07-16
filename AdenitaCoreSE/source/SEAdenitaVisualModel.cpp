@@ -348,7 +348,7 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
         positions_(index, 2) = minZ + iv * (maxZ - minZ);
 
         nodeIndices_(index) = nt->getNodeIndex();
-        flags_(index) = nt->getInheritedFlags() | getInheritedFlags();
+        flags_(index) = nt->getInheritedFlags();
         auto baseColor = getBaseColor(nt->getResidueType());
         colorsV_.SetRow(index, baseColor);
 
@@ -411,7 +411,7 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
       radiiV_(index) = config.nucleotide_V_radius;
       radiiE_(index) = config.nucleotide_V_radius;
 
-      flags_(index) = nt->getInheritedFlags() | getInheritedFlags();
+      flags_(index) = nt->getInheritedFlags();
       nodeIndices_(index) = nt->getNodeIndex();
 
       SBPosition3 min = nanorobot_->GetNucleotideSidechainPosition(nt);
