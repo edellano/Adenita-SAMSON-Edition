@@ -23,14 +23,23 @@ CollectionMap<ADNSingleStrand> ADNNanorobot::GetSingleStrands() const
 {
   CollectionMap<ADNSingleStrand> singleStrands;
 
-  SBNodeIndexer nodeIndexer;
+  /*SBNodeIndexer nodeIndexer;
   SAMSON::getActiveDocument()->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNSingleStrand")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
   SB_FOR(SBNode* n, nodeIndexer) {
     singleStrands.addReferenceTarget(static_cast<ADNSingleStrand*>(n));
+  }*/
+
+  if (partsIndex_.size() > 0) {
+    singleStrands = partsIndex_[0]->GetSingleStrands();
   }
 
   return singleStrands;
+}
+
+void ADNNanorobot::RegisterPart(ADNPointer<ADNPart> part)
+{
+  partsIndex_.addReferenceTarget(part());
 }
 
 int ADNNanorobot::GetNumberOfDoubleStrands()
@@ -83,7 +92,7 @@ int ADNNanorobot::GetNumberOfNucleotides()
 
 CollectionMap<ADNPart> ADNNanorobot::GetParts() const
 {
-  CollectionMap<ADNPart> parts;
+  /*CollectionMap<ADNPart> parts;
 
   SBNodeIndexer nodeIndexer;
   SAMSON::getActiveDocument()->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")) );
@@ -92,7 +101,9 @@ CollectionMap<ADNPart> ADNNanorobot::GetParts() const
     parts.addReferenceTarget(static_cast<ADNPart*>(n));
   }
 
-  return parts;
+  return parts;*/
+
+  return partsIndex_;
 }
 
 //std::map<int, ANTSingleStrand*> ANTNanorobot::GetSingleStrands() const {
@@ -1553,3 +1564,48 @@ CollectionMap<ADNPart> ADNNanorobot::GetParts() const
 //    }
 //  }
 //}
+
+CollectionMap<ADNNucleotide> ADNNanorobot::GetSingleStrandNucleotides(ADNPointer<ADNSingleStrand> ss)
+{
+  return ss->GetNucleotides();
+}
+
+ADNPointer<ADNNucleotide> ADNNanorobot::GetSingleStrandFivePrime(ADNPointer<ADNSingleStrand> ss)
+{
+  return ss->GetFivePrime();
+}
+
+bool ADNNanorobot::IsScaffold(ADNPointer<ADNSingleStrand> ss)
+{
+  return ss->IsScaffold();
+}
+
+End ADNNanorobot::GetNucleotideEnd(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetEnd();
+}
+
+ADNPointer<ADNNucleotide> ADNNanorobot::GetNucleotideNext(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetNext();
+}
+
+SBPosition3 ADNNanorobot::GetNucleotidePosition(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetPosition();
+}
+
+SBPosition3 ADNNanorobot::GetNucleotideBackbonePosition(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetBackbonePosition();
+}
+
+SBPosition3 ADNNanorobot::GetNucleotideSidechainPosition(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetSidechainPosition();
+}
+
+void ADNNanorobot::HideCenterAtoms(ADNPointer<ADNNucleotide> nt)
+{
+  nt->HideCenterAtoms();
+}

@@ -101,6 +101,7 @@ public:
 
   ADNPointer<ADNAtom> GetCenterAtom() const;
   void SetCenterAtom(ADNPointer<ADNAtom> centerAtom);
+  void HideCenterAtom();
 
 private:
   ADNPointer<ADNAtom> centerAtom_;
@@ -118,6 +119,7 @@ public:
   bool AddAtom(ADNPointer<ADNAtom> atom);
   bool DeleteAtom(ADNPointer<ADNAtom> atom);
   CollectionMap<ADNAtom> GetAtoms() const;
+  int getNumberOfAtoms() const;
 
   NucleotideGroup GetGroupType();
 
@@ -138,7 +140,8 @@ public:
 
   bool AddAtom(ADNPointer<ADNAtom> atom);
   bool DeleteAtom(ADNPointer<ADNAtom> atom);
-  CollectionMap<ADNAtom> GetAtoms();
+  CollectionMap<ADNAtom> GetAtoms() const;
+  int getNumberOfAtoms() const;
 
   NucleotideGroup GetGroupType();
 
@@ -193,6 +196,7 @@ public:
   void ADNNucleotide::DeleteAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
   CollectionMap<ADNAtom> GetAtoms();
   CollectionMap<ADNAtom> GetAtomsByName(std::string name);
+  void HideCenterAtoms();
 
   // Local base is always the standard basis */
   ublas::matrix<double> GetGlobalBasisTransformation();
@@ -223,7 +227,9 @@ public:
   void SetName(const std::string &name);
 
   ADNPointer<ADNNucleotide> GetFivePrime();
+  SBNode* getFivePrime() const;
   ADNPointer<ADNNucleotide> GetThreePrime();
+  SBNode* getThreePrime() const;
 
   // if using these functions, make sure nucleotides are properly added
   void SetFivePrime(ADNPointer<ADNNucleotide> nt);
@@ -231,6 +237,7 @@ public:
 
   void IsScaffold(bool b);
   bool IsScaffold();
+  int getNumberOfNucleotides() const;
   CollectionMap<ADNNucleotide> GetNucleotides() const;
   ADNPointer<ADNNucleotide> GetNucleotide(unsigned int id) const;
   void AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt);  // add nucleotide to the three prime end
@@ -247,11 +254,13 @@ public:
   * Returns the sequence of the strand
   * \param sequence from 5' to 3'
   */
-  std::string GetSequence();
+  std::string GetSequence() const;
+  std::string getSequence() const;
   /**
   * Returns GC content as a % in this strand
   */
-  double GetGCContent();
+  double GetGCContent() const;
+  double getGCContent() const;
 
   void SetSequence(std::string seq);
   void SetDefaultName();
@@ -342,6 +351,8 @@ public:
   ADNPointer<ADNNucleotide> GetEnd();
   SBNode* getEndNucleotide() const;
   void SetBaseSegment(ADNPointer<ADNBaseSegment> bs, bool setPositions = false);
+  int getNumberOfNucleotides() const;
+  std::string getLoopSequence() const;
 
   CollectionMap<ADNNucleotide> GetNucleotides() const;
 
@@ -399,8 +410,8 @@ public:
   void setNumber(int n);
   int getNumber() const;
 
-  ADNPointer<ADNBaseSegment> GetPrev();
-  ADNPointer<ADNBaseSegment> GetNext();
+  ADNPointer<ADNBaseSegment> GetPrev() const;
+  ADNPointer<ADNBaseSegment> GetNext() const;
 
   ADNPointer<ADNDoubleStrand> GetDoubleStrand();
   CollectionMap<ADNNucleotide> GetNucleotides();
@@ -408,6 +419,7 @@ public:
   void SetCell(ADNCell* c);  // we use raw pointers so subclassing will work
   ADNPointer<ADNCell> GetCell() const;
   CellType GetCellType() const;
+  std::string getCellType() const;
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
 
 private:
@@ -429,6 +441,7 @@ public:
 
   void SetInitialTwistAngle(double angle);
   double GetInitialTwistAngle() const;
+  double getInitialTwistAngle() const;
 
   int GetLength() const;
   int getLength() const;
@@ -436,8 +449,10 @@ public:
   CollectionMap<ADNBaseSegment> GetBaseSegments() const;
   ADNPointer<ADNBaseSegment> GetNthBaseSegment(int n);  // return the base segment by position in the double strand
 
-  ADNPointer<ADNBaseSegment> GetFirstBaseSegment();
-  ADNPointer<ADNBaseSegment> GetLastBaseSegment();
+  ADNPointer<ADNBaseSegment> GetFirstBaseSegment() const;
+  SBNode* getFirstBaseSegment() const;
+  ADNPointer<ADNBaseSegment> GetLastBaseSegment() const;
+  SBNode* getLastBaseSegment() const;
 
   void AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs);
   void AddBaseSegmentEnd(ADNPointer<ADNBaseSegment> bs);

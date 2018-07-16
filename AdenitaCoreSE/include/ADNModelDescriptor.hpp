@@ -21,9 +21,9 @@ SB_CLASS_BEGIN(ADNAtom);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_WRITE(SBElement::Type, ADNAtom, ElementType, "Atom", "Type of atom");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, Nt, "Nucleotide", "Nucleotide to which the atom belongs");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, NtGroup, "Nucleotide group", "Nucleotide group to which the atom belongs");
+    SB_ATTRIBUTE_READ_WRITE(SBElement::Type, ADNAtom, ElementType, "Atom", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, Nt, "Nucleotide", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, NtGroup, "Nucleotide group", "Properties");
 
   SB_INTERFACE_END;
 
@@ -43,6 +43,9 @@ SB_CLASS_BEGIN(ADNBackbone);
 
   SB_INTERFACE_BEGIN;
 
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNBackbone, Name, "Name", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNBackbone, NumberOfAtoms, "Number of atoms", "Properties");
+
   SB_INTERFACE_END;
 
 SB_CLASS_END(ADNBackbone);
@@ -60,6 +63,9 @@ SB_CLASS_BEGIN(ADNSidechain);
   SB_FACTORY_END;
 
   SB_INTERFACE_BEGIN;
+
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNSidechain, Name, "Name", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNSidechain, NumberOfAtoms, "Number of atoms", "Properties");
 
   SB_INTERFACE_END;
 
@@ -79,9 +85,10 @@ SB_CLASS_BEGIN(ADNNucleotide);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_ONLY(DNABlocks, ADNNucleotide, NucleotideType, "Type", "Nucleotide type");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, SingleStrand, "Single Strand", "Single Strand");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, BaseSegment, "Base segment", "Base segment");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNNucleotide, Name, "Name", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(DNABlocks, ADNNucleotide, NucleotideType, "Type", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, SingleStrand, "Single Strand", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, BaseSegment, "Base segment", "Properties");
 
   SB_INTERFACE_END;
 
@@ -100,6 +107,13 @@ SB_CLASS_BEGIN(ADNSingleStrand);
   SB_FACTORY_END;
 
   SB_INTERFACE_BEGIN;
+
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNSingleStrand, Name, "Name", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNSingleStrand, NumberOfNucleotides, "Nucleotides", "Properties");
+    // SB_ATTRIBUTE_READ_ONLY(std::string, ADNSingleStrand, Sequence, "Sequence", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(double, ADNSingleStrand, GCContent, "GC %", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSingleStrand, FivePrime, "5'", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSingleStrand, ThreePrime, "3'", "Properties");
 
   SB_INTERFACE_END;
 
@@ -137,8 +151,9 @@ SB_CLASS_BEGIN(ADNBasePair);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNBasePair, Left, "Left", "Left nucleotide");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNBasePair, Right, "Right", "Right nucleotide");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNBasePair, Name, "Name", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNBasePair, Left, "Left", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNBasePair, Right, "Right", "Properties");
 
   SB_INTERFACE_END;
 
@@ -176,8 +191,9 @@ SB_CLASS_BEGIN(ADNLoopPair);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoopPair, Left, "Left", "Left loop");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoopPair, Right, "Right", "Right loop");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNLoopPair, Name, "Name", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoopPair, Left, "Left", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoopPair, Right, "Right", "Properties");
 
   SB_INTERFACE_END;
 
@@ -197,8 +213,11 @@ SB_CLASS_BEGIN(ADNLoop);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoop, StartNucleotide, "Start nucleotide", "Beggining of loop");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoop, EndNucleotide, "End nucleotide", "End of loop");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNLoop, Name, "Name", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNLoop, NumberOfNucleotides, "Number of nucleotides", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(std::string, ADNLoop, LoopSequence, "Sequence", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoop, StartNucleotide, "Start nucleotide", "Nucleotides");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNLoop, EndNucleotide, "End nucleotide", "Nucleotides");
 
   SB_INTERFACE_END;
 
@@ -218,8 +237,9 @@ SB_CLASS_BEGIN(ADNBaseSegment);
 
   SB_INTERFACE_BEGIN;
 
-    // show custom members in inspector
-    SB_ATTRIBUTE_READ_WRITE(int, ADNBaseSegment, Number, "Number", "Helix turns at this position");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNBaseSegment, Name, "Name", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNBaseSegment, Number, "Number", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(std::string, ADNBaseSegment, CellType, "Contains", "Properties");
 
   SB_INTERFACE_END;
 
@@ -239,7 +259,11 @@ SB_CLASS_BEGIN(ADNDoubleStrand);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_ONLY(int, ADNDoubleStrand, Length, "Length", "Number of base segments");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNDoubleStrand, Name, "Name", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNDoubleStrand, Length, "Length", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(double, ADNDoubleStrand, InitialTwistAngle, "Helical twist offset", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNDoubleStrand, FirstBaseSegment, "First base segment", "Double strand extremes");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNDoubleStrand, LastBaseSegment, "Last base segment", "Double strand extremes");
 
   SB_INTERFACE_END;
 
