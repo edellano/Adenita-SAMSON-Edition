@@ -66,11 +66,18 @@ void ADNLogger::LogMatrix(ublas::matrix<double> m)
   Log(endLine);
 }
 
-time_t ADNLogger::LogPassedTime(time_t time1, std::string text)
+time_t ADNLogger::LogPassedSeconds(time_t time1, std::string text)
 {
   double seconds_since_start = difftime(time(0), time1);
   Log(QString("\t *** ") + QString(text.c_str()) + QString(" ") + QString::number(seconds_since_start) + QString(" seconds"));
   return time(0);
+}
+
+clock_t ADNLogger::LogPassedMilliseconds(clock_t time1, std::string text)
+{
+  float ms_since_start = float (clock() - time1) / CLOCKS_PER_SEC;
+  Log(QString("\t *** ") + QString(text.c_str()) + QString(" ") + QString::number(ms_since_start) + QString(" milliseconds"));
+  return clock();
 }
 
 void ADNLogger::LogPtr(quintptr ptr)
