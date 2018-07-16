@@ -78,11 +78,8 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
         );
 
       SB_FOR(auto nucleotide, nucleotides) {
-        // hide nucleotides
+        // hide nucleotides (too slow here)
         //nanorobot_->HideCenterAtoms(nucleotide);
-        //nucleotide->setVisibilityFlag(false);
-        //nucleotide->GetBackbone()->setVisibilityFlag(false);
-        //nucleotide->GetSidechain()->setVisibilityFlag(false);
         nucleotide->connectBaseSignalToSlot(
           this,
           SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
