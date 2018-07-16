@@ -8,6 +8,7 @@
 #include "DASBackToTheAtom.hpp"
 #include "DASCadnano.hpp"
 #include "SEConfig.hpp"
+#include "SEAdenitaVisualModel.hpp"
 
 
 /// This class implements the functionality of the app
@@ -42,6 +43,7 @@ public :
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options);
   void SetScaffoldSequence(std::string seq);
   void CenterPart();
+  void ResetVisualModel(bool deleteOldVM);
 
   ADNNanorobot* GetNanorobot();
 
