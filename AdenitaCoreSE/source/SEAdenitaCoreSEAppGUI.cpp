@@ -150,9 +150,14 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
     else if (filename.endsWith(".adnpart")) {
       t->LoadPart(filename);
     }
+
+    //add the visual model 
+    t->ResetVisualModel(true);
   }
 
   SAMSON::getActiveCamera()->center();
+
+
 }
 
 void SEAdenitaCoreSEAppGUI::onSavePart()
