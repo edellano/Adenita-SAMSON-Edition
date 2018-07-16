@@ -275,7 +275,7 @@
              </size>
             </property>
             <property name="shortcut">
-             <string>Ctrl+T</string>
+             <string>Ctrl+R</string>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -295,6 +295,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+;</string>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -334,6 +337,9 @@
               <height>20</height>
              </size>
             </property>
+            <property name="shortcut">
+             <string>Ctrl+[</string>
+            </property>
             <property name="checkable">
              <bool>true</bool>
             </property>
@@ -352,6 +358,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+]</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -372,6 +381,9 @@
               <height>20</height>
              </size>
             </property>
+            <property name="shortcut">
+             <string>Ctrl+M</string>
+            </property>
             <property name="checkable">
              <bool>true</bool>
             </property>
@@ -390,6 +402,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+I</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -410,6 +425,9 @@
               <height>20</height>
              </size>
             </property>
+            <property name="shortcut">
+             <string>Ctrl+D</string>
+            </property>
             <property name="checkable">
              <bool>true</bool>
             </property>
@@ -428,6 +446,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+L</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -449,7 +470,7 @@
              </size>
             </property>
             <property name="shortcut">
-             <string>Ctrl+S</string>
+             <string>Ctrl+K</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -470,6 +491,9 @@
               <height>20</height>
              </size>
             </property>
+            <property name="shortcut">
+             <string>Ctrl+M</string>
+            </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
@@ -486,6 +510,9 @@
               <height>20</height>
              </size>
             </property>
+            <property name="shortcut">
+             <string>Ctrl+.</string>
+            </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
@@ -501,6 +528,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+P</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
