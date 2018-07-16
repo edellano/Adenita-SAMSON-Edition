@@ -1017,26 +1017,6 @@ CollectionMap<ADNNucleotide> ADNBasePair::GetNucleotides()
   return nts;
 }
 
-ADNPointer<ADNNucleotide> ADNSkipPair::GetLeftSkip()
-{
-  return left_;
-}
-
-void ADNSkipPair::SetLeftSkip(ADNPointer<ADNNucleotide> nt)
-{
-  left_ = nt;
-}
-
-ADNPointer<ADNNucleotide> ADNSkipPair::GetRightSkip()
-{
-  return right_;
-}
-
-void ADNSkipPair::SetRightSkip(ADNPointer<ADNNucleotide> nt)
-{
-  right_ = nt;
-}
-
 void ADNSkipPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
 }
 
