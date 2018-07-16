@@ -478,6 +478,8 @@ void DASBackToTheAtom::PopulateWithMockAtoms(ADNPointer<ADNPart> origami)
     origami->RegisterAtom(nt, NucleotideGroup::Backbone, cBB);
     auto cSC = sc->GetCenterAtom();
     origami->RegisterAtom(nt, NucleotideGroup::SideChain, cSC);
+    // hiding atoms here cause when they are created is too slow
+    nt->HideCenterAtoms();
   }
 }
 
