@@ -308,8 +308,8 @@ void DASBackToTheAtom::CheckDistances(ADNPointer<ADNPart> part)
       if (start != 0) {
         auto distance = (prevPos - nt->GetPosition()).norm();
         if (!ADNVectorMath::IsNearlyZero(distance.getValue() - ADNConstants::BP_RISE * 1000)) {
-          std::string msg = "\tNucleotides " + prevName + " and " + nt->GetName() + " too close or too further away: " + std::to_string(distance.getValue()) + "pm";
-          logger.Log(msg);
+          //std::string msg = "\tNucleotides " + prevName + " and " + nt->GetName() + " too close or too further away: " + std::to_string(distance.getValue()) + "pm";
+          //logger.Log(msg);
         }
       }
       else {
@@ -331,8 +331,8 @@ void DASBackToTheAtom::CheckDistances(ADNPointer<ADNPart> part)
       std::string nextName = bs->getName();
       auto distance = (nextPos - bs->GetPosition()).norm();
       if (!ADNVectorMath::IsNearlyZero(distance.getValue() - ADNConstants::BP_RISE * 1000)) {
-        msg = "\tBase Segments " + nextName + " and " + bs->getName() + " too close or too further away: " + std::to_string(distance.getValue()) + "pm";
-        logger.Log(msg);
+        //msg = "\tBase Segments " + nextName + " and " + bs->getName() + " too close or too further away: " + std::to_string(distance.getValue()) + "pm";
+        //logger.Log(msg);
       }
       if (bs->GetCellType() == BasePair && bsNext->GetCellType() == BasePair) {
         ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(bs->GetCell()());
