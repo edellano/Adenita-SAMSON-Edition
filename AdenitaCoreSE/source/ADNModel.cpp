@@ -171,6 +171,16 @@ CollectionMap<ADNAtom> ADNNucleotide::GetAtoms()
   return atoms;
 }
 
+void ADNNucleotide::HideCenterAtoms()
+{
+  auto bb = GetBackbone();
+  auto sc = GetSidechain();
+
+  HideCenterAtom();
+  bb->HideCenterAtom();
+  sc->HideCenterAtom();
+}
+
 CollectionMap<ADNAtom> ADNNucleotide::GetAtomsByName(std::string name)
 {
   CollectionMap<ADNAtom> res;
@@ -346,9 +356,19 @@ ADNPointer<ADNNucleotide> ADNSingleStrand::GetFivePrime()
   return fivePrime_;
 }
 
+SBNode * ADNSingleStrand::getFivePrime() const
+{
+  return fivePrime_();
+}
+
 ADNPointer<ADNNucleotide> ADNSingleStrand::GetThreePrime()
 {
   return threePrime_;
+}
+
+SBNode * ADNSingleStrand::getThreePrime() const
+{
+  return threePrime_();
 }
 
 void ADNSingleStrand::SetFivePrime(ADNPointer<ADNNucleotide> nt)
@@ -369,6 +389,11 @@ void ADNSingleStrand::IsScaffold(bool b)
 bool ADNSingleStrand::IsScaffold()
 {
   return isScaffold_;
+}
+
+int ADNSingleStrand::getNumberOfNucleotides() const
+{
+  return boost::numeric_cast<int>(GetNucleotides().size());
 }
 
 CollectionMap<ADNNucleotide> ADNSingleStrand::GetNucleotides() const
@@ -392,7 +417,6 @@ ADNPointer<ADNNucleotide> ADNSingleStrand::GetNucleotide(unsigned int id) const
 
 void ADNSingleStrand::AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt)
 {
-  auto sz = GetNucleotides().size();
   addChild(nt());
   if (threePrime_ != nullptr) {
     if (threePrime_->GetEnd() == FiveAndThreePrime) threePrime_->SetEnd(FivePrime);
@@ -405,7 +429,6 @@ void ADNSingleStrand::AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt)
     nt->SetEnd(FiveAndThreePrime);
   }
   auto test = nt->GetPrev();
-  sz = GetNucleotides().size();
   threePrime_ = nt;
 }
 
@@ -452,7 +475,8 @@ void ADNSingleStrand::ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq) {
   }
 }
 
-std::string ADNSingleStrand::GetSequence() {
+std::string ADNSingleStrand::GetSequence() const
+{
   std::string seq = "";
   ADNPointer<ADNNucleotide> nt = fivePrime_;
   while (nt != nullptr) {
@@ -462,7 +486,13 @@ std::string ADNSingleStrand::GetSequence() {
   return seq;
 }
 
-double ADNSingleStrand::GetGCContent() {
+std::string ADNSingleStrand::getSequence() const
+{
+  return GetSequence();
+}
+
+double ADNSingleStrand::GetGCContent() const
+{
   double gcCont = 0.0;
   auto nucleotides = GetNucleotides();
 
@@ -473,6 +503,11 @@ double ADNSingleStrand::GetGCContent() {
   }
   gcCont /= nucleotides.size();
   return gcCont;
+}
+
+double ADNSingleStrand::getGCContent() const
+{
+  return GetGCContent();
 }
 
 void ADNSingleStrand::SetSequence(std::string seq) {
@@ -764,13 +799,13 @@ int ADNBaseSegment::getNumber() const
   return GetNumber();
 }
 
-ADNPointer<ADNBaseSegment> ADNBaseSegment::GetPrev()
+ADNPointer<ADNBaseSegment> ADNBaseSegment::GetPrev() const
 {
   auto p = static_cast<ADNBaseSegment*>(getPreviousStructuralNode());
   return ADNPointer<ADNBaseSegment>(p);
 }
 
-ADNPointer<ADNBaseSegment> ADNBaseSegment::GetNext()
+ADNPointer<ADNBaseSegment> ADNBaseSegment::GetNext() const
 {
   auto p = static_cast<ADNBaseSegment*>(getNextStructuralNode());
   return ADNPointer<ADNBaseSegment>(p);
@@ -804,6 +839,12 @@ CellType ADNBaseSegment::GetCellType() const
   return cell->GetType();
 }
 
+std::string ADNBaseSegment::getCellType() const
+{
+  auto t = GetCellType();
+  return ADNModel::CellTypeToString(t);
+}
+
 void ADNBaseSegment::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   ADNPointer<ADNCell> cell = GetCell();
   cell->RemoveNucleotide(nt);
@@ -833,6 +874,11 @@ void ADNDoubleStrand::SetInitialTwistAngle(double angle)
 double ADNDoubleStrand::GetInitialTwistAngle() const
 {
   return initialTwistAngle_;
+}
+
+double ADNDoubleStrand::getInitialTwistAngle() const
+{
+  return GetInitialTwistAngle();
 }
 
 int ADNDoubleStrand::GetLength() const
@@ -867,14 +913,24 @@ ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetNthBaseSegment(int n)
   return bs;
 }
 
-ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetFirstBaseSegment()
+ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetFirstBaseSegment() const
 {
   return start_;
 }
 
-ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetLastBaseSegment()
+SBNode * ADNDoubleStrand::getFirstBaseSegment() const
+{
+  return GetFirstBaseSegment()();
+}
+
+ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetLastBaseSegment() const
 {
   return end_;
+}
+
+SBNode * ADNDoubleStrand::getLastBaseSegment() const
+{
+  return GetLastBaseSegment()();
 }
 
 void ADNDoubleStrand::AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs)
@@ -956,8 +1012,8 @@ void ADNBasePair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
 CollectionMap<ADNNucleotide> ADNBasePair::GetNucleotides()
 {
   CollectionMap<ADNNucleotide> nts;
-  nts.addReferenceTarget(left_());
-  nts.addReferenceTarget(right_());
+  if (left_ != nullptr) nts.addReferenceTarget(left_());
+  if (right_ != nullptr) nts.addReferenceTarget(right_());
   return nts;
 }
 
@@ -1042,6 +1098,24 @@ ADNPointer<ADNNucleotide> ADNLoop::GetEnd()
 SBNode * ADNLoop::getEndNucleotide() const
 {
   return endNt_();
+}
+
+int ADNLoop::getNumberOfNucleotides() const
+{
+  return boost::numeric_cast<int>(GetNucleotides().size());
+}
+
+std::string ADNLoop::getLoopSequence() const
+{
+  std::string seq = "";
+  ADNPointer<ADNNucleotide> nt = startNt_;
+  while(nt != endNt_->GetNext()) {
+    DNABlocks t = nt->GetType();
+    seq += ADNModel::GetResidueName(t);
+    nt = nt->GetNext();
+  }
+
+  return seq;
 }
 
 void ADNLoop::SetBaseSegment(ADNPointer<ADNBaseSegment> bs, bool setPositions)
@@ -1137,6 +1211,11 @@ bool ADNBackbone::DeleteAtom(ADNPointer<ADNAtom> atom)
   return removeChild(atom());
 }
 
+int ADNBackbone::getNumberOfAtoms() const
+{
+  return boost::numeric_cast<int>(GetAtoms().size());
+}
+
 CollectionMap<ADNAtom> ADNBackbone::GetAtoms() const
 {
   CollectionMap<ADNAtom> atomList;
@@ -1192,7 +1271,12 @@ bool ADNSidechain::DeleteAtom(ADNPointer<ADNAtom> atom)
   return removeChild(atom());
 }
 
-CollectionMap<ADNAtom> ADNSidechain::GetAtoms()
+int ADNSidechain::getNumberOfAtoms() const
+{
+  return boost::numeric_cast<int>(GetAtoms().size());
+}
+
+CollectionMap<ADNAtom> ADNSidechain::GetAtoms() const
 {
   CollectionMap<ADNAtom> atomList;
 
@@ -1221,7 +1305,6 @@ ADNPointer<ADNNucleotide> ADNSidechain::GetNucleotide() const
 PositionableSB::PositionableSB()
 {
   centerAtom_ = new ADNAtom();
-  centerAtom_->setVisibilityFlag(false);
 }
 
 PositionableSB::PositionableSB(const PositionableSB & other)
@@ -1258,4 +1341,9 @@ ADNPointer<ADNAtom> PositionableSB::GetCenterAtom() const
 void PositionableSB::SetCenterAtom(ADNPointer<ADNAtom> centerAtom)
 {
   centerAtom_ = centerAtom;
+}
+
+void PositionableSB::HideCenterAtom()
+{
+  centerAtom_->setVisibilityFlag(false);
 }

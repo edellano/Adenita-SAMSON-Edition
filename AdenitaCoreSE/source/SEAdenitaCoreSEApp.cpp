@@ -11,6 +11,7 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
   if (config.clear_log_file) {
     logger.ClearLog();
   }
+  logger.LogDateTime();
 
   nanorobot_ = new ADNNanorobot();
 }
@@ -62,14 +63,13 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
   AddPartToActiveLayer(part);
 }
 
-void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename, ADNConstants::CadnanoLatticeType t)
+void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
 {
   DASCadnano cad = DASCadnano();
   ADNPointer<ADNPart> part = new ADNPart();
   std::string seq = "";
 
-  cad.ParseJSON(filename.toStdString());
-  cad.CreateModel(part, seq, t);
+  part = cad.CreateCadnanoPart(filename.toStdString());
   
   AddPartToActiveLayer(part);
 }
@@ -166,6 +166,8 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
     btta.GenerateAllAtomModel(part);
   }
   btta.CheckDistances(part);
+
+  nanorobot_->RegisterPart(part);
 
   SAMSON::beginHolding("Add model");
   part->create();

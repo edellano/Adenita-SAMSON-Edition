@@ -3,6 +3,7 @@
 
 #include "SBGApp.hpp" 
 #include "ui_SEAdenitaCoreSEAppGUI.h"
+#include <QMessageBox>
 
 class SEAdenitaCoreSEApp;
 
@@ -54,15 +55,13 @@ public slots:
 
   void onCreate();
   void onLoadFile();
-  void onLoadPart();
   void onSavePart();
-  void onLoadPLYFile();
-  void onImportFromCadnano();
   void onExportToOxDNA();
   void onSetScaffold();
   void onCenterPart();
 
 private:
+  std::string IsJsonCadnano(QString filename);
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
 

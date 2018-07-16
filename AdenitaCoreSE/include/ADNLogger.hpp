@@ -1,6 +1,6 @@
 #pragma once
 
-#include <time.h>
+#include <ctime>
 #include <string>
 #include <boost/numeric/ublas/vector.hpp>
 #include <QString>
@@ -34,6 +34,7 @@ public:
   void LogMatrix(ublas::matrix<double> m);
   time_t LogPassedTime(time_t time1, std::string text);
   void LogPtr(quintptr ptr);
+  void LogDateTime();
   //void logPosition(std::string name, SBPosition3 pos);
   //void logVector(std::string name, SBPicometerPerSecond3 pos);
   //void logVector(std::string name, SBRadianPerSecond3 pos);

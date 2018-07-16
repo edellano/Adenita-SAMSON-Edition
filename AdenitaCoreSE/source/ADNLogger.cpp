@@ -22,7 +22,7 @@ void ADNLogger::ClearLog()
 
 void ADNLogger::Log(int value)
 {
-  Log(to_string(value));
+  Log(std::to_string(value));
 }
 
 void ADNLogger::Log(std::string value)
@@ -78,6 +78,22 @@ void ADNLogger::LogPtr(quintptr ptr)
   QString ptrStr = QString("0x%1").arg(ptr,
     QT_POINTER_SIZE * 2, 16, QChar('0'));
   Log(ptrStr);
+}
+
+void ADNLogger::LogDateTime()
+{
+  time_t rawtime;
+  struct tm * timeinfo;
+  char buffer[80];
+
+  time(&rawtime);
+  timeinfo = localtime(&rawtime);
+
+  strftime(buffer, sizeof(buffer), "%d-%m-%Y %I:%M:%S", timeinfo);
+  std::string str(buffer);
+
+  std::string msg = " == Adenita starting at: " + str + " == ";
+  Log(msg);
 }
 
 //void ADNAuxiliary::logPosition(string name, SBPosition3 pos)

@@ -118,45 +118,36 @@ void SEAdenitaCoreSEAppGUI::onCreate()
 
 void SEAdenitaCoreSEAppGUI::onLoadFile()
 {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open document: caDNAno, mesh (ply), Adenita document"), QDir::currentPath(), tr("(Documents *.json *.ply)"));
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open document: caDNAno, mesh (ply), Adenita document (adn, adnpart)"), QDir::currentPath(), tr("(Documents *.json *.ply *.adn *.adnpart)"));
   if (!filename.isEmpty()) {
     SEAdenitaCoreSEApp* t = getApp();
 
     if (filename.endsWith(".json")) {
-
-      //cadnano file
-      ADNConstants::CadnanoLatticeType typ = ADNConstants::CadnanoLatticeType::Honeycomb;
-
-      QStringList items;
-      items << "Honeycomb" << "Square";
-
-      bool ok;
-      QString item = QInputDialog::getItem(this, "CaDNAno structure",
-        "Lattice:", items, 0, false, &ok);
-
-      if (ok && !item.isEmpty()) {
-        if (item == "Honeycomb") {
-          typ = ADNConstants::CadnanoLatticeType::Honeycomb;
-        }
-        else if (item == "Square") {
-          typ = ADNConstants::CadnanoLatticeType::Square;
-        }
-                
-        t->ImportFromCadnano(filename, typ);
-        
+      // either cadnano or old Adenita format
+      std::string format = IsJsonCadnano(filename);
+      if (format == "cadnano") {
+        t->ImportFromCadnano(filename);
+      }
+      else if (format == "adenita") {
+        t->LoadPart(filename);
+      }
+      else {
+        QMessageBox msgBox;
+        msgBox.setText("Unknown json format. Current supported formats include Cadnano and legacy Adenita parts");
+        msgBox.exec();
       }
     }
     else if(filename.endsWith(".ply")){
-
       bool ok;
       int i = QInputDialog::getInt(this, tr("Wireframe structure (Daedalus)"),
-        tr("Minimum edge size (bp): "), 42, 0, 500, 1, &ok);
+        tr("Minimum edge size (bp): "), 42, 31, 1050, 1, &ok);
       if (ok) {
-        t->LoadPartWithDaedalus(filename, i);
+        div_t d = div(i, 10.5);
+        int minSize = floor(d.quot * 10.5);
+        t->LoadPartWithDaedalus(filename, minSize);
       }
-
     }
-    else if (filename.endsWith(".adn")) {
+    else if (filename.endsWith(".adnpart")) {
       t->LoadPart(filename);
     }
   }
@@ -164,51 +155,13 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
   SAMSON::getActiveCamera()->center();
 }
 
-void SEAdenitaCoreSEAppGUI::onLoadPart()
-{
-  QString filename = QFileDialog::getOpenFileName(this, tr("Select an ANTPart .json file"), QDir::currentPath(), tr("Json (*.json)"));
-  if (!filename.isEmpty()) {
-    SEAdenitaCoreSEApp* t = getApp();
-    t->LoadPart(filename);
-  }
-
-  SAMSON::getActiveCamera()->center();
-}
-
 void SEAdenitaCoreSEAppGUI::onSavePart()
 {
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save an ANTPart .json file"), QDir::currentPath(), tr("Json (*.json)"));
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save an ANTPart .adnpart file"), QDir::currentPath(), tr("Adenita json (*.adnpart)"));
   if (!filename.isEmpty()) {
     SEAdenitaCoreSEApp* t = getApp();
     t->SavePart(filename);
   }
-}
-
-void SEAdenitaCoreSEAppGUI::onLoadPLYFile()
-{
-  int minEdgeSize = ui.spnDaedalusMinEdgeSize->value();
-  QString filename = QFileDialog::getOpenFileName(this, tr("Select a .ply file"), QDir::currentPath(), tr("Mesh (*.ply)"));
-  if (!filename.isEmpty()) {
-    SEAdenitaCoreSEApp* t = getApp();
-    t->LoadPartWithDaedalus(filename, minEdgeSize);
-  }
-
-  SAMSON::getActiveCamera()->center();
-}
-
-void SEAdenitaCoreSEAppGUI::onImportFromCadnano()
-{
-  ADNConstants::CadnanoLatticeType typ = ADNConstants::CadnanoLatticeType::Honeycomb;
-  if (ui.rdoCadnanoSquareLattice->isChecked()) {
-    typ = ADNConstants::CadnanoLatticeType::Square;
-  }
-  QString filename = QFileDialog::getOpenFileName(this, tr("Select a .json file"), QDir::currentPath(), tr("Cadnano (*.json)"));
-  if (!filename.isEmpty()) {
-    SEAdenitaCoreSEApp* t = getApp();
-    t->ImportFromCadnano(filename, typ);
-  }
-
-  SAMSON::getActiveCamera()->center();
 }
 
 void SEAdenitaCoreSEAppGUI::onExportToOxDNA()
@@ -262,6 +215,27 @@ void SEAdenitaCoreSEAppGUI::onCenterPart()
   SEAdenitaCoreSEApp *t = getApp();
   t->CenterPart();
   SAMSON::getActiveCamera()->center();
+}
+
+std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
+{
+  std::string format = "unknown";
+
+  FILE* fp;
+  fopen_s(&fp, filename.toStdString().c_str(), "rb");
+  char readBuffer[65536];
+  FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+  Document d;
+  d.ParseStream(is);
+
+  if (d.HasMember("vstrands")) {
+    format = "cadnano";
+  }
+  else if (d.HasMember("doubleStrands")) {
+    format = "adenita";
+  }
+
+  return format;
 }
 
 SBCContainerUUID SEAdenitaCoreSEAppGUI::getUUID() const { return SBCContainerUUID( "386506A7-DD8B-69DD-4599-F136C1B91610" );}

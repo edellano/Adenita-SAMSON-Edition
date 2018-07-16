@@ -36,11 +36,16 @@ public:
   CollectionMap<ADNNucleotide> GetNucleotides(CellType celltype = ALL) const;
   CollectionMap<ADNAtom> GetAtoms() const;
 
-  int GetNumberOfDoubleStrands();
-  int GetNumberOfSingleStrands();
-  int GetNumberOfNucleotides();
-  int GetNumberOfAtoms();
-  int GetNumberOfBaseSegments();
+  int GetNumberOfDoubleStrands() const;
+  int getNumberOfDoubleStrands() const;
+  int GetNumberOfSingleStrands() const;
+  int getNumberOfSingleStrands() const;
+  int GetNumberOfNucleotides() const;
+  int getNumberOfNucleotides() const;
+  int GetNumberOfAtoms() const;
+  int getNumberOfAtoms() const;
+  int GetNumberOfBaseSegments() const;
+  int getNumberOfBaseSegments() const;
 
   void DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
   void DeregisterNucleotide(ADNPointer<ADNNucleotide> nt);
