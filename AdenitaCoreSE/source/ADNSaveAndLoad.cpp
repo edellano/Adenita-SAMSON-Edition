@@ -499,6 +499,26 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
   return part;
 }
 
+ADNNanorobot * ADNLoader::LoadNanorobotFromJson(std::string filename)
+{
+  ADNNanorobot* nr = new ADNNanorobot();
+
+  FILE* fp = fopen(filename.c_str(), "rb");
+  char readBuffer[131072];
+  FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+  Document d;
+  d.ParseStream(is);
+
+  // check for save version
+  double versionValue = 0.0;
+  if (Value* version = Pointer("/version").Get(d)) {
+    versionValue = version->GetDouble();
+  }
+
+
+  return nr;
+}
+
 void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, rapidjson::Writer<StringBuffer>& writer)
 {
 
