@@ -12,10 +12,10 @@ SEAdenitaVisualModel::SEAdenitaVisualModel() {
 
 SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
 
-	// SAMSON Element generator pro tip: implement this function if you want your visual model to be applied to a set of data graph nodes.
-	// You might want to connect to various signals and handle the corresponding events. For example, if your visual model represents a sphere positioned at
-	// the center of mass of a group of atoms, you might want to connect to the atoms' base signals (e.g. to update the center of mass when an atom is erased) and
-	// the atoms' structural signals (e.g. to update the center of mass when an atom is moved).
+  // SAMSON Element generator pro tip: implement this function if you want your visual model to be applied to a set of data graph nodes.
+  // You might want to connect to various signals and handle the corresponding events. For example, if your visual model represents a sphere positioned at
+  // the center of mass of a group of atoms, you might want to connect to the atoms' base signals (e.g. to update the center of mass when an atom is erased) and
+  // the atoms' structural signals (e.g. to update the center of mass when an atom is moved).
 
   SEAdenitaCoreSEApp* app = getAdenitaApp();
   nanorobot_ = app->GetNanorobot();
@@ -53,29 +53,49 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   guanineColor_(2) = config.guanine_color[2];
   guanineColor_(3) = config.guanine_color[3];
 
+  auto parts = nanorobot_->GetParts();
 
-  SBNodeIndexer residues;
-  SB_FOR(SBNode* node, nodeIndexer)
-    node->getNodes(residues, SBNode::IsType(SBNode::Residue));
+  SB_FOR(auto part, parts) {
+    auto singleStrands = part->GetSingleStrands();
 
-  SB_FOR(SBNode* node, residues) {
-    SBResidue* residue = static_cast<SBResidue*>(node);
-
-    //connect signals
-    residue->connectBaseSignalToSlot(
+    part->connectBaseSignalToSlot(
       this,
       SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
-
-    residue->connectStructuralSignalToSlot(
-      this, // the pointer to the app
-      SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent) // the slot
+    part->connectStructuralSignalToSlot(
+      this,
+      SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent)
       );
 
+    SB_FOR(auto singleStrand, singleStrands) {
+      auto nucleotides = singleStrand->GetNucleotides();
 
+      singleStrand->connectBaseSignalToSlot(
+        this,
+        SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
+      singleStrand->connectStructuralSignalToSlot(
+        this,
+        SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent)
+        );
+
+      SB_FOR(auto nucleotide, nucleotides) {
+        // hide nucleotides
+        //nanorobot_->HideCenterAtoms(nucleotide);
+        //nucleotide->setVisibilityFlag(false);
+        //nucleotide->GetBackbone()->setVisibilityFlag(false);
+        //nucleotide->GetSidechain()->setVisibilityFlag(false);
+        nucleotide->connectBaseSignalToSlot(
+          this,
+          SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
+        nucleotide->connectStructuralSignalToSlot(
+          this,
+          SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent)
+          );
+
+      }
+    }
+
+    auto doubleStrands = part->GetDoubleStrands();
   }
-
-
-
 
   changeScale(6);
 }
@@ -167,8 +187,6 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 
     SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
       
-      // hide nucleotides
-      nanorobot_->HideCenterAtoms(nt);
       ntMap.insert(make_pair(nt(), index));
       
       ++index;
@@ -641,7 +659,7 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
   if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged || baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged || baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
     //flags have to be changed
     changeScale(scale_);
-
+    SAMSON::requestViewportUpdate();
   }
 }
 
