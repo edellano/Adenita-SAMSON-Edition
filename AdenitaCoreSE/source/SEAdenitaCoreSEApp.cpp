@@ -152,6 +152,32 @@ void SEAdenitaCoreSEApp::CenterPart()
   if (part != nullptr) ADNBasicOperations::CenterPart(part);
 }
 
+void SEAdenitaCoreSEApp::ResetVisualModel(bool deleteOldVM) {
+  //create visual model per nanorobot
+  SBNodeIndexer allNodes;
+  SAMSON::getActiveDocument()->getNodes(allNodes);
+  ADNLogger& logger = ADNLogger::GetLogger();
+
+  if (deleteOldVM) {
+    SB_FOR(SBNode* node, allNodes) {
+      if (node->getType() == SBNode::VisualModel) {
+        SBPointer<SBVisualModel> vm = static_cast<SBVisualModel*>(node);
+        if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
+          vm->getParent()->removeChild(node);
+          vm->erase();
+        }
+      }
+    }
+  }
+
+  SBProxy* vmProxy = SAMSON::getProxy("SEAdenitaVisualModel");
+  SEAdenitaVisualModel* vm = vmProxy->createInstance(allNodes);
+  vm->create();
+  SAMSON::getActiveLayer()->addChild(vm);
+
+
+}
+
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
 {
   return nanorobot_;
