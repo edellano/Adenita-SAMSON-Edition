@@ -25,7 +25,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -195,6 +195,9 @@
               <height>20</height>
              </size>
             </property>
+            <property name="shortcut">
+             <string>Ctrl+O</string>
+            </property>
             <property name="checkable">
              <bool>false</bool>
             </property>
@@ -214,6 +217,9 @@
               <height>20</height>
              </size>
             </property>
+            <property name="shortcut">
+             <string>Ctrl+S</string>
+            </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
@@ -229,6 +235,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+F</string>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -246,6 +255,9 @@
               <height>20</height>
              </size>
             </property>
+            <property name="shortcut">
+             <string>Ctrl+E</string>
+            </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
@@ -261,6 +273,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+T</string>
             </property>
             <property name="checkable">
              <bool>false</bool>
@@ -296,6 +311,9 @@
               <width>20</width>
               <height>20</height>
              </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+B</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
