@@ -174,7 +174,7 @@ void SEAdenitaCoreSEApp::ResetVisualModel(bool deleteOldVM) {
   SEAdenitaVisualModel* vm = vmProxy->createInstance(allNodes);
   vm->create();
   SAMSON::getActiveLayer()->addChild(vm);
-
+  
 
 }
 

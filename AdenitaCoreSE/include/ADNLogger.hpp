@@ -32,7 +32,8 @@ public:
   void LogVector(ublas::vector<double> v);
   void LogVector(std::string name, ublas::vector<double> v);
   void LogMatrix(ublas::matrix<double> m);
-  time_t LogPassedTime(time_t time1, std::string text);
+  time_t LogPassedSeconds(time_t time1, std::string text);
+  clock_t LogPassedMilliseconds(clock_t time1, std::string text);
   void LogPtr(quintptr ptr);
   void LogDateTime();
   //void logPosition(std::string name, SBPosition3 pos);
