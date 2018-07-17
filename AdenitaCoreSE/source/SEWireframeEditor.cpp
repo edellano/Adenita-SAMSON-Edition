@@ -92,6 +92,9 @@ void SEWireframeEditor::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
+  gl_->glEnable(GL_DEPTH_TEST);
+
+  gl_->glDisable(GL_DEPTH_TEST);
 
 }
 

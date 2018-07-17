@@ -8,6 +8,7 @@
 #include "SBDynamicalEvent.hpp"
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
+#include <QOpenGLFunctions_4_3_Core>
 
 /// This class implements an editor
 
@@ -93,6 +94,9 @@ public :
 	SEWireframeEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
+
+private:
+  QOpenGLFunctions_4_3_Core *                                 gl_;
 
 };
 
