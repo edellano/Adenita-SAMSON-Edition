@@ -13,6 +13,7 @@
 #include "ADNPart.hpp"
 #include "ADNNanorobot.hpp"
 #include "SEConfig.hpp"
+#include <QOpenGLFunctions_4_3_Core>
 
 
 /// This class implements a visual model
@@ -104,6 +105,9 @@ private:
   void												prepareScale9(bool forSelection = false); //scale 9: display polyhedron 
   SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
   ADNArray<float>             getBaseColor(SBResidue::ResidueType baseSymbol);
+
+  QOpenGLFunctions_4_3_Core * gl_;
+
 
   // general display properties 
   ADNArray<float> nucleotideEColor_;

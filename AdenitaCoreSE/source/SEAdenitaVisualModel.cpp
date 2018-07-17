@@ -52,6 +52,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   guanineColor_(1) = config.guanine_color[1];
   guanineColor_(2) = config.guanine_color[2];
   guanineColor_(3) = config.guanine_color[3];
+  ADNLogger& logger = ADNLogger::GetLogger();
 
   auto parts = nanorobot_->GetParts();
 
@@ -78,8 +79,6 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
         );
 
       SB_FOR(auto nucleotide, nucleotides) {
-        // hide nucleotides (too slow here)
-        //nanorobot_->HideCenterAtoms(nucleotide);
         nucleotide->connectBaseSignalToSlot(
           this,
           SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
@@ -565,6 +564,10 @@ void SEAdenitaVisualModel::display() {
 
   if (nanorobot_ == nullptr) return;
 
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_DEPTH_TEST);
+
   SAMSON::displaySpheres(
     nPositions_,
     positions_.GetArray(),
@@ -583,6 +586,9 @@ void SEAdenitaVisualModel::display() {
       colorsE_.GetArray(),
       flags_.GetArray());
   }
+
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_BLEND);
 
   //if (configuration_->display_base_pairing) {
   //  displayBasePairConnections(scale_);

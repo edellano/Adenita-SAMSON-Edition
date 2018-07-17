@@ -76,7 +76,7 @@ time_t ADNLogger::LogPassedSeconds(time_t time1, std::string text)
 clock_t ADNLogger::LogPassedMilliseconds(clock_t time1, std::string text)
 {
   float ms_since_start = float (clock() - time1) / CLOCKS_PER_SEC;
-  Log(QString("\t *** ") + QString(text.c_str()) + QString(" ") + QString::number(ms_since_start) + QString(" milliseconds"));
+  Log(QString("\t *** ") + QString(text.c_str()) + QString(" ") + QString::number(ms_since_start) + QString(" seconds"));
   return clock();
 }
 
