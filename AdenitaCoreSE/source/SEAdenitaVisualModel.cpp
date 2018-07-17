@@ -421,10 +421,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
     SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) { 
         
-      
-      radiiV_(index) = config.nucleotide_V_radius;
-      radiiE_(index) = config.nucleotide_V_radius;
-
       flags_(index) = nt->getInheritedFlags();
       nodeIndices_(index) = nt->getNodeIndex();
 
@@ -490,6 +486,14 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
       colorsV_(index, 1) = minVColorG + iv * (maxVColorG - minVColorG);
       colorsV_(index, 2) = minVColorB + iv * (maxVColorB - minVColorB);
       colorsV_(index, 3) = minVColorA + iv * (maxVColorA - minVColorA);
+      
+      radiiV_(index) = config.nucleotide_V_radius;
+      radiiE_(index) = config.nucleotide_V_radius;
+
+      if (!nt->isVisible() || !ss->isVisible()) {
+        colorsV_(index, 3) = colorsV_(index, 3) * 0.0f;
+        colorsE_(index, 3) = colorsE_(index, 3) * 0.0f;
+      }
 
       //highlightStrands(colorsV_, colorsE_, index, nucleotide);
 
@@ -498,11 +502,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
         radiiE_(index) = config.nucleotide_E_radius;
       }
       
-      if (!nt->isVisible()) {
-        radiiV_(index) = 0;
-        radiiE_(index) = 0;
-      }
-
       ++index;
     }
     
@@ -574,6 +573,7 @@ void SEAdenitaVisualModel::display() {
     radiiV_.GetArray(),
     colorsV_.GetArray(),
     flags_.GetArray());
+
 
   if (nCylinders_ > 0) {
     SAMSON::displayCylinders(
