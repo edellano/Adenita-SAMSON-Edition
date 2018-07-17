@@ -198,15 +198,14 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices(unsigned int n
   SB_FOR(auto part, parts) {
     auto singleStrands = part->GetSingleStrands();
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-      ADNPointer<ADNNucleotide> cur = nanorobot_->GetSingleStrandFivePrime(ss);
+      auto nucleotides = ss->GetNucleotides();
+      ADNPointer<ADNNucleotide> cur = ss->GetFivePrime();
       size_t curNCylinders = nucleotides.size() - 1;
       ADNArray<unsigned int> curIndices = ADNArray<unsigned int>(2 * curNCylinders);
       unsigned int j = 0;
       while (nanorobot_->GetNucleotideNext(cur) != nullptr) {
         unsigned int curIndex;
         curIndex = ntMap[cur()];
-
         unsigned int nextIndex;
         auto next = nanorobot_->GetNucleotideNext(cur)();
         nextIndex = ntMap[next];
