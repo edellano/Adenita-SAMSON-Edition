@@ -175,6 +175,7 @@ public:
   void SetBaseSegment(ADNPointer<ADNBaseSegment> bs);
   ADNPointer<ADNBaseSegment> GetBaseSegment();
   SBNode* getBaseSegment() const;
+  std::string getBaseSegmentType() const;
 
   End GetEnd();
   void SetEnd(End e);
