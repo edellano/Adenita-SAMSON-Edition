@@ -308,19 +308,6 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
           skipPair = new ADNSkipPair();
           bs->SetCell(skipPair());
         }
-        
-        ADNPointer<ADNNucleotide> skip = new ADNNucleotide();
-
-        SBPosition3 leftPos3D = vGrid_.GetGridCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
-
-        skip->SetPosition(leftPos3D);
-        skip->SetBackbonePosition(leftPos3D);
-        skip->SetSidechainPosition(leftPos3D);
-
-        if (left) skipPair->SetLeftSkip(skip);
-        else skipPair->SetRightSkip(skip);
-
-        skip->SetBaseSegment(bs);
       }
     }
     else {

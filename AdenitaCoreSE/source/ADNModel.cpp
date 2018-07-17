@@ -219,6 +219,12 @@ SBNode * ADNNucleotide::getBaseSegment() const
   return bs_();
 }
 
+std::string ADNNucleotide::getBaseSegmentType() const
+{
+  CellType t = bs_->GetCellType();
+  return ADNModel::CellTypeToString(t);
+}
+
 End ADNNucleotide::GetEnd()
 {
   return end_;
@@ -1015,26 +1021,6 @@ CollectionMap<ADNNucleotide> ADNBasePair::GetNucleotides()
   if (left_ != nullptr) nts.addReferenceTarget(left_());
   if (right_ != nullptr) nts.addReferenceTarget(right_());
   return nts;
-}
-
-ADNPointer<ADNNucleotide> ADNSkipPair::GetLeftSkip()
-{
-  return left_;
-}
-
-void ADNSkipPair::SetLeftSkip(ADNPointer<ADNNucleotide> nt)
-{
-  left_ = nt;
-}
-
-ADNPointer<ADNNucleotide> ADNSkipPair::GetRightSkip()
-{
-  return right_;
-}
-
-void ADNSkipPair::SetRightSkip(ADNPointer<ADNNucleotide> nt)
-{
-  right_ = nt;
 }
 
 void ADNSkipPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
