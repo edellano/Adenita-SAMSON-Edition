@@ -23,15 +23,11 @@ CollectionMap<ADNSingleStrand> ADNNanorobot::GetSingleStrands() const
 {
   CollectionMap<ADNSingleStrand> singleStrands;
 
-  /*SBNodeIndexer nodeIndexer;
+  SBNodeIndexer nodeIndexer;
   SAMSON::getActiveDocument()->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNSingleStrand")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
   SB_FOR(SBNode* n, nodeIndexer) {
     singleStrands.addReferenceTarget(static_cast<ADNSingleStrand*>(n));
-  }*/
-
-  if (partsIndex_.size() > 0) {
-    singleStrands = partsIndex_[0]->GetSingleStrands();
   }
 
   return singleStrands;
@@ -1564,6 +1560,16 @@ CollectionMap<ADNPart> ADNNanorobot::GetParts() const
 //    }
 //  }
 //}
+
+CollectionMap<ADNSingleStrand> ADNNanorobot::GetSingleStrands(ADNPointer<ADNPart> p)
+{
+  return p->GetSingleStrands();
+}
+
+CollectionMap<ADNDoubleStrand> ADNNanorobot::GetDoubleStrands(ADNPointer<ADNPart> p)
+{
+  return p->GetDoubleStrands();
+}
 
 CollectionMap<ADNNucleotide> ADNNanorobot::GetSingleStrandNucleotides(ADNPointer<ADNSingleStrand> ss)
 {

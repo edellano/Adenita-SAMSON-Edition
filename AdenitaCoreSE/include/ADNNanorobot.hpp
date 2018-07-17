@@ -17,6 +17,17 @@ public:
   //! Operator =
   ADNNanorobot& operator=(const ADNNanorobot& other);
 
+  //! Adds an ADNPart to the internal part index
+  /*!
+  \param a pointer to the ADNPart you want to add. The ADNPart is added to the current layer.
+  */
+  void RegisterPart(ADNPointer<ADNPart> part);
+  //! Deletes an ADNPart from the internal part index
+  /*!
+  \param a pointer to the ADNPart you want to delete from the index. The ADNPart is removed from the parent.
+  */
+  void DeregisterPart(ADNPointer<ADNPart> part);
+
   //! Returns the number of double strands
   int GetNumberOfDoubleStrands();
   //! Returns the number of base segments
@@ -30,17 +41,18 @@ public:
   CollectionMap<ADNPart> GetParts() const;
   //! Returns all the registered ADNSingleStrand
   CollectionMap<ADNSingleStrand> GetSingleStrands() const;
-
-  //! Adds an ADNPart to the internal part index
+  //! Return the single strands of an ADNPart
   /*!
-    \param a pointer to the ADNPart you want to add. The ADNPart is added to the current layer.
+    \param a ADNPointer to a ADNPart
+    \return a CollectionMap of ADNSingleStrand
   */
-  void RegisterPart(ADNPointer<ADNPart> part);
-  //! Deletes an ADNPart from the internal part index
+  CollectionMap<ADNSingleStrand> GetSingleStrands(ADNPointer<ADNPart> p);
+  //! Return the double strands of an ADNPart
   /*!
-    \param a pointer to the ADNPart you want to delete from the index. The ADNPart is removed from the parent.
+    \param a ADNPointer to a ADNPart
+    \return a CollectionMap of ADNSingleStrand
   */
-  void DeregisterPart(ADNPointer<ADNPart> part);
+  CollectionMap<ADNDoubleStrand> GetDoubleStrands(ADNPointer<ADNPart> p);
 
   //! Return the nucleotides of a single strand
   /*!

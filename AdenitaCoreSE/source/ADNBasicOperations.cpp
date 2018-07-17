@@ -373,10 +373,15 @@ std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> ADNBasicOperatio
     nt = nt->GetNext();
   }
 
-  if (list.size() != 2) return res;
-
-  res.first = list[0];
-  res.second = list[1];
+  if (list.size() == 1 && nt1 == nt2) {
+    // loop has only one nucleotide
+    res.first = list[0];
+    res.second = list[0];
+  }
+  else if (list.size() == 2) {
+    res.first = list[0];
+    res.second = list[1];
+  }
 
   return res;
 }
