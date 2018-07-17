@@ -90,8 +90,8 @@ public :
 	//@}
 
 private:
-  void												initArraysForDisplay(unsigned int nPositions, unsigned int nCylinders); // Clear the arrays for displaying 
-  ADNArray<unsigned int>      getNucleotideIndices();
+  void												initArraysForDisplay(); // Clear the arrays for displaying 
+  ADNArray<unsigned int>      getNucleotideIndices(unsigned int nCylinders);
   void												prepareArraysForDisplay(); // Prepare the arrays for displaying (this separates the interpolation from display)
   void												prepareScale0to1(double iv, bool forSelection = false); // scale 0 -> 1: depicting licorice to sticks representation
   void												prepareScale1to2(double iv, bool forSelection = false); // scale 1 -> 2: transition from thick bond to atoms without bonds
@@ -103,6 +103,7 @@ private:
   void												prepareScale7to8(double iv, bool forSelection = false); // scale 7 -> 8: transition single strands from sidechain to backbone
   void												prepareScale8to9(double iv, bool forSelection = false); // scale 8 -> 9: transition from duplex to polyhedron
   void												prepareScale9(bool forSelection = false); //scale 9: display polyhedron 
+  void												highlightFlagChanged(); //scale 9: display polyhedron 
   SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
   ADNArray<float>             getBaseColor(SBResidue::ResidueType baseSymbol);
 
