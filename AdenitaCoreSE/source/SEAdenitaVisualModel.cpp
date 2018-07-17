@@ -688,7 +688,8 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
 
   if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged || baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged || baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
     //flags have to be changed
-    changeScale(scale_);
+    //changeScale(scale_);
+    highlightFlagChanged();
     SAMSON::requestViewportUpdate();
   }
 }
