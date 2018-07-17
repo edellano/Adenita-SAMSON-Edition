@@ -158,6 +158,8 @@ void SEAdenitaCoreSEApp::ResetVisualModel(bool deleteOldVM) {
   SAMSON::getActiveDocument()->getNodes(allNodes);
   ADNLogger& logger = ADNLogger::GetLogger();
 
+  clock_t start = clock();
+
   if (deleteOldVM) {
     SB_FOR(SBNode* node, allNodes) {
       if (node->getType() == SBNode::VisualModel) {
@@ -174,7 +176,7 @@ void SEAdenitaCoreSEApp::ResetVisualModel(bool deleteOldVM) {
   SEAdenitaVisualModel* vm = vmProxy->createInstance(allNodes);
   vm->create();
   SAMSON::getActiveLayer()->addChild(vm);
-  
+  logger.LogPassedMilliseconds(start, "ResetVisualModel");
 
 }
 
