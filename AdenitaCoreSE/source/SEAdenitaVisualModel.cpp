@@ -564,6 +564,10 @@ void SEAdenitaVisualModel::display() {
 
   if (nanorobot_ == nullptr) return;
 
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_DEPTH_TEST);
+
   SAMSON::displaySpheres(
     nPositions_,
     positions_.GetArray(),
@@ -582,6 +586,9 @@ void SEAdenitaVisualModel::display() {
       colorsE_.GetArray(),
       flags_.GetArray());
   }
+
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_BLEND);
 
   //if (configuration_->display_base_pairing) {
   //  displayBasePairConnections(scale_);
