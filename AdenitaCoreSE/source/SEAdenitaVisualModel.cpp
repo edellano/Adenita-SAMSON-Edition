@@ -56,7 +56,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   auto parts = nanorobot_->GetParts();
 
   SB_FOR(auto part, parts) {
-    auto singleStrands = part->GetSingleStrands();
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
 
     part->connectBaseSignalToSlot(
       this,
@@ -67,7 +67,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
       );
 
     SB_FOR(auto singleStrand, singleStrands) {
-      auto nucleotides = singleStrand->GetNucleotides();
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(singleStrand);
 
       singleStrand->connectBaseSignalToSlot(
         this,
@@ -91,7 +91,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
       }
     }
 
-    auto doubleStrands = part->GetDoubleStrands();
+    auto doubleStrands = nanorobot_->GetDoubleStrands(part);
   }
 
   changeScale(6);
