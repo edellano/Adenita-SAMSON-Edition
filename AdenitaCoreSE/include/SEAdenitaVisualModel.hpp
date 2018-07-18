@@ -106,6 +106,8 @@ private:
   void												highlightFlagChanged(); //scale 9: display polyhedron 
   SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
   ADNArray<float>             getBaseColor(SBResidue::ResidueType baseSymbol);
+  void                        calcNucleotideToCenterDistance(SBPosition3 center);
+
 
   QOpenGLFunctions_4_3_Core * gl_;
 

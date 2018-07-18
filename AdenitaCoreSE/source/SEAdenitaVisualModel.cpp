@@ -98,6 +98,8 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   
   changeScale(6);
 
+  
+
 }
 
 SEAdenitaVisualModel::~SEAdenitaVisualModel() {
@@ -592,6 +594,34 @@ ADNArray<float> SEAdenitaVisualModel::getBaseColor(SBResidue::ResidueType baseSy
   }
 
   return color;
+}
+
+void SEAdenitaVisualModel::calcNucleotideToCenterDistance(SBPosition3 center)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  ADNLogger& logger = ADNLogger::GetLogger();
+
+  auto parts = nanorobot_->GetParts();
+
+  SB_FOR(auto part, parts) {
+
+    auto singleStrands = part->GetSingleStrands();
+
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+
+        SBPosition3 diff = nt->GetPosition() - center;
+        float dist = diff.norm2().getValue();
+
+      }
+    }
+  }
+
+
+
 }
 
 void SEAdenitaVisualModel::display() {
