@@ -696,10 +696,13 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle base events (e.g. when a node for which you provide a visual representation emits a base signal, such as when it is erased)
 
-  if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged || baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged || baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
-    //flags have to be changed
-    //changeScale(scale_);
+  if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged || baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged){
     highlightFlagChanged();
+    SAMSON::requestViewportUpdate();
+  }
+
+  if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
+    changeScale(scale_);
     SAMSON::requestViewportUpdate();
   }
 }
