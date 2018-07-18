@@ -121,6 +121,13 @@ void SEAdenitaVisualModelProperties::onSliderScaleChanged(int val)
   visualModel->changeScale(val / 10.0f);
 }
 
+void SEAdenitaVisualModelProperties::onSliderPeelingChanged(int val)
+{
+  visualModel->peel(val / 100.0f);
+  SAMSON::requestViewportUpdate();
+
+}
+
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
 SEAdenitaVisualModelProperties::Observer::~Observer() {}
 

@@ -69,6 +69,7 @@ public :
 	/// \name Rendering
 	//@{
   virtual void												changeScale(double scale);																///< Displays the visual model
+  virtual void												peel(double layer);																///< Displays the visual model
 	
   virtual void												display();																///< Displays the visual model
 	virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
@@ -128,6 +129,8 @@ private:
 
   ADNNanorobot * nanorobot_;
 
+  map<ADNNucleotide*, float> sortedNucleotidesByDist_;
+  map<ADNSingleStrand*, float> sortedSingleStrandsByDist_;
  
   // current arrays for being displayed (only spheres and cylinders)
   unsigned int nPositions_;
