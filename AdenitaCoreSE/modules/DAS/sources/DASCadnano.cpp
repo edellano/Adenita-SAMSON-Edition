@@ -336,6 +336,8 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
             ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(c());
             if (left) bp->SetLeftNucleotide(nt);
             else bp->SetRightNucleotide(nt);
+
+            bp->PairNucleotides();
             nt->SetBaseSegment(bs);
           }
           else {
