@@ -71,7 +71,8 @@ public:
 	};
 
 public slots:
-  void                              onSliderScaleChanged(int val);
+void                              onSliderScaleChanged(int val);
+void                              onSliderPeelingChanged(int val);
 
 private:
 
