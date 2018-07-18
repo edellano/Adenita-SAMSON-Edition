@@ -22,6 +22,13 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="0" colspan="2">
       <widget class="QSlider" name="hslScale">
        <property name="maximum">
@@ -35,10 +42,17 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>TextLabel</string>
+        <string>Peeling</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2">
+      <widget class="QSlider" name="hslPeeling">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -55,8 +69,8 @@
    <slot>onSliderScaleChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>149</x>
-     <y>22</y>
+     <x>161</x>
+     <y>56</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -64,8 +78,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>hslPeeling</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onSliderPeelingChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>194</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>6</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSliderScaleChanged(int)</slot>
+  <slot>onSliderPeelingChanged(int)</slot>
  </slots>
 </ui>

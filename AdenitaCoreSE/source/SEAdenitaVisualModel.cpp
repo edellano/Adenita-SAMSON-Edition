@@ -98,6 +98,26 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   
   changeScale(6);
 
+
+  SBPosition3 center;
+  SB_FOR(auto part, parts) {
+
+    auto singleStrands = part->GetSingleStrands();
+
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+
+        center += nt->GetPosition();
+      }
+    }
+  }
+
+  center /= nanorobot_->GetNumberOfNucleotides();
+
+  calcNucleotideToCenterDistance(center);
   
 
 }
@@ -155,6 +175,61 @@ void SEAdenitaVisualModel::changeScale(double scale)
   prepareArraysForDisplay();
 
   SAMSON::requestViewportUpdate();
+}
+
+void SEAdenitaVisualModel::peel(double layer)
+{
+
+  auto parts = nanorobot_->GetParts();
+  SEConfig& config = SEConfig::GetInstance();
+
+  unsigned int index = 0;
+  SB_FOR(auto part, parts) {
+
+    auto singleStrands = part->GetSingleStrands();
+
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      auto ssDist = sortedSingleStrandsByDist_[ss()];
+
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+
+        if (index >= nPositions_) return;
+        auto ntDist = sortedNucleotidesByDist_[nt()];
+        if (ssDist > layer) {
+          radiiV_(index) = 0;
+          radiiE_(index) = 0;
+        }
+        else {
+          radiiV_(index) = config.nucleotide_V_radius;
+          radiiE_(index) = config.nucleotide_V_radius;
+        }
+        if (ntDist > layer) {
+          //nt->setVisibilityFlag(false);
+          colorsV_(index, 3) = 0.0f;
+          colorsE_(index, 3) = 0.0f;
+          if (true) {
+            if (ss->IsScaffold()) {
+              radiiV_(index) = 0;
+              radiiE_(index) = 0;
+            }
+          }
+        }
+        else {
+          //nt->setVisibilityFlag(true);
+          colorsV_(index, 3) = 1.0f;
+          colorsE_(index, 3) = 1.0f;
+        }
+        
+        
+        ++index;
+      }
+    }
+  }
+
+  SAMSON::requestViewportUpdate();
+
 }
 
 void SEAdenitaVisualModel::initArraysForDisplay()
@@ -596,10 +671,15 @@ ADNArray<float> SEAdenitaVisualModel::getBaseColor(SBResidue::ResidueType baseSy
   return color;
 }
 
+
+
 void SEAdenitaVisualModel::calcNucleotideToCenterDistance(SBPosition3 center)
 {
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
+
+  vector<pair<ADNNucleotide*, float>> nucleotidesSorted;
+  vector<pair<ADNSingleStrand*, float>> singleStrandsSorted;
 
   auto parts = nanorobot_->GetParts();
 
@@ -611,17 +691,50 @@ void SEAdenitaVisualModel::calcNucleotideToCenterDistance(SBPosition3 center)
 
       auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
 
+      SBPosition3 strandCenter;
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
 
         SBPosition3 diff = nt->GetPosition() - center;
-        float dist = diff.norm2().getValue();
+        float dist = diff.norm().getValue();
 
+        nucleotidesSorted.push_back(make_pair(nt(), dist));
+
+        strandCenter += nt->GetPosition();
       }
+
+      strandCenter /= ss->getNumberOfNucleotides();
+
+      SBPosition3 ssDiff = strandCenter - center;
+      float ssDist = ssDiff.norm().getValue();
+      singleStrandsSorted.push_back(make_pair(ss(), ssDist));
+
     }
   }
 
+  sort(nucleotidesSorted.begin(), nucleotidesSorted.end(), [=](std::pair<ADNNucleotide*, float>& a, std::pair<ADNNucleotide*, float>& b)
+  {
+    return a.second < b.second;
+  });
 
+  sort(singleStrandsSorted.begin(), singleStrandsSorted.end(), [=](std::pair<ADNSingleStrand*, float>& a, std::pair<ADNSingleStrand*, float>& b)
+  {
+    return a.second < b.second;
+  });
 
+  sortedNucleotidesByDist_.clear();
+  sortedSingleStrandsByDist_.clear();
+
+  float max = nucleotidesSorted.back().second;
+
+  for (int i = 0; i < nucleotidesSorted.size(); i++) {
+    sortedNucleotidesByDist_.insert(make_pair(nucleotidesSorted[i].first, nucleotidesSorted[i].second / max));
+    //logger.Log(nucleotidesSorted[i].second);
+  }
+
+  for (int i = 0; i < singleStrandsSorted.size(); i++) {
+    sortedSingleStrandsByDist_.insert(make_pair(singleStrandsSorted[i].first, singleStrandsSorted[i].second / max));
+    //logger.Log(singleStrandsSorted[i].second);
+  }
 }
 
 void SEAdenitaVisualModel::display() {
