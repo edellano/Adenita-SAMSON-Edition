@@ -93,8 +93,8 @@ void SEConfig::loadConfig() {
     writer.Key("show_overlay");
     writer.Bool(show_overlay);
 
-    writer.Key("usage");
-    writer.String(usage.c_str());
+    writer.Key("mode");
+    writer.String(mode.c_str());
     
     writer.EndObject();
 
@@ -123,7 +123,7 @@ void SEConfig::updateConfig() {
     min_gibbs_free_energy = setting_["min_gibbs_free_energy"].GetDouble();
     interpolate_dimensions = setting_["interpolate_dimensions"].GetBool();
     animation_step_size = setting_["animation_step_size"].GetDouble();
-    usage = setting_["usage"].GetString();
+    mode = setting_["mode"].GetString();
     use_atomic_details = setting_["use_atomic_details"].GetBool();
     clear_log_file = setting_["clear_log_file"].GetBool();
     test_type = setting_["test_type"].GetInt();
