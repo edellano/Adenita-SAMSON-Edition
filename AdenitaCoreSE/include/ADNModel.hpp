@@ -303,6 +303,7 @@ public:
   SBNode* getRight() const;
   void SetRightNucleotide(ADNPointer<ADNNucleotide> nt);
   void AddPair(ADNPointer<ADNNucleotide> left, ADNPointer<ADNNucleotide> right);
+  void PairNucleotides();
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
   CollectionMap<ADNNucleotide> GetNucleotides();
 private:

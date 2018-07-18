@@ -1006,6 +1006,14 @@ void ADNBasePair::AddPair(ADNPointer<ADNNucleotide> left, ADNPointer<ADNNucleoti
   if (right_ != nullptr) right->SetPair(left);
 }
 
+void ADNBasePair::PairNucleotides()
+{
+  if (left_ != nullptr && right_ != nullptr) {
+    left_->SetPair(right_);
+    right_->SetPair(left_);
+  }
+}
+
 void ADNBasePair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   if (left_ == nt) {
     left_ = nullptr;
