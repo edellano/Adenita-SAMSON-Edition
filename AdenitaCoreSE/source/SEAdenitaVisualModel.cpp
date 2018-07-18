@@ -511,16 +511,18 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
         radiiV_(index) = config.nucleotide_V_radius;
         radiiE_(index) = config.nucleotide_V_radius;
 
-        if (!nt->isVisible() || !ss->isVisible()) {
-          colorsV_(index, 3) = colorsV_(index, 3) * 0.0f;
-          colorsE_(index, 3) = colorsE_(index, 3) * 0.0f;
-        }
-
         //highlightStrands(colorsV_, colorsE_, index, nucleotide);
 
         //strand direction
         if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
           radiiE_(index) = config.nucleotide_E_radius;
+        }
+
+        if (!nt->isVisible() || !ss->isVisible()) {
+          colorsV_(index, 3) = 0.0f;
+          radiiV_(index) = 0.0f;
+          radiiE_(index) = 0.0f;
+          colorsE_(index, 3) = 0.0f;
         }
 
         ++index;
@@ -559,6 +561,9 @@ void SEAdenitaVisualModel::highlightFlagChanged()
       }
     }
   }
+
+  SAMSON::requestViewportUpdate();
+
 }
 
 SEAdenitaCoreSEApp* SEAdenitaVisualModel::getAdenitaApp() const
@@ -600,9 +605,9 @@ void SEAdenitaVisualModel::display() {
 
   if (nanorobot_ == nullptr) return;
 
-  //glEnable(GL_BLEND);
-  //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  //glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_DEPTH_TEST);
 
   SAMSON::displaySpheres(
     nPositions_,
@@ -624,8 +629,8 @@ void SEAdenitaVisualModel::display() {
       flags_.GetArray());
   }
 
-  //glDisable(GL_DEPTH_TEST);
-  //glDisable(GL_BLEND);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_BLEND);
 
   //if (configuration_->display_base_pairing) {
   //  displayBasePairConnections(scale_);
@@ -698,12 +703,10 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
 
   if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged || baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged){
     highlightFlagChanged();
-    SAMSON::requestViewportUpdate();
   }
 
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
     changeScale(scale_);
-    SAMSON::requestViewportUpdate();
   }
 }
 
