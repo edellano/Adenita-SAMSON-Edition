@@ -337,14 +337,9 @@ void SEAdenitaVisualModel::prepareScale2to3(double iv, bool forSelection /*= fal
 
 void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= false*/)
 {
+
   SEConfig& config = SEConfig::GetInstance();
-
-  //auto singleStrands = nanorobot_->GetSingleStrands();
-
-  //unsigned int nPositions = nanorobot_->GetNumberOfNucleotides();
-  //unsigned int nCylinders = boost::numeric_cast<unsigned int>(nPositions - singleStrands.size());
-
-  initArraysForDisplay();
+  ADNLogger& logger = ADNLogger::GetLogger();
 
   unsigned int index = 0;
 
@@ -390,15 +385,15 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
 
         //if (configuration_->interpolate_dimensions) interpolateDimension(pos1D, pos2D, pos3D, positions_, index);
 
-        /*if (configuration_->show_nucleobase_text) {
-          SBPosition3 curPos = SBPosition3(SBQuantity::picometer(positions_(index, 0)),
-            SBQuantity::picometer(positions_(index, 1)),
-            SBQuantity::picometer(positions_(index, 2))
-            );
-          displayText(curPos, nucleotide);
-        }
 
-        highlightStrands(colorsV_, colorsV_, index, nucleotide);*/
+        //highlightStrands(colorsV_, colorsV_, index, nucleotide);
+
+        if (!nt->isVisible() || !ss->isVisible()) {
+          colorsV_(index, 3) = 0.0f;
+          //radiiV_(index) = 0.0f;
+          //radiiE_(index) = 0.0f;
+          colorsE_(index, 3) = 0.0f;
+        }
         ++index;
       }
       
@@ -420,13 +415,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 {
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
-
-  //auto singleStrands = nanorobot_->GetSingleStrands();
-
-  //unsigned int nPositions = nanorobot_->GetNumberOfNucleotides();
-  //unsigned int nCylinders = boost::numeric_cast<unsigned int>(nPositions - singleStrands.size());
-
-  //initArraysForDisplay();
 
   unsigned int index = 0;
 
@@ -520,8 +508,8 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
         if (!nt->isVisible() || !ss->isVisible()) {
           colorsV_(index, 3) = 0.0f;
-          radiiV_(index) = 0.0f;
-          radiiE_(index) = 0.0f;
+          //radiiV_(index) = 0.0f;
+          //radiiE_(index) = 0.0f;
           colorsE_(index, 3) = 0.0f;
         }
 
@@ -609,14 +597,6 @@ void SEAdenitaVisualModel::display() {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_DEPTH_TEST);
 
-  SAMSON::displaySpheres(
-    nPositions_,
-    positions_.GetArray(),
-    radiiV_.GetArray(),
-    colorsV_.GetArray(),
-    flags_.GetArray());
-
-
   if (nCylinders_ > 0) {
     SAMSON::displayCylinders(
       nCylinders_,
@@ -628,6 +608,13 @@ void SEAdenitaVisualModel::display() {
       colorsE_.GetArray(),
       flags_.GetArray());
   }
+
+  SAMSON::displaySpheres(
+    nPositions_,
+    positions_.GetArray(),
+    radiiV_.GetArray(),
+    colorsV_.GetArray(),
+    flags_.GetArray());
 
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
