@@ -385,15 +385,19 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
 
         //if (configuration_->interpolate_dimensions) interpolateDimension(pos1D, pos2D, pos3D, positions_, index);
 
-
         //highlightStrands(colorsV_, colorsV_, index, nucleotide);
 
-        if (!nt->isVisible() || !ss->isVisible()) {
+        if (!ss->isVisible()) {
           colorsV_(index, 3) = 0.0f;
-          //radiiV_(index) = 0.0f;
-          //radiiE_(index) = 0.0f;
+          radiiV_(index) = 0.0f;
+          radiiE_(index) = 0.0f;
           colorsE_(index, 3) = 0.0f;
         }
+        else if (!nt->isVisible()) {
+          colorsV_(index, 3) = 0.0f;
+          colorsE_(index, 3) = 0.0f;
+        }
+
         ++index;
       }
       
@@ -506,12 +510,16 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
           radiiE_(index) = config.nucleotide_E_radius;
         }
 
-        if (!nt->isVisible() || !ss->isVisible()) {
+        if (!ss->isVisible()) {
           colorsV_(index, 3) = 0.0f;
-          //radiiV_(index) = 0.0f;
-          //radiiE_(index) = 0.0f;
+          radiiV_(index) = 0.0f;
+          radiiE_(index) = 0.0f;
+          colorsE_(index, 3) = 0.0f;
+        } else if (!nt->isVisible()) {
+          colorsV_(index, 3) = 0.0f;
           colorsE_(index, 3) = 0.0f;
         }
+
 
         ++index;
       }
