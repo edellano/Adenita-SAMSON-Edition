@@ -792,61 +792,8 @@ void ADNLoader::OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNA
   std::string fnameTopo = "topo.top";
   std::ofstream outTopo = CreateOutputFile(fnameTopo, folder);
 
-  // config file header
-  std::string timeStep = "0";
-  std::string boxSizeX = std::to_string(options.boxSizeX_);
-  std::string boxSizeY = std::to_string(options.boxSizeY_);
-  std::string boxSizeZ = std::to_string(options.boxSizeZ_);
-  auto energies = std::tuple<std::string, std::string, std::string>("0.0", "0.0", "0.0");
-
-  outConf << "t = " + timeStep << std::endl;
-  outConf << "b = " + boxSizeX + " " + boxSizeY + " " + boxSizeZ << std::endl;
-  outConf << "E = " + std::get<0>(energies) + " " + std::get<1>(energies) + " " + std::get<2>(energies) << std::endl;
-
-  // topology file header
-  std::string numberNucleotides = std::to_string(part->GetNumberOfNucleotides());
-  std::string numberStrands = std::to_string(part->GetNumberOfSingleStrands());
-
-  outTopo << numberNucleotides << " " << numberStrands << std::endl;
-
-  // config file: velocity and angular velocity are zero for all
-  std::string L = "0 0 0";
-  std::string v = "0 0 0";
-
-  // we assign new ids
-  unsigned int strandId = 1;
-  unsigned int ntId = 0;
   auto singleStrands = part->GetSingleStrands();
-  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-    ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
-    do {
-      // config file info
-      SBPosition3 pos = nt->GetPosition();
-      ublas::vector<double> bbVector = nt->GetE2() * (-1.0);
-      ublas::vector<double> normal = nt->GetE1() * (-1.0);
-
-      // box size is in nm, so position of nt has to be too
-      std::string positionVector = std::to_string(pos[0].getValue() / 100.0) + " " + std::to_string(pos[1].getValue() / 100.0) + " " + std::to_string(pos[2].getValue() / 100.0);
-      std::string backboneBaseVector = std::to_string(bbVector[0]) + " " + std::to_string(bbVector[1]) + " " + std::to_string(bbVector[2]);
-      std::string normalVector = std::to_string(normal[0]) + " " + std::to_string(normal[1]) + " " + std::to_string(normal[2]);
-
-      outConf << positionVector + " " + backboneBaseVector + " " + normalVector + " " + v + " " + L << std::endl;
-
-      // topology file info
-      std::string base(1, ADNModel::GetResidueName(nt->GetType()));
-      std::string threePrime = "-1";
-      if (nt->GetPrev() != nullptr) threePrime = std::to_string(ntId - 1);
-      std::string fivePrime = "-1";
-      if (nt->GetNext() != nullptr) fivePrime = std::to_string(ntId + 1);
-
-      outTopo << std::to_string(strandId) + " " + base + " " + threePrime + " " + fivePrime << std::endl;
-
-      nt = nt->GetNext();
-      ntId++;
-    } while (nt != nullptr);
-
-    ++strandId;
-  }
+  SingleStrandsToOxDNA(singleStrands, outConf, outTopo, options);
 
   outConf.close();
   outTopo.close();
@@ -905,7 +852,7 @@ void ADNLoader::SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrand
       ublas::vector<double> normal = nt->GetE1() * (-1.0);
 
       // box size is in nm, so position of nt has to be too
-      std::string positionVector = std::to_string(pos[0].getValue() / 100.0) + " " + std::to_string(pos[1].getValue() / 100.0) + " " + std::to_string(pos[2].getValue() / 100.0);
+      std::string positionVector = std::to_string(pos[0].getValue() / 1000.0) + " " + std::to_string(pos[1].getValue() / 1000.0) + " " + std::to_string(pos[2].getValue() / 1000.0);
       std::string backboneBaseVector = std::to_string(bbVector[0]) + " " + std::to_string(bbVector[1]) + " " + std::to_string(bbVector[2]);
       std::string normalVector = std::to_string(normal[0]) + " " + std::to_string(normal[1]) + " " + std::to_string(normal[2]);
 
