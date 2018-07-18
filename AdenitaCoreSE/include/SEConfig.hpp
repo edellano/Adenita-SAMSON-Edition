@@ -90,7 +90,7 @@ public:
   bool display_base_pairing = false;
   bool show_overlay = false;
   // group general
-  std::string usage = "u"; //just for testing purposes: the way the software is used. u = user, e = elisa,  h = haichao
+  std::string mode = "debug_no_log"; //which mode of the software active. debug_log, debug_no_log, haichao, elisa
 
 public slots:
   void updateConfig();
