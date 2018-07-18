@@ -20,6 +20,11 @@ void ADNLogger::ClearLog()
   file.close();
 }
 
+void ADNLogger::Log(float value)
+{
+  Log(std::to_string(value));
+}
+
 void ADNLogger::Log(int value)
 {
   Log(std::to_string(value));
