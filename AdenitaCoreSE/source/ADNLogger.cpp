@@ -76,6 +76,34 @@ void ADNLogger::LogDebug(ublas::matrix<double> m)
   }
 }
 
+time_t ADNLogger::LogDebugPassedSeconds(time_t time1, std::string text)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.mode == "debug_log") {
+    return LogPassedSeconds(time1, text);
+  }
+
+  return time(0);
+}
+
+clock_t ADNLogger::LogDebugPassedMilliseconds(clock_t time1, std::string text)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.mode == "debug_log") {
+    return LogPassedMilliseconds(time1, text);
+  }
+
+  return clock();
+}
+
+void ADNLogger::LogDebugDateTime()
+{
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.mode == "debug_log") {
+    LogDateTime();
+  }
+}
+
 void ADNLogger::Log(float value)
 {
   Log(std::to_string(value));
