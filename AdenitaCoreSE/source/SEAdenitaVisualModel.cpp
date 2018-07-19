@@ -57,7 +57,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   auto parts = nanorobot_->GetParts();
 
   SB_FOR(auto part, parts) {
-    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    auto singleStrands = part->GetSingleStrands();
 
     part->connectBaseSignalToSlot(
       this,
@@ -68,7 +68,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
       );
 
     SB_FOR(auto singleStrand, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(singleStrand);
+      auto nucleotides = singleStrand->GetNucleotides();
 
       singleStrand->connectBaseSignalToSlot(
         this,
@@ -91,7 +91,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
 
     //todo connect double strands signals also to slots
 
-    auto doubleStrands = nanorobot_->GetDoubleStrands(part);
+    auto doubleStrands = part->GetDoubleStrands();
   }
 
 
@@ -271,7 +271,7 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
   SB_FOR(auto part, parts) {
     auto singleStrands = part->GetSingleStrands();
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      auto nucleotides = ss->GetNucleotides();
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
         ntMap.insert(make_pair(nt(), index));
         ++index;

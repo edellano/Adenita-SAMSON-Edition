@@ -53,7 +53,7 @@ public :
 
 private:
   void AddPartToActiveLayer(ADNPointer<ADNPart> part);
-  void ConnectSignalSlots();
+  void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);
 
   ADNNanorobot* nanorobot_ = nullptr;
 };
