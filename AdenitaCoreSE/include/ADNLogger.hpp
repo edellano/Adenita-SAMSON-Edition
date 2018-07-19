@@ -26,6 +26,7 @@ public:
   // logging functions
 
   void ClearLog();
+  void Log(float value);
   void Log(int value);
   void Log(std::string value);
   void Log(QString value);
