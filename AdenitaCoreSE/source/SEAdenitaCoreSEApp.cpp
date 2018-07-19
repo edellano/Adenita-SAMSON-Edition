@@ -68,6 +68,30 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
   AddPartToActiveLayer(part);
 }
 
+void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, bool all)
+{
+  // get selected part
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  CollectionMap<ADNPart> parts;
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      auto part = static_cast<ADNPart*>(node);
+      parts.addReferenceTarget(part);
+    }
+  }
+
+  if (parts.size() == 0 || all) {
+    auto parts = nanorobot_->GetParts();
+  }
+
+  QFileInfo file = QFileInfo(filename);
+  ADNLoader::OutputToCSV(parts, file.fileName().toStdString(), file.path().toStdString());
+}
+
 void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string seq)
 {
   std::string s = seq;
