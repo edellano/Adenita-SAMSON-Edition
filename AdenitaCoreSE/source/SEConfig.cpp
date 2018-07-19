@@ -162,8 +162,6 @@ void SEConfig::updateConfig() {
     nucleotide_V_radius = setting_["nucleotide_V_radius"].GetDouble();
     nucleotide_E_radius = setting_["nucleotide_E_radius"].GetDouble();
     num_staple_colors = setting_["num_staple_colors"].GetDouble();
-    
-    
   }
 }
 

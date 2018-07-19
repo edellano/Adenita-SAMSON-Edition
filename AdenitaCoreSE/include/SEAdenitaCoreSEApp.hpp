@@ -37,7 +37,8 @@ public :
 	//@}
 
   void LoadPart(QString filename);
-  void SavePart(QString filename);
+  void SaveFile(QString filename);
+  void SaveFile(QString filename, ADNPointer<ADNPart> part);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename);
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options);
@@ -46,6 +47,7 @@ public :
   void ResetVisualModel(bool deleteOldVM);
 
   ADNNanorobot* GetNanorobot();
+  CollectionMap<ADNPart> GetSelectedParts();
 
 private:
   void AddPartToActiveLayer(ADNPointer<ADNPart> part);
