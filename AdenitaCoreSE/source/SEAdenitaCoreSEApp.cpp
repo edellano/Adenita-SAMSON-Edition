@@ -14,6 +14,13 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
   logger.LogDateTime();
 
   nanorobot_ = new ADNNanorobot();
+
+  //events
+  SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
+    this,
+    SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent)
+    );
+
 }
 
 SEAdenitaCoreSEApp::~SEAdenitaCoreSEApp() {
@@ -170,31 +177,52 @@ void SEAdenitaCoreSEApp::CenterPart()
   if (part != nullptr) ADNBasicOperations::CenterPart(part);
 }
 
-void SEAdenitaCoreSEApp::ResetVisualModel(bool deleteOldVM) {
+void SEAdenitaCoreSEApp::ResetVisualModel() {
   //create visual model per nanorobot
   SBNodeIndexer allNodes;
   SAMSON::getActiveDocument()->getNodes(allNodes);
   ADNLogger& logger = ADNLogger::GetLogger();
 
+
   clock_t start = clock();
 
-  if (deleteOldVM) {
-    SB_FOR(SBNode* node, allNodes) {
-      if (node->getType() == SBNode::VisualModel) {
-        SBPointer<SBVisualModel> vm = static_cast<SBVisualModel*>(node);
-        if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
-          vm->getParent()->removeChild(node);
-          vm->erase();
-        }
+  bool vmAlreadyExist = false;
+  SBPointer<SBVisualModel> vm;
+  SB_FOR(SBNode* node, allNodes) {
+    if (node->getType() == SBNode::VisualModel) {
+      vm = static_cast<SBVisualModel*>(node);
+      if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
+        vmAlreadyExist = true;
+        break;
       }
     }
   }
+  
+  if (vmAlreadyExist) {
+    SBPointer<SEAdenitaVisualModel> adenitaVm = static_cast<SEAdenitaVisualModel*>(vm());
+    adenitaVm->changeScale(6);
+  }
+  else {
+    SBProxy* vmProxy = SAMSON::getProxy("SEAdenitaVisualModel");
+    SEAdenitaVisualModel* adenitaVm = vmProxy->createInstance(allNodes);
+    adenitaVm->create();
+    SAMSON::getActiveLayer()->addChild(adenitaVm);
+  }
 
-  SBProxy* vmProxy = SAMSON::getProxy("SEAdenitaVisualModel");
-  SEAdenitaVisualModel* vm = vmProxy->createInstance(allNodes);
-  vm->create();
-  SAMSON::getActiveLayer()->addChild(vm);
   logger.LogPassedMilliseconds(start, "ResetVisualModel");
+
+}
+
+void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
+{
+  ADNLogger& logger = ADNLogger::GetLogger();
+  logger.Log(QString("document has been changed"));
+}
+
+void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
+{
+  ADNLogger& logger = ADNLogger::GetLogger();
+  logger.Log(QString("structure has been changed"));
 
 }
 
@@ -234,8 +262,43 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
 
   nanorobot_->RegisterPart(part);
 
+  //events
+  ConnectStructuralSignalSlots(part);
+
   SAMSON::beginHolding("Add model");
   part->create();
   SAMSON::getActiveLayer()->addChild(part());
   SAMSON::endHolding();
+}
+
+void SEAdenitaCoreSEApp::ConnectStructuralSignalSlots(ADNPointer<ADNPart> part)
+{
+  auto singleStrands = part->GetSingleStrands();
+
+  part->connectStructuralSignalToSlot(
+    this,
+    SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
+    );
+
+  SB_FOR(auto singleStrand, singleStrands) {
+    auto nucleotides = singleStrand->GetNucleotides();
+
+    singleStrand->connectStructuralSignalToSlot(
+      this,
+      SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
+      );
+
+    SB_FOR(auto nucleotide, nucleotides) {
+      nucleotide->connectStructuralSignalToSlot(
+        this,
+        SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
+        );
+    }
+  }
+
+  //todo connect double strands signals also to slots
+  auto doubleStrands = nanorobot_->GetDoubleStrands(part);
+  
+
+
 }

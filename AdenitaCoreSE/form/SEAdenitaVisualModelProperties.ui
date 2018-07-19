@@ -45,14 +45,27 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Peeling</string>
+        <string>Visibility</string>
        </property>
       </widget>
      </item>
      <item row="3" column="0" colspan="2">
-      <widget class="QSlider" name="hslPeeling">
+      <widget class="QSlider" name="hslVisibility">
+       <property name="value">
+        <number>99</number>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QDoubleSpinBox" name="spbVisibility">
+       <property name="singleStep">
+        <double>0.050000000000000</double>
+       </property>
+       <property name="value">
+        <double>99.989999999999995</double>
        </property>
       </widget>
      </item>
@@ -79,10 +92,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>hslPeeling</sender>
+   <sender>hslVisibility</sender>
    <signal>sliderMoved(int)</signal>
    <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
-   <slot>onSliderPeelingChanged(int)</slot>
+   <slot>onSliderVisibilityChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>194</x>
@@ -94,9 +107,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>spbVisibility</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onSpinboxVisibilityChanged(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>180</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSliderScaleChanged(int)</slot>
-  <slot>onSliderPeelingChanged(int)</slot>
+  <slot>onSliderVisibilityChanged(int)</slot>
+  <slot>onSpinboxVisibilityChanged(double)</slot>
  </slots>
 </ui>

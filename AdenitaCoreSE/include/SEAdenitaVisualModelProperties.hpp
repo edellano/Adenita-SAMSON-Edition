@@ -72,7 +72,8 @@ public:
 
 public slots:
 void                              onSliderScaleChanged(int val);
-void                              onSliderPeelingChanged(int val);
+void                              onSliderVisibilityChanged(int val);
+void                              onSpinboxVisibilityChanged(double val);
 
 private:
 
