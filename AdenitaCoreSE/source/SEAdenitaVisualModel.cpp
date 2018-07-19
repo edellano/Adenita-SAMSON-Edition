@@ -96,7 +96,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   
   changeScale(6);
 
-  calcPeelingOrder();
+  orderVisibility();
   
 
 }
@@ -162,7 +162,7 @@ void SEAdenitaVisualModel::changeScale(double scale)
   SAMSON::requestViewportUpdate();
 }
 
-void SEAdenitaVisualModel::peel(double layer)
+void SEAdenitaVisualModel::changeVisibility(double layer)
 {
 
   auto parts = nanorobot_->GetParts();
@@ -658,7 +658,7 @@ ADNArray<float> SEAdenitaVisualModel::getBaseColor(SBResidue::ResidueType baseSy
 
 
 
-void SEAdenitaVisualModel::calcPeelingOrder()
+void SEAdenitaVisualModel::orderVisibility()
 {
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
@@ -668,8 +668,9 @@ void SEAdenitaVisualModel::calcPeelingOrder()
   vector<pair<ADNNucleotide*, float>> nucleotidesSorted;
   vector<pair<ADNSingleStrand*, float>> singleStrandsSorted;
 
+
   //ordered by
-  if (true) {
+  if (false) {
     SB_FOR(auto part, parts) {
       auto scaffolds = part->GetScaffolds();
       SB_FOR(ADNPointer<ADNSingleStrand> ss, scaffolds) {
@@ -722,18 +723,18 @@ void SEAdenitaVisualModel::calcPeelingOrder()
       auto singleStrands = part->GetSingleStrands();
       SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
         auto nucleotides = ss->GetNucleotides();
-        SBPosition3 strandCenter;
+        SBPosition3 strandPosition;
+        float minDist = FLT_MAX;
         SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
           SBPosition3 diff = nt->GetPosition() - center;
           float dist = diff.norm().getValue();
           nucleotidesSorted.push_back(make_pair(nt(), dist));
-          strandCenter += nt->GetPosition();
+
+          if (dist < minDist) minDist = dist;
+
         }
 
-        strandCenter /= ss->getNumberOfNucleotides();
-        SBPosition3 ssDiff = strandCenter - center;
-        float ssDist = ssDiff.norm().getValue();
-        singleStrandsSorted.push_back(make_pair(ss(), ssDist));
+        singleStrandsSorted.push_back(make_pair(ss(), minDist));
 
       }
     }

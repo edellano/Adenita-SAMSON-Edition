@@ -70,7 +70,7 @@ public :
 	//@{
   float       												getScale();																
   virtual void												changeScale(double scale);																///< Displays the visual model
-  virtual void												peel(double layer);																///< Displays the visual model
+  virtual void												changeVisibility(double layer);																///< Displays the visual model
 	
   virtual void												display();																///< Displays the visual model
 	virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
@@ -108,7 +108,7 @@ private:
   void												highlightFlagChanged(); //scale 9: display polyhedron 
   SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
   ADNArray<float>             getBaseColor(SBResidue::ResidueType baseSymbol);
-  void                        calcPeelingOrder();
+  void                        orderVisibility();
 
   // general display properties 
   ADNArray<float> nucleotideEColor_;
