@@ -109,10 +109,6 @@ private:
   ADNArray<float>             getBaseColor(SBResidue::ResidueType baseSymbol);
   void                        calcNucleotideToCenterDistance(SBPosition3 center);
 
-
-  QOpenGLFunctions_4_3_Core * gl_;
-
-
   // general display properties 
   ADNArray<float> nucleotideEColor_;
   ADNArray<float> stapleColors_;

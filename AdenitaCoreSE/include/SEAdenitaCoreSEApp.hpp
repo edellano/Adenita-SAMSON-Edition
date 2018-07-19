@@ -45,10 +45,15 @@ public :
   void CenterPart();
   void ResetVisualModel(bool deleteOldVM);
 
+  virtual void												onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
+  virtual void												onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
+
+
   ADNNanorobot* GetNanorobot();
 
 private:
   void AddPartToActiveLayer(ADNPointer<ADNPart> part);
+  void ConnectSignalSlots();
 
   ADNNanorobot* nanorobot_ = nullptr;
 };
