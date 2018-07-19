@@ -665,8 +665,8 @@ void SEAdenitaVisualModel::orderVisibility()
   
   auto parts = nanorobot_->GetParts();
 
-  vector<pair<ADNNucleotide*, float>> nucleotidesSorted;
-  vector<pair<ADNSingleStrand*, float>> singleStrandsSorted;
+  std::vector<pair<ADNNucleotide*, float>> nucleotidesSorted;
+  std::vector<pair<ADNSingleStrand*, float>> singleStrandsSorted;
 
 
   //ordered by
@@ -700,7 +700,7 @@ void SEAdenitaVisualModel::orderVisibility()
           }
         }
 
-        singleStrandsSorted.push_back(make_pair(ss(), minIdx));
+        singleStrandsSorted.push_back(std::make_pair(ss(), boost::numeric_cast<float>(minIdx)));
       }
     }
   }
@@ -733,7 +733,7 @@ void SEAdenitaVisualModel::orderVisibility()
 
         }
 
-        singleStrandsSorted.push_back(make_pair(ss(), minDist));
+        singleStrandsSorted.push_back(std::make_pair(ss(), minDist));
 
       }
     }
