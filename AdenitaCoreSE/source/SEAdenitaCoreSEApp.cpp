@@ -14,6 +14,13 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
   logger.LogDateTime();
 
   nanorobot_ = new ADNNanorobot();
+
+  //events
+  SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
+    this,
+    SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent)
+    );
+
 }
 
 SEAdenitaCoreSEApp::~SEAdenitaCoreSEApp() {
@@ -185,6 +192,7 @@ void SEAdenitaCoreSEApp::ResetVisualModel(bool deleteOldVM) {
         if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
           vm->getParent()->removeChild(node);
           vm->erase();
+          delete vm();
         }
       }
     }
@@ -195,6 +203,24 @@ void SEAdenitaCoreSEApp::ResetVisualModel(bool deleteOldVM) {
   vm->create();
   SAMSON::getActiveLayer()->addChild(vm);
   logger.LogPassedMilliseconds(start, "ResetVisualModel");
+
+
+}
+
+void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
+{
+  ADNLogger& logger = ADNLogger::GetLogger();
+
+  if (documentEvent->getType() == SBDocumentEvent::VisualModelRemoved) {
+   
+  }
+}
+
+void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
+{
+  ADNLogger& logger = ADNLogger::GetLogger();
+
+  ResetVisualModel(true);
 
 }
 
@@ -234,8 +260,43 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
 
   nanorobot_->RegisterPart(part);
 
+  //events
+  ConnectStructuralSignalSlots(part);
+
   SAMSON::beginHolding("Add model");
   part->create();
   SAMSON::getActiveLayer()->addChild(part());
   SAMSON::endHolding();
+}
+
+void SEAdenitaCoreSEApp::ConnectStructuralSignalSlots(ADNPointer<ADNPart> part)
+{
+  auto singleStrands = part->GetSingleStrands();
+
+  part->connectStructuralSignalToSlot(
+    this,
+    SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
+    );
+
+  SB_FOR(auto singleStrand, singleStrands) {
+    auto nucleotides = singleStrand->GetNucleotides();
+
+    singleStrand->connectStructuralSignalToSlot(
+      this,
+      SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
+      );
+
+    SB_FOR(auto nucleotide, nucleotides) {
+      nucleotide->connectStructuralSignalToSlot(
+        this,
+        SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
+        );
+    }
+  }
+
+  //todo connect double strands signals also to slots
+  auto doubleStrands = nanorobot_->GetDoubleStrands(part);
+  
+
+
 }
