@@ -20,6 +20,62 @@ void ADNLogger::ClearLog()
   file.close();
 }
 
+void ADNLogger::LogDebug(float value)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.mode == "debug_log") {
+    Log(value);
+  }
+}
+
+void ADNLogger::LogDebug(int value)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.mode == "debug_log") {
+    Log(value);
+  }
+}
+
+void ADNLogger::LogDebug(std::string value)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.mode == "debug_log") {
+    Log(value);
+  }
+}
+
+void ADNLogger::LogDebug(QString value)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.mode == "debug_log") {
+    Log(value);
+  }
+}
+
+void ADNLogger::LogDebug(ublas::vector<double> v)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.mode == "debug_log") {
+    Log(v);
+  }
+}
+
+void ADNLogger::LogDebug(std::string name, ublas::vector<double> v)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.mode == "debug_log") {
+    Log(name, v);
+  }
+}
+
+void ADNLogger::LogDebug(ublas::matrix<double> m)
+{
+  SEConfig& config = SEConfig::GetInstance();
+  if (config.mode == "debug_log") {
+    Log(m);
+  }
+}
+
 void ADNLogger::Log(float value)
 {
   Log(std::to_string(value));
@@ -48,24 +104,24 @@ void ADNLogger::Log(QString value)
   file.close();
 }
 
-void ADNLogger::LogVector(ublas::vector<double> v)
+void ADNLogger::Log(ublas::vector<double> v)
 {
   std::string line = ADNAuxiliary::UblasVectorToString(v);
   Log(line);
 }
 
-void ADNLogger::LogVector(std::string name, ublas::vector<double> v)
+void ADNLogger::Log(std::string name, ublas::vector<double> v)
 {
   std::string line = name + ": " + ADNAuxiliary::UblasVectorToString(v);
   Log(line);
 }
 
-void ADNLogger::LogMatrix(ublas::matrix<double> m)
+void ADNLogger::Log(ublas::matrix<double> m)
 {
   std::string startLine = "BEGIN MATRIX";
   Log(startLine);
   for (auto rit = 0; rit != m.size1(); ++rit) {
-    LogVector(ublas::row(m, rit));
+    Log(ublas::row(m, rit));
   }
   std::string endLine = "END MATRIX";
   Log(endLine);
@@ -85,7 +141,7 @@ clock_t ADNLogger::LogPassedMilliseconds(clock_t time1, std::string text)
   return clock();
 }
 
-void ADNLogger::LogPtr(quintptr ptr)
+void ADNLogger::Log(quintptr ptr)
 {
   QString ptrStr = QString("0x%1").arg(ptr,
     QT_POINTER_SIZE * 2, 16, QChar('0'));

@@ -7,6 +7,8 @@
 #include <QTextStream>
 #include <QFile>
 #include "ADNAuxiliary.hpp"
+#include "SEConfig.hpp"
+
 
 namespace ublas = boost::numeric::ublas;
 
@@ -25,17 +27,29 @@ public:
 
   // logging functions
 
+  // debug logging
   void ClearLog();
+  void LogDebug(float value);
+  void LogDebug(int value);
+  void LogDebug(std::string value);
+  void LogDebug(QString value);
+  void LogDebug(ublas::vector<double> v);
+  void LogDebug(std::string name, ublas::vector<double> v);
+  void LogDebug(ublas::matrix<double> m);
+
+  // normal logging
   void Log(float value);
   void Log(int value);
   void Log(std::string value);
   void Log(QString value);
-  void LogVector(ublas::vector<double> v);
-  void LogVector(std::string name, ublas::vector<double> v);
-  void LogMatrix(ublas::matrix<double> m);
+  void Log(ublas::vector<double> v);
+  void Log(std::string name, ublas::vector<double> v);
+  void Log(ublas::matrix<double> m);
+  void Log(quintptr ptr);
+
+  // time logs
   time_t LogPassedSeconds(time_t time1, std::string text);
   clock_t LogPassedMilliseconds(clock_t time1, std::string text);
-  void LogPtr(quintptr ptr);
   void LogDateTime();
   //void logPosition(std::string name, SBPosition3 pos);
   //void logVector(std::string name, SBPicometerPerSecond3 pos);
