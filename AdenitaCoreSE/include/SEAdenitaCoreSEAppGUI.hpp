@@ -55,7 +55,7 @@ public slots:
 
   void onCreate();
   void onLoadFile();
-  void onSavePart();
+  void onSaveFile();
   void onExportToOxDNA();
   void onSetScaffold();
   void onCenterPart();

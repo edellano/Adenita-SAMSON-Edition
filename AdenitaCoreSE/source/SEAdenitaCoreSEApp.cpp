@@ -32,22 +32,14 @@ void SEAdenitaCoreSEApp::LoadPart(QString filename)
   AddPartToActiveLayer(part);
 }
 
-void SEAdenitaCoreSEApp::SavePart(QString filename)
+void SEAdenitaCoreSEApp::SaveFile(QString filename)
 {
-  SBDocument* doc = SAMSON::getActiveDocument();
-  SBNodeIndexer nodes;
-  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")) );
+  ADNLoader::SaveNanorobotToJson(nanorobot_, filename.toStdString());
+}
 
-  // only take one
-  ADNPointer<ADNPart> part = nullptr;
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isSelected()) {
-      part = static_cast<ADNPart*>(node);
-    }
-  }
-
+void SEAdenitaCoreSEApp::SaveFile(QString filename, ADNPointer<ADNPart> part)
+{
   ADNLoader::SavePartToJson(part, filename.toStdString());
-
 }
 
 void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
@@ -183,6 +175,25 @@ void SEAdenitaCoreSEApp::ResetVisualModel(bool deleteOldVM) {
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
 {
   return nanorobot_;
+}
+
+CollectionMap<ADNPart> SEAdenitaCoreSEApp::GetSelectedParts()
+{
+  CollectionMap<ADNPart> parts;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      ADNPointer<ADNPart> part = static_cast<ADNPart*>(node);
+      parts.addReferenceTarget(part());
+    }
+  }
+
+  return parts;
 }
 
 void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)

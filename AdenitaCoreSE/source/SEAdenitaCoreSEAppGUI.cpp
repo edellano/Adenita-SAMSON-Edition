@@ -171,12 +171,38 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
 
 }
 
-void SEAdenitaCoreSEAppGUI::onSavePart()
+void SEAdenitaCoreSEAppGUI::onSaveFile()
 {
-  QString filename = QFileDialog::getSaveFileName(this, tr("Save an ANTPart .adnpart file"), QDir::currentPath(), tr("Adenita json (*.adnpart)"));
-  if (!filename.isEmpty()) {
-    SEAdenitaCoreSEApp* t = getApp();
-    t->SavePart(filename);
+  SEAdenitaCoreSEApp* t = getApp();
+  auto parts = t->GetSelectedParts();
+
+  bool nanorobot = true;
+  if (parts.size() > 0) {
+    QStringList items;
+    items << "Selected Part" << "Workspace";
+
+    bool ok;
+    QString item = QInputDialog::getItem(this, "Saving...", "Choose what you want to save:", items, 0, false, &ok);
+
+    if (ok && !item.isEmpty()) {
+      if (item == "Selected Part") {
+        nanorobot = false;
+      }
+    }
+  }
+
+  if (nanorobot) {
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save the workspace"), QDir::currentPath(), tr("Adenita workspace (*.adn)"));
+    if (!filename.isEmpty()) {
+      t->SaveFile(filename);
+    }
+  }
+  else {
+    ADNPointer<ADNPart> part = parts[0];
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save a part"), QDir::currentPath(), tr("Adenita part (*.adnpart)"));
+    if (!filename.isEmpty()) {
+        t->SaveFile(filename, part);
+    }
   }
 }
 
