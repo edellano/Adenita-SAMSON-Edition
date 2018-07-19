@@ -879,6 +879,18 @@ void ADNLoader::SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrand
 std::ofstream ADNLoader::CreateOutputFile(std::string fname, std::string folder)
 {
   std::ofstream output(folder + "/" + fname);
+
+  time_t rawtime;
+  struct tm * timeinfo;
+  char buffer[80];
+
+  time(&rawtime);
+  timeinfo = localtime(&rawtime);
+
+  strftime(buffer, sizeof(buffer), "%d-%m-%Y %I:%M:%S", timeinfo);
+  std::string str(buffer);
+
+  output << "## File created with Adenita on " + str;
   return output;
 }
 

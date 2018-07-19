@@ -173,36 +173,30 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
 
 void SEAdenitaCoreSEAppGUI::onSaveFile()
 {
-  SEAdenitaCoreSEApp* t = getApp();
-  auto parts = t->GetSelectedParts();
-
   bool nanorobot = true;
-  if (parts.size() > 0) {
-    QStringList items;
-    items << "Selected Part" << "Workspace";
+  QStringList items;
+  items << "Selected Part" << "Workspace";
 
-    bool ok;
-    QString item = QInputDialog::getItem(this, "Saving...", "Choose what you want to save:", items, 0, false, &ok);
+  bool ok;
+  QString item = QInputDialog::getItem(this, "Saving...", "Choose what you want to save:", items, 0, false, &ok);
 
-    if (ok && !item.isEmpty()) {
-      if (item == "Selected Part") {
-        nanorobot = false;
-      }
+  if (ok && !item.isEmpty()) {
+    if (item == "Selected Part") {
+      nanorobot = false;
     }
   }
 
+  QString filename;
   if (nanorobot) {
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save the workspace"), QDir::currentPath(), tr("Adenita workspace (*.adn)"));
-    if (!filename.isEmpty()) {
-      t->SaveFile(filename);
-    }
+    filename = QFileDialog::getSaveFileName(this, tr("Save the workspace"), QDir::currentPath(), tr("Adenita workspace (*.adn)"));
   }
   else {
-    ADNPointer<ADNPart> part = parts[0];
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save a part"), QDir::currentPath(), tr("Adenita part (*.adnpart)"));
-    if (!filename.isEmpty()) {
-        t->SaveFile(filename, part);
-    }
+    filename = QFileDialog::getSaveFileName(this, tr("Save a part"), QDir::currentPath(), tr("Adenita part (*.adnpart)"));
+  }
+
+  if (!filename.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->SaveFile(filename, nanorobot);
   }
 }
 
@@ -225,13 +219,13 @@ void SEAdenitaCoreSEAppGUI::onExport()
   QStringList itemsSelection;
   itemsSelection << "Selected Part" << "Workspace";
 
-  QComboBox* typeSelection = new QComboBox();
-  typeSelection->addItems(itemsSelection);
+  typeSelection_ = new QComboBox();
+  typeSelection_->addItems(itemsSelection);
 
   QStringList itemsExportType;
-  itemsExportType << "Sequence list" << "oxDNA Export";
-  QComboBox* exportType = new QComboBox();
-  exportType->addItems(itemsExportType);
+  itemsExportType << "Sequence list" << "oxDNA";
+  exportType_ = new QComboBox();
+  exportType_->addItems(itemsExportType);
 
   QPushButton* acceptButton = new QPushButton(tr("Export"));
   acceptButton->setDefault(true);
@@ -242,11 +236,12 @@ void SEAdenitaCoreSEAppGUI::onExport()
   buttonBox_->addButton(cancelButton, QDialogButtonBox::ActionRole);
 
   QObject::connect(cancelButton, SIGNAL(released()), dialog, SLOT(close()));
+  QObject::connect(acceptButton, SIGNAL(released()), this, SLOT(onAcceptExport()));
 
   QGridLayout *mainLayout = new QGridLayout;
   mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-  mainLayout->addWidget(typeSelection, 0, 0);
-  mainLayout->addWidget(exportType, 1, 0);
+  mainLayout->addWidget(typeSelection_, 0, 0);
+  mainLayout->addWidget(exportType_, 1, 0);
   mainLayout->addWidget(buttonBox_, 2, 0);
 
   dialog->setLayout(mainLayout);
@@ -291,6 +286,29 @@ void SEAdenitaCoreSEAppGUI::onCenterPart()
   SEAdenitaCoreSEApp *t = getApp();
   t->CenterPart();
   SAMSON::getActiveCamera()->center();
+}
+
+void SEAdenitaCoreSEAppGUI::onAcceptExport()
+{
+  bool nanorobot = true;
+  auto val = typeSelection_->currentIndex();
+  if (val != 1) nanorobot = false;
+
+  QString exportType = exportType_->currentText();
+
+  SEAdenitaCoreSEApp* t = getApp();
+  if (exportType == "Sequence List") {
+    // export sequences
+  }
+  else if (exportType == "oxDNA") {
+    ADNAuxiliary::OxDNAOptions options;
+    options.boxSizeX_ = 0.0;
+    options.boxSizeY_ = 0.0;
+    options.boxSizeZ_ = 0.0;
+
+    QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
+    t->ExportToOxDNA(folder, options, nanorobot);
+  } 
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)

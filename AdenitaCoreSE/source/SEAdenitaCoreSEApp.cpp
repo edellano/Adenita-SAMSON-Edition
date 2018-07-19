@@ -32,14 +32,16 @@ void SEAdenitaCoreSEApp::LoadPart(QString filename)
   AddPartToActiveLayer(part);
 }
 
-void SEAdenitaCoreSEApp::SaveFile(QString filename)
+void SEAdenitaCoreSEApp::SaveFile(QString filename, bool all)
 {
-  ADNLoader::SaveNanorobotToJson(nanorobot_, filename.toStdString());
-}
-
-void SEAdenitaCoreSEApp::SaveFile(QString filename, ADNPointer<ADNPart> part)
-{
-  ADNLoader::SavePartToJson(part, filename.toStdString());
+  if (all) {
+    ADNLoader::SaveNanorobotToJson(nanorobot_, filename.toStdString());
+  }
+  else {
+    auto parts = GetSelectedParts();
+    auto part = parts[0];  // save first
+    ADNLoader::SavePartToJson(part, filename.toStdString());
+  }
 }
 
 void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
@@ -102,7 +104,7 @@ void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string seq)
 
 }
 
-void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options)
+void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, bool all)
 {
   // get selected part
   SBDocument* doc = SAMSON::getActiveDocument();
@@ -117,7 +119,7 @@ void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOption
     }
   }
 
-  if (part == nullptr) {
+  if (part == nullptr || all) {
     // nothing selected: export all
     ADNLoader::OutputToOxDNA(nanorobot_, folder.toStdString(), options);
   }

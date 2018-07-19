@@ -37,11 +37,10 @@ public :
 	//@}
 
   void LoadPart(QString filename);
-  void SaveFile(QString filename);
-  void SaveFile(QString filename, ADNPointer<ADNPart> part);
+  void SaveFile(QString filename, bool all);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename);
-  void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options);
+  void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, bool all);
   void SetScaffoldSequence(std::string seq);
   void CenterPart();
   void ResetVisualModel(bool deleteOldVM);
