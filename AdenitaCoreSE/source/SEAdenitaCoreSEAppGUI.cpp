@@ -297,8 +297,10 @@ void SEAdenitaCoreSEAppGUI::onAcceptExport()
   QString exportType = exportType_->currentText();
 
   SEAdenitaCoreSEApp* t = getApp();
-  if (exportType == "Sequence List") {
+  if (exportType == "Sequence list") {
     // export sequences
+    auto filename = QFileDialog::getSaveFileName(this, tr("Sequence List"), QDir::currentPath(), tr("Sequence List (*.csv)"));
+    t->ExportToSequenceList(filename, nanorobot);
   }
   else if (exportType == "oxDNA") {
     ADNAuxiliary::OxDNAOptions options;

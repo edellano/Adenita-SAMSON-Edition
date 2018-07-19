@@ -41,6 +41,7 @@ public :
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename);
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, bool all);
+  void ExportToSequenceList(QString filename, bool all);
   void SetScaffoldSequence(std::string seq);
   void CenterPart();
   void ResetVisualModel(bool deleteOldVM);
