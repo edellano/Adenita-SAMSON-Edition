@@ -93,32 +93,10 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
 
     auto doubleStrands = part->GetDoubleStrands();
   }
-
-
-  initArraysForDisplay();
   
   changeScale(6);
 
-
-  SBPosition3 center;
-  SB_FOR(auto part, parts) {
-
-    auto singleStrands = part->GetSingleStrands();
-
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-
-        center += nt->GetPosition();
-      }
-    }
-  }
-
-  center /= nanorobot_->GetNumberOfNucleotides();
-
-  calcNucleotideToCenterDistance(center);
+  orderVisibility();
   
 
 }
@@ -168,16 +146,23 @@ void SEAdenitaVisualModel::eraseImplementation() {
 
 }
 
+float SEAdenitaVisualModel::getScale()
+{
+  return scale_;
+}
+
 void SEAdenitaVisualModel::changeScale(double scale)
 {
   scale_ = scale;
+
+  initArraysForDisplay();
 
   prepareArraysForDisplay();
 
   SAMSON::requestViewportUpdate();
 }
 
-void SEAdenitaVisualModel::peel(double layer)
+void SEAdenitaVisualModel::changeVisibility(double layer)
 {
 
   auto parts = nanorobot_->GetParts();
@@ -190,7 +175,7 @@ void SEAdenitaVisualModel::peel(double layer)
 
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
 
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      auto nucleotides = ss->GetNucleotides();
       auto ssDist = sortedSingleStrandsByDist_[ss()];
 
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
@@ -428,7 +413,7 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
 
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
 
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      auto nucleotides = ss->GetNucleotides();
 
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
 
@@ -627,7 +612,7 @@ void SEAdenitaVisualModel::highlightFlagChanged()
   SB_FOR(auto part, parts) {
     auto singleStrands = part->GetSingleStrands();
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      auto nucleotides = ss->GetNucleotides();
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
         flags_(index) = nt->getInheritedFlags();
         ++index;
@@ -673,44 +658,86 @@ ADNArray<float> SEAdenitaVisualModel::getBaseColor(SBResidue::ResidueType baseSy
 
 
 
-void SEAdenitaVisualModel::calcNucleotideToCenterDistance(SBPosition3 center)
+void SEAdenitaVisualModel::orderVisibility()
 {
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
+  
+  auto parts = nanorobot_->GetParts();
 
   vector<pair<ADNNucleotide*, float>> nucleotidesSorted;
   vector<pair<ADNSingleStrand*, float>> singleStrandsSorted;
 
-  auto parts = nanorobot_->GetParts();
 
-  SB_FOR(auto part, parts) {
-
-    auto singleStrands = part->GetSingleStrands();
-
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-
-      SBPosition3 strandCenter;
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-
-        SBPosition3 diff = nt->GetPosition() - center;
-        float dist = diff.norm().getValue();
-
-        nucleotidesSorted.push_back(make_pair(nt(), dist));
-
-        strandCenter += nt->GetPosition();
+  //ordered by
+  if (false) {
+    SB_FOR(auto part, parts) {
+      auto scaffolds = part->GetScaffolds();
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, scaffolds) {
+        auto nucleotides = ss->GetNucleotides();
+        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+          auto pair = nt->GetPair();
+          nucleotidesSorted.push_back(make_pair(nt(), float(nt->getNodeIndex())));
+          if(pair != nullptr)
+            nucleotidesSorted.push_back(make_pair(pair(), float(nt->getNodeIndex()))); //the staple nucleotide should get the same order as the scaffold nucleotide
+        }
       }
 
-      strandCenter /= ss->getNumberOfNucleotides();
+      auto singleStrands = part->GetSingleStrands();
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+        auto nucleotides = ss->GetNucleotides();
+        unsigned int minIdx = UINT_MAX;
+        if (ss->IsScaffold()) {
+          minIdx = 0;
+        }
+        else {
+          SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+            auto pair = nt->GetPair();
+            if (pair != nullptr) {
+              unsigned int idx = pair->getNodeIndex();
+              if (idx < minIdx) minIdx = idx;
+            }
+          }
+        }
 
-      SBPosition3 ssDiff = strandCenter - center;
-      float ssDist = ssDiff.norm().getValue();
-      singleStrandsSorted.push_back(make_pair(ss(), ssDist));
-
+        singleStrandsSorted.push_back(make_pair(ss(), minIdx));
+      }
     }
   }
+  else {
+    SBPosition3 center;
+    SB_FOR(auto part, parts) {
+      auto singleStrands = part->GetSingleStrands();
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+        auto nucleotides = ss->GetNucleotides();
+        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+          center += nt->GetPosition();
+        }
+      }
+    }
 
+    center /= nanorobot_->GetNumberOfNucleotides();
+
+    SB_FOR(auto part, parts) {
+      auto singleStrands = part->GetSingleStrands();
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+        auto nucleotides = ss->GetNucleotides();
+        SBPosition3 strandPosition;
+        float minDist = FLT_MAX;
+        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+          SBPosition3 diff = nt->GetPosition() - center;
+          float dist = diff.norm().getValue();
+          nucleotidesSorted.push_back(make_pair(nt(), dist));
+
+          if (dist < minDist) minDist = dist;
+
+        }
+
+        singleStrandsSorted.push_back(make_pair(ss(), minDist));
+
+      }
+    }
+  }
   sort(nucleotidesSorted.begin(), nucleotidesSorted.end(), [=](std::pair<ADNNucleotide*, float>& a, std::pair<ADNNucleotide*, float>& b)
   {
     return a.second < b.second;
@@ -746,7 +773,7 @@ void SEAdenitaVisualModel::display() {
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_DEPTH_TEST);
+  //glEnable(GL_DEPTH_TEST);
 
   if (nCylinders_ > 0) {
     SAMSON::displayCylinders(
@@ -767,7 +794,7 @@ void SEAdenitaVisualModel::display() {
     colorsV_.GetArray(),
     flags_.GetArray());
 
-  glDisable(GL_DEPTH_TEST);
+  //glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
 
   //if (configuration_->display_base_pairing) {
@@ -857,6 +884,7 @@ void SEAdenitaVisualModel::onDocumentEvent(SBDocumentEvent* documentEvent) {
 void SEAdenitaVisualModel::onStructuralEvent(SBStructuralEvent* documentEvent) {
 	
 	// SAMSON Element generator pro tip: implement this function if you need to handle structural events (e.g. when a structural node for which you provide a visual representation is updated)
-
+  ADNLogger& logger = ADNLogger::GetLogger();
+  changeScale(scale_);
 }
 

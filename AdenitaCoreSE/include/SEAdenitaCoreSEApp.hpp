@@ -44,7 +44,7 @@ public :
   void ExportToSequenceList(QString filename, bool all);
   void SetScaffoldSequence(std::string seq);
   void CenterPart();
-  void ResetVisualModel(bool deleteOldVM);
+  void ResetVisualModel();
 
   virtual void												onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void												onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events

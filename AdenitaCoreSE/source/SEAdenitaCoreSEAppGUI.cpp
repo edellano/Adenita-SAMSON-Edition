@@ -125,7 +125,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
     SEAdenitaCoreSEApp* t = getApp();
     t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/hextube/hextube.json");
 
-    t->ResetVisualModel(true);
+    t->ResetVisualModel();
     SAMSON::getActiveCamera()->center();
   }
   else {
@@ -164,7 +164,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
       }
 
       //add the visual model 
-      t->ResetVisualModel(true);
+      t->ResetVisualModel();
       logger.Log(QString("number of nucleotides"));
       logger.Log(t->GetNanorobot()->GetNumberOfNucleotides());
 

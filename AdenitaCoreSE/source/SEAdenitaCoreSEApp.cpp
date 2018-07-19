@@ -177,50 +177,52 @@ void SEAdenitaCoreSEApp::CenterPart()
   if (part != nullptr) ADNBasicOperations::CenterPart(part);
 }
 
-void SEAdenitaCoreSEApp::ResetVisualModel(bool deleteOldVM) {
+void SEAdenitaCoreSEApp::ResetVisualModel() {
   //create visual model per nanorobot
   SBNodeIndexer allNodes;
   SAMSON::getActiveDocument()->getNodes(allNodes);
   ADNLogger& logger = ADNLogger::GetLogger();
 
+
   clock_t start = clock();
 
-  if (deleteOldVM) {
-    SB_FOR(SBNode* node, allNodes) {
-      if (node->getType() == SBNode::VisualModel) {
-        SBPointer<SBVisualModel> vm = static_cast<SBVisualModel*>(node);
-        if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
-          vm->getParent()->removeChild(node);
-          vm->erase();
-          delete vm();
-        }
+  bool vmAlreadyExist = false;
+  SBPointer<SBVisualModel> vm;
+  SB_FOR(SBNode* node, allNodes) {
+    if (node->getType() == SBNode::VisualModel) {
+      vm = static_cast<SBVisualModel*>(node);
+      if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
+        vmAlreadyExist = true;
+        break;
       }
     }
   }
+  
+  if (vmAlreadyExist) {
+    SBPointer<SEAdenitaVisualModel> adenitaVm = static_cast<SEAdenitaVisualModel*>(vm());
+    adenitaVm->changeScale(6);
+  }
+  else {
+    SBProxy* vmProxy = SAMSON::getProxy("SEAdenitaVisualModel");
+    SEAdenitaVisualModel* adenitaVm = vmProxy->createInstance(allNodes);
+    adenitaVm->create();
+    SAMSON::getActiveLayer()->addChild(adenitaVm);
+  }
 
-  SBProxy* vmProxy = SAMSON::getProxy("SEAdenitaVisualModel");
-  SEAdenitaVisualModel* vm = vmProxy->createInstance(allNodes);
-  vm->create();
-  SAMSON::getActiveLayer()->addChild(vm);
   logger.LogPassedMilliseconds(start, "ResetVisualModel");
-
 
 }
 
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
-
-  if (documentEvent->getType() == SBDocumentEvent::VisualModelRemoved) {
-   
-  }
+  logger.Log(QString("document has been changed"));
 }
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
-
-  ResetVisualModel(true);
+  logger.Log(QString("structure has been changed"));
 
 }
 

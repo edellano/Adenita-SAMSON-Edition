@@ -121,11 +121,17 @@ void SEAdenitaVisualModelProperties::onSliderScaleChanged(int val)
   visualModel->changeScale(val / 10.0f);
 }
 
-void SEAdenitaVisualModelProperties::onSliderPeelingChanged(int val)
+void SEAdenitaVisualModelProperties::onSliderVisibilityChanged(int val)
 {
-  visualModel->peel(val / 100.0f);
+  visualModel->changeVisibility(val / 100.0f);
   SAMSON::requestViewportUpdate();
 
+}
+
+void SEAdenitaVisualModelProperties::onSpinboxVisibilityChanged(double val)
+{
+  visualModel->changeVisibility(val / 100.0f);
+  SAMSON::requestViewportUpdate();
 }
 
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
