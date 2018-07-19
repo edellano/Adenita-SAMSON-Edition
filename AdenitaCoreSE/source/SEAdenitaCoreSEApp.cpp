@@ -13,7 +13,7 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
   }
   logger.LogDateTime();
 
-  nanorobot_ = new ADNNanorobot();
+  // GetNanorobot();
 
   //events
   SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
@@ -42,7 +42,7 @@ void SEAdenitaCoreSEApp::LoadPart(QString filename)
 void SEAdenitaCoreSEApp::SaveFile(QString filename, bool all)
 {
   if (all) {
-    ADNLoader::SaveNanorobotToJson(nanorobot_, filename.toStdString());
+    ADNLoader::SaveNanorobotToJson(GetNanorobot(), filename.toStdString());
   }
   else {
     auto parts = GetSelectedParts();
@@ -92,7 +92,7 @@ void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, bool all)
   }
 
   if (parts.size() == 0 || all) {
-    auto parts = nanorobot_->GetParts();
+    auto parts = GetNanorobot()->GetParts();
   }
 
   QFileInfo file = QFileInfo(filename);
@@ -152,7 +152,7 @@ void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOption
 
   if (part == nullptr || all) {
     // nothing selected: export all
-    ADNLoader::OutputToOxDNA(nanorobot_, folder.toStdString(), options);
+    ADNLoader::OutputToOxDNA(GetNanorobot(), folder.toStdString(), options);
   }
   else {
     ADNLoader::OutputToOxDNA(part, folder.toStdString(), options);
@@ -228,7 +228,17 @@ void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
 
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
 {
-  return nanorobot_;
+  auto doc = SAMSON::getActiveDocument();
+  ADNNanorobot* nanorobot = nullptr;
+  if (nanorobots_.find(doc) == nanorobots_.end()) {
+    // create new nanorobot for this document
+    nanorobot = new ADNNanorobot();
+    nanorobots_.insert(std::make_pair(doc, nanorobot));
+  }
+  else {
+    nanorobot = nanorobots_.at(doc);
+  }
+  return nanorobot;
 }
 
 CollectionMap<ADNPart> SEAdenitaCoreSEApp::GetSelectedParts()
@@ -260,7 +270,7 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
   }
   btta.CheckDistances(part);
 
-  nanorobot_->RegisterPart(part);
+  GetNanorobot()->RegisterPart(part);
 
   //events
   ConnectStructuralSignalSlots(part);
@@ -297,8 +307,6 @@ void SEAdenitaCoreSEApp::ConnectStructuralSignalSlots(ADNPointer<ADNPart> part)
   }
 
   //todo connect double strands signals also to slots
-  auto doubleStrands = nanorobot_->GetDoubleStrands(part);
-  
-
+  //auto doubleStrands = GetNanorobot()->GetDoubleStrands(part);
 
 }
