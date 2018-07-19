@@ -206,9 +206,9 @@ void SEAdenitaCoreSEAppGUI::onSaveFile()
   }
 }
 
-void SEAdenitaCoreSEAppGUI::onExportToOxDNA()
+void SEAdenitaCoreSEAppGUI::onExport()
 {
-  ADNAuxiliary::OxDNAOptions options;
+  /*ADNAuxiliary::OxDNAOptions options;
 
   options.boxSizeX_ = ui.spnBoxSizeX->value();
   options.boxSizeY_ = ui.spnBoxSizeY->value();
@@ -218,7 +218,41 @@ void SEAdenitaCoreSEAppGUI::onExportToOxDNA()
   if (!folder.isEmpty()) {
     SEAdenitaCoreSEApp* t = getApp();
     t->ExportToOxDNA(folder, options);
-  }
+  }*/
+
+  QDialog* dialog = new QDialog();
+
+  QStringList itemsSelection;
+  itemsSelection << "Selected Part" << "Workspace";
+
+  QComboBox* typeSelection = new QComboBox();
+  typeSelection->addItems(itemsSelection);
+
+  QStringList itemsExportType;
+  itemsExportType << "Sequence list" << "oxDNA Export";
+  QComboBox* exportType = new QComboBox();
+  exportType->addItems(itemsExportType);
+
+  QPushButton* acceptButton = new QPushButton(tr("Export"));
+  acceptButton->setDefault(true);
+  QPushButton* cancelButton = new QPushButton(tr("Cancel"));
+
+  QDialogButtonBox* buttonBox_ = new QDialogButtonBox(Qt::Horizontal);
+  buttonBox_->addButton(acceptButton, QDialogButtonBox::ActionRole);
+  buttonBox_->addButton(cancelButton, QDialogButtonBox::ActionRole);
+
+  QObject::connect(cancelButton, SIGNAL(released()), dialog, SLOT(close()));
+
+  QGridLayout *mainLayout = new QGridLayout;
+  mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+  mainLayout->addWidget(typeSelection, 0, 0);
+  mainLayout->addWidget(exportType, 1, 0);
+  mainLayout->addWidget(buttonBox_, 2, 0);
+
+  dialog->setLayout(mainLayout);
+  dialog->setWindowTitle(tr("Export design"));
+
+  dialog->exec();
 }
 
 void SEAdenitaCoreSEAppGUI::onSetScaffold()

@@ -5,6 +5,7 @@
 #include "ui_SEAdenitaCoreSEAppGUI.h"
 #include <QMessageBox>
 
+
 class SEAdenitaCoreSEApp;
 
 /// This class implements the GUI of the app
@@ -56,7 +57,7 @@ public slots:
   void onCreate();
   void onLoadFile();
   void onSaveFile();
-  void onExportToOxDNA();
+  void onExport();
   void onSetScaffold();
   void onCenterPart();
 
