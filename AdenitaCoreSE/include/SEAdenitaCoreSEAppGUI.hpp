@@ -5,6 +5,7 @@
 #include "ui_SEAdenitaCoreSEAppGUI.h"
 #include <QMessageBox>
 
+
 class SEAdenitaCoreSEApp;
 
 /// This class implements the GUI of the app
@@ -55,15 +56,18 @@ public slots:
 
   void onCreate();
   void onLoadFile();
-  void onSavePart();
-  void onExportToOxDNA();
+  void onSaveFile();
+  void onExport();
   void onSetScaffold();
   void onCenterPart();
+  void onAcceptExport();
 
 private:
   std::string IsJsonCadnano(QString filename);
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
 
+  QComboBox* typeSelection_ = nullptr;
+  QComboBox* exportType_ = nullptr;
 };
 

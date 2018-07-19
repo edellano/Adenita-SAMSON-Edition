@@ -87,6 +87,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
       bs->SetE1(ADNAuxiliary::StringToUblasVector(itr2->value["e1"].GetString()));
       bs->SetE2(ADNAuxiliary::StringToUblasVector(itr2->value["e2"].GetString()));
       bs->SetE3(ADNAuxiliary::StringToUblasVector(itr2->value["e3"].GetString()));
+      bs->SetNumber(itr2->value["number"].GetInt());
 
       // Load cells
       const Value& c = itr2->value["cell"];
@@ -878,7 +879,37 @@ void ADNLoader::SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrand
 std::ofstream ADNLoader::CreateOutputFile(std::string fname, std::string folder)
 {
   std::ofstream output(folder + "/" + fname);
+
+  time_t rawtime;
+  struct tm * timeinfo;
+  char buffer[80];
+
+  time(&rawtime);
+  timeinfo = localtime(&rawtime);
+
+  strftime(buffer, sizeof(buffer), "%d-%m-%Y %I:%M:%S", timeinfo);
+  std::string str(buffer);
+
+  output << "## File created with Adenita on " + str + "\n";
   return output;
+}
+
+void ADNLoader::OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std::string folder)
+{
+  int num = 0;
+  std::ofstream& out = CreateOutputFile(fname, folder);
+  SB_FOR(ADNPointer<ADNPart> part, parts) {
+    auto singleStrands = part->GetSingleStrands();
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      auto seq = ss->GetSequence();
+      out << std::to_string(num) + " " + ss->GetName() + " | length: " + std::to_string(seq.size());
+      out << ",";
+      out << seq;
+      out << "\n";
+    }
+  }
+
+  out.close();
 }
 
 void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
