@@ -25,101 +25,8 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>1</number>
        </property>
-       <widget class="QWidget" name="tab">
-        <attribute name="title">
-         <string>File</string>
-        </attribute>
-        <widget class="QWidget" name="gridLayoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>10</y>
-           <width>421</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QPushButton" name="btnSavePart">
-            <property name="text">
-             <string>SavePart</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>60</y>
-           <width>421</width>
-           <height>91</height>
-          </rect>
-         </property>
-         <property name="title">
-          <string>Output to oxDNA</string>
-         </property>
-         <widget class="QWidget" name="gridLayoutWidget_2">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>20</y>
-            <width>401</width>
-            <height>59</height>
-           </rect>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Box (nm)</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QSpinBox" name="spnBoxSizeZ">
-             <property name="maximum">
-              <number>1000</number>
-             </property>
-             <property name="value">
-              <number>150</number>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QSpinBox" name="spnBoxSizeX">
-             <property name="maximum">
-              <number>1000</number>
-             </property>
-             <property name="value">
-              <number>150</number>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QSpinBox" name="spnBoxSizeY">
-             <property name="maximum">
-              <number>1000</number>
-             </property>
-             <property name="value">
-              <number>150</number>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" colspan="4">
-            <widget class="QPushButton" name="btnExportToOxDNA">
-             <property name="text">
-              <string>Export to oxDNA</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-       </widget>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
          <string>Modifications</string>
@@ -247,7 +154,7 @@
           <item>
            <widget class="QToolButton" name="btnExport">
             <property name="text">
-             <string>Export Seq</string>
+             <string>Export</string>
             </property>
             <property name="iconSize">
              <size>
@@ -552,38 +459,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>btnSavePart</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onSavePart()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>327</x>
-     <y>80</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>228</x>
-     <y>300</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnExportToOxDNA</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onExportToOxDNA()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>124</x>
-     <y>394</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>229</x>
-     <y>300</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>btnSetScaffold</sender>
    <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
@@ -616,6 +491,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>btnSave</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onSaveFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>79</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>8</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>btnLoad</sender>
    <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
@@ -632,18 +523,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>btnSave</sender>
+   <sender>btnExport</sender>
    <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onSavePart()</slot>
+   <slot>onExport()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>88</x>
-     <y>79</y>
+     <x>222</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel">
-     <x>8</x>
-     <y>167</y>
+     <x>229</x>
+     <y>300</y>
     </hint>
    </hints>
   </connection>
@@ -681,11 +572,11 @@
   </connection>
  </connections>
  <slots>
-  <slot>onSavePart()</slot>
-  <slot>onExportToOxDNA()</slot>
   <slot>onSetScaffold()</slot>
   <slot>onCenterPart()</slot>
   <slot>onLoadFile()</slot>
   <slot>onCreate()</slot>
+  <slot>onSaveFile()</slot>
+  <slot>onExport()</slot>
  </slots>
 </ui>
