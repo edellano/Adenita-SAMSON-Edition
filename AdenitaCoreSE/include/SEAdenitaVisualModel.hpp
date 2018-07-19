@@ -68,6 +68,7 @@ public :
 
 	/// \name Rendering
 	//@{
+  float       												getScale();																
   virtual void												changeScale(double scale);																///< Displays the visual model
   virtual void												peel(double layer);																///< Displays the visual model
 	

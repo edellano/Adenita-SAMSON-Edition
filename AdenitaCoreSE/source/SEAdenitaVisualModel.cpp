@@ -95,7 +95,6 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   }
 
 
-  initArraysForDisplay();
   
   changeScale(6);
 
@@ -168,9 +167,16 @@ void SEAdenitaVisualModel::eraseImplementation() {
 
 }
 
+float SEAdenitaVisualModel::getScale()
+{
+  return scale_;
+}
+
 void SEAdenitaVisualModel::changeScale(double scale)
 {
   scale_ = scale;
+
+  initArraysForDisplay();
 
   prepareArraysForDisplay();
 
@@ -746,7 +752,7 @@ void SEAdenitaVisualModel::display() {
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_DEPTH_TEST);
+  //glEnable(GL_DEPTH_TEST);
 
   if (nCylinders_ > 0) {
     SAMSON::displayCylinders(
@@ -767,7 +773,7 @@ void SEAdenitaVisualModel::display() {
     colorsV_.GetArray(),
     flags_.GetArray());
 
-  glDisable(GL_DEPTH_TEST);
+  //glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
 
   //if (configuration_->display_base_pairing) {
@@ -857,6 +863,7 @@ void SEAdenitaVisualModel::onDocumentEvent(SBDocumentEvent* documentEvent) {
 void SEAdenitaVisualModel::onStructuralEvent(SBStructuralEvent* documentEvent) {
 	
 	// SAMSON Element generator pro tip: implement this function if you need to handle structural events (e.g. when a structural node for which you provide a visual representation is updated)
-
+  ADNLogger& logger = ADNLogger::GetLogger();
+  changeScale(scale_);
 }
 
