@@ -686,22 +686,21 @@ void SEAdenitaVisualModel::orderVisibility()
       auto singleStrands = part->GetSingleStrands();
       SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
         auto nucleotides = ss->GetNucleotides();
-        double avgIdx = 0;
+        unsigned int minIdx = UINT_MAX;
         if (ss->IsScaffold()) {
-          /*SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-            avgIdx += double(nt->getNodeIndex());
-          }*/
+          minIdx = 0;
         }
         else {
           SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
             auto pair = nt->GetPair();
-            if (pair != nullptr) 
-              avgIdx += double(pair->getNodeIndex());
+            if (pair != nullptr) {
+              unsigned int idx = pair->getNodeIndex();
+              if (idx < minIdx) minIdx = idx;
+            }
           }
         }
 
-        avgIdx /= ss->getNumberOfNucleotides();
-        singleStrandsSorted.push_back(make_pair(ss(), avgIdx));
+        singleStrandsSorted.push_back(make_pair(ss(), minIdx));
       }
     }
   }
