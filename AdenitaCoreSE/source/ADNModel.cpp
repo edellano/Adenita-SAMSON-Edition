@@ -941,7 +941,13 @@ SBNode * ADNDoubleStrand::getLastBaseSegment() const
 
 void ADNDoubleStrand::AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs)
 {
-  int number = 0;
+  bs->setName("Base Segment " + std::to_string(bs->getNodeIndex()));
+  int number = bs->GetNumber();
+  if (number == -1) {
+    // number not defined
+    number = 0;
+  }
+
   if (start_ != nullptr) {
     number = start_->GetNumber() - 1;
   }
@@ -957,7 +963,12 @@ void ADNDoubleStrand::AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs)
 void ADNDoubleStrand::AddBaseSegmentEnd(ADNPointer<ADNBaseSegment> bs)
 {
   bs->setName("Base Segment " + std::to_string(bs->getNodeIndex()));
-  int number = 0;
+  int number = bs->GetNumber();
+  if (number == -1) {
+    // number not defined
+    number = 0;
+  }
+  
   if (end_ == nullptr) {
     // bs is also first
     start_ = bs;
@@ -965,6 +976,7 @@ void ADNDoubleStrand::AddBaseSegmentEnd(ADNPointer<ADNBaseSegment> bs)
   else {
     number = end_->GetNumber() + 1;
   }
+
   addChild(bs());
   end_ = bs;
   bs->SetNumber(number);

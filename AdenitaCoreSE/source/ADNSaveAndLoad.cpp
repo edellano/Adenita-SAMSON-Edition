@@ -87,6 +87,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
       bs->SetE1(ADNAuxiliary::StringToUblasVector(itr2->value["e1"].GetString()));
       bs->SetE2(ADNAuxiliary::StringToUblasVector(itr2->value["e2"].GetString()));
       bs->SetE3(ADNAuxiliary::StringToUblasVector(itr2->value["e3"].GetString()));
+      bs->SetNumber(itr2->value["number"].GetInt());
 
       // Load cells
       const Value& c = itr2->value["cell"];
