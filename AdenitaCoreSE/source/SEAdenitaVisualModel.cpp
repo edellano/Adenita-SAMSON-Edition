@@ -673,14 +673,34 @@ void SEAdenitaVisualModel::calcPeelingOrder()
     SB_FOR(auto part, parts) {
       auto scaffolds = part->GetScaffolds();
       SB_FOR(ADNPointer<ADNSingleStrand> ss, scaffolds) {
-
-        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+        auto nucleotides = ss->GetNucleotides();
         SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
           auto pair = nt->GetPair();
           nucleotidesSorted.push_back(make_pair(nt(), float(nt->getNodeIndex())));
           if(pair != nullptr)
             nucleotidesSorted.push_back(make_pair(pair(), float(nt->getNodeIndex()))); //the staple nucleotide should get the same order as the scaffold nucleotide
         }
+      }
+
+      auto singleStrands = part->GetSingleStrands();
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+        auto nucleotides = ss->GetNucleotides();
+        double avgIdx = 0;
+        if (ss->IsScaffold()) {
+          /*SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+            avgIdx += double(nt->getNodeIndex());
+          }*/
+        }
+        else {
+          SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+            auto pair = nt->GetPair();
+            if (pair != nullptr) 
+              avgIdx += double(pair->getNodeIndex());
+          }
+        }
+
+        avgIdx /= ss->getNumberOfNucleotides();
+        singleStrandsSorted.push_back(make_pair(ss(), avgIdx));
       }
     }
   }
