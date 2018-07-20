@@ -488,19 +488,19 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
   SB_FOR(auto part, parts) {
 
-    auto singleStrands = part->GetSingleStrands();
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
 
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
 
-      auto nucleotides = ss->GetNucleotides();
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
 
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
 
         flags_(index) = nt->getInheritedFlags();
         nodeIndices_(index) = nt->getNodeIndex();
 
-        SBPosition3 min = nt->GetSidechainPosition();
-        SBPosition3 max = nt->GetBackbonePosition();
+        SBPosition3 min = nanorobot_->GetNucleotideSidechainPosition(nt);
+        SBPosition3 max = nanorobot_->GetNucleotideBackbonePosition(nt);
 
         SBPosition3 iPos = min + iv * (max - min);
 
@@ -568,7 +568,7 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
         //highlightStrands(colorsV_, colorsE_, index, nucleotide);
 
         //strand direction
-        if (nt->GetEnd() == End::ThreePrime) {
+        if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
           radiiE_(index) = config.nucleotide_E_radius;
         }
 
@@ -672,27 +672,27 @@ void SEAdenitaVisualModel::orderVisibility()
   //ordered by
   if (false) {
     SB_FOR(auto part, parts) {
-      auto scaffolds = part->GetScaffolds();
+      auto scaffolds = nanorobot_->GetScaffolds(part);
       SB_FOR(ADNPointer<ADNSingleStrand> ss, scaffolds) {
-        auto nucleotides = ss->GetNucleotides();
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
         SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-          auto pair = nt->GetPair();
+          auto pair = nanorobot_->GetNucleotidePair(nt);
           nucleotidesSorted.push_back(make_pair(nt(), float(nt->getNodeIndex())));
           if(pair != nullptr)
             nucleotidesSorted.push_back(make_pair(pair(), float(nt->getNodeIndex()))); //the staple nucleotide should get the same order as the scaffold nucleotide
         }
       }
 
-      auto singleStrands = part->GetSingleStrands();
+      auto singleStrands = nanorobot_->GetSingleStrands(part);
       SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-        auto nucleotides = ss->GetNucleotides();
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
         unsigned int minIdx = UINT_MAX;
-        if (ss->IsScaffold()) {
+        if (nanorobot_->IsScaffold(ss)) {
           minIdx = 0;
         }
         else {
           SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-            auto pair = nt->GetPair();
+            auto pair = nanorobot_->GetNucleotidePair(nt);
             if (pair != nullptr) {
               unsigned int idx = pair->getNodeIndex();
               if (idx < minIdx) minIdx = idx;
@@ -707,11 +707,11 @@ void SEAdenitaVisualModel::orderVisibility()
   else {
     SBPosition3 center;
     SB_FOR(auto part, parts) {
-      auto singleStrands = part->GetSingleStrands();
+      auto singleStrands = nanorobot_->GetSingleStrands(part);
       SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-        auto nucleotides = ss->GetNucleotides();
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
         SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-          center += nt->GetPosition();
+          center += nanorobot_->GetNucleotidePosition(nt);
         }
       }
     }
@@ -719,13 +719,13 @@ void SEAdenitaVisualModel::orderVisibility()
     center /= nanorobot_->GetNumberOfNucleotides();
 
     SB_FOR(auto part, parts) {
-      auto singleStrands = part->GetSingleStrands();
+      auto singleStrands = nanorobot_->GetSingleStrands(part);
       SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-        auto nucleotides = ss->GetNucleotides();
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
         SBPosition3 strandPosition;
         float minDist = FLT_MAX;
         SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-          SBPosition3 diff = nt->GetPosition() - center;
+          SBPosition3 diff = nanorobot_->GetNucleotidePosition(nt) - center;
           float dist = diff.norm().getValue();
           nucleotidesSorted.push_back(make_pair(nt(), dist));
 
@@ -879,6 +879,9 @@ void SEAdenitaVisualModel::onDocumentEvent(SBDocumentEvent* documentEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle document events 
 
+  if (documentEvent->getType() == SBDocumentEvent::StructuralModelRemoved) {
+    prepareArraysForDisplay();
+  }
 }
 
 void SEAdenitaVisualModel::onStructuralEvent(SBStructuralEvent* documentEvent) {
