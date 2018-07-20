@@ -107,6 +107,44 @@ CollectionMap<ADNPart> ADNNanorobot::GetParts() const
   return partsIndex_;
 }
 
+CollectionMap<ADNNucleotide> ADNNanorobot::GetSelectedNucleotides()
+{
+  CollectionMap<ADNNucleotide> nts;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNNucleotide")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
+      nts.addReferenceTarget(nt());
+    }
+  }
+
+  return nts;
+}
+
+CollectionMap<ADNPart> ADNNanorobot::GetSelectedParts()
+{
+  CollectionMap<ADNPart> parts;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      ADNPointer<ADNPart> part = static_cast<ADNPart*>(node);
+      parts.addReferenceTarget(part());
+    }
+  }
+
+  return parts;
+}
+
 //ANTSingleStrand* ANTNanorobot::MergeStrands(ANTSingleStrand * first_strand, ANTSingleStrand * second_strand, std::string sequence) {
 //  if (first_strand == nullptr || second_strand == nullptr) return nullptr;
 //
@@ -1369,121 +1407,63 @@ CollectionMap<ADNPart> ADNNanorobot::GetParts() const
 //  }
 //  return nr;
 //}
-//
-//std::vector<ANTBaseSegment*> ANTNanorobot::GetBaseSegments(CellType celltype) {
-//  std::vector<ANTBaseSegment*> bss;
-//  for (auto &p : parts_) {
-//    BaseSegments pbs = p.second->GetBaseSegments(celltype);
-//    for (auto &pp : pbs) bss.push_back(pp.second);
-//  }
-//  return bss;
-//}
-//
-//Joints ANTNanorobot::GetSegmentJoints(CellType celltype) {
-//  Joints joints;
-//  for (auto &p : parts_) {
-//    Joints pj = p.second->GetSegmentJoints(celltype);
-//    joints.insert(joints.end(), pj.begin(), pj.end());
-//  }
-//  return joints;
-//}
-//
-//std::map<ANTSingleStrand*, std::vector<ANTNucleotide*>> ANTNanorobot::GetSelectedNucleotides() {
-//  std::map<ANTSingleStrand*, std::vector<ANTNucleotide*>> selectedNucleotides;
-//  for (auto & it : singleStrands_) {
-//    ANTSingleStrand* singleStrand = it.first;
-//    ANTNucleotideList nucleotides = singleStrand->nucleotides_;
-//    std::vector<ANTNucleotide*> selected;
-//
-//    for (auto & nit : nucleotides) {
-//      ANTNucleotide* nucleotide = nit.second;
-//      SBPointer<SBResidue> node = nucleotide->residue_;
-//      unsigned int index = nucleotide->id_;
-//
-//      if (node != nullptr && node->isSelected()) {
-//        selected.push_back(nucleotide);
-//      }
-//    }
-//
-//    if (selected.size() > 0) selectedNucleotides.insert(std::make_pair(singleStrand, selected));
-//  }
-//
-//  return selectedNucleotides;
-//}
-//
-//std::vector<ANTPart*> ANTNanorobot::GetSelectedParts() {
-//  std::vector<ANTPart*> selectedParts;
-//  for (auto & it : parts_) {
-//    ANTPart* part = it.second;
-//    SBPointer<SBStructuralModel> sm = part->GetSBModel();
-//
-//    if (sm != nullptr && sm->isSelected()) {
-//        selectedParts.push_back(part);
-//    }
-//  }
-//
-//  return selectedParts;
-//}
-//
-//std::vector<ANTSingleStrand*> ANTNanorobot::GetSelectedSingleStrands() {
-//  std::vector<ANTSingleStrand*> selectedStrands;
-//  for (auto & it : singleStrands_) {
-//    ANTSingleStrand* ss = it.first;
-//    SBPointer<SBChain> sm = ss->chain_;
-//
-//    if (sm != nullptr && sm->isSelected()) {
-//      selectedStrands.push_back(ss);
-//    }
-//  }
-//
-//  return selectedStrands;
-//}
-//
-//std::vector<ANTDoubleStrand*> ANTNanorobot::GetSelectedDoubleStrands() {
-//  std::vector<ANTDoubleStrand*> selectedDoubleStrands;
-//  auto selectedNucleotides = GetSelectedNucleotides();
-//  for (auto & it : selectedNucleotides) {
-//    auto nts = it.second;
-//    for (auto &nt : nts) {
-//      ANTBaseSegment* bs = GetBaseSegment(nt);
-//      SBPointer<SBResidue> sm = nt->residue_;
-//      ANTDoubleStrand* ds = bs->doubleStrand_;
-//      if (sm != nullptr && sm->isSelected()) {
-//        if (ds != nullptr && std::find(selectedDoubleStrands.begin(), selectedDoubleStrands.end(), ds) == selectedDoubleStrands.end()) 
-//          selectedDoubleStrands.push_back(ds);
-//      }
-//    }
-//  }
-//
-//  return selectedDoubleStrands;
-//}
-//
-//ANTBaseSegment * ANTNanorobot::GetBaseSegment(ANTNucleotide * nt) {
-//  if (nt != nullptr) {
-//    ANTPart* part = singleStrands_.at(nt->strand_);
-//    if (part != nullptr) {
-//      return part->GetBaseSegment(nt);
-//    }
-//  }
-//  return nullptr;
-//}
-//
-//std::vector<ANTBaseSegment*> ANTNanorobot::GetSelectedBaseSegments() {
-//  std::vector<ANTBaseSegment*> selectedBaseSegments;
-//  auto selectedNucleotides = GetSelectedNucleotides();
-//  for (auto & it : selectedNucleotides) {
-//    auto nts = it.second;
-//    for (auto &nt : nts) {
-//      ANTBaseSegment* bs = GetBaseSegment(nt);
-//      SBPointer<SBResidue> sm = nt->residue_;
-//      if (sm != nullptr && sm->isSelected()) {
-//        selectedBaseSegments.push_back(bs);
-//      }
-//    }
-//  }
-//
-//  return selectedBaseSegments;
-//}
+
+CollectionMap<ADNBaseSegment> ADNNanorobot::GetSelectedBaseSegments()
+{
+  CollectionMap<ADNBaseSegment> bss;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+      bss.addReferenceTarget(bs());
+    }
+  }
+
+  return bss;
+}
+
+CollectionMap<ADNSingleStrand> ADNNanorobot::GetSelectedSingleStrands()
+{
+  CollectionMap<ADNSingleStrand> singleStrands;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNSingleStrand")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      ADNPointer<ADNSingleStrand> ss = static_cast<ADNSingleStrand*>(node);
+      singleStrands.addReferenceTarget(ss());
+    }
+  }
+
+  return singleStrands;
+}
+
+CollectionMap<ADNDoubleStrand> ADNNanorobot::GetSelectedDoubleStrands()
+{
+  CollectionMap<ADNDoubleStrand> doubleStrands;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNDoubleStrand")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      ADNPointer<ADNDoubleStrand> ds = static_cast<ADNDoubleStrand*>(node);
+      doubleStrands.addReferenceTarget(ds());
+    }
+  }
+
+  return doubleStrands;
+}
 
 CollectionMap<ADNSingleStrand> ADNNanorobot::GetSingleStrands(ADNPointer<ADNPart> p)
 {
