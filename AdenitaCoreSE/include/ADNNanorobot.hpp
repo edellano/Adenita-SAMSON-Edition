@@ -41,6 +41,16 @@ public:
   CollectionMap<ADNPart> GetParts() const;
   //! Returns all the registered ADNSingleStrand
   CollectionMap<ADNSingleStrand> GetSingleStrands() const;
+  //! Returns all currently selected ADNPart
+  CollectionMap<ADNPart> GetSelectedParts();
+  //! Returns all currently selected ADNNucleotides
+  CollectionMap<ADNNucleotide> GetSelectedNucleotides();
+  //! Returns all currently selected ADNBaseSegment
+  CollectionMap<ADNBaseSegment> GetSelectedBaseSegments();
+  //! Returns all currently selected ADNSingleStrand
+  CollectionMap<ADNSingleStrand> GetSelectedSingleStrands();
+  //! Returns all currently selected ADNSingleStrand
+  CollectionMap<ADNDoubleStrand> GetSelectedDoubleStrands();
   //! Return the single strands of an ADNPart
   /*!
     \param a ADNPointer to a ADNPart
