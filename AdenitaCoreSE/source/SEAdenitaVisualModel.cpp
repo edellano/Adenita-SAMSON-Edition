@@ -238,11 +238,7 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
     auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
       auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-<<<<<<< HEAD
       ADNPointer<ADNNucleotide> cur = nanorobot_->GetSingleStrandFivePrime(ss);
-=======
-      ADNPointer<ADNNucleotide> cur = ss->GetFivePrime();
->>>>>>> origin/migrateVM
       size_t curNCylinders = nucleotides.size() - 1;
       ADNArray<unsigned int> curIndices = ADNArray<unsigned int>(2 * curNCylinders);
       unsigned int j = 0;
@@ -465,10 +461,7 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
 
       auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/migrateVM
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
 
         flags_(index) = nt->getInheritedFlags();
