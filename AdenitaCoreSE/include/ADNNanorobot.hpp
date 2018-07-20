@@ -19,12 +19,12 @@ public:
 
   //! Adds an ADNPart to the internal part index
   /*!
-  \param a pointer to the ADNPart you want to add. The ADNPart is added to the current layer.
+    \param a pointer to the ADNPart you want to add. The ADNPart is added to the current layer.
   */
   void RegisterPart(ADNPointer<ADNPart> part);
   //! Deletes an ADNPart from the internal part index
   /*!
-  \param a pointer to the ADNPart you want to delete from the index. The ADNPart is removed from the parent.
+    \param a pointer to the ADNPart you want to delete from the index. The ADNPart is removed from the parent.
   */
   void DeregisterPart(ADNPointer<ADNPart> part);
 
@@ -41,12 +41,28 @@ public:
   CollectionMap<ADNPart> GetParts() const;
   //! Returns all the registered ADNSingleStrand
   CollectionMap<ADNSingleStrand> GetSingleStrands() const;
+  //! Returns all currently selected ADNPart
+  CollectionMap<ADNPart> GetSelectedParts();
+  //! Returns all currently selected ADNNucleotides
+  CollectionMap<ADNNucleotide> GetSelectedNucleotides();
+  //! Returns all currently selected ADNBaseSegment
+  CollectionMap<ADNBaseSegment> GetSelectedBaseSegments();
+  //! Returns all currently selected ADNSingleStrand
+  CollectionMap<ADNSingleStrand> GetSelectedSingleStrands();
+  //! Returns all currently selected ADNSingleStrand
+  CollectionMap<ADNDoubleStrand> GetSelectedDoubleStrands();
   //! Return the single strands of an ADNPart
   /*!
     \param a ADNPointer to a ADNPart
     \return a CollectionMap of ADNSingleStrand
   */
   CollectionMap<ADNSingleStrand> GetSingleStrands(ADNPointer<ADNPart> p);
+  //! Return the scaffolds of an ADNPart
+  /*!
+    \param a ADNPointer to a ADNPart
+    \return a CollectionMap of ADNSingleStrand
+  */
+  CollectionMap<ADNSingleStrand> GetScaffolds(ADNPointer<ADNPart> p);
   //! Return the double strands of an ADNPart
   /*!
     \param a ADNPointer to a ADNPart
@@ -81,14 +97,18 @@ public:
     \return the End position on the strand
   */
   End GetNucleotideEnd(ADNPointer<ADNNucleotide> nt);
-
   //! Return the nucleotide next on the single strand
   /*!
     \param a ADNPointer to a ADNNucleotide
     \return a ADNPointer to the ADNNucleotide next on the single strand
   */
   ADNPointer<ADNNucleotide> GetNucleotideNext(ADNPointer<ADNNucleotide> nt);
-
+  //! Return a nucleotide's pair
+  /*!
+    \param a ADNPointer to a ADNNucleotide
+    \return a ADNPointer to the ADNNucleotide pair
+  */
+  ADNPointer<ADNNucleotide> GetNucleotidePair(ADNPointer<ADNNucleotide> nt);
   //! Return the position of a nucleotide
   /*!
     \param a ADNPointer to a ADNNucleotide

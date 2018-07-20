@@ -46,8 +46,8 @@ public :
   void CenterPart();
   void ResetVisualModel();
 
-  virtual void												onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
-  virtual void												onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
+  virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
+  virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
 
 
   ADNNanorobot* GetNanorobot();
@@ -57,6 +57,7 @@ private:
   void AddPartToActiveLayer(ADNPointer<ADNPart> part);
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);
 
+  std::map<SBDocument*, ADNNanorobot*> nanorobots_;
   ADNNanorobot* nanorobot_ = nullptr;
 };
 
