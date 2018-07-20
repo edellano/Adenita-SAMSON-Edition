@@ -254,9 +254,9 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
   auto parts = nanorobot_->GetParts();
 
   SB_FOR(auto part, parts) {
-    auto singleStrands = part->GetSingleStrands();
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = ss->GetNucleotides();
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
         ntMap.insert(make_pair(nt(), index));
         ++index;
@@ -267,10 +267,10 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
   size_t sumNumEdges = 0;
 
   SB_FOR(auto part, parts) {
-    auto singleStrands = part->GetSingleStrands();
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = ss->GetNucleotides();
-      ADNPointer<ADNNucleotide> cur = ss->GetFivePrime();
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      ADNPointer<ADNNucleotide> cur = nanorobot_->GetSingleStrandFivePrime(ss);
       size_t curNCylinders = nucleotides.size() - 1;
       ADNArray<unsigned int> curIndices = ADNArray<unsigned int>(2 * curNCylinders);
       unsigned int j = 0;
@@ -409,11 +409,11 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
 
   SB_FOR(auto part, parts) {
 
-    auto singleStrands = part->GetSingleStrands();
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
 
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
 
-      auto nucleotides = ss->GetNucleotides();
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
 
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
 
@@ -610,9 +610,9 @@ void SEAdenitaVisualModel::highlightFlagChanged()
   auto parts = nanorobot_->GetParts();
 
   SB_FOR(auto part, parts) {
-    auto singleStrands = part->GetSingleStrands();
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = ss->GetNucleotides();
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
         flags_(index) = nt->getInheritedFlags();
         ++index;
@@ -878,10 +878,6 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
 void SEAdenitaVisualModel::onDocumentEvent(SBDocumentEvent* documentEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle document events 
-
-  if (documentEvent->getType() == SBDocumentEvent::StructuralModelRemoved) {
-    prepareArraysForDisplay();
-  }
 }
 
 void SEAdenitaVisualModel::onStructuralEvent(SBStructuralEvent* documentEvent) {
