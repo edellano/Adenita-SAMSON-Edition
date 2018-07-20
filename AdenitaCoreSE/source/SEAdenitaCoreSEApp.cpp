@@ -224,7 +224,8 @@ void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
   ADNLogger& logger = ADNLogger::GetLogger();
   logger.Log(QString("structure has been changed"));
   
-  ResetVisualModel();
+  //ResetVisualModel();
+
 }
 
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
