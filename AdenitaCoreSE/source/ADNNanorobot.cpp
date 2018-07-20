@@ -38,6 +38,11 @@ void ADNNanorobot::RegisterPart(ADNPointer<ADNPart> part)
   partsIndex_.addReferenceTarget(part());
 }
 
+void ADNNanorobot::DeregisterPart(ADNPointer<ADNPart> part)
+{
+  partsIndex_.removeReferenceTarget(part());
+}
+
 int ADNNanorobot::GetNumberOfDoubleStrands()
 {
   auto parts = GetParts();
@@ -88,48 +93,20 @@ int ADNNanorobot::GetNumberOfNucleotides()
 
 CollectionMap<ADNPart> ADNNanorobot::GetParts() const
 {
-  /*CollectionMap<ADNPart> parts;
+  //CollectionMap<ADNPart> parts;
 
-  SBNodeIndexer nodeIndexer;
-  SAMSON::getActiveDocument()->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")) );
+  //SBNodeIndexer nodeIndexer;
+  //SAMSON::getActiveDocument()->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")) );
 
-  SB_FOR(SBNode* n, nodeIndexer) {
-    parts.addReferenceTarget(static_cast<ADNPart*>(n));
-  }
+  //SB_FOR(SBNode* n, nodeIndexer) {
+  //  if (!n->isErased()) parts.addReferenceTarget(static_cast<ADNPart*>(n));
+  //}
 
-  return parts;*/
+  //return parts;
 
   return partsIndex_;
 }
 
-//std::map<int, ANTSingleStrand*> ANTNanorobot::GetSingleStrands() const {
-//  std::map<int, ANTSingleStrand*> strands;
-//  int s_id = 0;
-//  for (auto &sit : singleStrands_) {
-//    strands.insert(std::make_pair(s_id, sit.first));
-//    ++s_id;
-//  }
-//  return strands;
-//}
-//
-//std::map<ANTDoubleStrand*, ANTPart*> ANTNanorobot::GetDoubleStrands() const {
-//  return doubleStrands_;
-//}
-//
-//std::map<int, ANTPart*> ANTNanorobot::GetParts() const
-//{
-//  return parts_;
-//}
-//
-//ANTPart * ANTNanorobot::GetPart(ANTSingleStrand * ss) {
-//  return singleStrands_.at(ss);
-//}
-//
-//ANTPart * ANTNanorobot::GetPart(ANTBaseSegment * bs) {
-//  ANTSingleStrand* ss = bs->GetNucleotide()->strand_;
-//  return GetPart(ss);
-//}
-//
 //ANTSingleStrand* ANTNanorobot::MergeStrands(ANTSingleStrand * first_strand, ANTSingleStrand * second_strand, std::string sequence) {
 //  if (first_strand == nullptr || second_strand == nullptr) return nullptr;
 //
@@ -1507,63 +1484,15 @@ CollectionMap<ADNPart> ADNNanorobot::GetParts() const
 //
 //  return selectedBaseSegments;
 //}
-//
-//void ANTNanorobot::RegisterPart(ANTPart * part) {
-//  int last_id = -1;
-//  if (parts_.size() > 0) {
-//    last_id = parts_.rbegin()->first;
-//  }
-//  part->SetId(last_id + 1);
-//  parts_.insert(std::make_pair(part->GetId(), part));
-//
-//  for (auto &sit : part->GetSingleStrands()) {
-//    ANTSingleStrand* ss = sit.second;
-//    singleStrands_.insert(std::make_pair(ss, part));
-//  }
-//  for (auto &dit : part->GetDoubleStrands()) {
-//    ANTDoubleStrand* ds = dit.second;
-//    doubleStrands_.insert(std::make_pair(ds, part));
-//  }
-//}
-//
-//void ANTNanorobot::UpdatePart(ANTPart * part) {
-//  int id = part->GetId();
-//  if (parts_.find(id) != parts_.end()) {
-//    // erase strands from nanorobot
-//    std::vector<ANTSingleStrand*> eraseSS;
-//    std::vector<ANTDoubleStrand*> eraseDS;
-//    for (auto &sit : singleStrands_) {
-//      ANTSingleStrand* ss = sit.first;
-//      ANTPart* p = sit.second;
-//      if (p->GetId() == id) eraseSS.push_back(ss);
-//    }
-//    for (auto &dit : doubleStrands_) {
-//      ANTDoubleStrand* ds = dit.first;
-//      ANTPart* p = dit.second;
-//      if (p->GetId() == id) eraseDS.push_back(ds);
-//    }
-//    for (auto &eit : eraseSS) {
-//      singleStrands_.erase(eit);
-//    }
-//    for (auto &eit : eraseDS) {
-//      doubleStrands_.erase(eit);
-//    }
-//    // exchange with new part
-//    parts_[id] = part;
-//    for (auto &sit : part->GetSingleStrands()) {
-//      ANTSingleStrand* ss = sit.second;
-//      singleStrands_.insert(std::make_pair(ss, part));
-//    }
-//    for (auto &dit : part->GetDoubleStrands()) {
-//      ANTDoubleStrand* ds = dit.second;
-//      doubleStrands_.insert(std::make_pair(ds, part));
-//    }
-//  }
-//}
 
 CollectionMap<ADNSingleStrand> ADNNanorobot::GetSingleStrands(ADNPointer<ADNPart> p)
 {
   return p->GetSingleStrands();
+}
+
+CollectionMap<ADNSingleStrand> ADNNanorobot::GetScaffolds(ADNPointer<ADNPart> p)
+{
+  return p->GetScaffolds();
 }
 
 CollectionMap<ADNDoubleStrand> ADNNanorobot::GetDoubleStrands(ADNPointer<ADNPart> p)
@@ -1594,6 +1523,11 @@ End ADNNanorobot::GetNucleotideEnd(ADNPointer<ADNNucleotide> nt)
 ADNPointer<ADNNucleotide> ADNNanorobot::GetNucleotideNext(ADNPointer<ADNNucleotide> nt)
 {
   return nt->GetNext();
+}
+
+ADNPointer<ADNNucleotide> ADNNanorobot::GetNucleotidePair(ADNPointer<ADNNucleotide> nt)
+{
+  return nt->GetPair();
 }
 
 SBPosition3 ADNNanorobot::GetNucleotidePosition(ADNPointer<ADNNucleotide> nt)
