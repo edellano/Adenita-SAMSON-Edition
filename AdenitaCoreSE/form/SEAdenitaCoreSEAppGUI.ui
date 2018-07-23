@@ -570,6 +570,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnConnectSS</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onConnectSingleStrands()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>512</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -578,5 +594,6 @@
   <slot>onCreate()</slot>
   <slot>onSaveFile()</slot>
   <slot>onExport()</slot>
+  <slot>onConnectSingleStrands()</slot>
  </slots>
 </ui>

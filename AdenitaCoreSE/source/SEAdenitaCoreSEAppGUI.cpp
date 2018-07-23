@@ -319,6 +319,12 @@ void SEAdenitaCoreSEAppGUI::onAcceptExport()
   } 
 }
 
+void SEAdenitaCoreSEAppGUI::onConnectSingleStrands()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->ConnectSingleStrands();
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";

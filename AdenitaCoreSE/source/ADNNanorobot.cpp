@@ -107,6 +107,13 @@ CollectionMap<ADNPart> ADNNanorobot::GetParts() const
   return partsIndex_;
 }
 
+ADNPointer<ADNPart> ADNNanorobot::GetPart(ADNPointer<ADNSingleStrand> ss)
+{
+  SBNode* parent = ss->getParent()->getParent();  // first parent is the structural model root
+  ADNPointer<ADNPart> part = static_cast<ADNPart*>(parent);
+  return part;
+}
+
 CollectionMap<ADNNucleotide> ADNNanorobot::GetSelectedNucleotides()
 {
   CollectionMap<ADNNucleotide> nts;
@@ -1468,6 +1475,17 @@ CollectionMap<ADNDoubleStrand> ADNNanorobot::GetSelectedDoubleStrands()
 CollectionMap<ADNSingleStrand> ADNNanorobot::GetSingleStrands(ADNPointer<ADNPart> p)
 {
   return p->GetSingleStrands();
+}
+
+void ADNNanorobot::RemoveSingleStrand(ADNPointer<ADNSingleStrand> ss)
+{
+  auto part = GetPart(ss);
+  part->DeregisterSingleStrand(ss);
+}
+
+void ADNNanorobot::AddSingleStrand(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> part)
+{
+  part->RegisterSingleStrand(ss);
 }
 
 CollectionMap<ADNSingleStrand> ADNNanorobot::GetScaffolds(ADNPointer<ADNPart> p)

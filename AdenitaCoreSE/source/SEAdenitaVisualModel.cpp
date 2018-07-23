@@ -62,10 +62,10 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
     part->connectBaseSignalToSlot(
       this,
       SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
-    part->connectStructuralSignalToSlot(
-      this,
-      SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent)
-      );
+    //part->connectStructuralSignalToSlot(
+    //  this,
+    //  SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent)
+    //  );
 
     SB_FOR(auto singleStrand, singleStrands) {
       auto nucleotides = singleStrand->GetNucleotides();
@@ -73,19 +73,19 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
       singleStrand->connectBaseSignalToSlot(
         this,
         SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
-      singleStrand->connectStructuralSignalToSlot(
-        this,
-        SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent)
-        );
+      //singleStrand->connectStructuralSignalToSlot(
+      //  this,
+      //  SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent)
+      //  );
 
       SB_FOR(auto nucleotide, nucleotides) {
         nucleotide->connectBaseSignalToSlot(
           this,
           SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
-        nucleotide->connectStructuralSignalToSlot(
-          this,
-          SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent)
-          );
+        //nucleotide->connectStructuralSignalToSlot(
+        //  this,
+        //  SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent)
+        //  );
       }
     }
 

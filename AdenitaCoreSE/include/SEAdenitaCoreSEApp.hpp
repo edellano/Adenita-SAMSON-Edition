@@ -45,13 +45,12 @@ public :
   void SetScaffoldSequence(std::string seq);
   void CenterPart();
   void ResetVisualModel();
+  void ConnectSingleStrands();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
 
-
   ADNNanorobot* GetNanorobot();
-  CollectionMap<ADNPart> GetSelectedParts();
 
 private:
   void AddPartToActiveLayer(ADNPointer<ADNPart> part);
