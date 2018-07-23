@@ -16,7 +16,9 @@ namespace ADNBasicOperations {
 
   // Delete
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> DeleteNucleotide(ADNPointer<ADNNucleotide> nt);
+  void DeleteNucleotideWithoutBreak(ADNPointer<ADNNucleotide> nt);
   std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> DeleteBaseSegment(ADNPointer<ADNBaseSegment> bs);
+  void DeleteBaseSegmentWithoutBreak(ADNPointer<ADNBaseSegment> bs);
   void DeleteSingleStrand(ADNPointer<ADNSingleStrand> ss);
   void DeleteDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
 

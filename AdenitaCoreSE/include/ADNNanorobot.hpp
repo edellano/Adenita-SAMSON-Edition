@@ -39,6 +39,12 @@ public:
 
   //! Returns all the registered ADNPart
   CollectionMap<ADNPart> GetParts() const;
+  //! Returns the part to which an ADNSingleStrand belongs
+  /*!
+    \param a pointer to a ADNSingleStrand
+    \return the ADNPart to which the ADNSingleStrand belongs to
+  */
+  ADNPointer<ADNPart> GetPart(ADNPointer<ADNSingleStrand> ss);
   //! Returns all the registered ADNSingleStrand
   CollectionMap<ADNSingleStrand> GetSingleStrands() const;
   //! Returns all currently selected ADNPart
@@ -57,6 +63,17 @@ public:
     \return a CollectionMap of ADNSingleStrand
   */
   CollectionMap<ADNSingleStrand> GetSingleStrands(ADNPointer<ADNPart> p);
+  //! Removes a single strand from the ADNPart to which it belongs
+  /*!
+    \param a ADNPointer to a ADNSingleStrand. ADNSingleStrand is deleted
+  */
+  void RemoveSingleStrand(ADNPointer<ADNSingleStrand> ss);
+  //! Adds a single strand to a ADNPart
+  /*!
+    \param a ADNPointer to a ADNSingleStrand
+    \param a ADNPointer to a ADNPart
+  */
+  void AddSingleStrand(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> part);
   //! Return the scaffolds of an ADNPart
   /*!
     \param a ADNPointer to a ADNPart

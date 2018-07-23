@@ -45,7 +45,7 @@ void SEAdenitaCoreSEApp::SaveFile(QString filename, bool all)
     ADNLoader::SaveNanorobotToJson(GetNanorobot(), filename.toStdString());
   }
   else {
-    auto parts = GetSelectedParts();
+    auto parts = GetNanorobot()->GetSelectedParts();
     auto part = parts[0];  // save first
     ADNLoader::SavePartToJson(part, filename.toStdString());
   }
@@ -213,10 +213,33 @@ void SEAdenitaCoreSEApp::ResetVisualModel() {
 
 }
 
+void SEAdenitaCoreSEApp::ConnectSingleStrands()
+{
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  if (nts.size() == 2) {
+    ADNPointer<ADNNucleotide> fPrime = nts[0];
+    ADNPointer<ADNNucleotide> tPrime = nts[1];
+    if (fPrime->GetStrand() != tPrime->GetStrand()) {
+      if (fPrime->GetEnd() == ThreePrime && tPrime->GetEnd() == FivePrime) {
+        fPrime = nts[1];
+        tPrime = nts[0];
+      }
+      auto fPrimeStrand = fPrime->GetStrand();
+      auto tPrimeStrand = tPrime->GetStrand();
+      ADNPointer<ADNPart> part = nanorobot_->GetPart(tPrimeStrand);
+      auto newStrand = ADNBasicOperations::MergeSingleStrands(part, tPrimeStrand, fPrimeStrand);
+      nanorobot_->RemoveSingleStrand(tPrimeStrand);
+      nanorobot_->RemoveSingleStrand(fPrimeStrand);
+
+      ResetVisualModel();
+    }
+  }
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
-  logger.Log(QString("document has been changed"));
+  logger.LogDebug(QString("document has been changed"));
 }
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
@@ -241,25 +264,6 @@ ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
     nanorobot = nanorobots_.at(doc);
   }
   return nanorobot;
-}
-
-CollectionMap<ADNPart> SEAdenitaCoreSEApp::GetSelectedParts()
-{
-  CollectionMap<ADNPart> parts;
-
-  SBDocument* doc = SAMSON::getActiveDocument();
-  SBNodeIndexer nodes;
-  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-
-  // only take one
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isSelected()) {
-      ADNPointer<ADNPart> part = static_cast<ADNPart*>(node);
-      parts.addReferenceTarget(part());
-    }
-  }
-
-  return parts;
 }
 
 void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
