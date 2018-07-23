@@ -258,7 +258,7 @@ void SEAdenitaCoreSEAppGUI::onExport()
 
 void SEAdenitaCoreSEAppGUI::onSetScaffold()
 {
-  std::string filename = "";
+  /*std::string filename = "";
   ADNAuxiliary::ScaffoldSeq type = ADNAuxiliary::ScaffoldSeq(ui.cmbScaffolds->currentIndex());
   if (type == ADNAuxiliary::m13mp18) {
     filename = SB_ELEMENT_PATH + "/Data/m13mp18.fasta";
@@ -283,8 +283,7 @@ void SEAdenitaCoreSEAppGUI::onSetScaffold()
       }
     }
     t->SetScaffoldSequence(s);
-  }
-
+  }*/
 }
 
 void SEAdenitaCoreSEAppGUI::onCenterPart()
@@ -323,6 +322,18 @@ void SEAdenitaCoreSEAppGUI::onConnectSingleStrands()
 {
   SEAdenitaCoreSEApp* t = getApp();
   t->ConnectSingleStrands();
+}
+
+void SEAdenitaCoreSEAppGUI::onBreak()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->BreakSingleStrand();
+}
+
+void SEAdenitaCoreSEAppGUI::onDelete()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->DeleteNucleotide();
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)

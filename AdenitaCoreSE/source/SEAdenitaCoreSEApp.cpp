@@ -236,6 +236,36 @@ void SEAdenitaCoreSEApp::ConnectSingleStrands()
   }
 }
 
+void SEAdenitaCoreSEApp::BreakSingleStrand()
+{
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  if (nts.size() == 1) {
+    ADNPointer<ADNNucleotide> nt = nts[0];
+    if (nt->GetEnd() != ThreePrime) {
+      ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
+      ADNPointer<ADNPart> part = nanorobot_->GetPart(ss);
+      auto newStrands = ADNBasicOperations::BreakSingleStrand(part, nt);
+      nanorobot_->RemoveSingleStrand(ss);
+
+      ResetVisualModel();
+    }
+  }
+}
+
+void SEAdenitaCoreSEApp::DeleteNucleotide()
+{
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  if (nts.size() == 1) {
+    ADNPointer<ADNNucleotide> nt = nts[0];
+    ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
+    ADNPointer<ADNPart> part = nanorobot_->GetPart(ss);
+    auto newStrands = ADNBasicOperations::DeleteNucleotide(part, nt);
+    nanorobot_->RemoveSingleStrand(ss);
+
+    ResetVisualModel();
+  }
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
