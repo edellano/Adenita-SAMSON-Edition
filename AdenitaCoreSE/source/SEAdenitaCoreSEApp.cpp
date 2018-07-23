@@ -228,10 +228,10 @@ void SEAdenitaCoreSEApp::ConnectSingleStrands()
       auto tPrimeStrand = tPrime->GetStrand();
       ADNPointer<ADNPart> part = nanorobot_->GetPart(tPrimeStrand);
       auto newStrand = ADNBasicOperations::MergeSingleStrands(part, tPrimeStrand, fPrimeStrand);
-      auto firstSize = tPrimeStrand->getNumberOfNucleotides();
-      auto secondSize = fPrimeStrand->getNumberOfNucleotides();
       nanorobot_->RemoveSingleStrand(tPrimeStrand);
       nanorobot_->RemoveSingleStrand(fPrimeStrand);
+
+      ResetVisualModel();
     }
   }
 }
