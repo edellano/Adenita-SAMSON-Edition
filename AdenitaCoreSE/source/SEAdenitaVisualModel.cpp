@@ -199,6 +199,7 @@ void SEAdenitaVisualModel::initArraysForDisplay()
   radiiE_ = ADNArray<float>(nPositions);
   colorsV_ = ADNArray<float>(4, nPositions);
   colorsE_ = ADNArray<float>(4, nPositions);
+  capData_ = ADNArray<unsigned int>(nPositions);
   flags_ = ADNArray<unsigned int>(nPositions);
   nodeIndices_ = ADNArray<unsigned int>(nPositions);
   indices_ = getNucleotideIndices();
@@ -207,6 +208,8 @@ void SEAdenitaVisualModel::initArraysForDisplay()
 
 ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 {
+  ADNLogger& logger = ADNLogger::GetLogger();
+
   auto singleStrands = nanorobot_->GetSingleStrands();
 
   unsigned int nPositions = nanorobot_->GetNumberOfNucleotides();
@@ -241,21 +244,40 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
       ADNPointer<ADNNucleotide> cur = nanorobot_->GetSingleStrandFivePrime(ss);
       size_t curNCylinders = nucleotides.size() - 1;
       ADNArray<unsigned int> curIndices = ADNArray<unsigned int>(2 * curNCylinders);
-      unsigned int j = 0;
-      while (nanorobot_->GetNucleotideNext(cur) != nullptr) {
+
+      ////looping using the next_ member variable of nucleotides
+      //unsigned int j = 0;
+      //while (nanorobot_->GetNucleotideNext(cur) != nullptr) {
+      //  unsigned int curIndex;
+      //  curIndex = ntMap[cur()];
+      //  //nucleotides.getIndex(cur(), curIndex);
+      //  unsigned int nextIndex;
+      //  auto next = nanorobot_->GetNucleotideNext(cur)();
+      //  nextIndex = ntMap[next];
+      //  //nucleotides.getIndex(next, nextIndex);
+
+      //  curIndices(2 * j) = curIndex;
+      //  curIndices(2 * j + 1) = nextIndex;
+      //  j++;
+
+      //  cur = nanorobot_->GetNucleotideNext(cur);
+      //}
+
+      for (int j = 0; j < nucleotides.size() - 1; ++j) {
+        auto cur = nucleotides[j];
         unsigned int curIndex;
-        curIndex = ntMap[cur()];
+        curIndex = ntMap[cur];
         //nucleotides.getIndex(cur(), curIndex);
         unsigned int nextIndex;
-        auto next = nanorobot_->GetNucleotideNext(cur)();
+        //auto next = nanorobot_->GetNucleotideNext(cur)();
+        auto next = nucleotides[j + 1];
         nextIndex = ntMap[next];
         //nucleotides.getIndex(next, nextIndex);
 
         curIndices(2 * j) = curIndex;
         curIndices(2 * j + 1) = nextIndex;
-        j++;
+        //j++;
 
-        cur = nanorobot_->GetNucleotideNext(cur);
       }
 
       for (int k = 0; k < curNCylinders * 2; ++k) {
@@ -464,6 +486,7 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
 
+        capData_(index) = 0;
         flags_(index) = nt->getInheritedFlags();
         nodeIndices_(index) = nt->getNodeIndex();
 
@@ -740,7 +763,7 @@ void SEAdenitaVisualModel::display() {
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  //glEnable(GL_DEPTH_TEST);
+  glEnable(GL_DEPTH_TEST);
 
   if (nCylinders_ > 0) {
     SAMSON::displayCylinders(
@@ -761,8 +784,9 @@ void SEAdenitaVisualModel::display() {
     colorsV_.GetArray(),
     flags_.GetArray());
 
-  //glDisable(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
+
 
   //if (configuration_->display_base_pairing) {
   //  displayBasePairConnections(scale_);
