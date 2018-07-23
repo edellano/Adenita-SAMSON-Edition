@@ -3,42 +3,6 @@
 #include "ADNBasicOperations.hpp"
 
 
-ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand)
-{
-  ADNPointer<ADNSingleStrand> ss = ADNPointer<ADNSingleStrand>(new ADNSingleStrand());
-
-  auto fivePrimeF = first_strand->GetFivePrime();
-  ADNPointer<ADNNucleotide> nt = fivePrimeF;
-  while (nt != nullptr) {
-    ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
-    first_strand->removeChild(nt());
-    ss->AddNucleotideThreePrime(nt);
-    nt = ntNext;
-  } 
-
-  auto fivePrimeS = second_strand->GetFivePrime();
-  nt = fivePrimeS;
-  while (nt != nullptr) {
-    ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
-    second_strand->removeChild(nt());
-    ss->AddNucleotideThreePrime(nt);
-    nt = ntNext;
-  }
-
-  if (first_strand->IsScaffold() || second_strand->IsScaffold()) {
-    ss->IsScaffold(true);
-  }
-
-  auto firstSize = first_strand->getNumberOfNucleotides();
-  auto secondSize = second_strand->getNumberOfNucleotides();
-  if (firstSize > 0 || secondSize > 0) {
-    std::string msg = "Possible error when merging strands";
-    ADNLogger& logger = ADNLogger::GetLogger();
-    logger.LogDebug(msg);
-  }
-  return ss;
-}
-
 ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand)
 {
   ADNPointer<ADNSingleStrand> ss = ADNPointer<ADNSingleStrand>(new ADNSingleStrand());
@@ -164,10 +128,16 @@ ADNPointer<ADNPart> ADNBasicOperations::MergeParts(ADNPointer<ADNPart> part1, AD
   return part;
 }
 
-std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOperations::BreakSingleStrand(ADNPointer<ADNNucleotide> nt)
+std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOperations::BreakSingleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt)
 {
   ADNPointer<ADNSingleStrand> ssFP = ADNPointer<ADNSingleStrand>(new ADNSingleStrand());
+  ssFP->SetName("Broken Strand 1");
+  ssFP->create();
+  part->RegisterSingleStrand(ssFP);
   ADNPointer<ADNSingleStrand> ssTP = ADNPointer<ADNSingleStrand>(new ADNSingleStrand());
+  ssTP->SetName("Broken Strand 2");
+  ssTP->create();
+  part->RegisterSingleStrand(ssTP);
 
   ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
 
@@ -176,12 +146,14 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
 
   while (nucleo != nt) {
     ADNPointer<ADNNucleotide> ntNext = nucleo->GetNext();
+    ss->removeChild(nucleo());
     ssFP->AddNucleotideThreePrime(nucleo);
     nucleo = ntNext;
   }
 
   while (nucleo != nullptr) {
     ADNPointer<ADNNucleotide> ntNext = nucleo->GetNext();
+    ss->removeChild(nucleo());
     ssTP->AddNucleotideThreePrime(nucleo);
     nucleo = ntNext;
   }
@@ -196,6 +168,13 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
     else {
       ssTP->IsScaffold(true);
     }
+  }
+
+  auto sz = ss->getNumberOfNucleotides();
+  if (sz > 0) {
+    std::string msg = "Possible error when breaking strands inside part";
+    ADNLogger& logger = ADNLogger::GetLogger();
+    logger.LogDebug(msg);
   }
 
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ssPair = std::make_pair(ssFP, ssTP);
@@ -233,28 +212,29 @@ std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOper
   return dsPair;
 }
 
-std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOperations::DeleteNucleotide(ADNPointer<ADNNucleotide> nt)
+std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOperations::DeleteNucleotide(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt)
 {
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> res = std::make_pair(nullptr, nullptr);
   // first break
-  auto ssPair = BreakSingleStrand(nt);
+  auto ssPair = BreakSingleStrand(part, nt);
   res.first = ssPair.first;
   if (nt->GetEnd() == ThreePrime) {
-    ssPair.second.deleteReferenceTarget();
+    part->DeregisterSingleStrand(ssPair.second);
+    //ssPair.second.deleteReferenceTarget();
   }
   else {
     // second break
-    auto ssPair2 = BreakSingleStrand(nt->GetNext());
+    auto ssPair2 = BreakSingleStrand(part, nt->GetNext());
     res.second = ssPair2.second;
-
     // delete remaining single strand containing nt
-    ssPair2.first.deleteReferenceTarget();
+    part->DeregisterSingleStrand(ssPair2.first);
+    //ssPair2.first.deleteReferenceTarget();
   }
 
   return res;
 }
 
-void ADNBasicOperations::DeleteNucleotideWithoutBreak(ADNPointer<ADNNucleotide> nt)
+void ADNBasicOperations::DeleteNucleotideWithoutBreak(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt)
 {
   if (nt->GetEnd() != FiveAndThreePrime) {
     ADNPointer<ADNNucleotide> next = nt->GetNext();
