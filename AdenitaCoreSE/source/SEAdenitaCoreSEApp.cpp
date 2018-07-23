@@ -16,11 +16,11 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
   // GetNanorobot();
 
   //events
-  SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
+  /*SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
     this,
     SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent)
     );
-
+*/
 }
 
 SEAdenitaCoreSEApp::~SEAdenitaCoreSEApp() {
@@ -244,10 +244,11 @@ void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
 {
-
-
   ADNLogger& logger = ADNLogger::GetLogger();
-  logger.LogDebug(QString("structure has been changed"));
+  logger.Log(QString("structure has been changed"));
+  
+  //ResetVisualModel();
+
 }
 
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
@@ -295,23 +296,21 @@ void SEAdenitaCoreSEApp::ConnectStructuralSignalSlots(ADNPointer<ADNPart> part)
     SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
     );
 
-  SB_FOR(auto singleStrand, singleStrands) {
-    auto nucleotides = singleStrand->GetNucleotides();
+  //SB_FOR(auto singleStrand, singleStrands) {
+  //  auto nucleotides = singleStrand->GetNucleotides();
 
-    singleStrand->connectStructuralSignalToSlot(
-      this,
-      SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
-      );
+  //  singleStrand->connectStructuralSignalToSlot(
+  //    this,
+  //    SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
+  //    );
 
-    SB_FOR(auto nucleotide, nucleotides) {
-      nucleotide->connectStructuralSignalToSlot(
-        this,
-        SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
-        );
-    }
-  }
+  //  SB_FOR(auto nucleotide, nucleotides) {
+  //    nucleotide->connectStructuralSignalToSlot(
+  //      this,
+  //      SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
+  //      );
+  //  }
+  //}
 
-  //todo connect double strands signals also to slots
-  //auto doubleStrands = GetNanorobot()->GetDoubleStrands(part);
 
 }
