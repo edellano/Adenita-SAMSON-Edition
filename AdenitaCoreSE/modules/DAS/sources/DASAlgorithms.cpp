@@ -434,15 +434,15 @@ void DASCrossover::CreateCrossover(ADNPointer<ADNPart> part) {
 
   if (firstSingleStrandO == secondSingleStrandO) return;
 
-  auto first_chain_idsO = ADNBasicOperations::BreakSingleStrand(firstNt_);
-  auto second_chain_idsO = ADNBasicOperations::BreakSingleStrand(secondNt_->GetPrev());
-  // todo: take into account that at crossover point there might already 
-  // be two different strands. Workaround
-  bool pair = true;
-  if (second_chain_idsO.first == second_chain_idsO.second) pair = false;
+  //auto first_chain_idsO = ADNBasicOperations::BreakSingleStrand(firstNt_);
+  //auto second_chain_idsO = ADNBasicOperations::BreakSingleStrand(secondNt_->GetPrev());
+  //// todo: take into account that at crossover point there might already 
+  //// be two different strands. Workaround
+  //bool pair = true;
+  //if (second_chain_idsO.first == second_chain_idsO.second) pair = false;
 
-  ADNPointer<ADNSingleStrand> mergedChainO = ADNBasicOperations::MergeSingleStrands(first_chain_idsO.first, second_chain_idsO.second);
-  if (pair) ADNPointer<ADNSingleStrand> mergedChainPairO = ADNBasicOperations::MergeSingleStrands(second_chain_idsO.first, first_chain_idsO.second);
+  //ADNPointer<ADNSingleStrand> mergedChainO = ADNBasicOperations::MergeSingleStrands(first_chain_idsO.first, second_chain_idsO.second);
+  //if (pair) ADNPointer<ADNSingleStrand> mergedChainPairO = ADNBasicOperations::MergeSingleStrands(second_chain_idsO.first, first_chain_idsO.second);
 }
 
 bool DASCrossover::IsScaffoldCrossover() {
