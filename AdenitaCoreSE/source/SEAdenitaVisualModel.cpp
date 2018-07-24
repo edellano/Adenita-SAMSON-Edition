@@ -267,16 +267,12 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
         auto cur = nucleotides[j];
         unsigned int curIndex;
         curIndex = ntMap[cur];
-        //nucleotides.getIndex(cur(), curIndex);
         unsigned int nextIndex;
-        //auto next = nanorobot_->GetNucleotideNext(cur)();
         auto next = nucleotides[j + 1];
         nextIndex = ntMap[next];
-        //nucleotides.getIndex(next, nextIndex);
 
         curIndices(2 * j) = curIndex;
         curIndices(2 * j + 1) = nextIndex;
-        //j++;
 
       }
 
