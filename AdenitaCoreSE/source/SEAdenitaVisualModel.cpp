@@ -119,7 +119,7 @@ float SEAdenitaVisualModel::getScale()
   return scale_;
 }
 
-void SEAdenitaVisualModel::changeScale(double scale)
+void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/)
 {
   scale_ = scale;
 
@@ -185,7 +185,7 @@ void SEAdenitaVisualModel::changeVisibility(double layer)
 
 }
 
-void SEAdenitaVisualModel::initArraysForDisplay()
+void SEAdenitaVisualModel::initArraysForDisplay(bool createIndex /* = true */)
 {
   auto singleStrands = nanorobot_->GetSingleStrands();
 
@@ -202,7 +202,10 @@ void SEAdenitaVisualModel::initArraysForDisplay()
   capData_ = ADNArray<unsigned int>(nPositions);
   flags_ = ADNArray<unsigned int>(nPositions);
   nodeIndices_ = ADNArray<unsigned int>(nPositions);
-  indices_ = getNucleotideIndices();
+
+  if (createIndex) {
+    indices_ = getNucleotideIndices();
+  }
 
 }
 
@@ -283,6 +286,9 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
       sumNumEdges += (2 * curNCylinders);
     }
   }
+
+  ntMap.clear();
+
   return indices;
 
 }
@@ -806,12 +812,6 @@ void SEAdenitaVisualModel::displayForSelection() {
 
   if (nanorobot_ == nullptr) return;
 
-  SAMSON::displaySpheresSelection(
-    nPositions_,
-    positions_.GetArray(),
-    radiiV_.GetArray(),
-    nodeIndices_.GetArray()
-    );
   if (nCylinders_ > 0) {
     SAMSON::displayCylindersSelection(
       nCylinders_,
@@ -822,6 +822,14 @@ void SEAdenitaVisualModel::displayForSelection() {
       nullptr,
       nodeIndices_.GetArray());
   }
+
+
+  SAMSON::displaySpheresSelection(
+    nPositions_,
+    positions_.GetArray(),
+    radiiV_.GetArray(),
+    nodeIndices_.GetArray()
+    );
 }
 
 void SEAdenitaVisualModel::expandBounds(SBIAPosition3& bounds) const {
@@ -858,7 +866,7 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
   }
 
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
-    changeScale(scale_);
+    changeScale(scale_, false);
   }
 }
 
