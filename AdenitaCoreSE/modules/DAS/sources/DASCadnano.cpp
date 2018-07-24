@@ -239,7 +239,7 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
   //find number of staples and their starting points
-  std::vector<vec2> stapleStarts = json_.stapleStarts_; //vstrand id and position on vstrand
+  std::vector<vec2> stapleStarts = json_.stapleStarts_;  //vstrand id and position on vstrand
   std::string numStaplesString;
   numStaplesString += "num of staple strands ";
   numStaplesString += to_string(stapleStarts.size());
@@ -274,25 +274,13 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
   ADNLogger& logger = ADNLogger::GetLogger();
   //trace scaffold through vstrands
   auto& vstrands = json_.vstrands_;
+
+  int vStrandId = startVStrand;
+  int z = startVStrandPos;
   vec4 curVstrandElem;
   if (left) curVstrandElem = vstrands[startVStrand].scaf_[startVStrandPos];
   else curVstrandElem = vstrands[startVStrand].stap_[startVStrandPos];
-
-  int lastElem = 0;
-  bool last_it = false;
   while (true) {
-    int vStrandId = curVstrandElem.n2;
-    int z = curVstrandElem.n3;
-
-    //find next scaf element and check if it is last
-    auto nextVstrand = json_.vstrands_[curVstrandElem.n2];
-    vec4 nextVstrandElem;
-    if (left) nextVstrandElem = nextVstrand.scaf_[curVstrandElem.n3];
-    else nextVstrandElem = nextVstrand.stap_[curVstrandElem.n3];
-
-    if (nextVstrandElem.n0 != -1 && nextVstrandElem.n1 != -1 && nextVstrandElem.n2 == -1 && nextVstrandElem.n3 == -1) {
-      last_it = true;
-    }
 
     std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> bs_positions = cellBsMap_.at(&json_.vstrands_[vStrandId]);
 
@@ -378,12 +366,19 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
       }
     }
 
-    curVstrandElem = nextVstrandElem;
-    lastElem = z;
-
-    if (last_it) {
+    if (curVstrandElem.n0 != -1 && curVstrandElem.n1 != -1 && curVstrandElem.n2 == -1 && curVstrandElem.n3 == -1) {
       break;
     }
+
+    //find next scaf element
+    auto nextVstrand = json_.vstrands_[curVstrandElem.n2];
+    vec4 nextVstrandElem;
+    if (left) nextVstrandElem = nextVstrand.scaf_[curVstrandElem.n3];
+    else nextVstrandElem = nextVstrand.stap_[curVstrandElem.n3];
+
+    vStrandId = curVstrandElem.n2;
+    z = curVstrandElem.n3;
+    curVstrandElem = nextVstrandElem;
   }
 }
 

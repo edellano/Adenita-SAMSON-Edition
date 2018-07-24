@@ -45,7 +45,10 @@ public :
   void SetScaffoldSequence(std::string seq);
   void CenterPart();
   void ResetVisualModel();
+  // Modifications
   void ConnectSingleStrands();
+  void BreakSingleStrand();
+  void DeleteNucleotide();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events

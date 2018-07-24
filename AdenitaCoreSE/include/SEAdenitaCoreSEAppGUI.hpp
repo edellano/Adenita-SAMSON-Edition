@@ -4,6 +4,7 @@
 #include "SBGApp.hpp" 
 #include "ui_SEAdenitaCoreSEAppGUI.h"
 #include <QMessageBox>
+#include <QComboBox>
 
 
 class SEAdenitaCoreSEApp;
@@ -62,6 +63,8 @@ public slots:
   void onCenterPart();
   void onAcceptExport();
   void onConnectSingleStrands();
+  void onBreak();
+  void onDelete();
 
 private:
   std::string IsJsonCadnano(QString filename);
