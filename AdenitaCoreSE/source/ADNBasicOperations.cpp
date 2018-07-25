@@ -215,7 +215,7 @@ std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOper
 std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOperations::DeleteNucleotide(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt)
 {
   auto ss = nt->GetStrand();
-  auto numSs = part->GetNumberOfSingleStrands();
+  End e = nt->GetEnd();
 
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> res = std::make_pair(nullptr, nullptr);
   // first break
@@ -224,7 +224,7 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
   part->RegisterSingleStrand(res.first);  // register new strand
   part->DeregisterSingleStrand(ss);  // deregister old one
 
-  if (nt->GetEnd() == ThreePrime) {
+  if (e == ThreePrime) {
     part->DeregisterSingleStrand(ssPair.second);
   }
   else {
