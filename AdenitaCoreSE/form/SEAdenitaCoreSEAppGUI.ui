@@ -498,7 +498,7 @@
   </connection>
   <connection>
    <sender>btnDelete</sender>
-   <signal>released()</signal>
+   <signal>toggled(bool)</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
    <slot>onDelete()</slot>
    <hints>
