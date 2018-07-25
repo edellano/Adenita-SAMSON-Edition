@@ -23,6 +23,11 @@ SEConnectSSDNAEditor::~SEConnectSSDNAEditor() {
 
 SEConnectSSDNAEditorGUI* SEConnectSSDNAEditor::getPropertyWidget() const { return static_cast<SEConnectSSDNAEditorGUI*>(propertyWidget); }
 
+SEAdenitaCoreSEApp* SEConnectSSDNAEditor::getAdenitaApp() const
+{
+  return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+}
+
 SBCContainerUUID SEConnectSSDNAEditor::getUUID() const { return SBCContainerUUID("0854A585-E146-954F-616C-B4532A1B2555"); }
 
 QString SEConnectSSDNAEditor::getName() const { 
@@ -46,7 +51,7 @@ QPixmap SEConnectSSDNAEditor::getLogo() const {
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
 	// Modify it to better reflect the purpose of your editor.
 
-	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/SEConnectSSDNAEditorIcon.png"));
+	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/connectSS.png"));
 
 }
 
@@ -93,6 +98,22 @@ void SEConnectSSDNAEditor::display() {
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
 
+  if (display_) {
+    SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    
+    //check if a nucleotide got selected
+    auto app = getAdenitaApp();
+    auto nanorobot = app->GetNanorobot();
+
+    auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
+    
+    if (highlightedNucleotides.size() == 1) {
+      currentPosition = highlightedNucleotides[0]->GetPosition();
+    }
+    
+    ADNDisplayHelper::displayCylinder(start_, currentPosition);
+  }
+
 }
 
 void SEConnectSSDNAEditor::displayForShadow() {
@@ -116,13 +137,47 @@ void SEConnectSSDNAEditor::mousePressEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
+  if (event->buttons() == Qt::LeftButton && !display_) {
+    start_ = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
 
+    //check if a nucleotide got selected
+    auto app = getAdenitaApp();
+    auto nanorobot = app->GetNanorobot();
+
+    auto selectedNucleotides = nanorobot->GetSelectedNucleotides();
+    auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
+
+    SB_FOR(auto node, selectedNucleotides) {
+      node->setSelectionFlag(false);
+    }
+
+    if (highlightedNucleotides.size() == 1) {
+      highlightedNucleotides[0]->setSelectionFlag(true);
+      start_ = highlightedNucleotides[0]->GetPosition();
+    }
+
+    display_ = true;
+  }
 }
 
 void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
+  
+  if (display_) {
+    display_ = false;
+
+    auto app = getAdenitaApp();
+    auto nanorobot = app->GetNanorobot();
+
+    auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
+    
+    if (highlightedNucleotides.size() == 1) {
+      highlightedNucleotides[0]->setSelectionFlag(true);
+      app->ConnectSingleStrands();
+    }
+  }
 
 }
 
@@ -130,7 +185,9 @@ void SEConnectSSDNAEditor::mouseMoveEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
-
+  if (display_) {
+    SAMSON::requestViewportUpdate();
+  }
 }
 
 void SEConnectSSDNAEditor::mouseDoubleClickEvent(QMouseEvent* event) {
