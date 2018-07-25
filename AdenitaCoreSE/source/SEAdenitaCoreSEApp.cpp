@@ -12,15 +12,7 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
     logger.ClearLog();
   }
   logger.LogDateTime();
-
-  // GetNanorobot();
-
-  //events
-  /*SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
-    this,
-    SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent)
-    );
-*/
+  
 }
 
 SEAdenitaCoreSEApp::~SEAdenitaCoreSEApp() {
@@ -200,7 +192,7 @@ void SEAdenitaCoreSEApp::ResetVisualModel() {
   
   if (vmAlreadyExist) {
     SBPointer<SEAdenitaVisualModel> adenitaVm = static_cast<SEAdenitaVisualModel*>(vm());
-    adenitaVm->changeScale(adenitaVm->getScale());
+    adenitaVm->changeScaleFocus(adenitaVm->getScaleFocus());
   }
   else {
     SBProxy* vmProxy = SAMSON::getProxy("SEAdenitaVisualModel");

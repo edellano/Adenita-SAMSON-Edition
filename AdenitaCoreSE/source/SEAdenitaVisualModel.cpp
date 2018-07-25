@@ -62,7 +62,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
       SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
   }
   
-  changeScale(6);
+  changeScaleFocus(6);
 
   orderVisibility();
   
@@ -114,14 +114,25 @@ void SEAdenitaVisualModel::eraseImplementation() {
 
 }
 
-float SEAdenitaVisualModel::getScale()
+float SEAdenitaVisualModel::getScaleFocus()
 {
-  return scale_;
+  return scaleFocus_;
 }
 
-void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/)
+void SEAdenitaVisualModel::changeScaleFocus(double scale, bool createIndex/* = true*/)
 {
-  scale_ = scale;
+  scaleFocus_ = scale;
+
+  initArraysForDisplay(createIndex);
+
+  prepareArraysForDisplay();
+
+  SAMSON::requestViewportUpdate();
+}
+
+void SEAdenitaVisualModel::changeScaleContext(double scale, bool createIndex /*= true*/)
+{
+  scaleContext_ = scale;
 
   initArraysForDisplay(createIndex);
 
@@ -313,58 +324,58 @@ void SEAdenitaVisualModel::prepareArraysForDisplay()
 
   //scale_ += animation_step_size;
 
-  if (scale_ > MAX_SCALE) scale_ = MAX_SCALE;
+  if (scaleFocus_ > MAX_SCALE) scaleFocus_ = MAX_SCALE;
 
-  float interpolated = 1.0f - (ceil(scale_) - scale_);
+  float interpolated = 1.0f - (ceil(scaleFocus_) - scaleFocus_);
 
-  if (scale_ < (float)ALL_ATOMS_STICKS) {
+  if (scaleFocus_ < (float)ALL_ATOMS_STICKS) {
     //0 - 9
     prepareScale0to1(interpolated);
     
   }
-  else if (scale_ < (float)ALL_ATOMS_BALLS) {
+  else if (scaleFocus_ < (float)ALL_ATOMS_BALLS) {
     //10 - 19
     //displayScale1to2(interpolated);
   }
-  else if (scale_ < (float)NUCLEOTIDES_BACKBONE) {
+  else if (scaleFocus_ < (float)NUCLEOTIDES_BACKBONE) {
     //20 - 29
     //if (config.show_atomic_scales) {
     //  prepareScale2to3(interpolated);
     //}
   }
-  else if (scale_ < (float)NUCLEOTIDES_SIDECHAIN) {
+  else if (scaleFocus_ < (float)NUCLEOTIDES_SIDECHAIN) {
     //30 - 39
     prepareScale3to4(interpolated);
     //if (config.display_base_pairing) displayBasePairConnections(scale_);
   }
-  else if (scale_ < (float)NUCLEOTIDES_SCAFFOLD) {
+  else if (scaleFocus_ < (float)NUCLEOTIDES_SCAFFOLD) {
     //40 - 49
     prepareScale4to5(interpolated);
     //if (config.display_base_pairing) displayBasePairConnections(scale_);
     //displaySkips(scale_, dimension_);
   }
-  else if (scale_ < (float)STAPLES_SCAFFOLD_PLAITING_SIDECHAIN) {
+  else if (scaleFocus_ < (float)STAPLES_SCAFFOLD_PLAITING_SIDECHAIN) {
     //50 - 59
     prepareScale5to6(interpolated);
     //if (config.display_base_pairing) displayBasePairConnections(scale_);
     //displaySkips(scale_, dimension_);
   }
-  else if (scale_ < (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+  else if (scaleFocus_ < (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
     //60 - 69
     prepareScale6to7(interpolated);
     //if (config.display_base_pairing) displayBasePairConnections(scale_);
   }
-  else if (scale_ < (float)DOUBLE_HELIX_PATH) {
+  else if (scaleFocus_ < (float)DOUBLE_HELIX_PATH) {
     //70 - 79
     prepareScale7to8(interpolated); //todo
     //if (config.display_base_pairing) displayBasePairConnections(scale_);
 
   }
-  else if (scale_ < (float)EDGES_VERTICES) {
+  else if (scaleFocus_ < (float)EDGES_VERTICES) {
     //80 - 89
     prepareScale8to9(interpolated);
   }
-  else if (scale_ < (float)OBJECTS) {
+  else if (scaleFocus_ < (float)OBJECTS) {
     prepareScale9();
   }
   else {
@@ -858,7 +869,7 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
   }
 
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
-    changeScale(scale_, false);
+    changeScaleFocus(scaleFocus_, false);
   }
 }
 
