@@ -118,7 +118,7 @@ bool SEAdenitaVisualModelProperties::setup(SBNode* node) {
 
 void SEAdenitaVisualModelProperties::onSliderScaleFocusChanged(int val)
 {
-  visualModel->changeScale(val / 10.0f, false);
+  visualModel->changeScaleFocus(val / 10.0f, false);
 }
 
 void SEAdenitaVisualModelProperties::onSliderScaleContextChanged(int val)
