@@ -8,6 +8,8 @@
 #include "SBDynamicalEvent.hpp"
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
+#include "ADNDisplayHelper.hpp"
+#include "SEAdenitaCoreSEApp.hpp"
 
 /// This class implements an editor
 
@@ -93,6 +95,12 @@ public :
 	SEConnectSSDNAEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
+
+private:
+  SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
+
+  bool display_ = false;
+  SBPosition3 start_;
 
 };
 

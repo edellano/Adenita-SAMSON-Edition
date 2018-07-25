@@ -52,23 +52,26 @@ void ADNDisplayHelper::displayCylinder(SBPosition3 start, SBPosition3 end, std::
   SEConfig& config = SEConfig::GetInstance();
   
   unsigned int nCylinders = 1;
-  unsigned int nPositions = 2;
+  unsigned int nPositions = 2 * nCylinders;
   unsigned int* indexData = new unsigned int[2 * nCylinders];
   float *positionData = new float[3 * nPositions];
-  unsigned int *capData = new unsigned int[2 * nCylinders];
   float *radiusData = new float[2 * nCylinders];
+  unsigned int *capData = new unsigned int[2 * nCylinders];
   float *colorData = new float[4 * 2 * nCylinders];
   unsigned int *flagData = new unsigned int[2 * nCylinders];
 
-  positionData[3 * 0 + 0] = start.v[0].getValue();
-  positionData[3 * 0 + 1] = start.v[1].getValue();
-  positionData[3 * 0 + 2] = start.v[2].getValue();
-  positionData[3 * 1 + 0] = end.v[0].getValue();
-  positionData[3 * 1 + 1] = end.v[1].getValue();
-  positionData[3 * 1 + 2] = end.v[2].getValue();
+  positionData[0 * 3 + 0] = start.v[0].getValue();
+  positionData[0 * 3 + 1] = start.v[1].getValue();
+  positionData[0 * 3 + 2] = start.v[2].getValue();
+  positionData[1 * 3 + 0] = end.v[0].getValue();
+  positionData[1 * 3 + 1] = end.v[1].getValue();
+  positionData[1 * 3 + 2] = end.v[2].getValue();
 
   indexData[0] = 0;
   indexData[1] = 1;
+
+  radiusData[0] = 100;
+  radiusData[1] = 100;
 
   capData[0] = 1;
   capData[1] = 1;
@@ -76,24 +79,25 @@ void ADNDisplayHelper::displayCylinder(SBPosition3 start, SBPosition3 end, std::
   colorData[0] = config.nucleotide_E_Color[0];
   colorData[1] = config.nucleotide_E_Color[1];
   colorData[2] = config.nucleotide_E_Color[2];
-  colorData[3] = config.nucleotide_E_Color[3] * 0.5f;
-  colorData[4] = config.nucleotide_E_Color[4];
-  colorData[5] = config.nucleotide_E_Color[5];
-  colorData[6] = config.nucleotide_E_Color[6];
-  colorData[7] = config.nucleotide_E_Color[7] * 0.5f;
-
-  unsigned int flag = 0;
+  colorData[3] = config.nucleotide_E_Color[3] * 0.7f;
+  colorData[4] = config.nucleotide_E_Color[0];
+  colorData[5] = config.nucleotide_E_Color[1];
+  colorData[6] = config.nucleotide_E_Color[2];
+  colorData[7] = config.nucleotide_E_Color[3] * 0.7f;
+  
+  int flag = 0;
   flagData[0] = flag;
   flagData[1] = flag;
 
-
   SAMSON::displayCylinders(nCylinders, nPositions, indexData, positionData, radiusData, capData, colorData, flagData);
+
   delete[] indexData;
+  delete[] radiusData;
   delete[] capData;
   delete[] colorData;
-  delete[] positionData;
   delete[] flagData;
-  delete[] radiusData;
+  delete[] positionData;
+
 
 }
 
