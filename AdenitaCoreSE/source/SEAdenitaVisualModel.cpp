@@ -136,7 +136,6 @@ void SEAdenitaVisualModel::changeVisibility(double layer)
   auto parts = nanorobot_->GetParts();
   SEConfig& config = SEConfig::GetInstance();
 
-  unsigned int index = 0;
   SB_FOR(auto part, parts) {
 
     auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -147,6 +146,8 @@ void SEAdenitaVisualModel::changeVisibility(double layer)
       auto ssDist = sortedSingleStrandsByDist_[ss()];
 
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+
+        auto index = ntMap_[nt()];
 
         if (index >= nPositions_) return;
         auto ntDist = sortedNucleotidesByDist_[nt()];
@@ -175,8 +176,6 @@ void SEAdenitaVisualModel::changeVisibility(double layer)
           colorsE_(index, 3) = 1.0f;
         }
         
-        
-        ++index;
       }
     }
   }
@@ -219,6 +218,8 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
   unsigned int nCylinders = boost::numeric_cast<unsigned int>(nPositions - singleStrands.size());
 
   ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
+
+  ntMap_.clear();
 
   unsigned int index = 0;
   //this init can be optimized in the future
@@ -285,7 +286,6 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
     }
   }
 
-  //ntMap.clear();
 
   return indices;
 
@@ -392,9 +392,7 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
 
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
-
-  unsigned int index = 0;
-
+  
   auto parts = nanorobot_->GetParts();
 
   SB_FOR(auto part, parts) {
@@ -406,6 +404,8 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
       auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
 
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+
+        auto index = ntMap_[nt()];
 
         auto bbPos = nanorobot_->GetNucleotideBackbonePosition(nt);
         float minX = bbPos[0].getValue();
@@ -450,7 +450,6 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
           colorsE_(index, 3) = 0.0f;
         }
 
-        ++index;
       }
       
     }
@@ -471,8 +470,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 {
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
-
-  //unsigned int index = 0;
 
   auto parts = nanorobot_->GetParts();
 
@@ -573,9 +570,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
           colorsV_(index, 3) = 0.0f;
           colorsE_(index, 3) = 0.0f;
         }
-
-
-        //++index;
       }
     }
   }
@@ -598,7 +592,6 @@ void SEAdenitaVisualModel::prepareScale9(bool forSelection /*= false*/)
 
 void SEAdenitaVisualModel::highlightFlagChanged()
 {
-  unsigned int index = 0;
   auto parts = nanorobot_->GetParts();
 
   SB_FOR(auto part, parts) {
@@ -606,8 +599,8 @@ void SEAdenitaVisualModel::highlightFlagChanged()
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
       auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        auto index = ntMap_[nt()];
         flags_(index) = nt->getInheritedFlags();
-        ++index;
       }
     }
   }
