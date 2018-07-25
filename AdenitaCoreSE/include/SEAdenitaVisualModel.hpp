@@ -69,7 +69,7 @@ public :
 	/// \name Rendering
 	//@{
   float       												getScale();																
-  virtual void												changeScale(double scale);																///< Displays the visual model
+  virtual void												changeScale(double scalem, bool createIndex = true);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
 	
   virtual void												display();																///< Displays the visual model
@@ -92,7 +92,7 @@ public :
 	//@}
 
 private:
-  void												initArraysForDisplay(); // Clear the arrays for displaying 
+  void												initArraysForDisplay(bool createIndex = true); 
   ADNArray<unsigned int>      getNucleotideIndices();
   void												prepareArraysForDisplay(); // Prepare the arrays for displaying (this separates the interpolation from display)
   void												prepareScale0to1(double iv, bool forSelection = false); // scale 0 -> 1: depicting licorice to sticks representation
