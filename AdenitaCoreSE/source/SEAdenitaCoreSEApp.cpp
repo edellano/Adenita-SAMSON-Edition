@@ -214,6 +214,9 @@ void SEAdenitaCoreSEApp::ResetVisualModel() {
 
 void SEAdenitaCoreSEApp::ConnectSingleStrands()
 {
+
+  int size1 = GetNanorobot()->GetSingleStrands().size();
+
   auto nts = GetNanorobot()->GetSelectedNucleotides();
   if (nts.size() == 2) {
     ADNPointer<ADNNucleotide> fPrime = nts[0];
@@ -233,6 +236,7 @@ void SEAdenitaCoreSEApp::ConnectSingleStrands()
       ResetVisualModel();
     }
   }
+
 }
 
 void SEAdenitaCoreSEApp::BreakSingleStrand()
