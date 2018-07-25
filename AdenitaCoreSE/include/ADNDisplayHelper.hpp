@@ -13,7 +13,7 @@
 namespace ADNDisplayHelper {
 
   void displayLine(SBPosition3 start, SBPosition3 end, std::string text = "");
-  void displayCylinder(SBPosition3 start, SBPosition3 end, std::string text = "");
+  void displayCylinder(SBPosition3 start, SBPosition3 end, float radius = 150);
   void displayLine(ublas::vector<double> center, ublas::vector<double> dir, int length);
   void displayVector(SBVector3 vec, SBPosition3 shift);
   void displayVector(SBVector3 vec, SBPosition3 shift, float * color, int length);
