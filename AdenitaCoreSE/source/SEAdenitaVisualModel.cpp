@@ -216,8 +216,6 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
   unsigned int nCylinders = boost::numeric_cast<unsigned int>(nPositions - singleStrands.size());
 
   ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
-  
-  std::map<ADNNucleotide*, unsigned int> ntMap;
 
   unsigned int index = 0;
   //this init can be optimized in the future
@@ -245,36 +243,36 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
       size_t curNCylinders = nucleotides.size() - 1;
       ADNArray<unsigned int> curIndices = ADNArray<unsigned int>(2 * curNCylinders);
 
-      ////looping using the next_ member variable of nucleotides
-      //unsigned int j = 0;
-      //while (nanorobot_->GetNucleotideNext(cur) != nullptr) {
-      //  unsigned int curIndex;
-      //  curIndex = ntMap[cur()];
-      //  //nucleotides.getIndex(cur(), curIndex);
-      //  unsigned int nextIndex;
-      //  auto next = nanorobot_->GetNucleotideNext(cur)();
-      //  nextIndex = ntMap[next];
-      //  //nucleotides.getIndex(next, nextIndex);
-
-      //  curIndices(2 * j) = curIndex;
-      //  curIndices(2 * j + 1) = nextIndex;
-      //  j++;
-
-      //  cur = nanorobot_->GetNucleotideNext(cur);
-      //}
-
-      for (int j = 0; j < nucleotides.size() - 1; ++j) {
-        auto cur = nucleotides[j];
+      //looping using the next_ member variable of nucleotides
+      unsigned int j = 0;
+      while (nanorobot_->GetNucleotideNext(cur) != nullptr) {
         unsigned int curIndex;
-        curIndex = ntMap[cur];
+        curIndex = ntMap[cur()];
+        //nucleotides.getIndex(cur(), curIndex);
         unsigned int nextIndex;
-        auto next = nucleotides[j + 1];
+        auto next = nanorobot_->GetNucleotideNext(cur)();
         nextIndex = ntMap[next];
+        //nucleotides.getIndex(next, nextIndex);
 
         curIndices(2 * j) = curIndex;
         curIndices(2 * j + 1) = nextIndex;
+        j++;
 
+        cur = nanorobot_->GetNucleotideNext(cur);
       }
+
+      //for (int j = 0; j < nucleotides.size() - 1; ++j) {
+      //  auto cur = nucleotides[j];
+      //  unsigned int curIndex;
+      //  curIndex = ntMap[cur];
+      //  unsigned int nextIndex;
+      //  auto next = nucleotides[j + 1];
+      //  nextIndex = ntMap[next];
+
+      //  curIndices(2 * j) = curIndex;
+      //  curIndices(2 * j + 1) = nextIndex;
+
+      //}
 
       for (int k = 0; k < curNCylinders * 2; ++k) {
         indices(sumNumEdges + k) = curIndices(k);
@@ -468,7 +466,7 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
 
-  unsigned int index = 0;
+  //unsigned int index = 0;
 
   auto parts = nanorobot_->GetParts();
 
@@ -482,6 +480,7 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
 
+        auto index = ntMap[nt()];
         capData_(index) = 0;
         flags_(index) = nt->getInheritedFlags();
         nodeIndices_(index) = nt->getNodeIndex();
@@ -570,7 +569,7 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
         }
 
 
-        ++index;
+        //++index;
       }
     }
   }

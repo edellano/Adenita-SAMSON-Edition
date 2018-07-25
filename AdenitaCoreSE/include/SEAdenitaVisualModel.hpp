@@ -142,6 +142,7 @@ private:
   ADNArray<unsigned int> nodeIndices_;
   ADNArray<unsigned int> indices_;
 
+  std::map<ADNNucleotide*, unsigned int> ntMap_;
 };
 
 
