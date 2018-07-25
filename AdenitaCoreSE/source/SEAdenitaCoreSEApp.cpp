@@ -12,15 +12,7 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
     logger.ClearLog();
   }
   logger.LogDateTime();
-
-  // GetNanorobot();
-
-  //events
-  /*SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
-    this,
-    SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent)
-    );
-*/
+  
 }
 
 SEAdenitaCoreSEApp::~SEAdenitaCoreSEApp() {

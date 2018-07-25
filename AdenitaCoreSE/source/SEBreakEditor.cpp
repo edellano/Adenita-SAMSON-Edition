@@ -117,6 +117,8 @@ void SEBreakEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+
+
 }
 
 void SEBreakEditor::mouseReleaseEvent(QMouseEvent* event) {
