@@ -152,6 +152,25 @@ CollectionMap<ADNPart> ADNNanorobot::GetSelectedParts()
   return parts;
 }
 
+CollectionMap<ADNNucleotide> ADNNanorobot::GetHighlightedNucleotides()
+{
+  CollectionMap<ADNNucleotide> nts;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNNucleotide")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isHighlighted()) {
+      ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
+      nts.addReferenceTarget(nt());
+    }
+  }
+
+  return nts;
+}
+
 //ANTSingleStrand* ANTNanorobot::MergeStrands(ANTSingleStrand * first_strand, ANTSingleStrand * second_strand, std::string sequence) {
 //  if (first_strand == nullptr || second_strand == nullptr) return nullptr;
 //
