@@ -99,8 +99,6 @@ void SEConnectSSDNAEditor::display() {
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
 
   if (display_) {
-    SEConfig& config = SEConfig::GetInstance();
-
     SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     
     //check if a nucleotide got selected
@@ -110,10 +108,10 @@ void SEConnectSSDNAEditor::display() {
     auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
     
     if (highlightedNucleotides.size() == 1) {
-      currentPosition = highlightedNucleotides[0]->GetBackbone()->GetPosition();
+      currentPosition = highlightedNucleotides[0]->GetPosition();
     }
     
-    ADNDisplayHelper::displayCylinder(start_, currentPosition, config.nucleotide_V_radius);
+    ADNDisplayHelper::displayCylinder(start_, currentPosition);
   }
 
 }
@@ -155,7 +153,7 @@ void SEConnectSSDNAEditor::mousePressEvent(QMouseEvent* event) {
 
     if (highlightedNucleotides.size() == 1) {
       highlightedNucleotides[0]->setSelectionFlag(true);
-      start_ = highlightedNucleotides[0]->GetBackbone()->GetPosition();
+      start_ = highlightedNucleotides[0]->GetPosition();
     }
 
     display_ = true;
