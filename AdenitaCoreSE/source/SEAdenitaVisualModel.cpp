@@ -230,7 +230,7 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
       auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        ntMap.insert(make_pair(nt(), index));
+        ntMap_.insert(make_pair(nt(), index));
         ++index;
       }
     }
@@ -250,11 +250,11 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
       unsigned int j = 0;
       while (nanorobot_->GetNucleotideNext(cur) != nullptr) {
         unsigned int curIndex;
-        curIndex = ntMap[cur()];
+        curIndex = ntMap_[cur()];
         //nucleotides.getIndex(cur(), curIndex);
         unsigned int nextIndex;
         auto next = nanorobot_->GetNucleotideNext(cur)();
-        nextIndex = ntMap[next];
+        nextIndex = ntMap_[next];
         //nucleotides.getIndex(next, nextIndex);
 
         curIndices(2 * j) = curIndex;
@@ -285,7 +285,7 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
     }
   }
 
-  ntMap.clear();
+  //ntMap.clear();
 
   return indices;
 
@@ -486,7 +486,7 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
 
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
 
-        auto index = ntMap[nt()];
+        auto index = ntMap_[nt()];
         capData_(index) = 0;
         flags_(index) = nt->getInheritedFlags();
         nodeIndices_(index) = nt->getNodeIndex();
