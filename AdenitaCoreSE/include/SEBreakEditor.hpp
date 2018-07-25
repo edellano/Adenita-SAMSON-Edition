@@ -3,11 +3,13 @@
 #include "SBGEditor.hpp"
 #include "SEBreakEditorGUI.hpp"
 
+#include "SBGApp.hpp" 
 #include "SBBaseEvent.hpp"
 #include "SBDocumentEvent.hpp"
 #include "SBDynamicalEvent.hpp"
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
+#include "SEAdenitaCoreSEApp.hpp"
 
 /// This class implements an editor
 
@@ -93,6 +95,9 @@ public :
 	SEBreakEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
+
+private:
+  SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
 
 };
 

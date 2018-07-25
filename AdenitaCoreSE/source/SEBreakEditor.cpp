@@ -23,6 +23,11 @@ SEBreakEditor::~SEBreakEditor() {
 
 SEBreakEditorGUI* SEBreakEditor::getPropertyWidget() const { return static_cast<SEBreakEditorGUI*>(propertyWidget); }
 
+SEAdenitaCoreSEApp* SEBreakEditor::getAdenitaApp() const
+{
+  return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+}
+
 SBCContainerUUID SEBreakEditor::getUUID() const { return SBCContainerUUID("2FACBF90-F7E2-AFCB-5E37-AA86763DDBC2"); }
 
 QString SEBreakEditor::getName() const { 
@@ -46,7 +51,7 @@ QPixmap SEBreakEditor::getLogo() const {
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
 	// Modify it to better reflect the purpose of your editor.
 
-	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/SEBreakEditorIcon.png"));
+	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/break.png"));
 
 }
 
@@ -117,8 +122,21 @@ void SEBreakEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  auto app = getAdenitaApp();
+  auto nanorobot = app->GetNanorobot();
 
+  auto selectedNucleotides = nanorobot->GetSelectedNucleotides();
+  auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
 
+  SB_FOR(auto node, selectedNucleotides) {
+    node->setSelectionFlag(false);
+  }
+
+  if (highlightedNucleotides.size() == 1) {
+    highlightedNucleotides[0]->setSelectionFlag(true);
+  }
+
+  app->BreakSingleStrand();
 }
 
 void SEBreakEditor::mouseReleaseEvent(QMouseEvent* event) {
