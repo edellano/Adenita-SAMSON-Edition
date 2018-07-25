@@ -123,7 +123,7 @@ void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/
 {
   scale_ = scale;
 
-  initArraysForDisplay();
+  initArraysForDisplay(createIndex);
 
   prepareArraysForDisplay();
 
