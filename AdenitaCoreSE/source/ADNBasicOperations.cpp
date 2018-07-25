@@ -214,21 +214,26 @@ std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOper
 
 std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOperations::DeleteNucleotide(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt)
 {
+  auto ss = nt->GetStrand();
+  End e = nt->GetEnd();
+
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> res = std::make_pair(nullptr, nullptr);
   // first break
   auto ssPair = BreakSingleStrand(part, nt);
   res.first = ssPair.first;
-  if (nt->GetEnd() == ThreePrime) {
+  part->RegisterSingleStrand(res.first);  // register new strand
+  part->DeregisterSingleStrand(ss);  // deregister old one
+
+  if (e == ThreePrime) {
     part->DeregisterSingleStrand(ssPair.second);
-    //ssPair.second.deleteReferenceTarget();
   }
   else {
     // second break
     auto ssPair2 = BreakSingleStrand(part, nt->GetNext());
     res.second = ssPair2.second;
-    // delete remaining single strand containing nt
-    part->DeregisterSingleStrand(ssPair2.first);
-    //ssPair2.first.deleteReferenceTarget();
+    part->RegisterSingleStrand(res.second);
+    part->DeregisterSingleStrand(ssPair.second);  // deregister second strand from first break
+    part->DeregisterSingleStrand(ssPair2.first);  // deregister strand containing only the nt we want to delete
   }
 
   return res;
