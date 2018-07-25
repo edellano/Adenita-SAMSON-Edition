@@ -125,7 +125,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
     SEAdenitaCoreSEApp* t = getApp();
     t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/hextube/hextube.json");
 
-    //t->ResetVisualModel();
+    t->ResetVisualModel();
     SAMSON::getActiveCamera()->center();
   }
   else {
