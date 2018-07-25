@@ -47,7 +47,7 @@ void ADNDisplayHelper::displayLine(SBPosition3 start, SBPosition3 end, std::stri
 
 }
 
-void ADNDisplayHelper::displayCylinder(SBPosition3 start, SBPosition3 end, float radius)
+void ADNDisplayHelper::displayCylinder(SBPosition3 start, SBPosition3 end, std::string text /*= ""*/)
 {
   SEConfig& config = SEConfig::GetInstance();
   
@@ -70,8 +70,8 @@ void ADNDisplayHelper::displayCylinder(SBPosition3 start, SBPosition3 end, float
   indexData[0] = 0;
   indexData[1] = 1;
 
-  radiusData[0] = radius;
-  radiusData[1] = radius;
+  radiusData[0] = 100;
+  radiusData[1] = 100;
 
   capData[0] = 1;
   capData[1] = 1;
