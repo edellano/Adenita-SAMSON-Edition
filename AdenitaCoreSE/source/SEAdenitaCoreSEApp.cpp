@@ -209,8 +209,7 @@ void SEAdenitaCoreSEApp::ResetVisualModel() {
     SAMSON::getActiveLayer()->addChild(adenitaVm);
   }
 
-  logger.LogPassedMilliseconds(start, "ResetVisualModel");
-
+  logger.LogDebugPassedMilliseconds(start, "ResetVisualModel");
 }
 
 void SEAdenitaCoreSEApp::ConnectSingleStrands()
@@ -226,10 +225,10 @@ void SEAdenitaCoreSEApp::ConnectSingleStrands()
       }
       auto fPrimeStrand = fPrime->GetStrand();
       auto tPrimeStrand = tPrime->GetStrand();
-      ADNPointer<ADNPart> part = nanorobot_->GetPart(tPrimeStrand);
+      ADNPointer<ADNPart> part = GetNanorobot()->GetPart(tPrimeStrand);
       auto newStrand = ADNBasicOperations::MergeSingleStrands(part, tPrimeStrand, fPrimeStrand);
-      nanorobot_->RemoveSingleStrand(tPrimeStrand);
-      nanorobot_->RemoveSingleStrand(fPrimeStrand);
+      GetNanorobot()->RemoveSingleStrand(tPrimeStrand);
+      GetNanorobot()->RemoveSingleStrand(fPrimeStrand);
 
       ResetVisualModel();
     }
@@ -243,9 +242,9 @@ void SEAdenitaCoreSEApp::BreakSingleStrand()
     ADNPointer<ADNNucleotide> nt = nts[0];
     if (nt->GetEnd() != ThreePrime) {
       ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
-      ADNPointer<ADNPart> part = nanorobot_->GetPart(ss);
+      ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
       auto newStrands = ADNBasicOperations::BreakSingleStrand(part, nt);
-      nanorobot_->RemoveSingleStrand(ss);
+      GetNanorobot()->RemoveSingleStrand(ss);
 
       ResetVisualModel();
     }
@@ -254,14 +253,18 @@ void SEAdenitaCoreSEApp::BreakSingleStrand()
 
 void SEAdenitaCoreSEApp::DeleteNucleotide()
 {
+  auto numNts = GetNanorobot()->GetNumberOfNucleotides();
+  auto numSss = GetNanorobot()->GetNumberOfSingleStrands();
+
   auto nts = GetNanorobot()->GetSelectedNucleotides();
   if (nts.size() == 1) {
     ADNPointer<ADNNucleotide> nt = nts[0];
     ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
-    ADNPointer<ADNPart> part = nanorobot_->GetPart(ss);
+    ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
     auto newStrands = ADNBasicOperations::DeleteNucleotide(part, nt);
-    nanorobot_->RemoveSingleStrand(ss);
-
+    //ss->removeChild(nt());
+    //nt->erase();
+       
     ResetVisualModel();
   }
 }
@@ -274,11 +277,7 @@ void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
 {
-  ADNLogger& logger = ADNLogger::GetLogger();
-  logger.Log(QString("structure has been changed"));
-  
   //ResetVisualModel();
-
 }
 
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
