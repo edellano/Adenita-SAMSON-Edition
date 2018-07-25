@@ -482,7 +482,7 @@
   </connection>
   <connection>
    <sender>btnBreak</sender>
-   <signal>released()</signal>
+   <signal>toggled(bool)</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
    <slot>onBreak()</slot>
    <hints>
