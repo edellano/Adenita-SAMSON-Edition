@@ -108,10 +108,10 @@ void SEConnectSSDNAEditor::display() {
     auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
     
     if (highlightedNucleotides.size() == 1) {
-      currentPosition = highlightedNucleotides[0]->GetPosition();
+      currentPosition = highlightedNucleotides[0]->GetBackbone()->GetPosition();
     }
     
-    ADNDisplayHelper::displayCylinder(start_, currentPosition);
+    ADNDisplayHelper::displayCylinder(start_->GetBackbone()->GetPosition(), currentPosition);
   }
 
 }
@@ -138,7 +138,6 @@ void SEConnectSSDNAEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
   if (event->buttons() == Qt::LeftButton && !display_) {
-    start_ = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
 
     //check if a nucleotide got selected
     auto app = getAdenitaApp();
@@ -152,11 +151,14 @@ void SEConnectSSDNAEditor::mousePressEvent(QMouseEvent* event) {
     }
 
     if (highlightedNucleotides.size() == 1) {
-      highlightedNucleotides[0]->setSelectionFlag(true);
-      start_ = highlightedNucleotides[0]->GetPosition();
+      auto nt = highlightedNucleotides[0];
+      
+      nt->setSelectionFlag(true);
+      start_ = nt;
+      display_ = true;
+
     }
 
-    display_ = true;
   }
 }
 
@@ -174,8 +176,47 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
     auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
     
     if (highlightedNucleotides.size() == 1) {
-      highlightedNucleotides[0]->setSelectionFlag(true);
-      app->ConnectSingleStrands();
+      auto end = highlightedNucleotides[0];
+      bool start53 = start_->GetEnd() == FivePrime || start_->GetEnd() == ThreePrime;
+      bool end53 = end->GetEnd() == FivePrime || end->GetEnd() == ThreePrime;
+      if (start53 && end53) {
+        end->setSelectionFlag(true);
+        app->ConnectSingleStrands();
+      }
+      else { //if not the respective endings are selected, then break at the locations and connect the new endings
+        auto selectedNucleotides = nanorobot->GetSelectedNucleotides();
+        
+        SB_FOR(auto node, selectedNucleotides) {
+          node->setSelectionFlag(false);
+        }
+
+        //break the strands first
+        if (start53 && !end53) {
+          end->setSelectionFlag(true);
+          app->BreakSingleStrand();
+        }
+        else if (!start53 && end53) {
+          start_->setSelectionFlag(true);
+          app->BreakSingleStrand();
+        }
+        else {
+          start_->setSelectionFlag(true);
+          app->BreakSingleStrand();
+          start_->setSelectionFlag(false);
+          end->setSelectionFlag(true);
+          app->BreakSingleStrand();
+          end->setSelectionFlag(false);
+        }
+
+        //connect at broken location
+        start_->setSelectionFlag(true);
+        end->setSelectionFlag(true);
+        app->ConnectSingleStrands();
+      }
+
+
+      
+
     }
   }
 
