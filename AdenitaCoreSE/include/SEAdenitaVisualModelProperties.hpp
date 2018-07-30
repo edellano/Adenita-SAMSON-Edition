@@ -71,7 +71,8 @@ public:
 	};
 
 public slots:
-void                              onSliderScaleChanged(int val);
+void                              onSliderScaleFocusChanged(int val);
+void                              onSliderScaleContextChanged(int val);
 void                              onSliderVisibilityChanged(int val);
 void                              onSpinboxVisibilityChanged(double val);
 
