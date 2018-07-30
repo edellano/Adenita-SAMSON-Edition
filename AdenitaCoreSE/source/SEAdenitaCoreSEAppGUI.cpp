@@ -4,80 +4,83 @@
 #include "SBGWindow.hpp"
 #include <QInputDialog>
 #include "SEWireframeEditor.hpp"
+#include "SEBreakEditor.hpp"
+#include "SEDeleteEditor.hpp"
+#include <QPixmap>
 
 SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( t ) {
 
 	ui.setupUi( this );
 
   //change icons
-  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/";
+  string iconsPath = SB_ELEMENT_PATH + "/Resource/icons/";
 
   QIcon loadIcon;
-  loadIcon.addFile(string(iconPath + "load.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  loadIcon.addFile(string(iconsPath + "load.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnLoad->setIcon(loadIcon);
 
   QIcon saveIcon;
-  saveIcon.addFile(string(iconPath + "save.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  saveIcon.addFile(string(iconsPath + "save.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnSave->setIcon(saveIcon);
 
   QIcon exportIcon; 
-  exportIcon.addFile(string(iconPath + "export.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  exportIcon.addFile(string(iconsPath + "export.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnExport->setIcon(exportIcon);
 
   QIcon searchIcon;
-  searchIcon.addFile(string(iconPath + "search.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  searchIcon.addFile(string(iconsPath + "search.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnSearch->setIcon(searchIcon);
 
   QIcon createIcon;
-  createIcon.addFile(string(iconPath + "create.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  createIcon.addFile(string(iconsPath + "create.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnCreate->setIcon(createIcon);
 
   QIcon setScaffIcon;
-  setScaffIcon.addFile(string(iconPath + "setScaffold.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  setScaffIcon.addFile(string(iconsPath + "setScaffold.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnSetScaff->setIcon(setScaffIcon);
 
   QIcon breakIcon;
-  breakIcon.addFile(string(iconPath + "break.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  breakIcon.addFile(string(iconsPath + "break.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnBreak->setIcon(breakIcon);
 
   QIcon connectSSIcon;
-  connectSSIcon.addFile(string(iconPath + "connectSS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  connectSSIcon.addFile(string(iconsPath + "connectSS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnConnectSS->setIcon(connectSSIcon);
 
   QIcon connectDSIcon;
-  connectDSIcon.addFile(string(iconPath + "connectDS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  connectDSIcon.addFile(string(iconsPath + "connectDS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnConnectDS->setIcon(connectDSIcon);
 
   QIcon mutateIcon;
-  mutateIcon.addFile(string(iconPath + "mutate.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  mutateIcon.addFile(string(iconsPath + "mutate.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnMutate->setIcon(mutateIcon);
 
   QIcon insertIcon;
-  insertIcon.addFile(string(iconPath + "insert.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  insertIcon.addFile(string(iconsPath + "insert.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnInsert->setIcon(insertIcon);
 
   QIcon deleteIcon;
-  deleteIcon.addFile(string(iconPath + "delete.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  deleteIcon.addFile(string(iconsPath + "delete.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnDelete->setIcon(deleteIcon);
 
   QIcon addLoopIcon;
-  addLoopIcon.addFile(string(iconPath + "addLoop.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  addLoopIcon.addFile(string(iconsPath + "addLoop.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnAddLoop->setIcon(addLoopIcon);
 
   QIcon addSkipIcon;
-  addSkipIcon.addFile(string(iconPath + "addSkip.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  addSkipIcon.addFile(string(iconsPath + "addSkip.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnAddSkip->setIcon(addSkipIcon);
 
   QIcon mapToAminoAcidIcon;
-  mapToAminoAcidIcon.addFile(string(iconPath + "mapToAminoAcid.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  mapToAminoAcidIcon.addFile(string(iconsPath + "mapToAminoAcid.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnMapToAminoAcids->setIcon(mapToAminoAcidIcon);
 
   QIcon editAtomsIcon;
-  editAtomsIcon.addFile(string(iconPath + "editAtoms.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  editAtomsIcon.addFile(string(iconsPath + "editAtoms.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnEditAtoms->setIcon(editAtomsIcon);
 
   QIcon paintIcon;
-  paintIcon.addFile(string(iconPath + "paint.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  paintIcon.addFile(string(iconsPath + "paint.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnPaint->setIcon(paintIcon);
 
 
@@ -125,7 +128,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
     SEAdenitaCoreSEApp* t = getApp();
     t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/hextube/hextube.json");
 
-    //t->ResetVisualModel();
+    t->ResetVisualModel();
     SAMSON::getActiveCamera()->center();
   }
   else {
@@ -322,14 +325,35 @@ void SEAdenitaCoreSEAppGUI::onConnectSingleStrands()
 
 void SEAdenitaCoreSEAppGUI::onBreak()
 {
-  SEAdenitaCoreSEApp* t = getApp();
-  t->BreakSingleStrand();
+  bool active = ui.btnBreak->isChecked();
+  if (active) {
+    SBProxy* p = SAMSON::getProxy("SEBreakEditor");
+    SEBreakEditor* e = static_cast<SEBreakEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
+    SAMSON::setActiveEditor(e);
+    string iconPath = SB_ELEMENT_PATH + "/Resource/icons/break.png";
+
+    SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
+  } else {
+    SAMSON::setActiveEditor(nullptr);
+    SAMSON::unsetViewportCursor();
+  }
 }
 
 void SEAdenitaCoreSEAppGUI::onDelete()
 {
-  SEAdenitaCoreSEApp* t = getApp();
-  t->DeleteNucleotide();
+  bool active = ui.btnDelete->isChecked();
+  if (active) {
+    SBProxy* p = SAMSON::getProxy("SEDeleteEditor");
+    SEDeleteEditor* e = static_cast<SEDeleteEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
+    SAMSON::setActiveEditor(e);
+    string iconPath = SB_ELEMENT_PATH + "/Resource/icons/delete.png";
+
+    SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
+  }
+  else {
+    SAMSON::setActiveEditor(nullptr);
+    SAMSON::unsetViewportCursor();
+  }
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
