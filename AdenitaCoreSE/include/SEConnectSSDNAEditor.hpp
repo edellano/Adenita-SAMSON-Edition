@@ -100,7 +100,7 @@ private:
   SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
 
   bool display_ = false;
-  SBPosition3 start_;
+  ADNPointer<ADNNucleotide> start_;
 
 };
 

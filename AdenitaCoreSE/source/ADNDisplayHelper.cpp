@@ -70,8 +70,8 @@ void ADNDisplayHelper::displayCylinder(SBPosition3 start, SBPosition3 end, std::
   indexData[0] = 0;
   indexData[1] = 1;
 
-  radiusData[0] = 100;
-  radiusData[1] = 100;
+  radiusData[0] = config.nucleotide_V_radius;
+  radiusData[1] = config.nucleotide_V_radius;
 
   capData[0] = 1;
   capData[1] = 1;
