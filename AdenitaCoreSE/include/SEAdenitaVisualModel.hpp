@@ -68,9 +68,8 @@ public :
 
 	/// \name Rendering
 	//@{
-  float       												getScaleFocus();																
-  virtual void												changeScaleFocus(double scale, bool createIndex = true);																///< Displays the visual model
-  virtual void												changeScaleContext(double scale, bool createIndex = true);																///< Displays the visual model
+  float       												getScale();																
+  virtual void												changeScale(double scale, bool createIndex = true);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
 	
   virtual void												display();																///< Displays the visual model
@@ -123,8 +122,7 @@ private:
   ADNArray<float>	doubleHelixEColor_;
   ADNArray<float>	basePairingEColor_;
 
-  double scaleFocus_;
-  double scaleContext_;
+  double scale_;
 
   ADNNanorobot * nanorobot_;
 
