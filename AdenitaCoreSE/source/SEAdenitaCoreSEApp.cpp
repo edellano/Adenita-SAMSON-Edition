@@ -239,10 +239,14 @@ void SEAdenitaCoreSEApp::BreakSingleStrand()
     if (nt->GetEnd() != ThreePrime) {
       ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
       ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
-      auto newStrands = ADNBasicOperations::BreakSingleStrand(part, nt);
-      GetNanorobot()->RemoveSingleStrand(ss);
+      // to break in the 3' direction
+      auto ntNext = nt->GetNext();
+      if (ntNext != nullptr) {
+        auto newStrands = ADNBasicOperations::BreakSingleStrand(part, ntNext);
+        GetNanorobot()->RemoveSingleStrand(ss);
 
-      ResetVisualModel();
+        ResetVisualModel();
+      }
     }
   }
 }
