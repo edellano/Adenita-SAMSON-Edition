@@ -14,6 +14,13 @@
 
 using namespace rapidjson;
 
+enum SEConfigMode {
+  DEBUG_LOG = 0,
+  DEBUG_NO_LOG = 1,
+  HAICHAO = 2,
+  ELISA = 3
+};
+
 class SEConfig : public QObject {
   Q_OBJECT
 public:
@@ -90,7 +97,7 @@ public:
   bool display_base_pairing = false;
   bool show_overlay = false;
   // group general
-  std::string mode = "debug_no_log"; //which mode of the software active. debug_log, debug_no_log, haichao, elisa
+  SEConfigMode mode = DEBUG_NO_LOG; //which mode of the software active. debug_log, debug_no_log, haichao, elisa
 
 public slots:
   void updateConfig();
