@@ -179,6 +179,7 @@ public:
 
   End GetEnd();
   void SetEnd(End e);
+  bool IsEnd();
 
   ADNPointer<ADNBackbone> GetBackbone();
   void SetBackbone(ADNPointer<ADNBackbone> bb);
