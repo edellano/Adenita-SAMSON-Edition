@@ -91,7 +91,7 @@ bool SEAdenitaVisualModelProperties::setup() {
 		visualModel = static_cast<SEAdenitaVisualModel*>((nodeIndexer)[0]);
 		visualModel->connectBaseSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onBaseEvent));
 		visualModel->connectVisualSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onVisualEvent));
-    connect(ui.hslScaleFocus, SIGNAL(sliderMoved(int)), this, SLOT(onSliderScaleFocusChanged(int)));
+    connect(ui.hslScale, SIGNAL(sliderMoved(int)), this, SLOT(onSliderScaleChanged(int)));
 
 		return true;
 
@@ -110,20 +110,15 @@ bool SEAdenitaVisualModelProperties::setup(SBNode* node) {
 	visualModel = static_cast<SEAdenitaVisualModel*>(node);
 	visualModel->connectBaseSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onBaseEvent));
 	visualModel->connectVisualSignalToSlot(observer(), SB_SLOT(&SEAdenitaVisualModelProperties::Observer::onVisualEvent));
-  connect(ui.hslScaleFocus, SIGNAL(sliderMoved(int)), this, SLOT(onSliderScaleFocusChanged(int)));
+  connect(ui.hslScale, SIGNAL(sliderMoved(int)), this, SLOT(onSliderScaleChanged(int)));
 
 	return true;
 
 }
 
-void SEAdenitaVisualModelProperties::onSliderScaleFocusChanged(int val)
+void SEAdenitaVisualModelProperties::onSliderScaleChanged(int val)
 {
-  visualModel->changeScaleFocus(val / 10.0f, false);
-}
-
-void SEAdenitaVisualModelProperties::onSliderScaleContextChanged(int val)
-{
-
+  visualModel->changeScale(val / 10.0f, false);
 }
 
 void SEAdenitaVisualModelProperties::onSliderVisibilityChanged(int val)
