@@ -235,6 +235,14 @@ void ADNNucleotide::SetEnd(End e)
   end_ = e;
 }
 
+bool ADNNucleotide::IsEnd()
+{
+  bool isEnd = false;
+  if (end_ != NotEnd) isEnd = true;
+
+  return isEnd;
+}
+
 ADNPointer<ADNBackbone> ADNNucleotide::GetBackbone()
 {
   auto bb = static_cast<ADNBackbone*>(getBackbone());
