@@ -214,26 +214,62 @@ std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOper
 
 std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOperations::DeleteNucleotide(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt)
 {
+  SEConfig& config = SEConfig::GetInstance();
+  ADNLogger& logger = ADNLogger::GetLogger();
+
+  auto numNts = part->GetNumberOfNucleotides();
+  auto numSS = part->GetNumberOfSingleStrands();
+  
   auto ss = nt->GetStrand();
   End e = nt->GetEnd();
 
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> res = std::make_pair(nullptr, nullptr);
-  // first break
-  auto ssPair = BreakSingleStrand(part, nt);
-  res.first = ssPair.first;
-  part->RegisterSingleStrand(res.first);  // register new strand
-  part->DeregisterSingleStrand(ss);  // deregister old one
 
-  if (e == ThreePrime) {
-    part->DeregisterSingleStrand(ssPair.second);
+  if (e == FiveAndThreePrime || e == FivePrime) {
+    // we don't need to break, just delete
+    ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
+    if (ntNext != nullptr) {
+      ntNext->SetEnd(e);
+      ss->SetFivePrime(ntNext);
+    }
+    part->DeregisterNucleotide(nt);
+    res.first = ss;
   }
   else {
-    // second break
-    auto ssPair2 = BreakSingleStrand(part, nt->GetNext());
-    res.second = ssPair2.second;
-    part->RegisterSingleStrand(res.second);
-    part->DeregisterSingleStrand(ssPair.second);  // deregister second strand from first break
-    part->DeregisterSingleStrand(ssPair2.first);  // deregister strand containing only the nt we want to delete
+    // first break
+    auto ssPair = BreakSingleStrand(part, nt);
+    res.first = ssPair.first;
+    part->RegisterSingleStrand(res.first);  // register new strand
+    part->DeregisterSingleStrand(ss);  // deregister old one
+
+    if (e == ThreePrime) {
+      part->DeregisterSingleStrand(ssPair.second);
+    }
+    else {
+      // second break
+      auto ssPair2 = BreakSingleStrand(part, nt->GetNext());
+      res.second = ssPair2.second;
+      part->RegisterSingleStrand(res.second);
+      part->DeregisterSingleStrand(ssPair.second);  // deregister second strand from first break
+      part->DeregisterSingleStrand(ssPair2.first);  // deregister strand containing only the nt we want to delete
+    }
+
+    nt.deleteReferenceTarget();
+  }
+
+  auto numNtsNew = part->GetNumberOfNucleotides();
+  auto numSSNew = part->GetNumberOfSingleStrands();
+
+  if (config.mode == DEBUG_NO_LOG || config.mode == DEBUG_LOG) {
+    logger.LogDateTime();
+    std::string msg = "  --> DELETING NUCLEOTIDE";
+    logger.LogDebug(msg);
+    msg = "         Nucleotides before deletion: " + std::to_string(numNts) + "\n";
+    msg += "         Nucleotides after deletion: " + std::to_string(numNtsNew);
+    logger.LogDebug(msg);
+    msg = "         Single Strands before deletion: " + std::to_string(numSS) + "\n";
+    msg += "         Single Strands after deletion: " + std::to_string(numSSNew);
+    logger.LogDebug(msg);
   }
 
   return res;

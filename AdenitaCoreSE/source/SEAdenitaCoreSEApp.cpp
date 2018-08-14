@@ -213,7 +213,7 @@ void SEAdenitaCoreSEApp::ConnectSingleStrands()
   if (nts.size() == 2) {
     ADNPointer<ADNNucleotide> fPrime = nts[0];
     ADNPointer<ADNNucleotide> tPrime = nts[1];
-    if (fPrime->GetStrand() != tPrime->GetStrand()) {
+    if ((fPrime->GetStrand() != tPrime->GetStrand()) && fPrime->IsEnd() && tPrime->IsEnd()) {
       if (fPrime->GetEnd() == ThreePrime && tPrime->GetEnd() == FivePrime) {
         fPrime = nts[1];
         tPrime = nts[0];
@@ -239,10 +239,14 @@ void SEAdenitaCoreSEApp::BreakSingleStrand()
     if (nt->GetEnd() != ThreePrime) {
       ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
       ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
-      auto newStrands = ADNBasicOperations::BreakSingleStrand(part, nt);
-      GetNanorobot()->RemoveSingleStrand(ss);
+      // to break in the 3' direction
+      auto ntNext = nt->GetNext();
+      if (ntNext != nullptr) {
+        auto newStrands = ADNBasicOperations::BreakSingleStrand(part, ntNext);
+        GetNanorobot()->RemoveSingleStrand(ss);
 
-      ResetVisualModel();
+        ResetVisualModel();
+      }
     }
   }
 }
