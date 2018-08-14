@@ -139,7 +139,8 @@ void ADNPart::DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss)
 
 void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt)
 {
-  nt->getParent()->removeChild(nt());
+  ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
+  ss->removeChild(nt());
   nucleotidesIndex_.removeReferenceTarget(nt());
 }
 
