@@ -123,9 +123,15 @@ void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/
 {
   scale_ = scale;
 
-  initArraysForDisplay(createIndex);
+  if (scale >= (float)NUCLEOTIDES_SIDECHAIN && scale < (float)EDGES_VERTICES) {
+    initNucleotideArraysForDisplay(createIndex);
+  }
+  else if(scale >= (float)EDGES_VERTICES) {
+    initBaseSegmentArraysForDisplay(createIndex);
+  }
 
   prepareArraysForDisplay();
+
 
   SAMSON::requestViewportUpdate();
 }
@@ -186,7 +192,7 @@ void SEAdenitaVisualModel::changeVisibility(double layer)
 
 }
 
-void SEAdenitaVisualModel::initArraysForDisplay(bool createIndex /* = true */)
+void SEAdenitaVisualModel::initNucleotideArraysForDisplay(bool createIndex /* = true */)
 {
   auto singleStrands = nanorobot_->GetSingleStrands();
 
@@ -206,6 +212,29 @@ void SEAdenitaVisualModel::initArraysForDisplay(bool createIndex /* = true */)
 
   if (createIndex) {
     indices_ = getNucleotideIndices();
+  }
+
+}
+
+void SEAdenitaVisualModel::initBaseSegmentArraysForDisplay(bool createIndex /*= true*/)
+{
+
+  unsigned int nPositions = nanorobot_->GetNumberOfBaseSegments();
+  //unsigned int nCylinders = boost::numeric_cast<unsigned int>(nPositions - singleStrands.size());
+
+  nPositions_ = nPositions;
+  //nCylinders_ = nCylinders;
+  positions_ = ADNArray<float>(3, nPositions);
+  radiiV_ = ADNArray<float>(nPositions);
+  radiiE_ = ADNArray<float>(nPositions);
+  colorsV_ = ADNArray<float>(4, nPositions);
+  colorsE_ = ADNArray<float>(4, nPositions);
+  capData_ = ADNArray<unsigned int>(nPositions);
+  flags_ = ADNArray<unsigned int>(nPositions);
+  nodeIndices_ = ADNArray<unsigned int>(nPositions);
+
+  if (createIndex) {
+    indices_ = getBaseSegmentIndices();
   }
 
 }
@@ -288,6 +317,16 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
     }
   }
 
+
+  return indices;
+
+}
+
+ADNArray<unsigned int> SEAdenitaVisualModel::getBaseSegmentIndices()
+{
+  unsigned int nCylinders = 0;
+
+  ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
 
   return indices;
 
@@ -589,6 +628,53 @@ void SEAdenitaVisualModel::prepareScale8to9(double iv, bool forSelection /*= fal
 
 void SEAdenitaVisualModel::prepareScale9(bool forSelection /*= false*/)
 {
+  SEConfig& config = SEConfig::GetInstance();
+  ADNLogger& logger = ADNLogger::GetLogger();
+
+  auto parts = nanorobot_->GetParts();
+
+  positions_ = ADNArray<float>(3, nPositions_);
+  radiiV_ = ADNArray<float>(nPositions_);
+  flags_ = ADNArray<unsigned int>(nPositions_);
+  colorsV_ = ADNArray<float>(4, nPositions_);
+  nodeIndices_ = ADNArray<unsigned int>(nPositions_);
+  indices_ = ADNArray<unsigned int>(nCylinders_ * 2);
+  capData_ = ADNArray<unsigned int>(nPositions_);
+
+  unsigned int index = 0;
+
+  SB_FOR(auto part, parts) {
+    auto doubleStrands = part->GetDoubleStrands();
+
+    SB_FOR(auto doubleStrand, doubleStrands) {
+      auto baseSegments = doubleStrand->GetBaseSegments();
+
+      SB_FOR(auto baseSegment, baseSegments) {
+        auto cell = baseSegment->GetCell();
+
+        if (cell->GetType() == BasePair) {
+          SBPosition3 pos = baseSegment->GetPosition();
+          positions_(index, 0) = (float)pos.v[0].getValue();
+          positions_(index, 1) = (float)pos.v[1].getValue();
+          positions_(index, 2) = (float)pos.v[2].getValue();
+        }
+
+        colorsV_(index, 0) = config.nucleotide_E_Color[0];
+        colorsV_(index, 1) = config.nucleotide_E_Color[1];
+        colorsV_(index, 2) = config.nucleotide_E_Color[2];
+        colorsV_(index, 3) = config.nucleotide_E_Color[3];
+
+        radiiV_(index) = config.nucleotide_V_radius * 2;
+
+        capData_(index) = 1;
+
+        flags_(index) = baseSegment->getInheritedFlags();
+
+        ++index;
+
+      }
+    }
+  }
 
 }
 
