@@ -122,8 +122,9 @@ float SEAdenitaVisualModel::getScale()
 void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/)
 {
   scale_ = scale;
-
-  if (scale >= (float)NUCLEOTIDES_SIDECHAIN && scale < (float)EDGES_VERTICES) {
+  if (scale < (float)NUCLEOTIDES_SIDECHAIN) {
+  }
+  else if (scale >= (float)NUCLEOTIDES_SIDECHAIN && scale < (float)EDGES_VERTICES) {
     initNucleotideArraysForDisplay(createIndex);
   }
   else if(scale >= (float)EDGES_VERTICES) {
@@ -690,16 +691,41 @@ void SEAdenitaVisualModel::highlightFlagChanged()
 {
   auto parts = nanorobot_->GetParts();
 
-  SB_FOR(auto part, parts) {
-    auto singleStrands = nanorobot_->GetSingleStrands(part);
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        auto index = ntMap_[nt()];
-        flags_(index) = nt->getInheritedFlags();
+  if (scale_ < (float)NUCLEOTIDES_SIDECHAIN) {
+  }
+  else if (scale_ >= (float)NUCLEOTIDES_SIDECHAIN && scale_ < (float)EDGES_VERTICES) {
+    SB_FOR(auto part, parts) {
+      auto singleStrands = nanorobot_->GetSingleStrands(part);
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+          auto index = ntMap_[nt()];
+          flags_(index) = nt->getInheritedFlags();
+        }
       }
     }
   }
+  else if (scale_ >= (float)EDGES_VERTICES) {
+
+    unsigned int index = 0;
+
+    SB_FOR(auto part, parts) {
+      auto doubleStrands = part->GetDoubleStrands();
+
+      SB_FOR(auto doubleStrand, doubleStrands) {
+        auto baseSegments = doubleStrand->GetBaseSegments();
+
+        SB_FOR(auto baseSegment, baseSegments) {
+          
+          flags_(index) = baseSegment->getInheritedFlags();
+
+          ++index;
+        }
+      }
+    }
+  }
+
+
 
   SAMSON::requestViewportUpdate();
 
