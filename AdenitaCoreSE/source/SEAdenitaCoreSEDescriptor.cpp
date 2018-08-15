@@ -8,6 +8,8 @@
 #include "SEBreakEditorDescriptor.hpp"
 #include "SEDeleteEditorDescriptor.hpp"
 #include "SEConnectSSDNAEditorDescriptor.hpp"
+#include "SEDSDNACreatorEditorDescriptor.hpp"
+#include "SENanotubeCreatorEditorDescriptor.hpp"
 
 
 
@@ -42,6 +44,8 @@ SB_ELEMENT_CLASSES_BEGIN;
   SB_ELEMENT_CLASS(SEBreakEditor);
   SB_ELEMENT_CLASS(SEDeleteEditor);
   SB_ELEMENT_CLASS(SEConnectSSDNAEditor);
+  SB_ELEMENT_CLASS(SEDSDNACreatorEditor);
+  SB_ELEMENT_CLASS(SENanotubeCreatorEditor);
 
 SB_ELEMENT_CLASSES_END;
 
