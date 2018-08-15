@@ -659,12 +659,12 @@ void SEAdenitaVisualModel::prepareScale9(bool forSelection /*= false*/)
           positions_(index, 2) = (float)pos.v[2].getValue();
         }
 
-        colorsV_(index, 0) = config.nucleotide_E_Color[0];
-        colorsV_(index, 1) = config.nucleotide_E_Color[1];
-        colorsV_(index, 2) = config.nucleotide_E_Color[2];
-        colorsV_(index, 3) = config.nucleotide_E_Color[3];
+        colorsV_(index, 0) = config.double_strand_color[0];
+        colorsV_(index, 1) = config.double_strand_color[1];
+        colorsV_(index, 2) = config.double_strand_color[2];
+        colorsV_(index, 3) = config.double_strand_color[3];
 
-        radiiV_(index) = config.nucleotide_V_radius * 2;
+        radiiV_(index) = config.base_pair_radius;
 
         capData_(index) = 1;
 
