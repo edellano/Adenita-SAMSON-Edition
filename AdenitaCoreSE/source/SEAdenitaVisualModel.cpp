@@ -670,6 +670,14 @@ void SEAdenitaVisualModel::prepareScale9(bool forSelection /*= false*/)
 
         flags_(index) = baseSegment->getInheritedFlags();
 
+        if (!doubleStrand->isVisible()) {
+          colorsV_(index, 3) = 0.0f;
+          radiiV_(index) = 0.0f;
+        }
+        else if (!baseSegment->isVisible()) {
+          colorsV_(index, 3) = 0.0f;
+        }
+
         ++index;
 
       }
