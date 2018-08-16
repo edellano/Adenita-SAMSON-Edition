@@ -684,7 +684,6 @@ void SEAdenitaVisualModel::prepareScale9(bool forSelection /*= false*/)
       }
     }
   }
-
 }
 
 void SEAdenitaVisualModel::highlightFlagChanged()
