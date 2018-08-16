@@ -36,6 +36,7 @@ void SEConfig::loadConfig() {
 
     writeDoubleArray(writer, "double_helix_V_color", double_helix_V_color, 4);
     writeDoubleArray(writer, "nucleotide_E_Color", nucleotide_E_Color, 4);
+    writeDoubleArray(writer, "double_strand_color", double_strand_color, 4);
     writeDoubleArray(writer, "adenine_color", adenine_color, 4);
     writeDoubleArray(writer, "thymine_color", thymine_color, 4);
     writeDoubleArray(writer, "guanine_color", guanine_color, 4);
@@ -47,7 +48,10 @@ void SEConfig::loadConfig() {
 
     writer.Key("nucleotide_E_radius");
     writer.Double(nucleotide_E_radius);
-    
+
+    writer.Key("base_pair_radius");
+    writer.Double(base_pair_radius);
+
     writer.Key("num_staple_colors");
     writer.Double(num_staple_colors);
 
@@ -144,6 +148,10 @@ void SEConfig::updateConfig() {
     Value& nucleotide_E_ColorVal = setting_["nucleotide_E_Color"];
     readDoubleArray(nucleotide_E_ColorVal, nucleotide_E_Color, 4);
 
+    Value& double_strand_colorVal = setting_["double_strand_color"];
+    readDoubleArray(double_strand_colorVal, double_strand_color, 4);
+
+
     Value& adenine_colorVal = setting_["adenine_color"];
     readDoubleArray(adenine_colorVal, adenine_color, 4);
 
@@ -161,6 +169,7 @@ void SEConfig::updateConfig() {
 
     nucleotide_V_radius = setting_["nucleotide_V_radius"].GetDouble();
     nucleotide_E_radius = setting_["nucleotide_E_radius"].GetDouble();
+    base_pair_radius = setting_["base_pair_radius"].GetDouble();
     num_staple_colors = setting_["num_staple_colors"].GetDouble();
   }
 }

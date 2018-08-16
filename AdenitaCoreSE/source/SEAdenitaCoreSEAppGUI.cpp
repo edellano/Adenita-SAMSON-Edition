@@ -124,7 +124,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
 
-  if (config.mode == "haichao") {
+  if (config.mode == SEConfigMode::HAICHAO) {
     SEAdenitaCoreSEApp* t = getApp();
     t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/hextube/hextube.json");
 
