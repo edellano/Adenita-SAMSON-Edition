@@ -8,6 +8,10 @@
 #include "SBDynamicalEvent.hpp"
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
+#include "ADNPart.hpp"
+#include "SEAdenitaCoreSEApp.hpp"
+#include "ADNDisplayHelper.hpp"
+#include "DASEditor.hpp"
 
 /// This class implements an editor
 
@@ -93,6 +97,28 @@ public :
 	SENanotubeCreatorEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
+
+private:
+
+  ADNPointer<ADNDoubleStrand> generateDoubleStrand();
+  ADNPointer<ADNPart> generateNanotube();
+  void displayNanotube();
+  void resetPositions();
+
+  struct Positions {
+    SBPosition3 First;
+    SBPosition3 Second;
+    SBPosition3 Third;
+    SBPosition3 Fourth;
+    SBPosition3 Fifth;
+    SBPosition3 Sixth;
+    int cnt = 0;
+  };
+
+  Positions positions_;
+  bool display_ = false;
+  ADNPointer<ADNPart> tempPart_ = nullptr;
+
 
 };
 
