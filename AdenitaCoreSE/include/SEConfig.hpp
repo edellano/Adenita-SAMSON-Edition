@@ -40,6 +40,8 @@ public:
   float animation_step_size = 0.0f;
   double double_helix_V_color[4] = { 0.0f, 0.43f, 0.86f, 1.0f };
   double nucleotide_E_Color[4] = { 0.59f, 0.63f, 0.8f, 1.0f };
+  double double_strand_color[4] = { 1.0f, 1.0f, 1.0f, 1.0f};
+  
   double adenine_color[4] = { 
     102.0f / 255.0f, 
     194.0f / 255.0f, 
@@ -63,6 +65,7 @@ public:
 
   float nucleotide_V_radius = 160.0f;
   float nucleotide_E_radius = 32.0f;
+  float base_pair_radius = 1000.0f;
   unsigned int num_staple_colors = 12;
   double staple_colors[48] = { 
     0.65f, 0.80f, 0.89f, 1.0f, 
