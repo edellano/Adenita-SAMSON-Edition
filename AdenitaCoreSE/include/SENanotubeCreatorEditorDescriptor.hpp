@@ -12,7 +12,7 @@
 SB_CLASS_BEGIN(SENanotubeCreatorEditor);
 
 	SB_CLASS_TYPE(SBCClass::Editor);
-        SB_CLASS_DESCRIPTION("SENanotubeCreatorEditor : SAMSON Element generator pro tip: modify me");
+        SB_CLASS_DESCRIPTION("Nanotube Creator");
 
 	SB_FACTORY_BEGIN;
 
