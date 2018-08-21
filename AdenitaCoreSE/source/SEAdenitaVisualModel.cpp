@@ -500,7 +500,66 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
 
 void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= false*/)
 {
+  SEConfig& config = SEConfig::GetInstance();
+  ADNLogger& logger = ADNLogger::GetLogger();
 
+  auto parts = nanorobot_->GetParts();
+
+  SB_FOR(auto part, parts) {
+
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+
+        auto index = ntMap_[nt()];
+
+        auto bbPos = nanorobot_->GetNucleotideBackbonePosition(nt);
+        float minX = bbPos[0].getValue();
+        float minY = bbPos[1].getValue();
+        float minZ = bbPos[2].getValue();
+
+        auto scPos = nanorobot_->GetNucleotideSidechainPosition(nt);
+        float maxX = scPos[0].getValue();
+        float maxY = scPos[1].getValue();
+        float maxZ = scPos[2].getValue();
+        
+        nodeIndices_(index) = nt->getNodeIndex();
+        flags_(index) = nt->getInheritedFlags();
+        auto baseColor = getBaseColor(nt->getResidueType());
+        colorsV_.SetRow(index, baseColor);
+
+        colorsE_.SetRow(index, nucleotideEColor_);
+
+        radiiV_(index) = config.nucleotide_V_radius;
+        radiiE_(index) = config.nucleotide_E_radius;
+
+        SBPosition3 pos3D = nanorobot_->GetNucleotidePosition(nt);
+        /*SBPosition3 pos2D = nucleotide->GetSBPosition2D();
+        SBPosition3 pos1D = nucleotide->GetSBPosition1D();*/
+
+        //if (configuration_->interpolate_dimensions) interpolateDimension(pos1D, pos2D, pos3D, positions_, index);
+
+        //highlightStrands(colorsV_, colorsV_, index, nucleotide);
+
+        if (!ss->isVisible()) {
+          colorsV_(index, 3) = 0.0f;
+          radiiV_(index) = 0.0f;
+          radiiE_(index) = 0.0f;
+          colorsE_(index, 3) = 0.0f;
+        }
+        else if (!nt->isVisible()) {
+          colorsV_(index, 3) = 0.0f;
+          colorsE_(index, 3) = 0.0f;
+        }
+
+      }
+
+    }
+  }
 }
 
 void SEAdenitaVisualModel::prepareScale5to6(double iv, bool forSelection /*= false*/)
