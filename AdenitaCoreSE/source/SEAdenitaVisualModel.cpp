@@ -526,7 +526,11 @@ void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= fal
         float maxX = scPos[0].getValue();
         float maxY = scPos[1].getValue();
         float maxZ = scPos[2].getValue();
-        
+
+        positions_(index, 0) = minX + iv * (maxX - minX);
+        positions_(index, 1) = minY + iv * (maxY - minY);
+        positions_(index, 2) = minZ + iv * (maxZ - minZ);
+
         nodeIndices_(index) = nt->getNodeIndex();
         flags_(index) = nt->getInheritedFlags();
         auto baseColor = getBaseColor(nt->getResidueType());
