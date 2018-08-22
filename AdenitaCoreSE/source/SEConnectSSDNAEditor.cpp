@@ -179,7 +179,9 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
       auto start = start_;
       auto end = highlightedNucleotides[0];
       ADNPointer<ADNPart> part = nanorobot->GetPart(end->GetStrand());
-      DASOperations::CreateCrossover(part, start, end);
+      auto ssPair = DASOperations::CreateCrossover(part, start, end);
+      if (ssPair.first != nullptr) nanorobot->RemoveSingleStrand(ssPair.first);
+      if (ssPair.second != nullptr) nanorobot->RemoveSingleStrand(ssPair.second);
       app->ResetVisualModel();
       //auto end = highlightedNucleotides[0];
       //bool start53 = start_->GetEnd() == FivePrime || start_->GetEnd() == ThreePrime;

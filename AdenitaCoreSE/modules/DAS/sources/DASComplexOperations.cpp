@@ -48,7 +48,9 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> DASOperation
       }
       auto fPrimeStrand = fPrime->GetStrand();
       auto tPrimeStrand = tPrime->GetStrand();
-      ADNBasicOperations::MergeSingleStrands(part, fPrimeStrand, tPrimeStrand);
+      ADNBasicOperations::MergeSingleStrands(part, tPrimeStrand, fPrimeStrand);
+      ssPair.first = fPrimeStrand;
+      ssPair.second = tPrimeStrand;
     }
     else {
       // break first nucleotide in 3'
@@ -56,18 +58,18 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> DASOperation
       if (nt1->GetEnd() != ThreePrime) {
         auto ntNext = nt1->GetNext();
         auto pair1 = ADNBasicOperations::BreakSingleStrand(part, ntNext);
+        ssPair.first = firstStrand;
         firstStrand = pair1.first;
-        ssPair.first = pair1.second;
       }
       // break second nucleotide in 5'
       ADNPointer<ADNSingleStrand> secondStrand = nt2->GetStrand();
       if (nt2->GetEnd() != FivePrime) {
         auto pair2 = ADNBasicOperations::BreakSingleStrand(part, nt2);
+        ssPair.second = secondStrand;
         secondStrand = pair2.second;
-        ssPair.second = pair2.first;
       }
       // connect trands
-      auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, firstStrand, secondStrand);
+      //auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, firstStrand, secondStrand);
     }
   }
 
