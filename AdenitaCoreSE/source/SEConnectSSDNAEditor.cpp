@@ -176,47 +176,48 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
     auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
     
     if (highlightedNucleotides.size() == 1) {
+      auto start = start_;
       auto end = highlightedNucleotides[0];
-      bool start53 = start_->GetEnd() == FivePrime || start_->GetEnd() == ThreePrime;
-      bool end53 = end->GetEnd() == FivePrime || end->GetEnd() == ThreePrime;
-      if (start53 && end53) {
-        end->setSelectionFlag(true);
-        app->ConnectSingleStrands();
-      }
-      else { //if not the respective endings are selected, then break at the locations and connect the new endings
-        auto selectedNucleotides = nanorobot->GetSelectedNucleotides();
-        
-        SB_FOR(auto node, selectedNucleotides) {
-          node->setSelectionFlag(false);
-        }
+      ADNPointer<ADNPart> part = nanorobot->GetPart(end->GetStrand());
+      DASOperations::CreateCrossover(part, start, end);
+      app->ResetVisualModel();
+      //auto end = highlightedNucleotides[0];
+      //bool start53 = start_->GetEnd() == FivePrime || start_->GetEnd() == ThreePrime;
+      //bool end53 = end->GetEnd() == FivePrime || end->GetEnd() == ThreePrime;
+      //if (start53 && end53) {
+      //  end->setSelectionFlag(true);
+      //  app->ConnectSingleStrands();
+      //}
+      //else { //if not the respective endings are selected, then break at the locations and connect the new endings
+      //  auto selectedNucleotides = nanorobot->GetSelectedNucleotides();
+      //  
+      //  SB_FOR(auto node, selectedNucleotides) {
+      //    node->setSelectionFlag(false);
+      //  }
 
-        //break the strands first
-        if (start53 && !end53) {
-          end->setSelectionFlag(true);
-          app->BreakSingleStrand();
-        }
-        else if (!start53 && end53) {
-          start_->setSelectionFlag(true);
-          app->BreakSingleStrand();
-        }
-        else {
-          start_->setSelectionFlag(true);
-          app->BreakSingleStrand();
-          start_->setSelectionFlag(false);
-          end->setSelectionFlag(true);
-          app->BreakSingleStrand();
-          end->setSelectionFlag(false);
-        }
+      //  //break the strands first
+      //  if (start53 && !end53) {
+      //    end->setSelectionFlag(true);
+      //    app->BreakSingleStrand();
+      //  }
+      //  else if (!start53 && end53) {
+      //    start_->setSelectionFlag(true);
+      //    app->BreakSingleStrand();
+      //  }
+      //  else {
+      //    start_->setSelectionFlag(true);
+      //    app->BreakSingleStrand();
+      //    start_->setSelectionFlag(false);
+      //    end->setSelectionFlag(true);
+      //    app->BreakSingleStrand();
+      //    end->setSelectionFlag(false);
+      //  }
 
-        //connect at broken location
-        start_->setSelectionFlag(true);
-        end->setSelectionFlag(true);
-        app->ConnectSingleStrands();
-      }
-
-
-      
-
+      //  //connect at broken location
+      //  start_->setSelectionFlag(true);
+      //  end->setSelectionFlag(true);
+      //  app->ConnectSingleStrands();
+      //}
     }
   }
 

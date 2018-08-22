@@ -7,6 +7,7 @@
 #include "DASDaedalus.hpp"
 #include "DASBackToTheAtom.hpp"
 #include "DASCadnano.hpp"
+#include "DASComplexOperations.hpp"
 #include "SEConfig.hpp"
 #include "SEAdenitaVisualModel.hpp"
 
