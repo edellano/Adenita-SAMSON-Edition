@@ -79,7 +79,7 @@ void SENanotubeCreatorEditor::displayNanotube()
       colorsV(index, 0) = config.double_strand_color[0];
       colorsV(index, 1) = config.double_strand_color[1];
       colorsV(index, 2) = config.double_strand_color[2];
-      colorsV(index, 3) = config.double_strand_color[3];
+      colorsV(index, 3) = 0.3f;
 
       radiiV(index) = config.base_pair_radius;
 
@@ -208,9 +208,12 @@ void SENanotubeCreatorEditor::display() {
     if (tempPart_ != nullptr) {
 
       glEnable(GL_DEPTH_TEST);
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       displayNanotube();
 
+      glDisable(GL_BLEND);
       glDisable(GL_DEPTH_TEST);
 
     }
