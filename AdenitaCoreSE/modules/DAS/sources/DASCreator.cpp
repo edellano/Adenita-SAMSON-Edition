@@ -413,8 +413,6 @@ ADNPointer<ADNPart> DASCreator::CreateNanotube(SBQuantity::length radius, SBPosi
       nanorobot->SetE1(ADNVectorMath::row(subspace, 0));
       nanorobot->SetE2(ADNVectorMath::row(subspace, 1));
       nanorobot->SetE3(ADNVectorMath::row(subspace, 2));
-
-      ADNBasicOperations::CenterPart(nanorobot);
     }
 
     ADNLogger& logger = ADNLogger::GetLogger();
