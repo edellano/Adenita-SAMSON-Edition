@@ -23,22 +23,6 @@ SENanotubeCreatorEditor::~SENanotubeCreatorEditor() {
 
 SENanotubeCreatorEditorGUI* SENanotubeCreatorEditor::getPropertyWidget() const { return static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget); }
 
-ADNPointer<ADNDoubleStrand> SENanotubeCreatorEditor::generateDoubleStrand()
-{
-  ADNPointer<ADNDoubleStrand> doubleStrand = nullptr;
-  
-  SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
-  auto tubeLength = (currentPosition - positions_.First).norm();
-  SBVector3 dir = (currentPosition - positions_.First).normalizedVersion();
-  SBQuantity::dimensionless num_nts = tubeLength / SBQuantity::nanometer(ADNConstants::BP_RISE);
-  int n = num_nts.getValue();
-  if (n > 0) {
-    doubleStrand = DASEditor::CreateDoubleStrand(n, positions_.First, dir);
-  }
-
-  return doubleStrand;
-}
-
 ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube()
 {
   ADNPointer<ADNPart> part = nullptr;
@@ -48,9 +32,9 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube()
   auto numNucleotides = roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE);
   SBVector3 dir = (positions_.Second - positions_.First).normalizedVersion();
 
-  if (radius > SBQuantity::length(0.0) && roundHeight > SBQuantity::length(0.0)) {
-    //part = editor.CreateRoundOrigami(radius * 2, positions_.First, dir, numNucleotides.getValue());
-
+  //if (radius > SBQuantity::length(0.0) && roundHeight > SBQuantity::length(0.0)) {
+  if (radius > SBQuantity::length(0.0)) {
+    part = DASEditor::CreateNanotube(radius, positions_.First, dir, numNucleotides.getValue());
   }
 
   return part;
@@ -116,6 +100,12 @@ void SENanotubeCreatorEditor::resetPositions()
   positions_.Fifth = SBPosition3();
   positions_.Sixth = SBPosition3();
   positions_.cnt = 0;
+}
+
+void SENanotubeCreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
+{
+  SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  adenita->AddPartToActiveLayer(nanotube);
 }
 
 SBCContainerUUID SENanotubeCreatorEditor::getUUID() const { return SBCContainerUUID("F9068FA3-69DE-B6FA-2B42-C80DA5302A0D"); }
@@ -240,10 +230,6 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
-  if (tempPart_ != nullptr) {
-    tempPart_ = nullptr;
-  }
-
   if (positions_.cnt == 0) {
     positions_.First = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.cnt++;
@@ -254,22 +240,16 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
 
     auto radius = (positions_.Third - positions_.Second).norm();
 
-    if (radius > SBQuantity::nanometer(1)) {
-      ADNPointer<ADNPart> part = generateNanotube();
-    }
-    else {
-      ADNPointer<ADNDoubleStrand> part = generateDoubleStrand();
-    }
+    ADNPointer<ADNPart> part = generateNanotube();
 
     resetPositions();
     display_ = false;
   }
   
-
-
-  //if (nanorobot != nullptr) sendPartToAdenita(nanorobot);
-
-
+  if (tempPart_ != nullptr) {
+    sendPartToAdenita(tempPart_);
+    tempPart_ == nullptr;
+  }
 }
 
 void SENanotubeCreatorEditor::mouseReleaseEvent(QMouseEvent* event) {

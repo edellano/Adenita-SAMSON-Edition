@@ -100,10 +100,10 @@ public :
 
 private:
 
-  ADNPointer<ADNDoubleStrand> generateDoubleStrand();
   ADNPointer<ADNPart> generateNanotube();
   void displayNanotube();
   void resetPositions();
+  void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
 
   struct Positions {
     SBPosition3 First;
@@ -118,8 +118,6 @@ private:
   Positions positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
-
-
 };
 
 

@@ -151,7 +151,6 @@ void SEConfig::updateConfig() {
     Value& double_strand_colorVal = setting_["double_strand_color"];
     readDoubleArray(double_strand_colorVal, double_strand_color, 4);
 
-
     Value& adenine_colorVal = setting_["adenine_color"];
     readDoubleArray(adenine_colorVal, adenine_color, 4);
 

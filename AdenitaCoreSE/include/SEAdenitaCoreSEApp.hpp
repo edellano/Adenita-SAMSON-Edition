@@ -55,8 +55,10 @@ public :
 
   ADNNanorobot* GetNanorobot();
 
-private:
+  // Exposed for editors
   void AddPartToActiveLayer(ADNPointer<ADNPart> part);
+
+private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);
 
   std::map<SBDocument*, ADNNanorobot*> nanorobots_;

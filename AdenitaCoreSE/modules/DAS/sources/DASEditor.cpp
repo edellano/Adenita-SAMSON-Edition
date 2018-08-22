@@ -10,80 +10,7 @@
 //  return nrobot;
 //}
 //
-//ADNPart * DASEditor::CreateRoundOrigami(SBQuantity::length diameter, SBPosition3 center, SBVector3 direction, int min_length) {
-//  ADNPart* nanorobot = nullptr;
-//
-//  // so far create only a circle
-//  // transformation to global coordinates
-//  ublas::vector<double> dir = ublas::vector<double>(3);
-//  dir[0] = direction[0].getValue();
-//  dir[1] = direction[1].getValue();
-//  dir[2] = direction[2].getValue();
-//  ublas::matrix<double> subspace = FindOrthogonalSubspace(dir);
-//  ADNVectorMath::AddRowToMatrix(subspace, dir);
-//
-//  if (diameter > SBQuantity::length(0.0)) {
-//    // number of double helices that fit into the circumpherence
-//    SBQuantity::length r = SBQuantity::nanometer(ADNConstants::DH_DIAMETER * 0.5);
-//    SBQuantity::length R = diameter * 0.5;
-//
-//    // in a circumpherence every double strand is going to take up the same space
-//    auto up = -r*r*(4 * R*R - r*r) + (2 * R*R - r*r)*(2 * R*R - r*r);
-//    auto down = r*r*(4 * R*R - r*r) + (2 * R*R - r*r)*(2 * R*R - r*r);
-//    auto cosTheta = up / down;
-//    auto theta = acos(cosTheta.getValue());
-//    double pi = atan(1.0) * 4.0;
-//    int num = ceil(2 * pi / theta);
-//
-//    // recalculate the exact radius so num will fit
-//    auto newR = theta * num * R / (2*pi);
-//    auto newTheta = 2 * pi / num;
-//
-//    if (num > 0) {
-//      nanorobot = new ADNPart();
-//      // create dsDNA
-//      double t = 0.0;
-//      for (int j = 0; j < num; ++j) {
-//      //  // a and b are the coordinates on the plane
-//        auto a = newR*sin(t);
-//        auto b = newR*cos(t);
-//        ublas::vector<double> pos_p(3);
-//        pos_p[0] = a.getValue();
-//        pos_p[1] = b.getValue();
-//        pos_p[2] = 0.0;
-//        ublas::vector<double> trf = ublas::prod(ublas::trans(subspace), pos_p);
-//        SBPosition3 dsPosition = SBPosition3(SBQuantity::picometer(trf[0]), SBQuantity::picometer(trf[1]), SBQuantity::picometer(trf[2])) + center;
-//        AddDoubleStrandToANTPart(nanorobot, min_length, dsPosition, direction);
-//        //t += acos(cosTheta.getValue());
-//        t += newTheta;
-//      }
-//      nanorobot->SetScaffold(0);
-//      nanorobot->SetNtSegmentMap();
-//
-//      nanorobot->e1_ = ADNVectorMath::row(subspace, 0);
-//      nanorobot->e2_ = ADNVectorMath::row(subspace, 1);
-//      nanorobot->e3_ = ADNVectorMath::row(subspace, 2);
-//
-//      //ANTAuxiliary::logVector("e1", nanorobot->e1_);
-//      //ANTAuxiliary::logVector("e2", nanorobot->e2_);
-//      //ANTAuxiliary::logVector("e3", nanorobot->e3_);
-//
-//      nanorobot->setCenterOfMass();
-//    }
-//
-//    //ANTAuxiliary::log(string("num of ds"));
-//    //ANTAuxiliary::log(QString::number(num));
-//    //ANTAuxiliary::log(string("bps per ds "), false);
-//    //ANTAuxiliary::log(QString::number(min_length));
-//    //ANTAuxiliary::log(string("total bps"), false);
-//    //ANTAuxiliary::log(QString::number(min_length * num));
-//  }
-//
-//  //generate 1D
-//
-//  return nanorobot;
-//}
-//
+
 //ADNPart * DASEditor::CreateTwoTubes(size_t length, SBPosition3 start, SBVector3 direction, SBVector3 sepDir) {
 //  ADNPart* part = new ADNPart();
 //
@@ -360,57 +287,12 @@
 //}
 
 // todo: calculate positions
-ADNPointer<ADNDoubleStrand> DASEditor::CreateDoubleStrand(int length, SBPosition3 start, SBVector3 direction)
+ADNPointer<ADNDoubleStrand> DASEditor::CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction)
 {
-  SBPosition3 delt = SBQuantity::nanometer(ADNConstants::BP_RISE) * direction;
-  SBPosition3 pos = start;
-
-  ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
-
-  // create nucleotides
-  ADNPointer<ADNSingleStrand> ss = new ADNSingleStrand();
-  ADNPointer<ADNSingleStrand> pair_ss = new ADNSingleStrand();
-
-  for (size_t i = 0; i < length; ++i) {
-    ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
-    ds->AddBaseSegmentEnd(bs);
-
-    ADNPointer<ADNBasePair> bp = new ADNBasePair();
-    bs->SetCell(bp());
-    bs->SetPosition(pos);
-
-    ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
-    nt->SetType(DNABlocks::DI);
-    nt->SetPosition(bs->GetPosition());
-    nt->SetBackbonePosition(bs->GetPosition());
-    nt->SetSidechainPosition(bs->GetPosition());
-    nt->SetBaseSegment(bs);
-    bp->SetLeftNucleotide(nt);
-
-    ADNPointer<ADNNucleotide> ntPair = new ADNNucleotide();
-    ntPair->SetType(DNABlocks::DI);
-    ntPair->SetPosition(bs->GetPosition());
-    ntPair->SetBackbonePosition(bs->GetPosition());
-    ntPair->SetSidechainPosition(bs->GetPosition());
-    ntPair->SetBaseSegment(bs);
-    bp->SetRightNucleotide(ntPair);
-
-    nt->SetPair(ntPair);
-    ntPair->SetPair(nt);
-
-    ss->AddNucleotideThreePrime(nt);
-    pair_ss->AddNucleotideFivePrime(ntPair);
-
-    pos += delt;
-  }
-  
-  ss->SetDefaultName();
-  pair_ss->SetDefaultName();
-
-  return ds;
+  return AddDoubleStrandToADNPart(part, length, start, direction);
 }
 
-ADNPointer<ADNSingleStrand> DASEditor::CreateSingleStrand(int length, SBPosition3 start, SBVector3 direction)
+ADNPointer<ADNSingleStrand> DASEditor::CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction)
 {
   SBPosition3 delt = SBQuantity::nanometer(ADNConstants::BP_RISE) * direction;
   SBPosition3 pos = start;
@@ -464,4 +346,141 @@ ADNPointer<ADNLoop> DASEditor::CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPoi
   }
 
   return loop;
+}
+
+ADNPointer<ADNPart> DASEditor::CreateNanotube(SBQuantity::length radius, SBPosition3 center, SBVector3 direction, int length)
+{
+  int minHeight = 1;
+  int minNanotubes = 3;
+
+  ADNPointer<ADNPart> nanorobot = nullptr;
+  
+  // so far create only a circle
+  // transformation to global coordinates
+  ublas::vector<double> dir = ublas::vector<double>(3);
+  dir[0] = direction[0].getValue();
+  dir[1] = direction[1].getValue();
+  dir[2] = direction[2].getValue();
+  ublas::matrix<double> subspace = ADNVectorMath::FindOrthogonalSubspace(dir);
+  ADNVectorMath::AddRowToMatrix(subspace, dir);
+  
+  if (length < minHeight) {
+    length = minHeight;
+  }
+
+  if (radius > SBQuantity::length(0.0)) {
+    // number of double helices that fit into the circumpherence
+    auto diameter = 2 * radius;
+
+    SBQuantity::length r = SBQuantity::nanometer(ADNConstants::DH_DIAMETER * 0.5);
+    SBQuantity::length R = diameter * 0.5;
+  
+    // in a circumpherence every double strand is going to take up the same space
+    auto up = -r*r*(4 * R*R - r*r) + (2 * R*R - r*r)*(2 * R*R - r*r);
+    auto down = r*r*(4 * R*R - r*r) + (2 * R*R - r*r)*(2 * R*R - r*r);
+    auto cosTheta = up / down;
+    auto theta = acos(cosTheta.getValue());
+    double pi = atan(1.0) * 4.0;
+    int num = ceil(2 * pi / theta);
+
+    if (num < minNanotubes) {
+      num = minNanotubes;
+      theta = ADNVectorMath::DegToRad(120.0);
+    }
+
+    // recalculate the exact radius so num will fit
+    auto newR = theta * num * R / (2 * pi);
+    auto newTheta = 2 * pi / num;
+
+    if (num > 0) {
+      nanorobot = new ADNPart();
+      // create dsDNA
+      double t = 0.0;
+      for (int j = 0; j < num; ++j) {
+        //  // a and b are the coordinates on the plane
+        auto a = newR*sin(t);
+        auto b = newR*cos(t);
+        ublas::vector<double> pos_p(3);
+        pos_p[0] = a.getValue();
+        pos_p[1] = b.getValue();
+        pos_p[2] = 0.0;
+        ublas::vector<double> trf = ublas::prod(ublas::trans(subspace), pos_p);
+        SBPosition3 dsPosition = SBPosition3(SBQuantity::picometer(trf[0]), SBQuantity::picometer(trf[1]), SBQuantity::picometer(trf[2])) + center;
+        AddDoubleStrandToADNPart(nanorobot, length, dsPosition, direction);
+        t += newTheta;
+      }
+
+      nanorobot->SetE1(ADNVectorMath::row(subspace, 0));
+      nanorobot->SetE2(ADNVectorMath::row(subspace, 1));
+      nanorobot->SetE3(ADNVectorMath::row(subspace, 2));
+
+      ADNBasicOperations::CenterPart(nanorobot);
+    }
+
+    ADNLogger& logger = ADNLogger::GetLogger();
+    logger.LogDebugDateTime();
+    logger.LogDebug(std::string("-> Creating DNA nanotube"));
+    logger.LogDebug(std::string("    * num of ds: ") + std::to_string(num));
+    logger.LogDebug(std::string("    * bps per ds: ") + std::to_string(length));
+    logger.LogDebug(std::string("    * total bps: ") + std::to_string(length*num));
+  }
+
+  return nanorobot;
+}
+
+ADNPointer<ADNDoubleStrand> DASEditor::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction)
+{
+  SBPosition3 delt = SBQuantity::nanometer(ADNConstants::BP_RISE) * direction;
+  SBPosition3 pos = start;
+
+  ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
+  part->RegisterDoubleStrand(ds);
+
+  ADNPointer<ADNSingleStrand> ssLeft = new ADNSingleStrand();
+  part->RegisterSingleStrand(ssLeft);
+
+  ADNPointer<ADNSingleStrand> ssRight = new ADNSingleStrand();
+  part->RegisterSingleStrand(ssRight);
+
+  for (size_t i = 0; i < length; ++i) {
+    ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
+
+    bs->SetPosition(pos);
+    bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(direction));
+    bs->SetNumber(boost::numeric_cast<int>(i));
+
+    ADNPointer<ADNBasePair> cell = new ADNBasePair();
+    // create nucleotides
+    ADNPointer<ADNNucleotide> ntLeft = new ADNNucleotide();
+    part->RegisterNucleotideThreePrime(ssLeft, ntLeft);
+    cell->SetLeftNucleotide(ntLeft);
+    ntLeft->SetPosition(bs->GetPosition());
+    ntLeft->SetBackbonePosition(bs->GetPosition());
+    ntLeft->SetSidechainPosition(bs->GetPosition());
+    ntLeft->SetBaseSegment(bs);
+    ntLeft->SetType(DNABlocks::DI);
+
+    ADNPointer<ADNNucleotide> ntRight = new ADNNucleotide();
+    part->RegisterNucleotideFivePrime(ssRight, ntRight);
+    cell->SetRightNucleotide(ntRight);
+    ntRight->SetPosition(bs->GetPosition());
+    ntRight->SetBackbonePosition(bs->GetPosition());
+    ntRight->SetSidechainPosition(bs->GetPosition());
+    ntRight->SetBaseSegment(bs);
+    ntRight->SetType(DNABlocks::DI);
+
+    ntLeft->SetPair(ntRight);
+    ntRight->SetPair(ntLeft);
+
+    bs->SetCell(cell());
+
+    part->RegisterBaseSegmentEnd(ds, bs);
+
+    pos += delt;
+  }
+
+  ssLeft->SetDefaultName();
+  ssRight->SetDefaultName();
+
+  return ds;
 }
