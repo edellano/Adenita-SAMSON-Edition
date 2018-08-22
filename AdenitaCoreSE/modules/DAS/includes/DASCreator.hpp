@@ -3,8 +3,6 @@
 #include "ADNNanorobot.hpp"
 #include "ADNConstants.hpp"
 #include "ADNBasicOperations.hpp"
-//#include "DASBackToTheAtom.hpp"
-//#include "DASCadnano.hpp"
 
 // type of editor enumeration
 
@@ -48,8 +46,9 @@ namespace DASCreator {
     \param position of the center of the bottom circumpherence
     \param direction vector towards which to grow the nanotube
     \param length of the nanotube in base pairs
+    \param whether to create a mock part containing only the high-level details
   */
-  ADNPointer<ADNPart> CreateNanotube(SBQuantity::length radius, SBPosition3 center, SBVector3 direction, int length);
+  ADNPointer<ADNPart> CreateNanotube(SBQuantity::length radius, SBPosition3 center, SBVector3 direction, int length, bool mock = false);
   //! Creates a ADNPart containing only the high-level model (double strands) of a nanotube for displaying purposes
   /*!
     \param the radius of the nanotube
@@ -59,11 +58,6 @@ namespace DASCreator {
   */
   ADNPointer<ADNPart> CreateMockNanotube(SBQuantity::length radius, SBPosition3 center, SBVector3 direction, int length);
 
-  ///**
-  // * Creates a straight double helix between the given spatial points
-  // */
-  //ADNPart* CreateTube(size_t length, SBPosition3 start, SBVector3 direction);
-  //ADNPart* CreateRoundOrigami(SBQuantity::length diameter, SBPosition3 center, SBVector3 direction, int min_length);
   //ADNPart* CreateTwoTubes(size_t length, SBPosition3 start, SBVector3 direction, SBVector3 sepDir);
   
   //! Helper function that creates a double strand in a ADNPart
@@ -75,10 +69,27 @@ namespace DASCreator {
   */
   ADNPointer<ADNDoubleStrand> AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction);
 
+  //! Helper function that adds a double strand containing only the high-level model (base segments) to a mock ADNPart
+  /*!
+  \param the ADNPart to which the double strand will be added
+  \param length of the double strand in base pairs
+  \param position of the 5' in space
+  \param direction of the double strand
+  */
+  ADNPointer<ADNDoubleStrand> AddMockDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction);
+
+  //! Helper function that creates a single strand B-DNA like in a ADNPart
+  /*!
+    \param the ADNPart to which the double strand will be added
+    \param length of the single strand in bases
+    \param position of the 5' in space
+    \param direction of the double strand
+  */
+  ADNPointer<ADNSingleStrand> AddSingleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction);
+
   //* Generates a crippled cuboid for viewing purposes
   //*/
   //ADNPart* CreateCrippledWireframeCuboid(SBPosition3 topLeft, int xSize, int ySize, int zSize);
-  //void AddCrippledDoubleStrandToANTPart(SBPosition3 dsPosition, SBVector3 direction, int length, ADNPart& nanorobot);
 
   ///** Generates a small system for debuging crossovers purposes
   // */
