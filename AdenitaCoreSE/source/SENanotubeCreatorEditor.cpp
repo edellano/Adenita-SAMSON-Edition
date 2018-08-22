@@ -122,7 +122,7 @@ QString SENanotubeCreatorEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("SENanotubeCreatorEditor"); 
+	return QObject::tr("DNA Nanotube Creator"); 
 
 }
 
@@ -147,7 +147,7 @@ QString SENanotubeCreatorEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("Nanotube Creator"); 
+	return QObject::tr("DNA Nanotube Creator"); 
 
 }
 
@@ -241,13 +241,10 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
     auto radius = (positions_.Third - positions_.Second).norm();
 
     ADNPointer<ADNPart> part = generateNanotube();
+    sendPartToAdenita(part);
 
     resetPositions();
     display_ = false;
-  }
-  
-  if (tempPart_ != nullptr) {
-    sendPartToAdenita(tempPart_);
     tempPart_ == nullptr;
   }
 }
