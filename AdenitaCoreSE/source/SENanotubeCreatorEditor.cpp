@@ -108,6 +108,7 @@ void SENanotubeCreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
 {
   SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   adenita->AddPartToActiveLayer(nanotube);
+  adenita->ResetVisualModel();
 }
 
 SBCContainerUUID SENanotubeCreatorEditor::getUUID() const { return SBCContainerUUID("F9068FA3-69DE-B6FA-2B42-C80DA5302A0D"); }
