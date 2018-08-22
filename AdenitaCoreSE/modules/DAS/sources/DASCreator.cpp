@@ -128,66 +128,70 @@ ADNPointer<ADNPart> DASCreator::CreateNanotube(SBQuantity::length radius, SBPosi
     length = minHeight;
   }
 
+  int num = 0;
+  double theta = 0.0;
+  double pi = atan(1.0) * 4.0;
+  SBQuantity::length r = SBQuantity::nanometer(ADNConstants::DH_DIAMETER * 0.5);
+  SBQuantity::length R;
+
   if (radius > SBQuantity::length(0.0)) {
     // number of double helices that fit into the circumpherence
     auto diameter = 2 * radius;
+    R = diameter * 0.5;
 
-    SBQuantity::length r = SBQuantity::nanometer(ADNConstants::DH_DIAMETER * 0.5);
-    SBQuantity::length R = diameter * 0.5;
-  
     // in a circumpherence every double strand is going to take up the same space
     auto up = -r*r*(4 * R*R - r*r) + (2 * R*R - r*r)*(2 * R*R - r*r);
     auto down = r*r*(4 * R*R - r*r) + (2 * R*R - r*r)*(2 * R*R - r*r);
     auto cosTheta = up / down;
-    auto theta = acos(cosTheta.getValue());
-    double pi = atan(1.0) * 4.0;
-    int num = ceil(2 * pi / theta);
-
-    if (num < minNanotubes) {
-      num = minNanotubes;
-      theta = ADNVectorMath::DegToRad(120.0);
-    }
-
-    // recalculate the exact radius so num will fit
-    auto newR = theta * num * R / (2 * pi);
-    auto newTheta = 2 * pi / num;
-
-    if (num > 0) {
-      nanorobot = new ADNPart();
-      // create dsDNA
-      double t = 0.0;
-      for (int j = 0; j < num; ++j) {
-        //  // a and b are the coordinates on the plane
-        auto a = newR*sin(t);
-        auto b = newR*cos(t);
-        ublas::vector<double> pos_p(3);
-        pos_p[0] = a.getValue();
-        pos_p[1] = b.getValue();
-        pos_p[2] = 0.0;
-        ublas::vector<double> trf = ublas::prod(ublas::trans(subspace), pos_p);
-        SBPosition3 dsPosition = SBPosition3(SBQuantity::picometer(trf[0]), SBQuantity::picometer(trf[1]), SBQuantity::picometer(trf[2])) + center;
-        if (mock) {
-          AddMockDoubleStrandToADNPart(nanorobot, length, dsPosition, direction);
-        }
-        else {
-          AddDoubleStrandToADNPart(nanorobot, length, dsPosition, direction);
-        }
-        t += newTheta;
-      }
-
-      nanorobot->SetE1(ADNVectorMath::row(subspace, 0));
-      nanorobot->SetE2(ADNVectorMath::row(subspace, 1));
-      nanorobot->SetE3(ADNVectorMath::row(subspace, 2));
-    }
-
-    ADNLogger& logger = ADNLogger::GetLogger();
-    logger.LogDebugDateTime();
-    logger.LogDebug(std::string("-> Creating DNA nanotube"));
-    logger.LogDebug(std::string("    * num of ds: ") + std::to_string(num));
-    logger.LogDebug(std::string("    * bps per ds: ") + std::to_string(length));
-    logger.LogDebug(std::string("    * total bps: ") + std::to_string(length*num));
+    theta = acos(cosTheta.getValue());
+    num = ceil(2 * pi / theta);
   }
 
+  if (num < minNanotubes) {
+    num = minNanotubes;
+    theta = ADNVectorMath::DegToRad(120.0);
+    R = 2 * r / sqrt(3);
+  }
+
+  // recalculate the exact radius so num will fit
+  auto newR = theta * num * R / (2 * pi);
+  auto newTheta = 2 * pi / num;
+
+  if (num > 0) {
+    nanorobot = new ADNPart();
+    // create dsDNA
+    double t = 0.0;
+    for (int j = 0; j < num; ++j) {
+      //  // a and b are the coordinates on the plane
+      auto a = newR*sin(t);
+      auto b = newR*cos(t);
+      ublas::vector<double> pos_p(3);
+      pos_p[0] = a.getValue();
+      pos_p[1] = b.getValue();
+      pos_p[2] = 0.0;
+      ublas::vector<double> trf = ublas::prod(ublas::trans(subspace), pos_p);
+      SBPosition3 dsPosition = SBPosition3(SBQuantity::picometer(trf[0]), SBQuantity::picometer(trf[1]), SBQuantity::picometer(trf[2])) + center;
+      if (mock) {
+        AddMockDoubleStrandToADNPart(nanorobot, length, dsPosition, direction);
+      }
+      else {
+        AddDoubleStrandToADNPart(nanorobot, length, dsPosition, direction);
+      }
+      t += newTheta;
+    }
+
+    nanorobot->SetE1(ADNVectorMath::row(subspace, 0));
+    nanorobot->SetE2(ADNVectorMath::row(subspace, 1));
+    nanorobot->SetE3(ADNVectorMath::row(subspace, 2));
+  }
+
+  ADNLogger& logger = ADNLogger::GetLogger();
+  logger.LogDebugDateTime();
+  logger.LogDebug(std::string("-> Creating DNA nanotube"));
+  logger.LogDebug(std::string("    * num of ds: ") + std::to_string(num));
+  logger.LogDebug(std::string("    * bps per ds: ") + std::to_string(length));
+  logger.LogDebug(std::string("    * total bps: ") + std::to_string(length*num));
+ 
   return nanorobot;
 }
 
@@ -267,6 +271,9 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddMockDoubleStrandToADNPart(ADNPointer<
     bs->SetPosition(pos);
     bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(direction));
     bs->SetNumber(boost::numeric_cast<int>(i));
+
+    ADNPointer<ADNBasePair> cell = new ADNBasePair();
+    bs->SetCell(cell());
 
     part->RegisterBaseSegmentEnd(ds, bs);
 
