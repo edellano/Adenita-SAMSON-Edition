@@ -928,7 +928,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
         for (int i = 0; i < num_poly_t_; ++i) {
           seq += "T";
         }
-        ADNPointer<ADNLoop> loop = DASEditor::CreateLoop(chain, prev_nt, seq, part);
+        ADNPointer<ADNLoop> loop = DASCreator::CreateLoop(chain, prev_nt, seq, part);
         loop->SetBaseSegment(bs);
         loop_cell->SetRightLoop(loop);
         prev_nt = loop->GetStart();  // we move backwards

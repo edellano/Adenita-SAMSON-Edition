@@ -287,12 +287,12 @@
 //}
 
 // todo: calculate positions
-ADNPointer<ADNDoubleStrand> DASEditor::CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction)
+ADNPointer<ADNDoubleStrand> DASCreator::CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction)
 {
   return AddDoubleStrandToADNPart(part, length, start, direction);
 }
 
-ADNPointer<ADNSingleStrand> DASEditor::CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction)
+ADNPointer<ADNSingleStrand> DASCreator::CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction)
 {
   SBPosition3 delt = SBQuantity::nanometer(ADNConstants::BP_RISE) * direction;
   SBPosition3 pos = start;
@@ -328,7 +328,7 @@ ADNPointer<ADNSingleStrand> DASEditor::CreateSingleStrand(ADNPointer<ADNPart> pa
   return ss;
 }
 
-ADNPointer<ADNLoop> DASEditor::CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq, ADNPointer<ADNPart> part)
+ADNPointer<ADNLoop> DASCreator::CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq, ADNPointer<ADNPart> part)
 {
   ADNPointer<ADNLoop> loop = new ADNLoop();
 
@@ -348,7 +348,7 @@ ADNPointer<ADNLoop> DASEditor::CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPoi
   return loop;
 }
 
-ADNPointer<ADNPart> DASEditor::CreateNanotube(SBQuantity::length radius, SBPosition3 center, SBVector3 direction, int length)
+ADNPointer<ADNPart> DASCreator::CreateNanotube(SBQuantity::length radius, SBPosition3 center, SBVector3 direction, int length)
 {
   int minHeight = 1;
   int minNanotubes = 3;
@@ -428,7 +428,7 @@ ADNPointer<ADNPart> DASEditor::CreateNanotube(SBQuantity::length radius, SBPosit
   return nanorobot;
 }
 
-ADNPointer<ADNDoubleStrand> DASEditor::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction)
+ADNPointer<ADNDoubleStrand> DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction)
 {
   SBPosition3 delt = SBQuantity::nanometer(ADNConstants::BP_RISE) * direction;
   SBPosition3 pos = start;

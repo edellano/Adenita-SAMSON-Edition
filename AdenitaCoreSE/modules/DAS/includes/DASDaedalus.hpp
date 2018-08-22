@@ -20,7 +20,7 @@
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/graphviz.hpp>
 #include "DASPolyhedron.hpp"
-#include "DASEditor.hpp"
+#include "DASCreator.hpp"
 #include "ADNNanorobot.hpp"
 #include "ADNVectorMath.hpp"
 #include "ADNConstants.hpp"

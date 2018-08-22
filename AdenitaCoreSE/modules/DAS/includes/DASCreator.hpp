@@ -8,7 +8,7 @@
 
 // type of editor enumeration
 
-namespace DASEditor {
+namespace DASCreator {
 
   enum EditorType {
     DoubleStrand = 0,
