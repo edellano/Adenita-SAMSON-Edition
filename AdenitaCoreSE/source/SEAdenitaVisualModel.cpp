@@ -841,15 +841,18 @@ void SEAdenitaVisualModel::orderVisibility()
   std::vector<pair<ADNSingleStrand*, float>> singleStrandsSorted;
 
   //ordered by
-  if (order == 0) {
+  if (order == 1) {
     SB_FOR(auto part, parts) {
       auto scaffolds = nanorobot_->GetScaffolds(part);
+
+      if (scaffolds.size() == 0) return;
+        
       SB_FOR(ADNPointer<ADNSingleStrand> ss, scaffolds) {
         auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
         SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
           auto pair = nanorobot_->GetNucleotidePair(nt);
           nucleotidesSorted.push_back(make_pair(nt(), float(nt->getNodeIndex())));
-          if(pair != nullptr)
+          if (pair != nullptr)
             nucleotidesSorted.push_back(make_pair(pair(), float(nt->getNodeIndex()))); //the staple nucleotide should get the same order as the scaffold nucleotide
         }
       }
@@ -873,6 +876,7 @@ void SEAdenitaVisualModel::orderVisibility()
 
         singleStrandsSorted.push_back(std::make_pair(ss(), boost::numeric_cast<float>(minIdx)));
       }
+      
     }
   }
   else if (order == 1) {
