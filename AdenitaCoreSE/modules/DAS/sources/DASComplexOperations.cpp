@@ -33,3 +33,43 @@
 //
 //  return ds;
 //}
+
+std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> DASOperations::CreateCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2)
+{
+  std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ssPair;
+
+  ADNPointer<ADNNucleotide> fPrime = nt1;
+  ADNPointer<ADNNucleotide> tPrime = nt2;
+  if (fPrime->GetStrand() != tPrime->GetStrand()) {
+    if (fPrime->IsEnd() && tPrime->IsEnd()) {
+      if (fPrime->GetEnd() == ThreePrime && tPrime->GetEnd() == FivePrime) {
+        fPrime = nt2;
+        tPrime = nt1;
+      }
+      auto fPrimeStrand = fPrime->GetStrand();
+      auto tPrimeStrand = tPrime->GetStrand();
+      ADNBasicOperations::MergeSingleStrands(part, fPrimeStrand, tPrimeStrand);
+    }
+    else {
+      // break first nucleotide in 3'
+      ADNPointer<ADNSingleStrand> firstStrand = nt1->GetStrand();
+      if (nt1->GetEnd() != ThreePrime) {
+        auto ntNext = nt1->GetNext();
+        auto pair1 = ADNBasicOperations::BreakSingleStrand(part, ntNext);
+        firstStrand = pair1.first;
+        ssPair.first = pair1.second;
+      }
+      // break second nucleotide in 5'
+      ADNPointer<ADNSingleStrand> secondStrand = nt2->GetStrand();
+      if (nt2->GetEnd() != FivePrime) {
+        auto pair2 = ADNBasicOperations::BreakSingleStrand(part, nt2);
+        secondStrand = pair2.second;
+        ssPair.second = pair2.first;
+      }
+      // connect trands
+      auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, firstStrand, secondStrand);
+    }
+  }
+
+  return ssPair;
+}
