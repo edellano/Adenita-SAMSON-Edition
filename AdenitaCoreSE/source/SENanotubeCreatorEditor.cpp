@@ -34,7 +34,7 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube()
 
   //if (radius > SBQuantity::length(0.0) && roundHeight > SBQuantity::length(0.0)) {
   if (radius > SBQuantity::length(0.0)) {
-    part = DASEditor::CreateNanotube(radius, positions_.First, dir, numNucleotides.getValue());
+    part = DASCreator::CreateNanotube(radius, positions_.First, dir, numNucleotides.getValue());
   }
 
   return part;
