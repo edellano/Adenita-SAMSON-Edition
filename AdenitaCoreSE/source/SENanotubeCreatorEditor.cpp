@@ -33,7 +33,13 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
   SBVector3 dir = (positions_.Second - positions_.First).normalizedVersion();
 
   if (mock) {
-    part = DASCreator::CreateMockNanotube(radius, positions_.First, dir, numNucleotides.getValue());
+    if (positions_.cnt == 1) {
+      part = DASCreator::CreateMockNanotube(SBQuantity::picometer(1), positions_.First, dir, numNucleotides.getValue());
+    }
+    else if (positions_.cnt == 2) {
+      part = DASCreator::CreateMockNanotube(radius, positions_.First, dir, numNucleotides.getValue());
+
+    }
   }
   else {
     part = DASCreator::CreateNanotube(radius, positions_.First, dir, numNucleotides.getValue());
