@@ -830,7 +830,7 @@ ADNArray<float> SEAdenitaVisualModel::getBaseColor(SBResidue::ResidueType baseSy
 void SEAdenitaVisualModel::orderVisibility()
 {
 
-  unsigned int order = 0;
+  unsigned int order = 1;
 
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
