@@ -23,7 +23,7 @@ SENanotubeCreatorEditor::~SENanotubeCreatorEditor() {
 
 SENanotubeCreatorEditorGUI* SENanotubeCreatorEditor::getPropertyWidget() const { return static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget); }
 
-ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube()
+ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
 {
   ADNPointer<ADNPart> part = nullptr;
 
@@ -32,8 +32,10 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube()
   auto numNucleotides = roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE);
   SBVector3 dir = (positions_.Second - positions_.First).normalizedVersion();
 
-  //if (radius > SBQuantity::length(0.0) && roundHeight > SBQuantity::length(0.0)) {
-  if (radius > SBQuantity::length(0.0)) {
+  if (mock) {
+    part = DASCreator::CreateMockNanotube(radius, positions_.First, dir, numNucleotides.getValue());
+  }
+  else {
     part = DASCreator::CreateNanotube(radius, positions_.First, dir, numNucleotides.getValue());
   }
 
@@ -185,15 +187,16 @@ void SENanotubeCreatorEditor::display() {
 
     if (positions_.cnt == 1) {
       ADNDisplayHelper::displayLine(positions_.First, currentPosition);
+      positions_.Second = currentPosition;
     }
     else if (positions_.cnt == 2) {
       ADNDisplayHelper::displayLine(positions_.First, positions_.Second);
       ADNDisplayHelper::displayLine(positions_.Second, currentPosition);
 
       positions_.Third = currentPosition;
-
-      if (config.preview_editor) tempPart_ = generateNanotube();
     }
+
+    if (config.preview_editor) tempPart_ = generateNanotube(true);
 
     if (tempPart_ != nullptr) {
 
@@ -253,10 +256,6 @@ void SENanotubeCreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
-
-  if (tempPart_ != nullptr) {
-    tempPart_ = nullptr;
-  }
 
   if (positions_.cnt == 1) {
     positions_.Second = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());

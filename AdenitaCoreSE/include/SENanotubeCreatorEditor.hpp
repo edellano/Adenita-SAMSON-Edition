@@ -100,7 +100,7 @@ public :
 
 private:
 
-  ADNPointer<ADNPart> generateNanotube();
+  ADNPointer<ADNPart> generateNanotube(bool mock = false);
   void displayNanotube();
   void resetPositions();
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
