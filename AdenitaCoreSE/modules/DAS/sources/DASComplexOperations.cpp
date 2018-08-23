@@ -34,9 +34,9 @@
 //  return ds;
 //}
 
-std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> DASOperations::CreateCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2)
+DASOperations::FourSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2)
 {
-  std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ssPair;
+  FourSingleStrands ssLeftOvers;
 
   ADNPointer<ADNNucleotide> fPrime = nt1;
   ADNPointer<ADNNucleotide> tPrime = nt2;
@@ -49,8 +49,8 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> DASOperation
       auto fPrimeStrand = fPrime->GetStrand();
       auto tPrimeStrand = tPrime->GetStrand();
       ADNBasicOperations::MergeSingleStrands(part, tPrimeStrand, fPrimeStrand);
-      ssPair.first = fPrimeStrand;
-      ssPair.second = tPrimeStrand;
+      ssLeftOvers.first = fPrimeStrand;
+      ssLeftOvers.second = tPrimeStrand;
     }
     else {
       // break first nucleotide in 3'
@@ -58,20 +58,22 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> DASOperation
       if (nt1->GetEnd() != ThreePrime) {
         auto ntNext = nt1->GetNext();
         auto pair1 = ADNBasicOperations::BreakSingleStrand(part, ntNext);
-        ssPair.first = firstStrand;
+        ssLeftOvers.first = firstStrand;
         firstStrand = pair1.first;
       }
       // break second nucleotide in 5'
       ADNPointer<ADNSingleStrand> secondStrand = nt2->GetStrand();
       if (nt2->GetEnd() != FivePrime) {
         auto pair2 = ADNBasicOperations::BreakSingleStrand(part, nt2);
-        ssPair.second = secondStrand;
+        ssLeftOvers.second = secondStrand;
         secondStrand = pair2.second;
       }
       // connect trands
-      //auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, firstStrand, secondStrand);
+      auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, firstStrand, secondStrand);
+      ssLeftOvers.third = firstStrand;
+      ssLeftOvers.fourth = secondStrand;
     }
   }
 
-  return ssPair;
+  return ssLeftOvers;
 }
