@@ -360,6 +360,15 @@ void SEAdenitaCoreSEAppGUI::onDelete()
   }
 }
 
+void SEAdenitaCoreSEAppGUI::onChangeScaffold(int idx)
+{
+  if (idx == 2) {
+    // custom scaffold
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose scaffold"), QDir::currentPath(), tr("(Sequences *.fasta)"));
+    ui.lineCustomScaffold->setText(filename);
+  }
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";
