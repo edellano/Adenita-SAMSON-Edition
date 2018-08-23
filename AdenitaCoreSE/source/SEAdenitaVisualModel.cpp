@@ -917,6 +917,7 @@ void SEAdenitaVisualModel::orderVisibility()
 
   }
 
+  if (nucleotidesSorted.size() == 0 || singleStrandsSorted.size() == 0) return;
 
   sort(nucleotidesSorted.begin(), nucleotidesSorted.end(), [=](std::pair<ADNNucleotide*, float>& a, std::pair<ADNNucleotide*, float>& b)
   {
