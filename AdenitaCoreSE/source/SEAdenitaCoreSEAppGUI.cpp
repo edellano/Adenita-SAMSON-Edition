@@ -261,8 +261,8 @@ void SEAdenitaCoreSEAppGUI::onExport()
 
 void SEAdenitaCoreSEAppGUI::onSetScaffold()
 {
-  /*std::string filename = "";
-  ADNAuxiliary::ScaffoldSeq type = ADNAuxiliary::ScaffoldSeq(ui.cmbScaffolds->currentIndex());
+  std::string filename = "";
+  ADNAuxiliary::ScaffoldSeq type = ADNAuxiliary::ScaffoldSeq(ui.cmbScaffold->currentIndex());
   if (type == ADNAuxiliary::m13mp18) {
     filename = SB_ELEMENT_PATH + "/Data/m13mp18.fasta";
   }
@@ -270,7 +270,7 @@ void SEAdenitaCoreSEAppGUI::onSetScaffold()
     filename = SB_ELEMENT_PATH + "/Data/p7249.fasta";
   }
   else if (type == ADNAuxiliary::Custom) {
-    QString fname = QFileDialog::getOpenFileName(this, tr("Select a .fasta file"), QDir::currentPath(), tr("Scaffold (*.fasta)"));
+    QString fname = ui.lineCustomScaffold->displayText();
     if (!fname.isEmpty()) filename = fname.toStdString();
   }
 
@@ -286,7 +286,7 @@ void SEAdenitaCoreSEAppGUI::onSetScaffold()
       }
     }
     t->SetScaffoldSequence(s);
-  }*/
+  }
 }
 
 void SEAdenitaCoreSEAppGUI::onCenterPart()
