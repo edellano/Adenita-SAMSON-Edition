@@ -133,6 +133,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
   }
   else {
     QString filename = QFileDialog::getOpenFileName(this, tr("Open document: caDNAno, mesh (ply), Adenita document (adn, adnpart)"), QDir::currentPath(), tr("(Documents *.json *.ply *.adn *.adnpart)"));
+    bool loadVM = true;
 
     if (!filename.isEmpty()) {
       SEAdenitaCoreSEApp* t = getApp();
@@ -148,6 +149,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
         }
         else {
           QMessageBox msgBox;
+          loadVM = false;
           msgBox.setText("Unknown json format. Current supported formats include Cadnano and legacy Adenita parts");
           msgBox.exec();
         }
@@ -165,10 +167,12 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
       else if (filename.endsWith(".adnpart")) {
         t->LoadPart(filename);
       }
+      else {
+        loadVM = false;
+      }
 
-      //add the visual model 
-      t->ResetVisualModel();
-      logger.LogDebug(QString("number of nucleotides"));
+      //add the visual model
+      if (loadVM) t->ResetVisualModel();
     }
 
     SAMSON::getActiveCamera()->center();
