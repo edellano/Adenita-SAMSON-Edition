@@ -31,4 +31,12 @@ public:
   static double CalculateTwistAngle(ADNPointer<ADNDoubleStrand> ds);
   static std::vector<std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>>> GetLinkingNucleotides(ADNPointer<ADNBaseSegment> bs);
   static SBQuantity::length CalculateAverageDistance(std::vector<std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>>> ntPairsList);
+
+  //! Routes the scaffold through a DNA nanotube created with the nanotube editor
+  /*!
+    \param number of tubes
+    \param length of the tubes
+    \param a pointer to the part containing the nanotube
+  */
+  static void RouteNanotube(int numTubes, int lengthTubes, ADNPointer<ADNPart> nanotube);
 };
