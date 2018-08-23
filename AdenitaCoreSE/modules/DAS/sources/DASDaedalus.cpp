@@ -589,7 +589,7 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
 
       for (int i = 0; i < l; ++i) {
         // every step is a ANTBaseSegment
-        ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
+        ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment(CellType::BasePair);
 
         bs->SetPosition(coords);
         bs->SetE2(ADNAuxiliary::SBVectorToUblasVector(norm));
@@ -600,11 +600,6 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
         if (i == l - 1) {
           // this region is polyT
           ADNPointer<ADNLoopPair> cell = new ADNLoopPair();
-          bs->SetCell(cell());
-        }
-        else {
-          // this region is dsDNA
-          ADNPointer<ADNBasePair> cell = new ADNBasePair();
           bs->SetCell(cell());
         }
 
