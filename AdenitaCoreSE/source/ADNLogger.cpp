@@ -1,5 +1,18 @@
 #include "ADNLogger.hpp"
 
+ADNLogger::ADNLogger()
+{
+  QIODevice::OpenModeFlag mode = QIODevice::Append;
+  QString fileName = QString::fromStdString(logPath_);
+  file_.setFileName(fileName);
+  file_.open(QIODevice::ReadWrite | mode);
+}
+
+ADNLogger::~ADNLogger()
+{
+  file_.close();
+}
+
 ADNLogger & ADNLogger::GetLogger()
 {
   static ADNLogger instance;
@@ -13,11 +26,8 @@ void ADNLogger::SetLogPath(std::string path)
 
 void ADNLogger::ClearLog()
 {
-  QString fileName = QString::fromStdString(logPath_);
-  QFile::copy(fileName, fileName + ".bak");
-  QFile file(fileName);
-  file.resize(0);
-  file.close();
+  file_.resize(0);
+  file_.flush();
 }
 
 void ADNLogger::LogDebug(float value)
@@ -122,14 +132,10 @@ void ADNLogger::Log(std::string value)
 
 void ADNLogger::Log(QString value)
 {
-  QIODevice::OpenModeFlag mode = QIODevice::Append;
-  QString fileName = QString::fromStdString(logPath_);
-  QFile file(fileName);
-  file.open(QIODevice::ReadWrite | mode);
-  QTextStream out(&file);
+  QTextStream out(&file_);
   out << value;
   out << QString("\n");
-  file.close();
+  file_.flush();
 }
 
 void ADNLogger::Log(ublas::vector<double> v)
