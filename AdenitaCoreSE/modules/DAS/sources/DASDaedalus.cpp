@@ -555,6 +555,9 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
   int j_id = 0;
   Faces faces = fig.GetFaces();
 
+  SEConfig& config = SEConfig::GetInstance();
+  double dh_dist = config.dh_dist + ADNConstants::DH_DIAMETER * 10;  // angstroms
+
   for (auto fit = faces.begin(); fit != faces.end(); ++fit) {
     DASHalfEdge* begin = (*fit)->halfEdge_;
     DASHalfEdge* he = begin;
@@ -573,7 +576,7 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
       double cos_theta = SBInnerProduct(norm, adj_norm);
       double theta = acos(cos_theta);
       double sn = sin(theta * 0.5);
-      double separation = DH_DIST*0.5 / sn;
+      double separation = dh_dist * 0.5 / sn;
       coords += SBQuantity::angstrom(separation)*norm;
 
       int l = bpLengths_.at(he->edge_) + 1; // +1 since we have apolyT region at the end

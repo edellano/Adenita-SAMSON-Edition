@@ -27,9 +27,7 @@
 
 
 const double BP_RISE = ADNConstants::BP_RISE * 10;  // angstroms
-const double DH_DIST = ADNConstants::DH_DIST + ADNConstants::DH_DIAMETER * 10;  // angstroms
 const double SS_PADDING = 10;  //angstroms
-
 
 struct DOTNode {
   DOTNode() = default;
