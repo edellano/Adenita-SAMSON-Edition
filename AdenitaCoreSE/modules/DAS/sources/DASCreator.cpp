@@ -266,14 +266,11 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddMockDoubleStrandToADNPart(ADNPointer<
   part->RegisterDoubleStrand(ds);
 
   for (size_t i = 0; i < length; ++i) {
-    ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
+    ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment(CellType::BasePair);
 
     bs->SetPosition(pos);
     bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(direction));
     bs->SetNumber(boost::numeric_cast<int>(i));
-
-    ADNPointer<ADNBasePair> cell = new ADNBasePair();
-    bs->SetCell(cell());
 
     part->RegisterBaseSegmentEnd(ds, bs);
 

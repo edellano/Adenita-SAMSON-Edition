@@ -396,6 +396,7 @@ class ADNBaseSegment: public PositionableSB, public SBStructuralGroup, public Or
   SB_CLASS
 public:
   ADNBaseSegment() : PositionableSB(), SBStructuralGroup(), Orientable() {};
+  ADNBaseSegment(CellType cellType);
   ADNBaseSegment(const ADNBaseSegment& other);
   ~ADNBaseSegment() = default;
 

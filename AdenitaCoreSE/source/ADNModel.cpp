@@ -776,6 +776,18 @@ std::map<std::string, std::vector<std::string>> ADNModel::GetNucleotideBonds(DNA
   return res;
 }
 
+ADNBaseSegment::ADNBaseSegment(CellType cellType) : PositionableSB(), Orientable(), SBStructuralGroup() {
+  if (cellType == BasePair) {
+    cell_ = new ADNBasePair();
+  }
+  else if (cellType == LoopPair) {
+    cell_ = new ADNLoopPair();
+  }
+  else if (cellType == SkipPair) {
+    cell_ = new ADNSkipPair();
+  }
+}
+
 ADNBaseSegment::ADNBaseSegment(const ADNBaseSegment & other) : PositionableSB(other), Orientable(other), SBStructuralGroup(other)
 {
   *this = other;
