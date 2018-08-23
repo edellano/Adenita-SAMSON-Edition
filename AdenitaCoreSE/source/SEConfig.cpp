@@ -79,6 +79,9 @@ void SEConfig::loadConfig() {
     writer.Key("detect_possible_crossovers");
     writer.Bool(detect_possible_crossovers);
 
+    writer.Key("dh_dist");
+    writer.Double(dh_dist);
+
     writer.Key("clear_log_file");
     writer.Bool(clear_log_file);
 
@@ -140,6 +143,7 @@ void SEConfig::updateConfig() {
     display_nucleotide_basis = setting_["display_nucleotide_basis"].GetBool();
     use_twist = setting_["use_twist"].GetBool();
     detect_possible_crossovers = setting_["detect_possible_crossovers"].GetBool();
+    dh_dist = setting_["dh_dist"].GetDouble();
     display_base_pairing = setting_["display_base_pairing"].GetBool();
 
     Value& double_helix_V_colorVal = setting_["double_helix_V_color"];
