@@ -87,10 +87,11 @@ public:
   // structure prediction and algorithms
   bool use_atomic_details = false;
   int magic_number = 5;  // initial twist in cadnano files
-  float crossover_distance_threshold = 15;  // ansgtroms
-  float crossover_angle_threshold = 25;  // angstroms
   bool use_twist = true;
   bool detect_possible_crossovers = false;
+  float crossover_distance_threshold = 15.0;  // ansgtroms
+  float crossover_angle_threshold = 25.0;  // angstroms
+  float dh_dist = 4.0;  // distance between double helices belonging to the same edge (angstroms)
   // logging and debugging
   bool clear_log_file = false;
   int test_type = 2;  // 2 for short
@@ -101,7 +102,8 @@ public:
   bool show_overlay = false;
   // group general
   SEConfigMode mode = DEBUG_NO_LOG; //which mode of the software active. debug_log, debug_no_log, haichao, elisa
-
+  // detecting crossovers
+  
 public slots:
   void updateConfig();
 

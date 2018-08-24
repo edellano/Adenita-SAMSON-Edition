@@ -555,6 +555,9 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
   int j_id = 0;
   Faces faces = fig.GetFaces();
 
+  SEConfig& config = SEConfig::GetInstance();
+  double dh_dist = config.dh_dist + ADNConstants::DH_DIAMETER * 10;  // angstroms
+
   for (auto fit = faces.begin(); fit != faces.end(); ++fit) {
     DASHalfEdge* begin = (*fit)->halfEdge_;
     DASHalfEdge* he = begin;
@@ -573,7 +576,7 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
       double cos_theta = SBInnerProduct(norm, adj_norm);
       double theta = acos(cos_theta);
       double sn = sin(theta * 0.5);
-      double separation = DH_DIST*0.5 / sn;
+      double separation = dh_dist * 0.5 / sn;
       coords += SBQuantity::angstrom(separation)*norm;
 
       int l = bpLengths_.at(he->edge_) + 1; // +1 since we have apolyT region at the end
@@ -586,7 +589,7 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
 
       for (int i = 0; i < l; ++i) {
         // every step is a ANTBaseSegment
-        ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
+        ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment(CellType::BasePair);
 
         bs->SetPosition(coords);
         bs->SetE2(ADNAuxiliary::SBVectorToUblasVector(norm));
@@ -597,11 +600,6 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
         if (i == l - 1) {
           // this region is polyT
           ADNPointer<ADNLoopPair> cell = new ADNLoopPair();
-          bs->SetCell(cell());
-        }
-        else {
-          // this region is dsDNA
-          ADNPointer<ADNBasePair> cell = new ADNBasePair();
           bs->SetCell(cell());
         }
 
@@ -928,7 +926,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
         for (int i = 0; i < num_poly_t_; ++i) {
           seq += "T";
         }
-        ADNPointer<ADNLoop> loop = DASEditor::CreateLoop(chain, prev_nt, seq, part);
+        ADNPointer<ADNLoop> loop = DASCreator::CreateLoop(chain, prev_nt, seq, part);
         loop->SetBaseSegment(bs);
         loop_cell->SetRightLoop(loop);
         prev_nt = loop->GetStart();  // we move backwards

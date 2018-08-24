@@ -16,7 +16,7 @@ class ADNLogger
 {
 public:
   // singleton pattern
-  ~ADNLogger() = default;
+  ~ADNLogger();
   // deleted functions should be public for better error message handling
   ADNLogger(ADNLogger const& l) = delete;
   void operator=(ADNLogger const& l) = delete;
@@ -62,8 +62,9 @@ public:
   //void logVector(std::string name, SBVector3 pos);
 
 private:
-  ADNLogger() = default;
+  ADNLogger();
 
   std::string logPath_ = SAMSON::getUserDataPath() + "/adenita.log";
+  QFile file_;
 };
 

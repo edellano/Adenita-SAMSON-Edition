@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1351</width>
-    <height>106</height>
+    <height>140</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -424,6 +424,59 @@
          </layout>
         </widget>
        </widget>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Options</string>
+        </attribute>
+        <widget class="QWidget" name="formLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>10</y>
+           <width>611</width>
+           <height>71</height>
+          </rect>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <item row="2" column="1">
+           <widget class="QComboBox" name="cmbScaffold">
+            <item>
+             <property name="text">
+              <string>m13mp18</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>p7249</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Custom</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Scaffold</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Custom scaffold</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="lineCustomScaffold"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -576,6 +629,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cmbScaffold</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onChangeScaffold(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>378</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>69</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -589,5 +658,6 @@
   <slot>onConnectDoubleStrands()</slot>
   <slot>onMutate()</slot>
   <slot>onDelete()</slot>
+  <slot>onChangeScaffold(int)</slot>
  </slots>
 </ui>

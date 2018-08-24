@@ -20,16 +20,14 @@
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/graphviz.hpp>
 #include "DASPolyhedron.hpp"
-#include "DASEditor.hpp"
+#include "DASCreator.hpp"
 #include "ADNNanorobot.hpp"
 #include "ADNVectorMath.hpp"
 #include "ADNConstants.hpp"
 
 
 const double BP_RISE = ADNConstants::BP_RISE * 10;  // angstroms
-const double DH_DIST = ADNConstants::DH_DIST + ADNConstants::DH_DIAMETER * 10;  // angstroms
 const double SS_PADDING = 10;  //angstroms
-
 
 struct DOTNode {
   DOTNode() = default;
