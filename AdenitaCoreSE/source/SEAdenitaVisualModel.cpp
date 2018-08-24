@@ -526,7 +526,11 @@ void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= fal
         float maxX = scPos[0].getValue();
         float maxY = scPos[1].getValue();
         float maxZ = scPos[2].getValue();
-        
+
+        positions_(index, 0) = minX + iv * (maxX - minX);
+        positions_(index, 1) = minY + iv * (maxY - minY);
+        positions_(index, 2) = minZ + iv * (maxZ - minZ);
+
         nodeIndices_(index) = nt->getNodeIndex();
         flags_(index) = nt->getInheritedFlags();
         auto baseColor = getBaseColor(nt->getResidueType());
@@ -826,7 +830,7 @@ ADNArray<float> SEAdenitaVisualModel::getBaseColor(SBResidue::ResidueType baseSy
 void SEAdenitaVisualModel::orderVisibility()
 {
 
-  unsigned int order = 0;
+  unsigned int order = 1;
 
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
@@ -837,15 +841,18 @@ void SEAdenitaVisualModel::orderVisibility()
   std::vector<pair<ADNSingleStrand*, float>> singleStrandsSorted;
 
   //ordered by
-  if (order == 0) {
+  if (order == 1) {
     SB_FOR(auto part, parts) {
       auto scaffolds = nanorobot_->GetScaffolds(part);
+
+      if (scaffolds.size() == 0) return;
+        
       SB_FOR(ADNPointer<ADNSingleStrand> ss, scaffolds) {
         auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
         SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
           auto pair = nanorobot_->GetNucleotidePair(nt);
           nucleotidesSorted.push_back(make_pair(nt(), float(nt->getNodeIndex())));
-          if(pair != nullptr)
+          if (pair != nullptr)
             nucleotidesSorted.push_back(make_pair(pair(), float(nt->getNodeIndex()))); //the staple nucleotide should get the same order as the scaffold nucleotide
         }
       }
@@ -869,6 +876,7 @@ void SEAdenitaVisualModel::orderVisibility()
 
         singleStrandsSorted.push_back(std::make_pair(ss(), boost::numeric_cast<float>(minIdx)));
       }
+      
     }
   }
   else if (order == 1) {
@@ -909,6 +917,7 @@ void SEAdenitaVisualModel::orderVisibility()
 
   }
 
+  if (nucleotidesSorted.size() == 0 || singleStrandsSorted.size() == 0) return;
 
   sort(nucleotidesSorted.begin(), nucleotidesSorted.end(), [=](std::pair<ADNNucleotide*, float>& a, std::pair<ADNNucleotide*, float>& b)
   {

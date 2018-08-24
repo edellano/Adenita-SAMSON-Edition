@@ -65,6 +65,7 @@ public slots:
   void onConnectSingleStrands();
   void onBreak();
   void onDelete();
+  void onChangeScaffold(int idx);
 
 private:
   std::string IsJsonCadnano(QString filename);

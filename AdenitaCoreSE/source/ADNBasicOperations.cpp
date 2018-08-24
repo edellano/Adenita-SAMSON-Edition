@@ -254,6 +254,11 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
       part->DeregisterSingleStrand(ssPair2.first);  // deregister strand containing only the nt we want to delete
     }
 
+    auto bs = nt->GetBaseSegment();
+    if (bs->GetCellType() == LoopPair) {
+      ADNPointer<ADNLoopPair> loopPair = static_cast<ADNLoopPair*>(bs->GetCell()());
+      loopPair->RemoveNucleotide(nt);
+    }
     nt.deleteReferenceTarget();
   }
 

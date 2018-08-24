@@ -23,23 +23,7 @@ SENanotubeCreatorEditor::~SENanotubeCreatorEditor() {
 
 SENanotubeCreatorEditorGUI* SENanotubeCreatorEditor::getPropertyWidget() const { return static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget); }
 
-ADNPointer<ADNDoubleStrand> SENanotubeCreatorEditor::generateDoubleStrand()
-{
-  ADNPointer<ADNDoubleStrand> doubleStrand = nullptr;
-  
-  SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
-  auto tubeLength = (currentPosition - positions_.First).norm();
-  SBVector3 dir = (currentPosition - positions_.First).normalizedVersion();
-  SBQuantity::dimensionless num_nts = tubeLength / SBQuantity::nanometer(ADNConstants::BP_RISE);
-  int n = num_nts.getValue();
-  if (n > 0) {
-    doubleStrand = DASEditor::CreateDoubleStrand(n, positions_.First, dir);
-  }
-
-  return doubleStrand;
-}
-
-ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube()
+ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
 {
   ADNPointer<ADNPart> part = nullptr;
 
@@ -48,9 +32,17 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube()
   auto numNucleotides = roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE);
   SBVector3 dir = (positions_.Second - positions_.First).normalizedVersion();
 
-  if (radius > SBQuantity::length(0.0) && roundHeight > SBQuantity::length(0.0)) {
-    //part = editor.CreateRoundOrigami(radius * 2, positions_.First, dir, numNucleotides.getValue());
+  if (mock) {
+    if (positions_.cnt == 1) {
+      part = DASCreator::CreateMockNanotube(SBQuantity::picometer(1), positions_.First, dir, numNucleotides.getValue());
+    }
+    else if (positions_.cnt == 2) {
+      part = DASCreator::CreateMockNanotube(radius, positions_.First, dir, numNucleotides.getValue());
 
+    }
+  }
+  else {
+    part = DASCreator::CreateNanotube(radius, positions_.First, dir, numNucleotides.getValue());
   }
 
   return part;
@@ -87,7 +79,7 @@ void SENanotubeCreatorEditor::displayNanotube()
       colorsV(index, 0) = config.double_strand_color[0];
       colorsV(index, 1) = config.double_strand_color[1];
       colorsV(index, 2) = config.double_strand_color[2];
-      colorsV(index, 3) = config.double_strand_color[3];
+      colorsV(index, 3) = 0.4f;
 
       radiiV(index) = config.base_pair_radius;
 
@@ -118,6 +110,13 @@ void SENanotubeCreatorEditor::resetPositions()
   positions_.cnt = 0;
 }
 
+void SENanotubeCreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
+{
+  SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  adenita->AddPartToActiveLayer(nanotube);
+  adenita->ResetVisualModel();
+}
+
 SBCContainerUUID SENanotubeCreatorEditor::getUUID() const { return SBCContainerUUID("F9068FA3-69DE-B6FA-2B42-C80DA5302A0D"); }
 
 QString SENanotubeCreatorEditor::getName() const { 
@@ -132,7 +131,7 @@ QString SENanotubeCreatorEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("SENanotubeCreatorEditor"); 
+	return QObject::tr("DNA Nanotube Creator"); 
 
 }
 
@@ -157,7 +156,7 @@ QString SENanotubeCreatorEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("Nanotube Creator"); 
+	return QObject::tr("DNA Nanotube Creator"); 
 
 }
 
@@ -195,22 +194,26 @@ void SENanotubeCreatorEditor::display() {
 
     if (positions_.cnt == 1) {
       ADNDisplayHelper::displayLine(positions_.First, currentPosition);
+      positions_.Second = currentPosition;
     }
     else if (positions_.cnt == 2) {
       ADNDisplayHelper::displayLine(positions_.First, positions_.Second);
       ADNDisplayHelper::displayLine(positions_.Second, currentPosition);
 
       positions_.Third = currentPosition;
-
-      if (config.preview_editor) tempPart_ = generateNanotube();
     }
+
+    if (config.preview_editor) tempPart_ = generateNanotube(true);
 
     if (tempPart_ != nullptr) {
 
       glEnable(GL_DEPTH_TEST);
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       displayNanotube();
 
+      glDisable(GL_BLEND);
       glDisable(GL_DEPTH_TEST);
 
     }
@@ -240,10 +243,6 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
-  if (tempPart_ != nullptr) {
-    tempPart_ = nullptr;
-  }
-
   if (positions_.cnt == 0) {
     positions_.First = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.cnt++;
@@ -254,32 +253,19 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
 
     auto radius = (positions_.Third - positions_.Second).norm();
 
-    if (radius > SBQuantity::nanometer(1)) {
-      ADNPointer<ADNPart> part = generateNanotube();
-    }
-    else {
-      ADNPointer<ADNDoubleStrand> part = generateDoubleStrand();
-    }
+    ADNPointer<ADNPart> part = generateNanotube();
+    sendPartToAdenita(part);
 
     resetPositions();
     display_ = false;
+    tempPart_ == nullptr;
   }
-  
-
-
-  //if (nanorobot != nullptr) sendPartToAdenita(nanorobot);
-
-
 }
 
 void SENanotubeCreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
-
-  if (tempPart_ != nullptr) {
-    tempPart_ = nullptr;
-  }
 
   if (positions_.cnt == 1) {
     positions_.Second = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());

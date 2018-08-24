@@ -7,6 +7,7 @@
 #include "DASDaedalus.hpp"
 #include "DASBackToTheAtom.hpp"
 #include "DASCadnano.hpp"
+#include "DASComplexOperations.hpp"
 #include "SEConfig.hpp"
 #include "SEAdenitaVisualModel.hpp"
 
@@ -55,8 +56,10 @@ public :
 
   ADNNanorobot* GetNanorobot();
 
-private:
+  // Exposed for editors
   void AddPartToActiveLayer(ADNPointer<ADNPart> part);
+
+private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);
 
   std::map<SBDocument*, ADNNanorobot*> nanorobots_;
