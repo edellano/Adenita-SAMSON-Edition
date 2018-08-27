@@ -178,7 +178,7 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
     if (highlightedNucleotides.size() == 1) {
       auto start = start_;
       ADNPointer<ADNNucleotide> end = highlightedNucleotides[0];
-      if (end->GetEnd() != ThreePrime) end = end->GetNext();
+      if (!end->IsEnd()) end = end->GetNext();
       ADNPointer<ADNPart> part = nanorobot->GetPart(end->GetStrand());
       auto ssLeftOvers = DASOperations::CreateCrossover(part, start, end);
       if (ssLeftOvers.first != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.first);
