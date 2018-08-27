@@ -155,6 +155,7 @@ public:
   */
   void HideCenterAtoms(ADNPointer<ADNNucleotide> nt);
 
+
 private:
   CollectionMap<ADNPart> partsIndex_;
 };
