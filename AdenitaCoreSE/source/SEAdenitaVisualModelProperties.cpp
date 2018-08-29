@@ -118,7 +118,9 @@ bool SEAdenitaVisualModelProperties::setup(SBNode* node) {
 
 void SEAdenitaVisualModelProperties::onSliderScaleChanged(int val)
 {
-  visualModel->changeScale(val / 10.0f, true); //todo this should depend on the previous scale
+  double scale = (double)val / 10.0f;
+  visualModel->changeScale(scale, true); //todo this should depend on the previous scale
+  ui.lblScale->setText(QString::number(scale));
 }
 
 void SEAdenitaVisualModelProperties::onSliderVisibilityChanged(int val)
