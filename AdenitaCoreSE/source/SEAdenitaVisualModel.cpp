@@ -340,21 +340,6 @@ void SEAdenitaVisualModel::prepareArraysForDisplay()
 
   if (nanorobot_ == nullptr) return;
   
-  //if (!allScalesInitialized_) {
-  //  return;
-  //}
-
-  //if (config.detect_possible_crossovers && config.display_possible_crossovers) {
-  //  displayPossibleCrossovers();
-  //}
-
-  //if (config.display_nucleotide_basis) {
-  //  displayNucleotideBasis();
-  //  return;
-  //}
-
-  //scale_ += animation_step_size;
-
   if (scale_ > MAX_SCALE) scale_ = MAX_SCALE;
 
   float interpolated = 1.0f - (ceil(scale_) - scale_);
@@ -472,15 +457,7 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
 
         radiiV_(index) = config.nucleotide_V_radius;
         radiiE_(index) = config.nucleotide_E_radius;
-
-        SBPosition3 pos3D = nanorobot_->GetNucleotidePosition(nt);
-        /*SBPosition3 pos2D = nucleotide->GetSBPosition2D();
-        SBPosition3 pos1D = nucleotide->GetSBPosition1D();*/
-
-        //if (configuration_->interpolate_dimensions) interpolateDimension(pos1D, pos2D, pos3D, positions_, index);
-
-        //highlightStrands(colorsV_, colorsV_, index, nucleotide);
-
+        
         if (!ss->isVisible()) {
           colorsV_(index, 3) = 0.0f;
           radiiV_(index) = 0.0f;
@@ -505,6 +482,11 @@ void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= fal
 
   auto parts = nanorobot_->GetParts();
 
+  float minERadius = config.nucleotide_E_radius;
+  float maxERadius = config.nucleotide_V_radius;
+  float intervalERadius = maxERadius - minERadius;
+  float iERadius = minERadius + iv * intervalERadius;
+
   SB_FOR(auto part, parts) {
 
     auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -517,37 +499,48 @@ void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= fal
 
         auto index = ntMap_[nt()];
 
-        auto bbPos = nanorobot_->GetNucleotideBackbonePosition(nt);
-        float minX = bbPos[0].getValue();
-        float minY = bbPos[1].getValue();
-        float minZ = bbPos[2].getValue();
-
         auto scPos = nanorobot_->GetNucleotideSidechainPosition(nt);
-        float maxX = scPos[0].getValue();
-        float maxY = scPos[1].getValue();
-        float maxZ = scPos[2].getValue();
 
-        positions_(index, 0) = minX + iv * (maxX - minX);
-        positions_(index, 1) = minY + iv * (maxY - minY);
-        positions_(index, 2) = minZ + iv * (maxZ - minZ);
-
-        nodeIndices_(index) = nt->getNodeIndex();
-        flags_(index) = nt->getInheritedFlags();
-        auto baseColor = getBaseColor(nt->getResidueType());
-        colorsV_.SetRow(index, baseColor);
-
-        colorsE_.SetRow(index, nucleotideEColor_);
+        positions_(index, 0) = nanorobot_->GetNucleotideSidechainPosition(nt)[0].getValue();
+        positions_(index, 1) = nanorobot_->GetNucleotideSidechainPosition(nt)[1].getValue();
+        positions_(index, 2) = nanorobot_->GetNucleotideSidechainPosition(nt)[2].getValue();
 
         radiiV_(index) = config.nucleotide_V_radius;
-        radiiE_(index) = config.nucleotide_E_radius;
+        colorsE_.SetRow(index, nucleotideEColor_);
+        nodeIndices_(index) = nt->getNodeIndex();
+        flags_(index) = nt->getInheritedFlags();
 
-        SBPosition3 pos3D = nanorobot_->GetNucleotidePosition(nt);
-        /*SBPosition3 pos2D = nucleotide->GetSBPosition2D();
-        SBPosition3 pos1D = nucleotide->GetSBPosition1D();*/
+        auto baseColor = getBaseColor(nt->getResidueType());
+        
+        if (ss->IsScaffold()) {
+          float maxVColorR;
+          float maxVColorG;
+          float maxVColorB;
+          float maxVColorA;
 
-        //if (configuration_->interpolate_dimensions) interpolateDimension(pos1D, pos2D, pos3D, positions_, index);
+          maxVColorR = config.nucleotide_E_Color[0];
+          maxVColorG = config.nucleotide_E_Color[1];
+          maxVColorB = config.nucleotide_E_Color[2];
+          maxVColorA = config.nucleotide_E_Color[3];
 
-        //highlightStrands(colorsV_, colorsV_, index, nucleotide);
+          float minVColorR = baseColor(0);
+          float minVColorG = baseColor(1);
+          float minVColorB = baseColor(2);
+          float minVColorA = baseColor(3);
+
+          colorsV_(index, 0) = minVColorR + iv * (maxVColorR - minVColorR);
+          colorsV_(index, 1) = minVColorG + iv * (maxVColorG - minVColorG);
+          colorsV_(index, 2) = minVColorB + iv * (maxVColorB - minVColorB);
+          colorsV_(index, 3) = minVColorA + iv * (maxVColorA - minVColorA);
+
+          radiiE_(index) = iERadius;
+
+        }
+        else {
+          colorsV_.SetRow(index, baseColor);
+          radiiE_(index) = config.nucleotide_E_radius;
+        }
+
 
         if (!ss->isVisible()) {
           colorsV_(index, 3) = 0.0f;
@@ -568,7 +561,116 @@ void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= fal
 
 void SEAdenitaVisualModel::prepareScale5to6(double iv, bool forSelection /*= false*/)
 {
+  SEConfig& config = SEConfig::GetInstance();
+  ADNLogger& logger = ADNLogger::GetLogger();
 
+  auto parts = nanorobot_->GetParts();
+
+  float minERadius = config.nucleotide_E_radius;
+  float maxERadius = config.nucleotide_V_radius;
+  float intervalERadius = maxERadius - minERadius;
+  float iERadius = minERadius + iv * intervalERadius;
+  
+  SB_FOR(auto part, parts) {
+
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+
+        auto index = ntMap_[nt()];
+
+        nodeIndices_(index) = nt->getNodeIndex();
+        flags_(index) = nt->getInheritedFlags();
+
+        float minVColorR;
+        float minVColorG;
+        float minVColorB;
+        float minVColorA;
+
+        int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
+
+        float maxVColorR = config.staple_colors[stapleColorNum * 4 + 0];
+        float maxVColorG = config.staple_colors[stapleColorNum * 4 + 1];
+        float maxVColorB = config.staple_colors[stapleColorNum * 4 + 2];
+        float maxVColorA = config.staple_colors[stapleColorNum * 4 + 3];
+
+        positions_(index, 0) = nanorobot_->GetNucleotideSidechainPosition(nt)[0].getValue();
+        positions_(index, 1) = nanorobot_->GetNucleotideSidechainPosition(nt)[1].getValue();
+        positions_(index, 2) = nanorobot_->GetNucleotideSidechainPosition(nt)[2].getValue();
+
+        radiiV_(index) = config.nucleotide_V_radius;
+
+        if (ss->IsScaffold())
+        {
+
+          minVColorR = config.nucleotide_E_Color[0];
+          minVColorG = config.nucleotide_E_Color[1];
+          minVColorB = config.nucleotide_E_Color[2];
+          minVColorA = config.nucleotide_E_Color[3];
+
+          maxVColorR = config.nucleotide_E_Color[0];
+          maxVColorG = config.nucleotide_E_Color[1];
+          maxVColorB = config.nucleotide_E_Color[2];
+          maxVColorA = config.nucleotide_E_Color[3];
+
+          colorsE_(index, 0) = config.nucleotide_E_Color[0];
+          colorsE_(index, 1) = config.nucleotide_E_Color[1];
+          colorsE_(index, 2) = config.nucleotide_E_Color[2];
+          colorsE_(index, 3) = config.nucleotide_E_Color[3];
+
+          radiiE_(index) = config.nucleotide_V_radius;
+
+        }
+        else
+        {
+          auto baseColor = getBaseColor(nt->getResidueType());
+
+          minVColorR = baseColor(0);
+          minVColorG = baseColor(1);
+          minVColorB = baseColor(2);
+          minVColorA = baseColor(3);
+
+          radiiE_(index) = iERadius;
+
+          float minEColorR = config.nucleotide_E_Color[0];
+          float minEColorG = config.nucleotide_E_Color[1];
+          float minEColorB = config.nucleotide_E_Color[2];
+          float minEColorA = config.nucleotide_E_Color[3];
+
+          colorsE_(index, 0) = minEColorR + iv * (maxVColorR - minEColorR);
+          colorsE_(index, 1) = minEColorG + iv * (maxVColorG - minEColorG);
+          colorsE_(index, 2) = minEColorB + iv * (maxVColorB - minEColorB);
+          colorsE_(index, 3) = minEColorA + iv * (maxVColorA - minEColorA);
+        }
+        
+        colorsV_(index, 0) = minVColorR + iv * (maxVColorR - minVColorR);
+        colorsV_(index, 1) = minVColorG + iv * (maxVColorG - minVColorG);
+        colorsV_(index, 2) = minVColorB + iv * (maxVColorB - minVColorB);
+        colorsV_(index, 3) = minVColorA + iv * (maxVColorA - minVColorA);
+
+
+        //strand direction
+        if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
+          radiiE_(index) = config.nucleotide_E_radius;
+        }
+
+        if (!ss->isVisible()) {
+          colorsV_(index, 3) = 0.0f;
+          radiiV_(index) = 0.0f;
+          radiiE_(index) = 0.0f;
+          colorsE_(index, 3) = 0.0f;
+        }
+        else if (!nt->isVisible()) {
+          colorsV_(index, 3) = 0.0f;
+          colorsE_(index, 3) = 0.0f;
+        }
+      }
+    }
+  }
 }
 
 void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
@@ -601,12 +703,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
         positions_(index, 0) = iPos[0].getValue();
         positions_(index, 1) = iPos[1].getValue();
         positions_(index, 2) = iPos[2].getValue();
-
-        SBPosition3 pos3D = nanorobot_->GetNucleotidePosition(nt);
-        //SBPosition3 pos2D = nucleotide->GetSBPosition2D();
-        //SBPosition3 pos1D = nucleotide->GetSBPosition1D();
-
-        //if (config.interpolate_dimensions) interpolateDimension(pos1D, pos2D, pos3D, positions_, index);
 
         float minVColorR;
         float minVColorG;
@@ -659,7 +755,6 @@ void SEAdenitaVisualModel::prepareScale6to7(double iv, bool forSelection)
         radiiV_(index) = config.nucleotide_V_radius;
         radiiE_(index) = config.nucleotide_V_radius;
 
-        //highlightStrands(colorsV_, colorsE_, index, nucleotide);
 
         //strand direction
         if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
