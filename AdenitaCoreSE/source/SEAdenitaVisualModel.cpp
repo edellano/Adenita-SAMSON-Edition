@@ -342,7 +342,7 @@ void SEAdenitaVisualModel::prepareArraysForDisplay()
   
   if (scale_ > MAX_SCALE) scale_ = MAX_SCALE;
 
-  float interpolated = 1.0f - (ceil(scale_) - scale_);
+  float interpolated = 1.0f - (floor(scale_ + 1) - scale_);
 
   if (scale_ < (float)ALL_ATOMS_STICKS) {
     //0 - 9
