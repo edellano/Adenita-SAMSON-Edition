@@ -25,11 +25,11 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
-       <widget class="QWidget" name="tab_2">
+       <widget class="QWidget" name="tabDebug">
         <attribute name="title">
-         <string>Modifications</string>
+         <string>Debug Menu</string>
         </attribute>
         <widget class="QWidget" name="gridLayoutWidget_3">
          <property name="geometry">
@@ -51,7 +51,7 @@
          </layout>
         </widget>
        </widget>
-       <widget class="QWidget" name="tab_3">
+       <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
          <string>New UI</string>
         </attribute>
@@ -424,7 +424,7 @@
          </layout>
         </widget>
        </widget>
-       <widget class="QWidget" name="tab">
+       <widget class="QWidget" name="tabOptions">
         <attribute name="title">
          <string>Options</string>
         </attribute>
