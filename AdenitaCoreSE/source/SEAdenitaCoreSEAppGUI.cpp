@@ -83,8 +83,10 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   paintIcon.addFile(string(iconsPath + "paint.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnPaint->setIcon(paintIcon);
 
-
-
+  // disable debug menu if compiling in release mode
+  #if NDEBUG
+  ui.tabWidget->removeTab(0);
+  #endif
 }
 
 SEAdenitaCoreSEAppGUI::~SEAdenitaCoreSEAppGUI() {
