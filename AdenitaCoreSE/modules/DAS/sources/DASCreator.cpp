@@ -225,10 +225,10 @@ ADNPointer<ADNPart> DASCreator::CreateDSRing(SBQuantity::length radius, SBPositi
     auto b = R*cos(t);
     // calculate tangent
     ublas::vector<double> rVec(3);
-    rVec[0] = R.getValue()*cos(t);
-    rVec[1] = R.getValue()*sin(t);
+    rVec[0] = sin(t);
+    rVec[1] = cos(t);
     rVec[2] = 0.0;
-    auto direction = ADNVectorMath::CrossProduct(ADNAuxiliary::SBVectorToUblasVector(normal), rVec);
+    auto direction = ADNVectorMath::CrossProduct(ADNAuxiliary::SBVectorToUblasVector(normal), -rVec);
 
     ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
 
@@ -238,6 +238,8 @@ ADNPointer<ADNPart> DASCreator::CreateDSRing(SBQuantity::length radius, SBPositi
     pos[2] = SBQuantity::length(0.0);
     bs->SetPosition(pos);
     bs->SetE3(direction);
+    bs->SetE2(ADNAuxiliary::SBVectorToUblasVector(normal));
+    bs->SetE1(rVec);
     bs->SetNumber(boost::numeric_cast<int>(j));
 
     ADNPointer<ADNBasePair> cell = new ADNBasePair();
