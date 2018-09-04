@@ -238,7 +238,9 @@ public:
   void SetThreePrime(ADNPointer<ADNNucleotide> nt);
 
   void IsScaffold(bool b);
-  bool IsScaffold();
+  bool IsScaffold() const;
+  bool getIsScaffold() const;
+  void setIsScaffold(bool b);
   int getNumberOfNucleotides() const;
   CollectionMap<ADNNucleotide> GetNucleotides() const;
   ADNPointer<ADNNucleotide> GetNucleotide(unsigned int id) const;

@@ -25,7 +25,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -463,7 +463,7 @@
            <x>0</x>
            <y>0</y>
            <width>431</width>
-           <height>31</height>
+           <height>65</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
@@ -471,6 +471,13 @@
            <widget class="QPushButton" name="btnCenterPart">
             <property name="text">
              <string>Center Part</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QPushButton" name="btnDSRing">
+            <property name="text">
+             <string>dsDNA Ring</string>
             </property>
            </widget>
           </item>
@@ -645,6 +652,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnDSRing</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onDSRing()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>229</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>69</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -659,5 +682,6 @@
   <slot>onMutate()</slot>
   <slot>onDelete()</slot>
   <slot>onChangeScaffold(int)</slot>
+  <slot>onDSRing()</slot>
  </slots>
 </ui>

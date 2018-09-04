@@ -39,7 +39,6 @@ namespace DASCreator {
 
   ADNPointer<ADNLoop> CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq, ADNPointer<ADNPart> part = nullptr);
 
-
   //! Creates a ADNPart containing a nanotube
   /*!
     \param the radius of the nanotube
@@ -57,6 +56,15 @@ namespace DASCreator {
     \param length of the nanotube in base pairs
   */
   ADNPointer<ADNPart> CreateMockNanotube(SBQuantity::length radius, SBPosition3 center, SBVector3 direction, int length);
+
+  //! Creates a ADNPart containing a double stranded DNA Ring
+  /*!
+    \param the radius of the ring
+    \param position of the center of the ring
+    \param normal to the ring
+    \param whether to create a mock part containing only the high-level details
+  */
+  ADNPointer<ADNPart> CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock = false);
 
   //ADNPart* CreateTwoTubes(size_t length, SBPosition3 start, SBVector3 direction, SBVector3 sepDir);
   
