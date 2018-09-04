@@ -207,8 +207,10 @@ ADNPointer<ADNPart> DASCreator::CreateDSRing(SBQuantity::length radius, SBPositi
   ADNPointer<ADNSingleStrand> ssLeft = new ADNSingleStrand();
   ADNPointer<ADNSingleStrand> ssRight = new ADNSingleStrand();
   part->RegisterDoubleStrand(ds);
-  part->RegisterSingleStrand(ssLeft);
-  part->RegisterSingleStrand(ssRight);
+  if (!mock) {
+    part->RegisterSingleStrand(ssLeft);
+    part->RegisterSingleStrand(ssRight);
+  }
 
   double pi = atan(1.0) * 4.0;
   auto circumpherence = 2.0 * pi * radius;
@@ -243,27 +245,29 @@ ADNPointer<ADNPart> DASCreator::CreateDSRing(SBQuantity::length radius, SBPositi
     bs->SetNumber(boost::numeric_cast<int>(j));
 
     ADNPointer<ADNBasePair> cell = new ADNBasePair();
-    // create nucleotides
-    ADNPointer<ADNNucleotide> ntLeft = new ADNNucleotide();
-    part->RegisterNucleotideThreePrime(ssLeft, ntLeft);
-    cell->SetLeftNucleotide(ntLeft);
-    ntLeft->SetPosition(bs->GetPosition());
-    ntLeft->SetBackbonePosition(bs->GetPosition());
-    ntLeft->SetSidechainPosition(bs->GetPosition());
-    ntLeft->SetBaseSegment(bs);
-    ntLeft->SetType(DNABlocks::DI);
+    if (!mock) {
+      // create nucleotides
+      ADNPointer<ADNNucleotide> ntLeft = new ADNNucleotide();
+      part->RegisterNucleotideThreePrime(ssLeft, ntLeft);
+      cell->SetLeftNucleotide(ntLeft);
+      ntLeft->SetPosition(bs->GetPosition());
+      ntLeft->SetBackbonePosition(bs->GetPosition());
+      ntLeft->SetSidechainPosition(bs->GetPosition());
+      ntLeft->SetBaseSegment(bs);
+      ntLeft->SetType(DNABlocks::DI);
 
-    ADNPointer<ADNNucleotide> ntRight = new ADNNucleotide();
-    part->RegisterNucleotideFivePrime(ssRight, ntRight);
-    cell->SetRightNucleotide(ntRight);
-    ntRight->SetPosition(bs->GetPosition());
-    ntRight->SetBackbonePosition(bs->GetPosition());
-    ntRight->SetSidechainPosition(bs->GetPosition());
-    ntRight->SetBaseSegment(bs);
-    ntRight->SetType(DNABlocks::DI);
+      ADNPointer<ADNNucleotide> ntRight = new ADNNucleotide();
+      part->RegisterNucleotideFivePrime(ssRight, ntRight);
+      cell->SetRightNucleotide(ntRight);
+      ntRight->SetPosition(bs->GetPosition());
+      ntRight->SetBackbonePosition(bs->GetPosition());
+      ntRight->SetSidechainPosition(bs->GetPosition());
+      ntRight->SetBaseSegment(bs);
+      ntRight->SetType(DNABlocks::DI);
 
-    ntLeft->SetPair(ntRight);
-    ntRight->SetPair(ntLeft);
+      ntLeft->SetPair(ntRight);
+      ntRight->SetPair(ntLeft);
+    }
 
     bs->SetCell(cell());
 
