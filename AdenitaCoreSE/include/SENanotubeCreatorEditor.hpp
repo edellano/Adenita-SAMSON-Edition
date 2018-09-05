@@ -13,6 +13,14 @@
 #include "ADNDisplayHelper.hpp"
 #include "DASCreator.hpp"
 
+
+enum RoutingType {
+  None = 0,
+  Seamless = 1,
+  Tiles = 2,
+  NonSeamless = 3
+};
+
 /// This class implements an editor
 
 class SENanotubeCreatorEditor : public SBGEditor {
@@ -98,6 +106,7 @@ public :
 
 	//@}
 
+  void SetRouting(RoutingType t);
 private:
 
   ADNPointer<ADNPart> generateNanotube(bool mock = false);
@@ -118,6 +127,7 @@ private:
   Positions positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
+  RoutingType routing_ = RoutingType::None;
 };
 
 

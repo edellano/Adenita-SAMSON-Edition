@@ -1,8 +1,8 @@
 #pragma once
 
-
 #include "SBGWindowWidget.hpp" 
 #include "ui_SENanotubeCreatorEditorGUI.h"
+
 
 class SENanotubeCreatorEditor;
 
@@ -51,10 +51,12 @@ public:
 
 	//@}
 
+public slots:
+  void onChangeRouting();
+
 private:
 
 	Ui::SENanotubeCreatorEditorGUIClass									ui;
 	SENanotubeCreatorEditor*												editor;
-
 };
 

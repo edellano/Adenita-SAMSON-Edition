@@ -32,6 +32,24 @@ void SENanotubeCreatorEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+void SENanotubeCreatorEditorGUI::onChangeRouting()
+{
+  RoutingType t = RoutingType::None;
+
+  if (ui.chkRoutingSeamless->isChecked()) {
+    t = RoutingType::Seamless;
+  }
+  else if (ui.chkRoutingTiles->isChecked()) {
+    t = RoutingType::Tiles;
+  }
+  else if (ui.chkRoutingNonSeamless->isChecked()) {
+    t = RoutingType::NonSeamless;
+  }
+
+  SENanotubeCreatorEditor* editor = getEditor();
+  editor->SetRouting(t);
+}
+
 SBCContainerUUID SENanotubeCreatorEditorGUI::getUUID() const { return SBCContainerUUID( "23177033-1C9B-B441-1916-35EE442706CC" );}
 
 QPixmap SENanotubeCreatorEditorGUI::getLogo() const { 
@@ -48,7 +66,7 @@ QString SENanotubeCreatorEditorGUI::getName() const {
 	// SAMSON Element generator pro tip: this string will be the GUI title. 
 	// Modify this function to have a user-friendly description of your editor inside SAMSON
 
-	return "SENanotubeCreatorEditor"; 
+	return "DNA Nanotube Creator"; 
 
 }
 
