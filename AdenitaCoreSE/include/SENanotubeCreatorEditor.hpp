@@ -12,14 +12,8 @@
 #include "SEAdenitaCoreSEApp.hpp"
 #include "ADNDisplayHelper.hpp"
 #include "DASCreator.hpp"
+#include "DASRouter.hpp"
 
-
-enum RoutingType {
-  None = 0,
-  Seamless = 1,
-  Tiles = 2,
-  NonSeamless = 3
-};
 
 /// This class implements an editor
 

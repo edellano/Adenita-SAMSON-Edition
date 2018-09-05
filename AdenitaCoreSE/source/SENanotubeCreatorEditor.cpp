@@ -259,7 +259,8 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
     auto radius = (positions_.Third - positions_.Second).norm();
 
     ADNPointer<ADNPart> part = generateNanotube();
-    // route the nanotube here
+    DASRouter* router = DASRouter::GetRouter(routing_);
+    router->Route(part);
     sendPartToAdenita(part);
 
     resetPositions();
