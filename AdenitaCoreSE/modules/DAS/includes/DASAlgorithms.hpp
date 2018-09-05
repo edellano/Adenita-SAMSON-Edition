@@ -5,6 +5,11 @@
 #include "DASBackToTheAtom.hpp"
 #include "ADNBasicOperations.hpp"
 
+
+class DASRouter {
+
+};
+
 class DASCrossover {
 public:
   DASCrossover() = default;

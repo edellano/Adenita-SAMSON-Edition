@@ -23,6 +23,11 @@ SENanotubeCreatorEditor::~SENanotubeCreatorEditor() {
 
 SENanotubeCreatorEditorGUI* SENanotubeCreatorEditor::getPropertyWidget() const { return static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget); }
 
+void SENanotubeCreatorEditor::SetRouting(RoutingType t)
+{
+  routing_ = t;
+}
+
 ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
 {
   ADNPointer<ADNPart> part = nullptr;
@@ -254,6 +259,7 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
     auto radius = (positions_.Third - positions_.Second).norm();
 
     ADNPointer<ADNPart> part = generateNanotube();
+    // route the nanotube here
     sendPartToAdenita(part);
 
     resetPositions();

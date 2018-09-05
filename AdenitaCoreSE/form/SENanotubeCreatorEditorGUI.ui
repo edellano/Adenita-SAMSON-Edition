@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>100</height>
+    <height>113</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -21,14 +21,117 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>SAMSON Element generator pro tip: modify me</string>
-     </property>
-    </widget>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="2" column="1">
+      <widget class="QRadioButton" name="chkRoutingTiles">
+       <property name="text">
+        <string>Tiles</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QRadioButton" name="chkRoutingNone">
+       <property name="text">
+        <string>None</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QRadioButton" name="chkRoutingSeamless">
+       <property name="text">
+        <string>Seamless</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QRadioButton" name="chkRoutingNonSeamless">
+       <property name="text">
+        <string>Non-seamless</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Select a routing</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>chkRoutingTiles</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SENanotubeCreatorEditorGUIClass</receiver>
+   <slot>onChangeRouting()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkRoutingNonSeamless</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SENanotubeCreatorEditorGUIClass</receiver>
+   <slot>onChangeRouting()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkRoutingNone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SENanotubeCreatorEditorGUIClass</receiver>
+   <slot>onChangeRouting()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>19</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkRoutingSeamless</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SENanotubeCreatorEditorGUIClass</receiver>
+   <slot>onChangeRouting()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onChangeRouting()</slot>
+ </slots>
 </ui>
