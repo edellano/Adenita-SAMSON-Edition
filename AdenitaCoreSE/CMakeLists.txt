@@ -21,6 +21,7 @@ FILE( GLOB_RECURSE ${OUTPUT_UUID}_ts resource/translations/*.ts )
 INCLUDE_DIRECTORIES ( include )
 INCLUDE_DIRECTORIES ( modules/DAS/includes )
 INCLUDE_DIRECTORIES ( modules/MSV/includes )
+INCLUDE_DIRECTORIES ( modules/PI/includes )
 INCLUDE_DIRECTORIES ( ${CMAKE_CURRENT_BINARY_DIR} )
 
 IF(QT_WRAP_CPP)
