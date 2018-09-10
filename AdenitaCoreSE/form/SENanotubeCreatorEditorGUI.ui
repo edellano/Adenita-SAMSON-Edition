@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>113</height>
+    <width>332</width>
+    <height>177</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -21,15 +21,36 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="2" column="1">
-      <widget class="QRadioButton" name="chkRoutingTiles">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0" rowspan="2">
+      <widget class="QPushButton" name="btnCreateNanotube">
        <property name="text">
-        <string>Tiles</string>
+        <string>Create DNA Nanotube</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" rowspan="4">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Select a routing</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Number of double helices</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Length (bp)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="2">
       <widget class="QRadioButton" name="chkRoutingNone">
        <property name="text">
         <string>None</string>
@@ -39,24 +60,47 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="3" column="1" colspan="2">
       <widget class="QRadioButton" name="chkRoutingSeamless">
        <property name="text">
         <string>Seamless</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="4" column="1" colspan="2">
       <widget class="QRadioButton" name="chkRoutingNonSeamless">
        <property name="text">
         <string>Non-seamless</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
+     <item row="5" column="1" colspan="2">
+      <widget class="QRadioButton" name="chkRoutingTiles">
        <property name="text">
-        <string>Select a routing</string>
+        <string>Tiles</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QSpinBox" name="spnNumBp">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>999999</number>
+       </property>
+       <property name="value">
+        <number>21</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QSpinBox" name="spnNumDs">
+       <property name="minimum">
+        <number>3</number>
+       </property>
+       <property name="maximum">
+        <number>9999</number>
        </property>
       </widget>
      </item>
