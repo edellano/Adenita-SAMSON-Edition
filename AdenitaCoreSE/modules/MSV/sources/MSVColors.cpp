@@ -6,7 +6,39 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNNucleotide> nt)
   auto res = GetColor(nt(), ntsColors_);
   auto color = res.second;
   if (res.first == false) {
-    // fetch default or random color
+    SEConfig& config = SEConfig::GetInstance();
+
+    color = ADNArray<float>(4);
+    if (nt->GetType() == DNABlocks::DA) {
+      color(0) = config.adenine_color[0];
+      color(1) = config.adenine_color[1];
+      color(2) = config.adenine_color[2];
+      color(3) = config.adenine_color[3];
+    }
+    else if (nt->GetType() == DNABlocks::DT) {
+      color(0) = config.thymine_color[0];
+      color(1) = config.thymine_color[1];
+      color(2) = config.thymine_color[2];
+      color(3) = config.thymine_color[3];
+    }
+    else if (nt->GetType() == DNABlocks::DC) {
+      color(0) = config.cytosine_color[0];
+      color(1) = config.cytosine_color[1];
+      color(2) = config.cytosine_color[2];
+      color(3) = config.cytosine_color[3];
+    }
+    else if (nt->GetType() == DNABlocks::DG) {
+      color(0) = config.guanine_color[0];
+      color(1) = config.guanine_color[1];
+      color(2) = config.guanine_color[2];
+      color(3) = config.guanine_color[3];
+    }
+    else {
+      color(0) = config.nucleotide_E_Color[0];
+      color(1) = config.nucleotide_E_Color[1];
+      color(2) = config.nucleotide_E_Color[2];
+      color(3) = config.nucleotide_E_Color[3];
+    }    
   }
 
   return color;

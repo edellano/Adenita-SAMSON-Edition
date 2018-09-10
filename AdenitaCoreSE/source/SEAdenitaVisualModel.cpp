@@ -22,6 +22,9 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
 
   SEConfig& config = SEConfig::GetInstance();
 
+  std::shared_ptr<MSVColors> colors = std::make_shared<MSVColors>();
+  colors_[ColorType::REGULAR] = colors;
+
   //setup the display properties
   nucleotideEColor_ = ADNArray<float>(4);
   nucleotideEColor_(0) = config.nucleotide_E_Color[0];
@@ -422,6 +425,8 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
   
   auto parts = nanorobot_->GetParts();
 
+  auto colors = colors_.at(REGULAR);
+
   SB_FOR(auto part, parts) {
 
     auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -450,7 +455,8 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
 
         nodeIndices_(index) = nt->getNodeIndex();
         flags_(index) = nt->getInheritedFlags();
-        auto baseColor = getBaseColor(nt->getResidueType());
+        //auto baseColor = getBaseColor(nt->getResidueType());
+        auto baseColor = colors->GetColor(nt);
         colorsV_.SetRow(index, baseColor);
 
         colorsE_.SetRow(index, nucleotideEColor_);
@@ -487,6 +493,8 @@ void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= fal
   float intervalERadius = maxERadius - minERadius;
   float iERadius = minERadius + iv * intervalERadius;
 
+  auto colors = colors_[ColorType::REGULAR];
+
   SB_FOR(auto part, parts) {
 
     auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -510,8 +518,9 @@ void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= fal
         nodeIndices_(index) = nt->getNodeIndex();
         flags_(index) = nt->getInheritedFlags();
 
-        auto baseColor = getBaseColor(nt->getResidueType());
-        
+        //auto baseColor = getBaseColor(nt->getResidueType());
+        auto baseColor = colors->GetColor(nt);
+
         if (ss->IsScaffold()) {
           float maxVColorR;
           float maxVColorG;
@@ -571,6 +580,8 @@ void SEAdenitaVisualModel::prepareScale5to6(double iv, bool forSelection /*= fal
   float intervalERadius = maxERadius - minERadius;
   float iERadius = minERadius + iv * intervalERadius;
   
+  auto colors = colors_[ColorType::REGULAR];
+
   SB_FOR(auto part, parts) {
 
     auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -627,7 +638,8 @@ void SEAdenitaVisualModel::prepareScale5to6(double iv, bool forSelection /*= fal
         }
         else
         {
-          auto baseColor = getBaseColor(nt->getResidueType());
+          //auto baseColor = getBaseColor(nt->getResidueType());
+          auto baseColor = colors->GetColor(nt);
 
           minVColorR = baseColor(0);
           minVColorG = baseColor(1);

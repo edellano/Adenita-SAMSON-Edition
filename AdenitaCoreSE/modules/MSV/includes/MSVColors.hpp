@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SEConfig.hpp"
 #include "ADNNanorobot.hpp"
 #include "ADNArray.hpp"
 
