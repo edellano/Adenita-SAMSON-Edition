@@ -44,12 +44,15 @@ public :
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, bool all);
   void ExportToSequenceList(QString filename, bool all);
   void SetScaffoldSequence(std::string seq);
-  void CenterPart();
   void ResetVisualModel();
   // Modifications
   void ConnectSingleStrands();
   void BreakSingleStrand();
   void DeleteNucleotide();
+  // Debug
+  void CenterPart();
+  void CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);
+  void CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events

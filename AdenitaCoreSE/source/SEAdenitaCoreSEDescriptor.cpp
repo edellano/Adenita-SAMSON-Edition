@@ -10,6 +10,7 @@
 #include "SEConnectSSDNAEditorDescriptor.hpp"
 #include "SEDSDNACreatorEditorDescriptor.hpp"
 #include "SENanotubeCreatorEditorDescriptor.hpp"
+#include "PIBindingRegionDescriptor.hpp"
 
 
 
@@ -38,6 +39,7 @@ SB_ELEMENT_CLASSES_BEGIN;
   SB_ELEMENT_CLASS(ADNBaseSegment);
   SB_ELEMENT_CLASS(ADNDoubleStrand);
   SB_ELEMENT_CLASS(ADNPart);
+  SB_ELEMENT_CLASS(PIBindingRegion);
   SB_ELEMENT_CLASS(SEAdenitaVisualModel);
   SB_ELEMENT_CLASS(SEAdenitaVisualModelProperties);
   SB_ELEMENT_CLASS(SEWireframeEditor);

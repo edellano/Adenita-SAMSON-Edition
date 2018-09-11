@@ -83,8 +83,10 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   paintIcon.addFile(string(iconsPath + "paint.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnPaint->setIcon(paintIcon);
 
-
-
+  // disable debug menu if compiling in release mode
+  #if NDEBUG
+  ui.tabWidget->removeTab(0);
+  #endif
 }
 
 SEAdenitaCoreSEAppGUI::~SEAdenitaCoreSEAppGUI() {
@@ -211,18 +213,6 @@ void SEAdenitaCoreSEAppGUI::onSaveFile()
 
 void SEAdenitaCoreSEAppGUI::onExport()
 {
-  /*ADNAuxiliary::OxDNAOptions options;
-
-  options.boxSizeX_ = ui.spnBoxSizeX->value();
-  options.boxSizeY_ = ui.spnBoxSizeY->value();
-  options.boxSizeZ_ = ui.spnBoxSizeZ->value();
-
-  QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
-  if (!folder.isEmpty()) {
-    SEAdenitaCoreSEApp* t = getApp();
-    t->ExportToOxDNA(folder, options);
-  }*/
-
   QDialog* dialog = new QDialog();
 
   QStringList itemsSelection;
@@ -366,6 +356,39 @@ void SEAdenitaCoreSEAppGUI::onChangeScaffold(int idx)
     // custom scaffold
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose scaffold"), QDir::currentPath(), tr("(Sequences *.fasta)"));
     ui.lineCustomScaffold->setText(filename);
+  }
+}
+
+void SEAdenitaCoreSEAppGUI::onDSRing()
+{
+  bool ok;
+  double radius = QInputDialog::getDouble(this, "Radius", "Choose the radius of the ring (nm)", 20.0, 0.0, 99999.9, 2, &ok);
+  SBQuantity::length R = SBQuantity::nanometer(radius);
+  SBVector3 normal = SBVector3();
+  normal[0] = 0.0;
+  normal[1] = 0.0;
+  normal[2] = 1.0;
+  SBPosition3 center = SBPosition3();
+
+  if (ok) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->CreateDSRing(R, center, normal);
+  }
+}
+
+void SEAdenitaCoreSEAppGUI::onCatenanes()
+{
+  bool ok;
+  double radius = QInputDialog::getDouble(this, "Radius", "Choose the radius of a ring (nm)", 20.0, 0.0, 99999.9, 2, &ok);
+  SBQuantity::length R = SBQuantity::nanometer(radius);
+  SBVector3 normal = SBVector3();
+  normal[0] = 0.0;
+  normal[1] = 0.0;
+  normal[2] = 1.0;
+  SBPosition3 center = SBPosition3();
+  if (ok) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->CreateCatenanes(R, center, normal);
   }
 }
 

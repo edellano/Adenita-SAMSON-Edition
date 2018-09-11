@@ -39,7 +39,6 @@ namespace DASCreator {
 
   ADNPointer<ADNLoop> CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq, ADNPointer<ADNPart> part = nullptr);
 
-
   //! Creates a ADNPart containing a nanotube
   /*!
     \param the radius of the nanotube
@@ -58,8 +57,35 @@ namespace DASCreator {
   */
   ADNPointer<ADNPart> CreateMockNanotube(SBQuantity::length radius, SBPosition3 center, SBVector3 direction, int length);
 
+  //! Creates a ADNPart containing a double stranded DNA Ring
+  /*!
+    \param the radius of the ring
+    \param position of the center of the ring
+    \param normal to the ring
+    \param whether to create a mock part containing only the high-level details
+  */
+  ADNPointer<ADNPart> CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock = false);
+
+  //! Creates a ADNPart containing two interlocked double stranded DNA Rings
+  /*!
+    \param the radius of the ring
+    \param position of the center of the ring
+    \param normal to the ring
+    \param whether to create a mock part containing only the high-level details
+  */
+  ADNPointer<ADNPart> CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock = false);
+
   //ADNPart* CreateTwoTubes(size_t length, SBPosition3 start, SBVector3 direction, SBVector3 sepDir);
   
+  //! Helper function that creates a double stranded ring in a ADNPart
+  /*!
+    \param the ADNPart to which the double strand will be added
+    \param radius of the ring
+    \param position of the center of the ring
+    \param normal direction of the ring
+  */
+  ADNPointer<ADNDoubleStrand> AddDSRingToADNPart(ADNPointer<ADNPart> part, SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock = false);
+
   //! Helper function that creates a double strand in a ADNPart
   /*!
     \param the ADNPart to which the double strand will be added
@@ -71,10 +97,10 @@ namespace DASCreator {
 
   //! Helper function that adds a double strand containing only the high-level model (base segments) to a mock ADNPart
   /*!
-  \param the ADNPart to which the double strand will be added
-  \param length of the double strand in base pairs
-  \param position of the 5' in space
-  \param direction of the double strand
+    \param the ADNPart to which the double strand will be added
+    \param length of the double strand in base pairs
+    \param position of the 5' in space
+    \param direction of the double strand
   */
   ADNPointer<ADNDoubleStrand> AddMockDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction);
 

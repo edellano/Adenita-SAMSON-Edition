@@ -271,6 +271,20 @@ void SEAdenitaCoreSEApp::DeleteNucleotide()
   }
 }
 
+void SEAdenitaCoreSEApp::CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal)
+{
+  auto part = DASCreator::CreateDSRing(radius, center, normal);
+  AddPartToActiveLayer(part);
+  ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal)
+{
+  auto part = DASCreator::CreateCatenanes(radius, center, normal);
+  AddPartToActiveLayer(part);
+  ResetVisualModel();
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();

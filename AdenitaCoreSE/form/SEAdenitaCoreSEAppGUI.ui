@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1351</width>
-    <height>140</height>
+    <height>144</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -25,33 +25,9 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
-       <widget class="QWidget" name="tab_2">
-        <attribute name="title">
-         <string>Modifications</string>
-        </attribute>
-        <widget class="QWidget" name="gridLayoutWidget_3">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>431</width>
-           <height>31</height>
-          </rect>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0" colspan="2">
-           <widget class="QPushButton" name="btnCenterPart">
-            <property name="text">
-             <string>Center Part</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-       <widget class="QWidget" name="tab_3">
+       <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
          <string>New UI</string>
         </attribute>
@@ -424,7 +400,7 @@
          </layout>
         </widget>
        </widget>
-       <widget class="QWidget" name="tab">
+       <widget class="QWidget" name="tabOptions">
         <attribute name="title">
          <string>Options</string>
         </attribute>
@@ -473,6 +449,44 @@
           </item>
           <item row="3" column="1">
            <widget class="QLineEdit" name="lineCustomScaffold"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tabDebug">
+        <attribute name="title">
+         <string>Debug Menu</string>
+        </attribute>
+        <widget class="QWidget" name="gridLayoutWidget_3">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>1311</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0" colspan="2">
+           <widget class="QPushButton" name="btnCenterPart">
+            <property name="text">
+             <string>Center Part</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="btnDSRing">
+            <property name="text">
+             <string>dsDNA Ring</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="btnCatenanes">
+            <property name="text">
+             <string>Catenanes</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -645,6 +659,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnDSRing</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onDSRing()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>229</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>69</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnCatenanes</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCatenanes()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1162</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -659,5 +705,7 @@
   <slot>onMutate()</slot>
   <slot>onDelete()</slot>
   <slot>onChangeScaffold(int)</slot>
+  <slot>onDSRing()</slot>
+  <slot>onCatenanes()</slot>
  </slots>
 </ui>

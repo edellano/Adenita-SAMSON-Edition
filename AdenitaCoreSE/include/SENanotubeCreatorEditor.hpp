@@ -12,6 +12,8 @@
 #include "SEAdenitaCoreSEApp.hpp"
 #include "ADNDisplayHelper.hpp"
 #include "DASCreator.hpp"
+#include "DASRouter.hpp"
+
 
 /// This class implements an editor
 
@@ -98,6 +100,7 @@ public :
 
 	//@}
 
+  void SetRouting(RoutingType t);
 private:
 
   ADNPointer<ADNPart> generateNanotube(bool mock = false);
@@ -118,6 +121,7 @@ private:
   Positions positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
+  RoutingType routing_ = RoutingType::None;
 };
 
 
