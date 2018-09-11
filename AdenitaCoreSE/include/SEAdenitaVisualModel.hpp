@@ -13,6 +13,7 @@
 #include "ADNPart.hpp"
 #include "ADNNanorobot.hpp"
 #include "SEConfig.hpp"
+#include "MSVColors.hpp"
 #include <QOpenGLFunctions_4_3_Core>
 
 
@@ -145,6 +146,14 @@ private:
   ADNArray<unsigned int> indices_;
 
   std::map<ADNNucleotide*, unsigned int> ntMap_;
+
+  // new color implementation
+  enum ColorType {
+    REGULAR = 0,  // default color map
+    GIBBS = 1,  // gibbs free energy color map
+    MELTTEMP = 2  // melting temperatures color map
+  };
+  std::map<ColorType, std::shared_ptr<MSVColors>> colors_;
 };
 
 

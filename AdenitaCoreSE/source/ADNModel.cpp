@@ -400,9 +400,19 @@ void ADNSingleStrand::IsScaffold(bool b)
   isScaffold_ = b;
 }
 
-bool ADNSingleStrand::IsScaffold()
+bool ADNSingleStrand::IsScaffold() const
 {
   return isScaffold_;
+}
+
+bool ADNSingleStrand::getIsScaffold() const
+{
+  return IsScaffold();
+}
+
+void ADNSingleStrand::setIsScaffold(bool b)
+{
+  IsScaffold(b);
 }
 
 int ADNSingleStrand::getNumberOfNucleotides() const
