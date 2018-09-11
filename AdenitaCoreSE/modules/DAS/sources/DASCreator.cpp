@@ -203,6 +203,31 @@ ADNPointer<ADNPart> DASCreator::CreateMockNanotube(SBQuantity::length radius, SB
 ADNPointer<ADNPart> DASCreator::CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock)
 {
   ADNPointer<ADNPart> part = new ADNPart();
+  DASCreator::AddDSRingToADNPart(part, radius, center, normal);
+  return part;
+}
+
+ADNPointer<ADNPart> DASCreator::CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock)
+{
+  ADNPointer<ADNPart> part = new ADNPart();
+  // calculate overlap
+  SBQuantity::length dist = radius*0.7;
+  SBVector3 v = SBVector3(1.0, 0.0, 0.0);
+  SBVector3 w = SBVector3(0.0, 1.0, 0.0);
+  auto center1 = center - dist*v;
+  auto center2 = center + dist*v;
+  double pi = atan(1.0) * 4.0;
+  double theta = pi*0.5*0.95;
+  auto normal1 = normal+cos(theta)*w;
+  auto normal2 = normal+cos(theta)*(-w);
+  DASCreator::AddDSRingToADNPart(part, radius, center1, normal1.normalizedVersion());
+  DASCreator::AddDSRingToADNPart(part, radius, center2, normal2.normalizedVersion());
+
+  return part;
+}
+
+ADNPointer<ADNDoubleStrand> DASCreator::AddDSRingToADNPart(ADNPointer<ADNPart> part, SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock)
+{
   ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
   ADNPointer<ADNSingleStrand> ssLeft = new ADNSingleStrand();
   ADNPointer<ADNSingleStrand> ssRight = new ADNSingleStrand();
@@ -220,24 +245,37 @@ ADNPointer<ADNPart> DASCreator::CreateDSRing(SBQuantity::length radius, SBPositi
   auto theta = 2.0 * pi / numNts;
   auto R = theta * numNts * radius / (2.0 * pi);
 
+  // create coordinate system
+  ublas::vector<double> n = ADNAuxiliary::SBVectorToUblasVector(normal);
+  auto subspace = ADNVectorMath::FindOrthogonalSubspace(n);
+  ADNVectorMath::AddRowToMatrix(subspace, n);
+  ublas::vector<double> xVec = ublas::row(subspace, 0);
+  ublas::vector<double> yVec = ublas::row(subspace, 1);
+
   double t = 0.0;
   for (int j = 0; j < numNts; ++j) {
     // a and b are the coordinates on the plane
     auto a = R*sin(t);
     auto b = R*cos(t);
     // calculate tangent
-    ublas::vector<double> rVec(3);
-    rVec[0] = sin(t);
-    rVec[1] = cos(t);
-    rVec[2] = 0.0;
+    ublas::vector<double> rVec(3, 0.0);
+    rVec += sin(t)*xVec;
+    rVec += cos(t)*yVec;
+    //rVec[2] = 0.0;
     auto direction = ADNVectorMath::CrossProduct(ADNAuxiliary::SBVectorToUblasVector(normal), -rVec);
 
     ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
 
-    Position3D pos = SBPosition3();
-    pos[0] = a;
-    pos[1] = b;
-    pos[2] = SBQuantity::length(0.0);
+    Position3D pos = center;
+    pos += a*ADNAuxiliary::UblasVectorToSBVector(xVec);
+    pos += b*ADNAuxiliary::UblasVectorToSBVector(yVec);
+    /*pos[0] += a;
+    pos[1] += b;
+    pos[2] += SBQuantity::length(0.0);*/
+    // transform position to coordinate system given by normal
+    //auto new_basis = ublas::trans(subspace);
+    //auto new_pos = ublas::prod(new_basis, ADNAuxiliary::SBPositionToUblas(pos));
+    //pos = ADNAuxiliary::UblasVectorToSBPosition(new_pos);
     bs->SetPosition(pos);
     bs->SetE3(direction);
     bs->SetE2(ADNAuxiliary::SBVectorToUblasVector(normal));
@@ -279,7 +317,7 @@ ADNPointer<ADNPart> DASCreator::CreateDSRing(SBQuantity::length radius, SBPositi
   ssLeft->SetDefaultName();
   ssRight->SetDefaultName();
 
-  return part;
+  return ds;
 }
 
 ADNPointer<ADNDoubleStrand> DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction)

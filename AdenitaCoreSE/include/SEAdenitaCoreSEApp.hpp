@@ -52,6 +52,7 @@ public :
   // Debug
   void CenterPart();
   void CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);
+  void CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events

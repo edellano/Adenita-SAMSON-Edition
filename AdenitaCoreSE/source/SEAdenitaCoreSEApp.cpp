@@ -278,6 +278,13 @@ void SEAdenitaCoreSEApp::CreateDSRing(SBQuantity::length radius, SBPosition3 cen
   ResetVisualModel();
 }
 
+void SEAdenitaCoreSEApp::CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal)
+{
+  auto part = DASCreator::CreateCatenanes(radius, center, normal);
+  AddPartToActiveLayer(part);
+  ResetVisualModel();
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();

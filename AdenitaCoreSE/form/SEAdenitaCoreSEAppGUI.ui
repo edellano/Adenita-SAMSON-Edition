@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1351</width>
-    <height>140</height>
+    <height>144</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -462,8 +462,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>431</width>
-           <height>65</height>
+           <width>1311</width>
+           <height>41</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
@@ -474,10 +474,17 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
+          <item row="0" column="2">
            <widget class="QPushButton" name="btnDSRing">
             <property name="text">
              <string>dsDNA Ring</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="btnCatenanes">
+            <property name="text">
+             <string>Catenanes</string>
             </property>
            </widget>
           </item>
@@ -668,6 +675,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnCatenanes</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCatenanes()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1162</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -683,5 +706,6 @@
   <slot>onDelete()</slot>
   <slot>onChangeScaffold(int)</slot>
   <slot>onDSRing()</slot>
+  <slot>onCatenanes()</slot>
  </slots>
 </ui>
