@@ -3,9 +3,10 @@
 #include "ADNNanorobot.hpp"
 #include "ADNConstants.hpp"
 #include "ADNBasicOperations.hpp"
+#include "DASLattices.hpp"
+
 
 // type of editor enumeration
-
 namespace DASCreator {
 
   enum EditorType {

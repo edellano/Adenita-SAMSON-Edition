@@ -211,7 +211,7 @@ ADNPointer<ADNPart> DASCreator::CreateLinearCatenanes(SBQuantity::length radius,
 {
   ADNPointer<ADNPart> part = new ADNPart();
   // calculate overlap
-  SBQuantity::length dist = radius*0.7;
+  SBQuantity::length dist = radius*0.8;
   // total distance spanning the catenanes
   SBQuantity::length totalLength = 2 * radius*number - dist*(number - 1);
   SBVector3 v = SBVector3(1.0, 0.0, 0.0);
@@ -233,7 +233,28 @@ ADNPointer<ADNPart> DASCreator::CreateLinearCatenanes(SBQuantity::length radius,
 
 ADNPointer<ADNPart> DASCreator::CreateHexagonalCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols, bool mock)
 {
-  return ADNPointer<ADNPart>();
+  ADNPointer<ADNPart> part = new ADNPart();
+
+  double edgeDist = radius.getValue() * 2 * 0.8;
+  DASLattice lattice = DASLattice(LatticeType::Honeycomb, edgeDist, rows, cols);
+
+  SBVector3 w = SBVector3(0.0, 1.0, 0.0);
+  double pi = atan(1.0) * 4.0;
+  double theta = pi*0.5*0.95;
+  // create a ring at every point of the lattice
+  auto numRows = lattice.GetNumberRows();
+  auto numCols = lattice.GetNumberCols();
+  for (unsigned int i = 0; i < numRows; ++i) {
+    for (unsigned int j = 0; j < numCols; ++j) {
+      LatticeCell cell = lattice.GetLatticeCell(i, j);
+      SBPosition3 c = SBPosition3(SBQuantity::picometer(cell.x_), SBQuantity::picometer(cell.y_), SBQuantity::nanometer(0.0)) + center;
+      auto n = normal + cos(theta)*w;
+      DASCreator::AddDSRingToADNPart(part, radius, c, n.normalizedVersion());
+      w *= -1.0;
+    }
+  }
+
+  return part;
 }
 
 ADNPointer<ADNDoubleStrand> DASCreator::AddDSRingToADNPart(ADNPointer<ADNPart> part, SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock)
@@ -279,13 +300,6 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddDSRingToADNPart(ADNPointer<ADNPart> p
     Position3D pos = center;
     pos += a*ADNAuxiliary::UblasVectorToSBVector(xVec);
     pos += b*ADNAuxiliary::UblasVectorToSBVector(yVec);
-    /*pos[0] += a;
-    pos[1] += b;
-    pos[2] += SBQuantity::length(0.0);*/
-    // transform position to coordinate system given by normal
-    //auto new_basis = ublas::trans(subspace);
-    //auto new_pos = ublas::prod(new_basis, ADNAuxiliary::SBPositionToUblas(pos));
-    //pos = ADNAuxiliary::UblasVectorToSBPosition(new_pos);
     bs->SetPosition(pos);
     bs->SetE3(direction);
     bs->SetE2(ADNAuxiliary::SBVectorToUblasVector(normal));

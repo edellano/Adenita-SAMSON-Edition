@@ -413,7 +413,7 @@ void SEAdenitaCoreSEAppGUI::onCatenanes()
   mainLayout->addWidget(buttonBox_, 2, 0);
 
   dialog->setLayout(mainLayout);
-  dialog->setWindowTitle(tr("Export design"));
+  dialog->setWindowTitle(tr("Create Catenanes"));
 
   int dialogCode = dialog->exec();
 
@@ -428,18 +428,69 @@ void SEAdenitaCoreSEAppGUI::onCatenanes()
     SEAdenitaCoreSEApp* t = getApp();
     t->LinearCatenanes(R, center, normal, num);
   }
-  /*bool ok;
-  double radius = QInputDialog::getDouble(this, "Radius", "Choose the radius of a ring (nm)", 20.0, 0.0, 99999.9, 2, &ok);
-  SBQuantity::length R = SBQuantity::nanometer(radius);
-  SBVector3 normal = SBVector3();
-  normal[0] = 0.0;
-  normal[1] = 0.0;
-  normal[2] = 1.0;
-  SBPosition3 center = SBPosition3();
-  if (ok) {
+}
+
+void SEAdenitaCoreSEAppGUI::onKinetoplast()
+{
+  QDialog* dialog = new QDialog();
+
+  QLabel* rowsLabel = new QLabel();
+  rowsLabel->setText("Number of rows");
+  QSpinBox* rows = new QSpinBox();
+  rows->setRange(1, 9999);
+  rows->setValue(2);
+
+  QLabel* colsLabel = new QLabel();
+  colsLabel->setText("Number of columns");
+  QSpinBox* cols = new QSpinBox();
+  cols->setRange(1, 9999);
+  cols->setValue(3);
+
+  QLabel* radiusLabel = new QLabel();
+  radiusLabel->setText("Radius (nm)");
+  QDoubleSpinBox* radius = new QDoubleSpinBox();
+  radius->setRange(0.0, 99999.9);
+  radius->setValue(20.0);
+  radius->setDecimals(2);
+
+  QPushButton* acceptButton = new QPushButton(tr("Create catenanes"));
+  acceptButton->setDefault(true);
+  QPushButton* cancelButton = new QPushButton(tr("Cancel"));
+
+  QDialogButtonBox* buttonBox_ = new QDialogButtonBox(Qt::Horizontal);
+  buttonBox_->addButton(acceptButton, QDialogButtonBox::ActionRole);
+  buttonBox_->addButton(cancelButton, QDialogButtonBox::ActionRole);
+
+  QObject::connect(cancelButton, SIGNAL(released()), dialog, SLOT(reject()));
+  QObject::connect(acceptButton, SIGNAL(released()), dialog, SLOT(accept()));
+
+  QGridLayout *mainLayout = new QGridLayout;
+  mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+  mainLayout->addWidget(rowsLabel, 0, 0);
+  mainLayout->addWidget(rows, 0, 1);
+  mainLayout->addWidget(colsLabel, 1, 0);
+  mainLayout->addWidget(cols, 1, 1);
+  mainLayout->addWidget(radiusLabel, 2, 0);
+  mainLayout->addWidget(radius, 2, 1);
+  mainLayout->addWidget(buttonBox_, 3, 0);
+
+  dialog->setLayout(mainLayout);
+  dialog->setWindowTitle(tr("Create Kinetoplast"));
+
+  int dialogCode = dialog->exec();
+
+  if (dialogCode == QDialog::Accepted) {
+    int r = rows->value();
+    int c = cols->value();
+    SBQuantity::length R = SBQuantity::nanometer(radius->value());
+    SBVector3 normal = SBVector3();
+    normal[0] = 0.0;
+    normal[1] = 0.0;
+    normal[2] = 1.0;
+    SBPosition3 center = SBPosition3();
     SEAdenitaCoreSEApp* t = getApp();
-    t->CreateCatenanes(R, center, normal);
-  }*/
+    t->Kinetoplast(R, center, normal, r, c);
+  }
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
