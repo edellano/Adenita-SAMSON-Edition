@@ -12,6 +12,7 @@
 #include "ADNNanorobot.hpp"
 #include "ADNAuxiliary.hpp"
 #include "ADNConstants.hpp"
+#include "DASLattices.hpp"
 
 
 using namespace std;
@@ -21,7 +22,7 @@ double const bp_rise_ = ADNConstants::BP_RISE; // nm
 double const dh_diameter_ = ADNConstants::DH_DIAMETER; // nm
 double const bp_cadnano_dist_ = ADNConstants::BP_CADNANO_DIST; //0.25 * dh_diameter_; //nm
 
-using LatticeType = ADNConstants::CadnanoLatticeType;
+//using LatticeType = ADNConstants::LatticeType;
 
 namespace ublas = boost::numeric::ublas;
 
@@ -59,24 +60,6 @@ struct CadnanoJSONFile {
   std::vector<vec2> stapleStarts_;  // list of staple starts
 };
 
-//Grid from caDNAno
-struct LatticeCell {
-  double x_;
-  double y_;
-};
-
-struct Lattice {
-  ublas::matrix<LatticeCell> mat_;
-
-  void CreateSquareLattice();
-  void CreateHoneycombLattice();
-
-  LatticeCell GetLatticeCell(unsigned int row, unsigned int column);
-
-  size_t GetNumberRows();
-  size_t GetNumberCols();
-};
-
 struct VTube {
   int vStrandId_;
   int initPos_;
@@ -85,7 +68,7 @@ struct VTube {
 
 struct VGrid {
   std::vector<VTube> vDoubleStrands_; // = vstrands
-  Lattice lattice_;
+  DASLattice lattice_;
 
   void CreateLattice(LatticeType lType);
 

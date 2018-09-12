@@ -227,15 +227,13 @@ ADNPointer<ADNPart> DASCreator::CreateLinearCatenanes(SBQuantity::length radius,
     start = start + (2 * radius - dist)*v;
     w *= -1.0;
   }
-  /*auto center1 = center - dist*v;
-  auto center2 = center + dist*v;
-  
-  auto normal1 = normal+cos(theta)*w;
-  auto normal2 = normal+cos(theta)*(-w);*/
-  /*DASCreator::AddDSRingToADNPart(part, radius, center1, normal1.normalizedVersion());
-  DASCreator::AddDSRingToADNPart(part, radius, center2, normal2.normalizedVersion());*/
 
   return part;
+}
+
+ADNPointer<ADNPart> DASCreator::CreateHexagonalCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols, bool mock)
+{
+  return ADNPointer<ADNPart>();
 }
 
 ADNPointer<ADNDoubleStrand> DASCreator::AddDSRingToADNPart(ADNPointer<ADNPart> part, SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock)
