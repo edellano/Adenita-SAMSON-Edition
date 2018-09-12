@@ -207,21 +207,33 @@ ADNPointer<ADNPart> DASCreator::CreateDSRing(SBQuantity::length radius, SBPositi
   return part;
 }
 
-ADNPointer<ADNPart> DASCreator::CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock)
+ADNPointer<ADNPart> DASCreator::CreateLinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int number, bool mock)
 {
   ADNPointer<ADNPart> part = new ADNPart();
   // calculate overlap
   SBQuantity::length dist = radius*0.7;
+  // total distance spanning the catenanes
+  SBQuantity::length totalLength = 2 * radius*number - dist*(number - 1);
   SBVector3 v = SBVector3(1.0, 0.0, 0.0);
   SBVector3 w = SBVector3(0.0, 1.0, 0.0);
-  auto center1 = center - dist*v;
-  auto center2 = center + dist*v;
+
+  SBPosition3 start = center - (totalLength*0.5 + radius)*v;
   double pi = atan(1.0) * 4.0;
   double theta = pi*0.5*0.95;
+  for (int i = 0; i < number; i++) {
+    auto n = normal+cos(theta)*w;
+    DASCreator::AddDSRingToADNPart(part, radius, start, n.normalizedVersion());
+    // calculate next center and normal
+    start = start + (2 * radius - dist)*v;
+    w *= -1.0;
+  }
+  /*auto center1 = center - dist*v;
+  auto center2 = center + dist*v;
+  
   auto normal1 = normal+cos(theta)*w;
-  auto normal2 = normal+cos(theta)*(-w);
-  DASCreator::AddDSRingToADNPart(part, radius, center1, normal1.normalizedVersion());
-  DASCreator::AddDSRingToADNPart(part, radius, center2, normal2.normalizedVersion());
+  auto normal2 = normal+cos(theta)*(-w);*/
+  /*DASCreator::AddDSRingToADNPart(part, radius, center1, normal1.normalizedVersion());
+  DASCreator::AddDSRingToADNPart(part, radius, center2, normal2.normalizedVersion());*/
 
   return part;
 }

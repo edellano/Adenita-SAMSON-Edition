@@ -278,9 +278,9 @@ void SEAdenitaCoreSEApp::CreateDSRing(SBQuantity::length radius, SBPosition3 cen
   ResetVisualModel();
 }
 
-void SEAdenitaCoreSEApp::CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal)
+void SEAdenitaCoreSEApp::LinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int num)
 {
-  auto part = DASCreator::CreateCatenanes(radius, center, normal);
+  auto part = DASCreator::CreateLinearCatenanes(radius, center, normal, num);
   AddPartToActiveLayer(part);
   ResetVisualModel();
 }

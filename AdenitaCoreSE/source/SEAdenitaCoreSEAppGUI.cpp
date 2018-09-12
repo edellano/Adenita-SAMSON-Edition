@@ -378,7 +378,57 @@ void SEAdenitaCoreSEAppGUI::onDSRing()
 
 void SEAdenitaCoreSEAppGUI::onCatenanes()
 {
-  bool ok;
+  QDialog* dialog = new QDialog();
+
+  QLabel* numberLabel = new QLabel();
+  numberLabel->setText("Number of catenanes");
+  QSpinBox* number = new QSpinBox();
+  number->setRange(1, 9999);
+  number->setValue(2);
+
+  QLabel* radiusLabel = new QLabel();
+  radiusLabel->setText("Radius (nm)");
+  QDoubleSpinBox* radius = new QDoubleSpinBox();
+  radius->setRange(0.0, 99999.9);
+  radius->setValue(20.0);
+  radius->setDecimals(2);
+
+  QPushButton* acceptButton = new QPushButton(tr("Create catenanes"));
+  acceptButton->setDefault(true);
+  QPushButton* cancelButton = new QPushButton(tr("Cancel"));
+
+  QDialogButtonBox* buttonBox_ = new QDialogButtonBox(Qt::Horizontal);
+  buttonBox_->addButton(acceptButton, QDialogButtonBox::ActionRole);
+  buttonBox_->addButton(cancelButton, QDialogButtonBox::ActionRole);
+
+  QObject::connect(cancelButton, SIGNAL(released()), dialog, SLOT(reject()));
+  QObject::connect(acceptButton, SIGNAL(released()), dialog, SLOT(accept()));
+
+  QGridLayout *mainLayout = new QGridLayout;
+  mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+  mainLayout->addWidget(numberLabel, 0, 0);
+  mainLayout->addWidget(number, 0, 1);
+  mainLayout->addWidget(radiusLabel, 1, 0);
+  mainLayout->addWidget(radius, 1, 1);
+  mainLayout->addWidget(buttonBox_, 2, 0);
+
+  dialog->setLayout(mainLayout);
+  dialog->setWindowTitle(tr("Export design"));
+
+  int dialogCode = dialog->exec();
+
+  if (dialogCode == QDialog::Accepted ) {
+    int num = number->value();
+    SBQuantity::length R = SBQuantity::nanometer(radius->value());
+    SBVector3 normal = SBVector3();
+    normal[0] = 0.0;
+    normal[1] = 0.0;
+    normal[2] = 1.0;
+    SBPosition3 center = SBPosition3();
+    SEAdenitaCoreSEApp* t = getApp();
+    t->LinearCatenanes(R, center, normal, num);
+  }
+  /*bool ok;
   double radius = QInputDialog::getDouble(this, "Radius", "Choose the radius of a ring (nm)", 20.0, 0.0, 99999.9, 2, &ok);
   SBQuantity::length R = SBQuantity::nanometer(radius);
   SBVector3 normal = SBVector3();
@@ -389,7 +439,7 @@ void SEAdenitaCoreSEAppGUI::onCatenanes()
   if (ok) {
     SEAdenitaCoreSEApp* t = getApp();
     t->CreateCatenanes(R, center, normal);
-  }
+  }*/
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
