@@ -5,6 +5,7 @@
 #include "ui_SEAdenitaCoreSEAppGUI.h"
 #include <QMessageBox>
 #include <QComboBox>
+#include <QSpinBox>
 
 
 class SEAdenitaCoreSEApp;

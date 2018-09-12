@@ -73,7 +73,7 @@ namespace DASCreator {
     \param normal to the ring
     \param whether to create a mock part containing only the high-level details
   */
-  ADNPointer<ADNPart> CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock = false);
+  ADNPointer<ADNPart> CreateLinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int number, bool mock = false);
 
   //ADNPart* CreateTwoTubes(size_t length, SBPosition3 start, SBVector3 direction, SBVector3 sepDir);
   
