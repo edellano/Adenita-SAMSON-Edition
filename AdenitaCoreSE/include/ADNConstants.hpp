@@ -10,7 +10,8 @@ namespace ADNConstants {
 
   // Other constants
   double const JSON_FORMAT_VERSION = 0.4;  // version of the json format that we are using, to keep compatibility 
-  enum CadnanoLatticeType {
+  enum LatticeType {
+    Unknown = -1,
     Honeycomb = 0,
     Square = 1,
   };

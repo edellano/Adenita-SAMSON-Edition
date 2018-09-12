@@ -65,7 +65,7 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
       ++count;
     }
 
-    totalCount = count + 1;  // all vhelix have the same count
+    totalCount = count;  // all vhelix have the same count
     vstrand.totalLength_ = totalCount;
 
     Value& stapVals = vstrandVal["stap"];
@@ -400,72 +400,17 @@ bool DASCadnano::IsThereBase(vec4 data) {
   return base;
 }
 
-void Lattice::CreateSquareLattice()
-{
-  mat_ = ublas::matrix<LatticeCell>(55, 55); // in cadnano 2.0 square lattice is 50x50, honeycomb is 30 x 32
-
-  for (unsigned row = 0; row < mat_.size1(); ++row) {
-    for (unsigned column = 0; column < mat_.size2(); ++column) {
-      //todo
-      LatticeCell lc;
-      lc.x_ = row * dh_diameter_;
-      lc.y_ = column * dh_diameter_;
-      mat_(row, column) = lc;
-    }
-  }
-}
-
-void Lattice::CreateHoneycombLattice()
-{
-  mat_ = ublas::matrix<LatticeCell>(30, 32); // in cadnano 2.0 square lattice is 50x50, honeycomb is 30 x 32
-  double angle = 120.0;  // deg
-  double delt_y = dh_diameter_ * sin(ADNVectorMath::DegToRad(angle - 90)) * 0.5;
-  double delt_x = dh_diameter_ * cos(ADNVectorMath::DegToRad(angle - 90));
-  double offset = delt_y;
-
-  for (unsigned int row = 0; row < mat_.size1(); ++row) {
-    for (unsigned int column = 0; column < mat_.size2(); ++column) {
-      double off = offset;
-      if ((row + column) % 2 == 0) off *= -1;
-      LatticeCell lc;
-      lc.x_ = column * delt_x;
-      lc.y_ = row * (dh_diameter_ + 2 * delt_y) + off;
-      mat_(row, column) = lc;
-    }
-  }
-}
-
-LatticeCell Lattice::GetLatticeCell(unsigned int row, unsigned int column)
-{
-  size_t rSize = mat_.size1();
-  size_t cSize = mat_.size2();
-  ADNLogger& logger = ADNLogger::GetLogger();
-  if (row >= rSize || column >= cSize) {
-    std::string msg = "Lattice overflow. Probably worng lattice type was selected.";
-    logger.Log(msg);
-  }
-  return mat_(row, column);
-}
-
-size_t Lattice::GetNumberRows()
-{
-  return mat_.size1();
-}
-
-size_t Lattice::GetNumberCols()
-{
-  return mat_.size2();
-}
-
 void VGrid::CreateLattice(LatticeType lType)
 {
-  lattice_ = Lattice();
+  // in cadnano 2.0 square lattice is 50x50, honeycomb is 30 x 32
+  int maxRows = 55;
+  int maxCols = 55;
   if (lType == LatticeType::Honeycomb) {
-    lattice_.CreateHoneycombLattice();
+    maxRows = 30;
+    maxCols = 32;
   }
-  else {
-    lattice_.CreateSquareLattice();
-  }
+
+  lattice_ = DASLattice(lType, dh_diameter_, maxRows, maxCols);
 }
 
 void VGrid::AddTube(VTube tube)

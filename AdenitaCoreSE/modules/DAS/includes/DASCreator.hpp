@@ -71,9 +71,21 @@ namespace DASCreator {
     \param the radius of the ring
     \param position of the center of the ring
     \param normal to the ring
+    \param number of linear rings
     \param whether to create a mock part containing only the high-level details
   */
   ADNPointer<ADNPart> CreateLinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int number, bool mock = false);
+
+  //! Creates a ADNPart containing interlocked double stranded DNA Rings in a hexagonal lattice
+  /*!
+    \param the radius of the ring
+    \param position of the center of the ring lattice
+    \param normal to the ring lattice
+    \param number of rows in the lattice
+    \param number of columns in the lattice
+    \param whether to create a mock part containing only the high-level details
+  */
+  ADNPointer<ADNPart> CreateHexagonalCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols, bool mock = false);
 
   //ADNPart* CreateTwoTubes(size_t length, SBPosition3 start, SBVector3 direction, SBVector3 sepDir);
   
