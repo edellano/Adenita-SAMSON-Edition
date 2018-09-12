@@ -61,14 +61,16 @@ public slots:
   void onSaveFile();
   void onExport();
   void onSetScaffold();
-  void onCenterPart();
   void onAcceptExport();
   void onConnectSingleStrands();
   void onBreak();
   void onDelete();
   void onChangeScaffold(int idx);
+  // Debug
+  void onCenterPart();
   void onDSRing();
   void onCatenanes();
+  void onKinetoplast();
 
 private:
   std::string IsJsonCadnano(QString filename);

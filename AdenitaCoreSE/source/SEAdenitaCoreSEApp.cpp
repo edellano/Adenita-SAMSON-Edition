@@ -285,6 +285,13 @@ void SEAdenitaCoreSEApp::LinearCatenanes(SBQuantity::length radius, SBPosition3 
   ResetVisualModel();
 }
 
+void SEAdenitaCoreSEApp::Kinetoplast(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols)
+{
+  auto part = DASCreator::CreateHexagonalCatenanes(radius, center, normal, rows, cols);
+  AddPartToActiveLayer(part);
+  ResetVisualModel();
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();

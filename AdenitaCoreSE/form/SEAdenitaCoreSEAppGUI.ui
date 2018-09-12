@@ -467,6 +467,13 @@
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="3">
+           <widget class="QPushButton" name="btnCatenanes">
+            <property name="text">
+             <string>Catenanes</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0" colspan="2">
            <widget class="QPushButton" name="btnCenterPart">
             <property name="text">
@@ -481,10 +488,10 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QPushButton" name="btnCatenanes">
+          <item row="0" column="4">
+           <widget class="QPushButton" name="btnKinetoplast">
             <property name="text">
-             <string>Catenanes</string>
+             <string>Kinetoplast</string>
             </property>
            </widget>
           </item>
@@ -691,6 +698,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnKinetoplast</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onKinetoplast()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1195</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -707,5 +730,6 @@
   <slot>onChangeScaffold(int)</slot>
   <slot>onDSRing()</slot>
   <slot>onCatenanes()</slot>
+  <slot>onKinetoplast()</slot>
  </slots>
 </ui>
