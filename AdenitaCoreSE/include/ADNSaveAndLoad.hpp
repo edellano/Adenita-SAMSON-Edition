@@ -6,6 +6,7 @@
 #include "rapidjson/pointer.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/filereadstream.h"
+#include "boost/algorithm/string.hpp"
 
 
 namespace ADNLoader {
@@ -26,6 +27,7 @@ namespace ADNLoader {
   void OutputToOxDNA(ADNNanorobot* nanorobot, std::string folder, ADNAuxiliary::OxDNAOptions options);
   void SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrands, std::ofstream& outConf, std::ofstream& outTopo, ADNAuxiliary::OxDNAOptions options);
   std::ofstream CreateOutputFile(std::string fname, std::string folder);
+  std::pair<bool, ADNPointer<ADNPart>> InputFromOxDNA(std::string topoFile, std::string configFile);
 
   // sequence list
   void OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std::string folder);
