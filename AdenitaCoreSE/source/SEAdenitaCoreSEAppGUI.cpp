@@ -85,7 +85,7 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
 
   // disable debug menu if compiling in release mode
   #if NDEBUG
-  ui.tabWidget->removeTab(0);
+  ui.tabWidget->removeTab(2);
   #endif
 }
 
