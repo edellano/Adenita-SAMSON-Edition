@@ -894,6 +894,41 @@ std::ofstream ADNLoader::CreateOutputFile(std::string fname, std::string folder)
   return output;
 }
 
+std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoFile, std::string configFile)
+{
+  ADNPointer<ADNPart> part = new ADNPart();
+  bool error = true;
+  // parse topology file
+  std::ifstream topo(topoFile);
+  if (topo.is_open()) {
+
+    std::string line;
+    int count = 0;
+    ADNPointer<ADNDoubleStrand> ds;
+    int currChain = -1;
+    error = false;
+
+    while (topo.good()) {
+      std::getline(topo, line);
+      if (count == 0) continue;  // first line of topology contains number of chains and nucleotides
+
+      if (error) break;
+
+      //boost::split(cont, str, boost::is_any_of(delims));
+
+      count++;
+    }
+  }
+
+  // parse config file and set positions if topology file was parsed correctly
+  if (!error) {
+    std::ifstream config(configFile);
+    // create base pairs and double strands
+  }
+  
+  return std::make_pair(error, part);
+}
+
 void ADNLoader::OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std::string folder)
 {
   int num = 0;
