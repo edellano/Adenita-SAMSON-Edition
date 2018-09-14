@@ -97,16 +97,36 @@ ADNPointer<ADNNucleotide> ADNNucleotide::GetPair()
   return pair_;
 }
 
-ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev()
+ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev(bool checkCircular)
 {
-  auto p = static_cast<ADNNucleotide*>(getPreviousNucleicAcid());
-  return ADNPointer<ADNNucleotide>(p);
+  if (!checkCircular) {
+    auto p = static_cast<ADNNucleotide*>(getPreviousNucleicAcid());
+    return ADNPointer<ADNNucleotide>(p);
+  }
+  else {
+    if (end_ = FivePrime) {
+      auto strand = GetStrand();
+      return strand->GetThreePrime();
+    }
+  }
+
+  return nullptr;
 }
 
-ADNPointer<ADNNucleotide> ADNNucleotide::GetNext()
+ADNPointer<ADNNucleotide> ADNNucleotide::GetNext(bool checkCircular)
 {
-  auto p = static_cast<ADNNucleotide*>(getNextNucleicAcid());
-  return ADNPointer<ADNNucleotide>(p);
+  if (!checkCircular) {
+    auto p = static_cast<ADNNucleotide*>(getNextNucleicAcid());
+    return ADNPointer<ADNNucleotide>(p);
+  }
+  else {
+    if (end_ = ThreePrime) {
+      auto strand = GetStrand();
+      return strand->GetFivePrime();
+    }
+  }
+
+  return nullptr;
 }
 
 ADNPointer<ADNSingleStrand> ADNNucleotide::GetStrand()
@@ -413,6 +433,26 @@ bool ADNSingleStrand::getIsScaffold() const
 void ADNSingleStrand::setIsScaffold(bool b)
 {
   IsScaffold(b);
+}
+
+void ADNSingleStrand::IsCircular(bool c)
+{
+  isCircular_ = c;
+}
+
+bool ADNSingleStrand::IsCircular() const
+{
+  return isCircular_;
+}
+
+bool ADNSingleStrand::getIsCircular() const
+{
+  return IsCircular();
+}
+
+void ADNSingleStrand::setIsCircular(bool b)
+{
+  IsCircular(b);
 }
 
 int ADNSingleStrand::getNumberOfNucleotides() const

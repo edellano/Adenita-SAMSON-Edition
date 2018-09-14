@@ -167,8 +167,8 @@ public:
   void SetPair(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetPair();
 
-  ADNPointer<ADNNucleotide> GetPrev();
-  ADNPointer<ADNNucleotide> GetNext();
+  ADNPointer<ADNNucleotide> GetPrev(bool checkCircular = false);
+  ADNPointer<ADNNucleotide> GetNext(bool checkCircular = false);
   ADNPointer<ADNSingleStrand> GetStrand();
   SBNode* getSingleStrand() const;
 
@@ -241,6 +241,10 @@ public:
   bool IsScaffold() const;
   bool getIsScaffold() const;
   void setIsScaffold(bool b);
+  void IsCircular(bool c);
+  bool IsCircular() const;
+  bool getIsCircular() const;
+  void setIsCircular(bool b);
   int getNumberOfNucleotides() const;
   CollectionMap<ADNNucleotide> GetNucleotides() const;
   ADNPointer<ADNNucleotide> GetNucleotide(unsigned int id) const;
@@ -271,6 +275,7 @@ public:
 
 private:
   bool isScaffold_ = false;
+  bool isCircular_ = false;
   ADNPointer<ADNNucleotide> fivePrime_;
   ADNPointer<ADNNucleotide> threePrime_;
 };

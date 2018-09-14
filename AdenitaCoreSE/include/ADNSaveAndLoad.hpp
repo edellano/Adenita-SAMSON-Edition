@@ -26,7 +26,7 @@ namespace ADNLoader {
   void OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options);
   void OutputToOxDNA(ADNNanorobot* nanorobot, std::string folder, ADNAuxiliary::OxDNAOptions options);
   void SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrands, std::ofstream& outConf, std::ofstream& outTopo, ADNAuxiliary::OxDNAOptions options);
-  std::ofstream CreateOutputFile(std::string fname, std::string folder);
+  std::ofstream CreateOutputFile(std::string fname, std::string folder, bool sign = false);
   std::pair<bool, ADNPointer<ADNPart>> InputFromOxDNA(std::string topoFile, std::string configFile);
 
   // sequence list
@@ -34,4 +34,13 @@ namespace ADNLoader {
 
   // generic functions
   ADNPointer<ADNPart> GeneratePartFromAtomic();
+
+  struct NucleotideWrap {
+    ADNPointer<ADNNucleotide> nt_;
+    bool paired_ = false;
+    int ntId_ = -1;
+    int strandId_ = -1;
+  };
+  std::vector < ADNPointer<ADNBaseSegment> > FindBasePairs(std::vector<NucleotideWrap> nts);
+  std::vector < ADNPointer<ADNDoubleStrand> > DetectDoubleStrands(ADNPointer<ADNPart> part, std::vector < ADNPointer<ADNBaseSegment> > bss);
 }
