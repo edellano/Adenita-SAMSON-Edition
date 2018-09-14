@@ -112,6 +112,7 @@ SB_CLASS_BEGIN(ADNSingleStrand);
 
     SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNSingleStrand, Name, "Name", "Properties");
     SB_ATTRIBUTE_READ_WRITE(bool, ADNSingleStrand, IsScaffold, "Is Scaffold", "Properties");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNSingleStrand, IsCircular, "Is Circular", "Properties");
     SB_ATTRIBUTE_READ_ONLY(int, ADNSingleStrand, NumberOfNucleotides, "Nucleotides", "Properties");
     // SB_ATTRIBUTE_READ_ONLY(std::string, ADNSingleStrand, Sequence, "Sequence", "Properties");
     SB_ATTRIBUTE_READ_ONLY(double, ADNSingleStrand, GCContent, "GC %", "Properties");
