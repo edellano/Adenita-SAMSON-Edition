@@ -99,34 +99,30 @@ ADNPointer<ADNNucleotide> ADNNucleotide::GetPair()
 
 ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev(bool checkCircular)
 {
-  if (!checkCircular) {
-    auto p = static_cast<ADNNucleotide*>(getPreviousNucleicAcid());
-    return ADNPointer<ADNNucleotide>(p);
-  }
-  else {
-    if (end_ = FivePrime) {
-      auto strand = GetStrand();
-      return strand->GetThreePrime();
+  ADNPointer<ADNNucleotide> p = static_cast<ADNNucleotide*>(getPreviousNucleicAcid());
+
+  if (checkCircular) {
+    auto strand = GetStrand();
+    if (strand->IsCircular() && end_ == FivePrime) {
+      p = strand->GetThreePrime();
     }
   }
 
-  return nullptr;
+  return p;
 }
 
 ADNPointer<ADNNucleotide> ADNNucleotide::GetNext(bool checkCircular)
 {
-  if (!checkCircular) {
-    auto p = static_cast<ADNNucleotide*>(getNextNucleicAcid());
-    return ADNPointer<ADNNucleotide>(p);
-  }
-  else {
-    if (end_ = ThreePrime) {
-      auto strand = GetStrand();
-      return strand->GetFivePrime();
+  ADNPointer<ADNNucleotide> p = static_cast<ADNNucleotide*>(getNextNucleicAcid());
+  
+  if (checkCircular) {
+    auto strand = GetStrand();
+    if (strand->IsCircular() && end_ == ThreePrime) {
+      p = strand->GetFivePrime();
     }
   }
 
-  return nullptr;
+  return p;
 }
 
 ADNPointer<ADNSingleStrand> ADNNucleotide::GetStrand()

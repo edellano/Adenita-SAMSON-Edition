@@ -846,6 +846,10 @@ void ADNLoader::SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrand
   unsigned int ntId = 0;
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
     ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
+    // calculate five prime and three prime ids
+    int numNt = ss->getNumberOfNucleotides();
+    int fivePrimeId = ntId;
+    int threePrimeId = fivePrimeId + numNt;
     do {
       // config file info
       SBPosition3 pos = nt->GetPosition();
@@ -863,10 +867,16 @@ void ADNLoader::SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrand
       std::string base(1, ADNModel::GetResidueName(nt->GetType()));
       std::string threePrime = "-1";
       auto ntPrev = nt->GetPrev(true);
-      if (nt->GetPrev(true) != nullptr) threePrime = std::to_string(ntId - 1);
+      if (ntPrev != nullptr) {
+        if (ntPrev->GetEnd() == ThreePrime) threePrime = std::to_string(threePrimeId);
+        else threePrime = std::to_string(ntId - 1);
+      }
       std::string fivePrime = "-1";
       auto ntNext = nt->GetNext(true);
-      if (nt->GetNext(true) != nullptr) fivePrime = std::to_string(ntId + 1);
+      if (ntNext != nullptr) {
+        if (ntNext->GetEnd() == FivePrime) fivePrime = std::to_string(fivePrimeId);
+        else fivePrime = std::to_string(ntId + 1);
+      }
 
       outTopo << std::to_string(strandId) + " " + base + " " + threePrime + " " + fivePrime << std::endl;
 
