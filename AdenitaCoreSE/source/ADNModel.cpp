@@ -871,19 +871,35 @@ int ADNBaseSegment::getNumber() const
   return GetNumber();
 }
 
-ADNPointer<ADNBaseSegment> ADNBaseSegment::GetPrev() const
+ADNPointer<ADNBaseSegment> ADNBaseSegment::GetPrev(bool checkCircular) const
 {
-  auto p = static_cast<ADNBaseSegment*>(getPreviousStructuralNode());
-  return ADNPointer<ADNBaseSegment>(p);
+  ADNPointer<ADNBaseSegment> p = static_cast<ADNBaseSegment*>(getPreviousStructuralNode());
+
+  if (checkCircular) {
+    auto ds = GetDoubleStrand();
+    if (ds->IsCircular() && GetNumber() == 0) {
+      // is the first bs
+      p = ds->GetLastBaseSegment();
+    }
+  }
+  return p;
 }
 
-ADNPointer<ADNBaseSegment> ADNBaseSegment::GetNext() const
+ADNPointer<ADNBaseSegment> ADNBaseSegment::GetNext(bool checkCircular) const
 {
-  auto p = static_cast<ADNBaseSegment*>(getNextStructuralNode());
-  return ADNPointer<ADNBaseSegment>(p);
+  ADNPointer<ADNBaseSegment> p = static_cast<ADNBaseSegment*>(getNextStructuralNode());
+
+  if (checkCircular) {
+    auto ds = GetDoubleStrand();
+    if (ds->IsCircular() && this == ds->GetLastBaseSegment()()) {
+      // is the last bs
+      p = ds->GetFirstBaseSegment();
+    }
+  }
+  return p;
 }
 
-ADNPointer<ADNDoubleStrand> ADNBaseSegment::GetDoubleStrand()
+ADNPointer<ADNDoubleStrand> ADNBaseSegment::GetDoubleStrand() const
 {
   auto p = static_cast<ADNDoubleStrand*>(getParent());
   return ADNPointer<ADNDoubleStrand>(p);
@@ -961,6 +977,26 @@ int ADNDoubleStrand::GetLength() const
 int ADNDoubleStrand::getLength() const
 {
   return GetLength();
+}
+
+void ADNDoubleStrand::IsCircular(bool c)
+{
+  isCircular_ = c;
+}
+
+bool ADNDoubleStrand::IsCircular() const
+{
+  return isCircular_;
+}
+
+bool ADNDoubleStrand::getIsCircular() const
+{
+  return IsCircular();
+}
+
+void ADNDoubleStrand::setIsCircular(bool b)
+{
+  IsCircular(b);
 }
 
 CollectionMap<ADNBaseSegment> ADNDoubleStrand::GetBaseSegments() const

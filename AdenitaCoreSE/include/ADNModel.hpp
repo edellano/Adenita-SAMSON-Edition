@@ -414,10 +414,10 @@ public:
   void setNumber(int n);
   int getNumber() const;
 
-  ADNPointer<ADNBaseSegment> GetPrev() const;
-  ADNPointer<ADNBaseSegment> GetNext() const;
+  ADNPointer<ADNBaseSegment> GetPrev(bool checkCircular = false) const;
+  ADNPointer<ADNBaseSegment> GetNext(bool checkCircular = false) const;
 
-  ADNPointer<ADNDoubleStrand> GetDoubleStrand();
+  ADNPointer<ADNDoubleStrand> GetDoubleStrand() const;
   CollectionMap<ADNNucleotide> GetNucleotides();
 
   void SetCell(ADNCell* c);  // we use raw pointers so subclassing will work
@@ -450,6 +450,11 @@ public:
   int GetLength() const;
   int getLength() const;
 
+  void IsCircular(bool c);
+  bool IsCircular() const;
+  bool getIsCircular() const;
+  void setIsCircular(bool b);
+
   CollectionMap<ADNBaseSegment> GetBaseSegments() const;
   ADNPointer<ADNBaseSegment> GetNthBaseSegment(int n);  // return the base segment by position in the double strand
 
@@ -462,6 +467,7 @@ public:
   void AddBaseSegmentEnd(ADNPointer<ADNBaseSegment> bs);
 
 private:
+  bool isCircular_ = false;
   ADNPointer<ADNBaseSegment> start_ = nullptr;
   ADNPointer<ADNBaseSegment> end_ = nullptr;
   double initialTwistAngle_ = 0.0;
