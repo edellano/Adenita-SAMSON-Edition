@@ -238,19 +238,25 @@ ADNPointer<ADNPart> DASCreator::CreateHexagonalCatenanes(SBQuantity::length radi
   double edgeDist = radius.getValue() * 2 * 0.8;
   DASLattice lattice = DASLattice(LatticeType::Honeycomb, edgeDist, rows, cols);
 
-  SBVector3 w = SBVector3(0.0, 1.0, 0.0);
   double pi = atan(1.0) * 4.0;
-  double theta = pi*0.5*0.95;
+  double w = 1.0;
+  double theta = 0.1;
   // create a ring at every point of the lattice
   auto numRows = lattice.GetNumberRows();
   auto numCols = lattice.GetNumberCols();
   for (unsigned int i = 0; i < numRows; ++i) {
     for (unsigned int j = 0; j < numCols; ++j) {
+      auto sigW = w;
+      if ((i + j) % 2 == 0) sigW *= -1.0;
       LatticeCell cell = lattice.GetLatticeCell(i, j);
       SBPosition3 c = SBPosition3(SBQuantity::picometer(cell.x_), SBQuantity::picometer(cell.y_), SBQuantity::nanometer(0.0)) + center;
-      auto n = normal + cos(theta)*w;
+
+      ublas::vector<double> normal(3.0, 0.0);
+      normal[0] = 1.0;
+      normal[1] = theta;
+      normal[2] = pi * 0.5 + sigW * pi * 0.5;
+      SBVector3 n = ADNAuxiliary::UblasVectorToSBVector(ADNVectorMath::Spherical2Cartesian(normal));
       DASCreator::AddDSRingToADNPart(part, radius, c, n.normalizedVersion());
-      w *= -1.0;
     }
   }
 

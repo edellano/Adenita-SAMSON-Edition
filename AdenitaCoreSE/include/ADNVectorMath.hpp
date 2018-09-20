@@ -37,18 +37,12 @@ namespace ADNVectorMath {
   bool IsNearlyZero(double n);
   double CalculateVectorNorm(ublas::vector<double> v);
   /*!
-  * Applies the transformation given by t_mat to a set of points
-  * \param the transformation matrix
-  * \param a matrix holding coordinates of points
-  * \return a matrix with the coordinates after the transformation
+    * Applies the transformation given by t_mat to a set of points
+    * \param the transformation matrix
+    * \param a matrix holding coordinates of points
+    * \return a matrix with the coordinates after the transformation
   */
   ublas::matrix<double> ApplyTransformation(ublas::matrix<double> t_mat, ublas::matrix<double> points);
 
-  /** Operations using SAMSON **/
-
-  //ublas::vector<double> CreateBoostVector(SBPosition3 pos);
-  //ublas::vector<double> CreateBoostVector(SBVector3 vec);
-  //SBPosition3 CreateSBPosition(ublas::vector<double> vec);
-  //SBVector3 CreateSBVector(ublas::vector<double> vec);
-  //SBPosition3 CalculateCM(SBNode* nodes);
+  ublas::vector<double> Spherical2Cartesian(ublas::vector<double> spher);
 };
