@@ -233,6 +233,8 @@ public:
   ADNPointer<ADNNucleotide> GetThreePrime();
   SBNode* getThreePrime() const;
 
+  ADNPointer<ADNNucleotide> GetNthNucleotide(int n);
+
   // if using these functions, make sure nucleotides are properly added
   void SetFivePrime(ADNPointer<ADNNucleotide> nt);
   void SetThreePrime(ADNPointer<ADNNucleotide> nt);
