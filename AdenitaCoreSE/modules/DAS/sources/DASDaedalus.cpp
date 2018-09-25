@@ -933,8 +933,13 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
         bs = bs->GetNext();
       }
     }
+
     ++count;
   }
+
+  // break chain away from polyT region
+  auto shiftNt = chain->GetNthNucleotide(12);
+  chain->ShiftStart(shiftNt);
 
   return chain;
 }
