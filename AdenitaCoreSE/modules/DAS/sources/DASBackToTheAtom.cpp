@@ -379,9 +379,10 @@ void DASBackToTheAtom::PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosit
     ublas::vector<double> e2 = ublas::row(subspace, 1);
 
     int i = 0;
+    auto frac = shifted.norm() / (nucleotides.size() + 1);
     while (nt != endNt->GetNext()) {
-      float frac = float(i) / (nucleotides.size() + 1);
-      SBPosition3 shift = shifted * frac;
+      //float frac = float(i) / (nucleotides.size() + 1);
+      SBPosition3 shift = (i+1) * frac * shifted.normalizedVersion();
       shift += start_pos;
 
       nt->SetPosition(shift);
