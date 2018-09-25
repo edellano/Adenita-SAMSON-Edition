@@ -346,6 +346,9 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddDSRingToADNPart(ADNPointer<ADNPart> p
 
   ssLeft->SetDefaultName();
   ssRight->SetDefaultName();
+  ssLeft->IsCircular(true);
+  ssRight->IsCircular(true);
+  ds->IsCircular(true);
 
   return ds;
 }
