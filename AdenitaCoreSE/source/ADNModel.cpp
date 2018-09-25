@@ -401,6 +401,19 @@ SBNode * ADNSingleStrand::getThreePrime() const
   return threePrime_();
 }
 
+ADNPointer<ADNNucleotide> ADNSingleStrand::GetNthNucleotide(int n)
+{
+  ADNPointer<ADNNucleotide> nt = nullptr;
+  if (n <= getNumberOfNucleotides()) {
+    nt = fivePrime_;
+    for (int i = 0; i < n; ++i) {
+      nt = nt->GetNext();
+    }
+  }
+  
+  return nt;
+}
+
 void ADNSingleStrand::SetFivePrime(ADNPointer<ADNNucleotide> nt)
 {
   fivePrime_ = nt;
@@ -524,9 +537,10 @@ void ADNSingleStrand::ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq) {
   auto stopNt = nt->GetPrev();
 
   while (loopNt != stopNt) {
-    removeChild(loopNt());
-    AddNucleotideFivePrime(loopNt);
+    auto cpNt = loopNt;
     loopNt = loopNt->GetPrev();
+    removeChild(cpNt());
+    AddNucleotideFivePrime(cpNt);
   }
   
   if (shiftSeq) {
