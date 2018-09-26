@@ -292,6 +292,27 @@ void SEAdenitaCoreSEApp::Kinetoplast(SBQuantity::length radius, SBPosition3 cent
   ResetVisualModel();
 }
 
+void SEAdenitaCoreSEApp::CalculateBindingRegions()
+{
+  // get selected part
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  ADNPointer<ADNPart> part = nullptr;
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      part = static_cast<ADNPart*>(node);
+    }
+  }
+
+  if (part != nullptr) {
+    auto p = PIPrimer3();
+    p.Calculate(part, 100, 5, 16);
+  }
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();

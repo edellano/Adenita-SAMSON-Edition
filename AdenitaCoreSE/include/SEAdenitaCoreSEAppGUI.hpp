@@ -71,6 +71,7 @@ public slots:
   void onDSRing();
   void onCatenanes();
   void onKinetoplast();
+  void onCalculateBindingRegions();
 
 private:
   std::string IsJsonCadnano(QString filename);

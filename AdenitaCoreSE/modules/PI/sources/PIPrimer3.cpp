@@ -28,7 +28,7 @@ ThermParam PIPrimer3::ExecuteNtthal(std::string leftSequence, std::string rightS
   QString firstLine = strLines[0];
 
   ThermParam res;
-  if (strLines.size() != 6) { //if there the region is unbound
+  if (strLines.size() != 6) {  //if there the region is unbound
     res.dS_ = FLT_MAX;
     res.dH_ = FLT_MAX;
     res.dG_ = FLT_MAX;
@@ -78,40 +78,51 @@ void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
 {
   auto singleStrands = p->GetSingleStrands();
 
+  std::vector<ADNPointer<ADNNucleotide>> added_nt;
+
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
     ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
 
     int regionSize = 0;
     unsigned int numRegions = 0;
 
-    ADNPointer<PIBindingRegion> region;
+    SBNodeIndexer nodeIndexer;
     while (nt != nullptr) {
-      if (regionSize == 0) {
-        region = new PIBindingRegion();
-        //region->RegisterBindingRegion();
-        //regions_.addReferenceTarget(region());
-        ++numRegions;
-      }
 
-      bool endOfRegion = true;
+      if (std::find(added_nt.begin(), added_nt.end(), nt) == added_nt.end()) {
+        bool endOfRegion = true;
 
-      auto st_cur = nt->GetPair();
-      auto sc_next = nt->GetNext();
+        auto st_cur = nt->GetPair();
+        auto sc_next = nt->GetNext();
 
-      if (sc_next != nullptr && st_cur != nullptr && st_cur->GetPrev() != nullptr) {
-        if (sc_next->GetPair() == st_cur->GetPrev()) {
-          endOfRegion = false;
+        if (sc_next != nullptr && st_cur != nullptr && st_cur->GetPrev() != nullptr) {
+          if (sc_next->GetPair() == st_cur->GetPrev()) {
+            endOfRegion = false;
+          }
+        }
+
+        nodeIndexer.addNode(nt());
+        added_nt.push_back(nt);
+        auto pair = nt->GetPair();
+        if (pair != nullptr) {
+          nodeIndexer.addNode(pair());
+          added_nt.push_back(pair);
+        }
+
+        ++regionSize;
+
+        if (endOfRegion) {
+          regionSize = 0;
+          std::string name = "Binding Region " + std::to_string(numRegions);
+          ADNPointer<PIBindingRegion> region = new PIBindingRegion(name, nodeIndexer);
+          region->RegisterBindingRegion();
+          regions_.addReferenceTarget(region());
+          region->SetLastNt(nt);
+          ++numRegions;
+          nodeIndexer.clear();
         }
       }
 
-      //region->addChild(nt());
-      //region->SetLastNt(nt);
-
-      ++regionSize;
-
-      if (endOfRegion) {
-        regionSize = 0;
-      }
       nt = nt->GetNext();
     }
   }
