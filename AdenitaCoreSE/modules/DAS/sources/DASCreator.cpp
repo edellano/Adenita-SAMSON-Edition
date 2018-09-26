@@ -446,27 +446,27 @@ ADNPointer<ADNSingleStrand> DASCreator::AddSingleStrandToADNPart(ADNPointer<ADNP
   SBPosition3 pos = start;
 
   ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
-
+  part->RegisterDoubleStrand(ds);
   // create nucleotides
   ADNPointer<ADNSingleStrand> ss = new ADNSingleStrand();
+  part->RegisterSingleStrand(ss);
 
   for (size_t i = 0; i < length; ++i) {
     ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
-    ds->AddBaseSegmentEnd(bs);
+    part->RegisterBaseSegmentEnd(ds, bs);
 
     ADNPointer<ADNBasePair> bp = new ADNBasePair();
     bs->SetCell(bp());
     bs->SetPosition(pos);
 
     ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+    part->RegisterNucleotideThreePrime(ss, nt);
     nt->SetType(DNABlocks::DI);
     nt->SetPosition(bs->GetPosition());
     nt->SetBackbonePosition(bs->GetPosition());
     nt->SetSidechainPosition(bs->GetPosition());
     nt->SetBaseSegment(bs);
     bp->SetLeftNucleotide(nt);
-
-    ss->AddNucleotideThreePrime(nt);
 
     pos += delt;
   }
