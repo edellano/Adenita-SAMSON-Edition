@@ -453,11 +453,13 @@ ADNPointer<ADNSingleStrand> DASCreator::AddSingleStrandToADNPart(ADNPointer<ADNP
 
   for (size_t i = 0; i < length; ++i) {
     ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
+    bs->SetPosition(pos);
+    bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(direction));
+    bs->SetNumber(boost::numeric_cast<int>(i));
     part->RegisterBaseSegmentEnd(ds, bs);
 
     ADNPointer<ADNBasePair> bp = new ADNBasePair();
     bs->SetCell(bp());
-    bs->SetPosition(pos);
 
     ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
     part->RegisterNucleotideThreePrime(ss, nt);
