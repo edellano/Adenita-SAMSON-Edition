@@ -6,7 +6,7 @@
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 #include <boost/numeric/ublas/lu.hpp>
 #include <cmath>
-//#include "SAMSON.hpp"
+#include "SAMSON.hpp"
 
 namespace ublas = boost::numeric::ublas;
 
@@ -45,4 +45,8 @@ namespace ADNVectorMath {
   ublas::matrix<double> ApplyTransformation(ublas::matrix<double> t_mat, ublas::matrix<double> points);
 
   ublas::vector<double> Spherical2Cartesian(ublas::vector<double> spher);
+
+  // SAMSON types operations
+  SBVector3 SBCrossProduct(SBVector3 v, SBVector3 w);
+  double SBInnerProduct(SBVector3 v, SBVector3 w);
 };

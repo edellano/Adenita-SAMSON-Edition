@@ -982,20 +982,11 @@ void DASDaedalus::LogEdgeMap(ADNPointer<ADNPart> origami) {
 }
 
 SBVector3 DASDaedalus::SBCrossProduct(SBVector3 v, SBVector3 w) {
-  std::vector<double> v_std = { v[0].getValue(), v[1].getValue(), v[2].getValue() };
-  std::vector<double> w_std = { w[0].getValue(), w[1].getValue(), w[2].getValue() };
-  ublas::vector<double> v_boost = ADNVectorMath::CreateBoostVector(v_std);
-  ublas::vector<double> w_boost = ADNVectorMath::CreateBoostVector(w_std);
-  ublas::vector<double> u_boost = ADNVectorMath::CrossProduct(v_boost, w_boost);
-  u_boost /= ublas::norm_2(u_boost);
-  std::vector<double> u_std = ADNVectorMath::CreateStdVector(u_boost);
-  SBVector3 u = SBVector3(u_std[0], u_std[1], u_std[2]);
-  return u;
+  return ADNVectorMath::SBCrossProduct(v, w);
 }
 
 double DASDaedalus::SBInnerProduct(SBVector3 v, SBVector3 w) {
-  auto res = v[0] * w[0] + v[1] * w[1] + v[2] * w[2];
-  return res.getValue();
+  return ADNVectorMath::SBInnerProduct(v, w);
 }
 
 void DASDaedalus::LogLinkGraph() {
