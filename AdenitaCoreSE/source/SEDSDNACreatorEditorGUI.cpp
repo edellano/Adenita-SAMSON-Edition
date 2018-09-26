@@ -32,6 +32,18 @@ void SEDSDNACreatorEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+void SEDSDNACreatorEditorGUI::onSetDSDNA(bool b)
+{
+  SEDSDNACreatorEditor* t = getEditor();
+  t->SetMode(b);
+}
+
+void SEDSDNACreatorEditorGUI::onSetSSDNA(bool b)
+{
+  SEDSDNACreatorEditor* t = getEditor();
+  t->SetMode(!b);
+}
+
 SBCContainerUUID SEDSDNACreatorEditorGUI::getUUID() const { return SBCContainerUUID( "751903AE-14BC-F0B9-01D9-D2CF8412AEF9" );}
 
 QPixmap SEDSDNACreatorEditorGUI::getLogo() const { 
