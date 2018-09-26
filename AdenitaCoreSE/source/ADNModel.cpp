@@ -596,15 +596,21 @@ void ADNSingleStrand::SetSequence(std::string seq) {
   ADNPointer<ADNNucleotide> nt = fivePrime_;
   int count = 0;
   while (nt != nullptr) {
-    DNABlocks type = ADNModel::ResidueNameToType(seq[count]);
+    DNABlocks type = DNABlocks::DI;
+    if (seq.size() > count) type = ADNModel::ResidueNameToType(seq[count]);
     nt->SetType(type);
-    if (isScaffold_ && nt->GetPair() != nullptr) {
+    if (nt->GetPair() != nullptr) {
       DNABlocks compType = ADNModel::GetComplementaryBase(type);
       nt->GetPair()->SetType(compType);
     }
     nt = nt->GetNext();
     ++count;
   }
+}
+
+void ADNSingleStrand::setSequence(std::string seq)
+{
+  SetSequence(seq);
 }
 
 void ADNSingleStrand::SetDefaultName() {

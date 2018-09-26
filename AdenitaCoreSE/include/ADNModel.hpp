@@ -273,6 +273,7 @@ public:
   double getGCContent() const;
 
   void SetSequence(std::string seq);
+  void setSequence(std::string seq);
   void SetDefaultName();
 
 private:
