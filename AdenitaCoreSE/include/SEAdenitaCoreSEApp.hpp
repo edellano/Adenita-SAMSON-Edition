@@ -10,6 +10,7 @@
 #include "DASComplexOperations.hpp"
 #include "SEConfig.hpp"
 #include "SEAdenitaVisualModel.hpp"
+#include "PIPrimer3.hpp"
 
 
 /// This class implements the functionality of the app
@@ -54,6 +55,7 @@ public :
   void CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);
   void LinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int num);
   void Kinetoplast(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols);
+  void CalculateBindingRegions();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events

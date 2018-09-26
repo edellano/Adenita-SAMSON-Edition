@@ -493,6 +493,12 @@ void SEAdenitaCoreSEAppGUI::onKinetoplast()
   }
 }
 
+void SEAdenitaCoreSEAppGUI::onCalculateBindingRegions()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->CalculateBindingRegions();
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";

@@ -17,10 +17,16 @@ class PIBindingRegion : public SBNodeGroup {
   SB_CLASS
 public:
   PIBindingRegion() : SBNodeGroup() {};
+  PIBindingRegion(std::string name, SBNodeIndexer indexer) : SBNodeGroup(name, indexer) {};
   PIBindingRegion(const PIBindingRegion& other) : SBNodeGroup(other) {};
   ~PIBindingRegion() = default;
 
   PIBindingRegion& operator=(const PIBindingRegion& other);
+
+  double getEntropy() const;
+  double getEntalpy() const;
+  double getGibbs() const;
+  double getTemp() const;
 
   void SetLastNt(ADNPointer<ADNNucleotide> nt);
   void SetThermParam(ThermParam res);
