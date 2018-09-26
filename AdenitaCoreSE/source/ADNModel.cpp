@@ -844,13 +844,13 @@ std::map<std::string, std::vector<std::string>> ADNModel::GetNucleotideBonds(DNA
 
 ADNBaseSegment::ADNBaseSegment(CellType cellType) : PositionableSB(), Orientable(), SBStructuralGroup() {
   if (cellType == BasePair) {
-    cell_ = new ADNBasePair();
+    SetCell(new ADNBasePair());
   }
   else if (cellType == LoopPair) {
-    cell_ = new ADNLoopPair();
+    SetCell(new ADNLoopPair());
   }
   else if (cellType == SkipPair) {
-    cell_ = new ADNSkipPair();
+    SetCell(new ADNSkipPair());
   }
 }
 
