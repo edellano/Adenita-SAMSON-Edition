@@ -17,7 +17,7 @@ DASDaedalus::~DASDaedalus() {
 
 ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, std::string filename, bool center) {
 
-  // Create ANTPolyhedron
+  // Create DASPolyhedron
   DASPolyhedron& p = DASPolyhedron(filename);
   p.Center(SBPosition3());
   
@@ -74,7 +74,6 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron &
   //LogLinkGraph();
   // Route scaffold
   RouteScaffold(daedalus_part, scaff, seq, r_length);
-  //ANTAuxiliary::log(GetChainSequence(scaff->id_));
   // Create staple objects
   CreateEdgeStaples(daedalus_part);
   CreateVertexStaples(daedalus_part, fig);
@@ -82,10 +81,6 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron &
   for (auto &p : chains_) {
     daedalus_part->RegisterSingleStrand(p.second());
   }
-  
-  // Set 1D and 2D positions for nucleotides
-  //Set2DPositions(*daedalus_part);
-  //Set1DPositions(*daedalus_part);
 
   return daedalus_part;
 }
@@ -172,12 +167,10 @@ void DASDaedalus::AddEdge(int id_source, int id_target, DOTLink* link, T &graph)
   }
 }
 
-//Path DASDaedalus::MinimumSpanningTree(const UndirectedGraph &u_graph) {
 LinkList DASDaedalus::MinimumSpanningTree(const UndirectedGraph &u_graph) {
   //Path prim_path;
   LinkList prim_path;
   std::vector<Node<UndirectedGraph>> mst_path_(boost::num_vertices(u_graph));
-  //auto weights = boost::weight_map(get(&EdgeProperty::weight_, u_graph));
   boost::prim_minimum_spanning_tree(u_graph, &mst_path_[0], boost::weight_map(get(&EdgeProperty::weight_, u_graph)));
 
   std::size_t plength = mst_path_.size();
@@ -186,7 +179,6 @@ LinkList DASDaedalus::MinimumSpanningTree(const UndirectedGraph &u_graph) {
       Node<UndirectedGraph> v = boost::vertex(i, u_graph);
       Edge<UndirectedGraph> e = boost::edge(v, mst_path_[i], u_graph).first;
       DOTLink* link = u_graph[e].link_;
-      //prim_path.push_back(e);
       prim_path.push_back(link);
     }
   }
@@ -201,7 +193,6 @@ void DASDaedalus::SplitEdges(const LinkList &mst, ADNPointer<ADNPart> origami, D
 
   for (auto lit = linkGraph_.begin(); lit != linkGraph_.end(); ++lit) {
     if (std::find(mst.begin(), mst.end(), *lit) == mst.end()) {
-      //links_to_remove.push_back(*lit);
       DOTNode* u = (*lit)->source_;
       DOTNode* v = (*lit)->target_;
       DASEdge* edge = (*lit)->halfEdge_->edge_;
@@ -226,8 +217,6 @@ void DASDaedalus::SplitEdges(const LinkList &mst, ADNPointer<ADNPart> origami, D
       links_to_remove.push_back(*lit);
       int e_len = bpLengths_.at(edge);
       // calculate sizes
-      //int sz1 = std::floor(float(e_len)*0.5);
-      //int sz2 = std::ceil(float(e_len)*0.5);
       int sz1 = 0;
       int sz2 = 0;
       if (e_len % 21 == 0) {
@@ -629,15 +618,10 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
     ADNPointer<ADNBaseSegment> bs_pair = AdvanceBaseSegment(firstBasesHe_.at(she), length - 2); // since the last one is a PolyT
 
     for (int i = 0; i < length - 1; ++i) {
-      //if (bs->GetCell()->GetType() == CellType::BasePair) {
-        // we only pair ANTBasePair
-        //ds->AddBaseSegmentEnd(bs);
-        //ds_pair->AddBaseSegmentEnd(firstBasesHe_.at(she));
       auto bsId = origami->GetBaseSegmentIndex(bs);
       auto bsPairId = origami->GetBaseSegmentIndex(bs_pair);
       bsPairs_.insert(std::make_pair(bsId, bsPairId));
       bsPairs_.insert(std::make_pair(bsPairId, bsId));
-      //}
       bs = bs->GetNext();
       bs_pair = bs_pair->GetPrev();
     }
@@ -692,23 +676,6 @@ DOTLink* DASDaedalus::AddLink(std::pair<DOTNode*, DOTNode*> ab, int bp, DASPolyh
   return link;
 }
 
-void DASDaedalus::RemoveNode(DOTNode* node) {
-  LinkList links_to_remove;
-  for (auto lit = linkGraph_.begin(); lit != linkGraph_.end(); ++lit) {
-    DOTNode* s = (*lit)->source_;
-    DOTNode* t = (*lit)->target_;
-    if (s == node || t == node) {
-      links_to_remove.push_back(*lit);
-    }
-  }
-
-  for (auto lit = links_to_remove.begin(); lit != links_to_remove.end(); ++lit) {
-    RemoveLink(*lit);
-  }
-
-  nodes_.erase(nodes_.find(node->id_));
-}
-
 DOTNode* DASDaedalus::GetNodeById(int id) const {
   return nodes_.at(id);
 }
@@ -751,7 +718,6 @@ void DASDaedalus::RouteScaffold(ADNPointer<ADNPart> part, ADNPointer<ADNSingleSt
   unsigned int nt_id = 0;
 
   std::string used_seq = seq.substr(0, routing_length);
-  //std::reverse(used_seq.begin(), used_seq.end());
 
   for (auto lit = linkGraph_.begin(); lit != linkGraph_.end(); ++lit) {
     ADNPointer<ADNBaseSegment> bs = (*lit)->firstBase_;
@@ -773,13 +739,6 @@ void DASDaedalus::RouteScaffold(ADNPointer<ADNPart> part, ADNPointer<ADNSingleSt
       bs = bs->GetNext();
     }
   }
-}
-
-std::string DASDaedalus::GetChainSequence(int c_id) {
-  ADNPointer<ADNSingleStrand> scaff = chains_.at(c_id);
-  std::string seq = scaff->GetSequence();
-
-  return seq;
 }
 
 ADNPointer<ADNBaseSegment> DASDaedalus::AdvanceBaseSegment(ADNPointer<ADNBaseSegment> bs, int pos) {
@@ -1067,43 +1026,6 @@ void DASDaedalus::LogLinkGraph() {
   logger.Log(msg);
 }
 
-void DASDaedalus::Set2DPositions(ADNPointer<ADNPart> origami) {
-  /**
-  * Way of setting 2D coordinates is taken from DASCadnano
-  * 2D position not working.
-  */
-  //Edges edges = origami.GetEdges();
-  //const double dist_he = 0.5; // nm
-  //const double dist_edges = 1.5; // nm
-  //const double inc_x = ANTConstants::BP_RISE;
-
-  //int e_id = 0.0;
-  //std::map<ANTEdge*, int> edge_ids; // assign edge ids on the fly
-
-  //for (auto &e : edges) {
-  //  auto he1 = e->halfEdge_;
-
-  //  BaseSegment* bs = firstBasesHe_.at(he1);
-  //  do {
-  //    ADNPointer<ADNNucleotide> nt = bs->nt_;
-  //    SBPosition3 pos = SBPosition3();
-  //    pos[0] = SBQuantity::angstrom(bs->number_ * inc_x *10);
-  //    pos[2] = SBQuantity::angstrom(e_id * dist_edges *10);
-  //    nt->SetPosition2D(pos);
-  //    ADNPointer<ADNNucleotide> nt_pair = nt->pair_;
-  //    if (nt_pair != nullptr) {
-  //      // nt_pair should never be null for daedalus
-  //      // if set for debugging purposes
-  //      pos[0] = SBQuantity::angstrom(bs->number_ * inc_x * 10);
-  //      pos[2] += SBQuantity::angstrom(dist_he * 10);
-  //      nt_pair->SetPosition2D(pos);
-  //    }
-  //    bs = bs->next_;
-  //  } while (bs->halfEdge_ == he1);
-  //  ++e_id;
-  //}
-}
-
 SBVector3 DASDaedalus::GetPolygonNorm(DASPolygon * face)
 {
   DASHalfEdge* he = face->halfEdge_;
@@ -1133,25 +1055,6 @@ ADNPointer<ADNBaseSegment> DASDaedalus::FindBaseSegmentPair(ADNPointer<ADNPart> 
   auto bases = origami->GetBaseSegments();
 
   return bases[pairIdx];
-}
-
-void DASDaedalus::Set1DPositions(ADNPointer<ADNPart> origami) {
-  /**
-  * Way of setting 1D and 2D coordinates is taken from DASCadnano
-  */
-  //auto strands = origami->GetSingleStrands();
-
-  //for (auto & s : strands) {
-  //  ADNPointer<ADNSingleStrand> st = s.second;
-  //  double x = 0.0;
-  //  for (auto &n : st->nucleotides_) {
-  //    ADNPointer<ADNNucleotide> nt = n.second;
-  //    SBPosition3 pos = SBPosition3();
-  //    pos[0] = SBQuantity::nanometer(st->id_);
-  //    pos[2] = SBQuantity::nanometer(nt->id_ / 2.0f);
-  //    nt->SetPosition1D(pos);
-  //  }
-  //}
 }
 
 int DASDaedalus::CalculateEdgeSize(SBQuantity::length nmLength) {
