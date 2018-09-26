@@ -78,12 +78,19 @@
 //}
 
 // todo: calculate positions
-ADNPointer<ADNDoubleStrand> DASCreator::CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction)
+ADNPointer<ADNDoubleStrand> DASCreator::CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction, bool mock)
 {
-  return AddDoubleStrandToADNPart(part, length, start, direction);
+  ADNPointer<ADNDoubleStrand> ds = nullptr;
+  if (mock) {
+    ds = AddMockDoubleStrandToADNPart(part, length, start, direction);
+  }
+  else {
+    ds = AddDoubleStrandToADNPart(part, length, start, direction);
+  }
+  return ds;
 }
 
-ADNPointer<ADNSingleStrand> DASCreator::CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction)
+ADNPointer<ADNSingleStrand> DASCreator::CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction, bool mock)
 {
   return AddSingleStrandToADNPart(part, length, start, direction);
 }

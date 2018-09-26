@@ -9,6 +9,11 @@
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
 
+#include "SEAdenitaCoreSEApp.hpp"
+#include "ADNPart.hpp"
+#include "ADNDisplayHelper.hpp"
+#include "DASCreator.hpp"
+
 /// This class implements an editor
 
 class SEDSDNACreatorEditor : public SBGEditor {
@@ -94,6 +99,25 @@ public :
 
 	//@}
 
+  void SetMode(bool m);
+
+private:
+  ADNPointer<ADNPart> generateStrand(bool mock = false);
+  void displayStrand();
+  void resetPositions();
+  void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
+
+  bool dsMode_ = true;  // true for dsDNA, false for ssDNA
+
+  struct Positions {
+    SBPosition3 First;
+    SBPosition3 Second;
+    int cnt = 0;
+  };
+
+  Positions positions_;
+  bool display_ = false;
+  ADNPointer<ADNPart> tempPart_ = nullptr;
 };
 
 

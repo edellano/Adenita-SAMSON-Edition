@@ -51,6 +51,11 @@ public:
 
 	//@}
 
+public slots:
+
+  void onSetDSDNA(bool b);
+  void onSetSSDNA(bool b);
+
 private:
 
 	Ui::SEDSDNACreatorEditorGUIClass									ui;

@@ -29,14 +29,14 @@ namespace DASCreator {
     \param starting point of the double strand
     \param direction vector
   */
-  ADNPointer<ADNDoubleStrand> CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction);
+  ADNPointer<ADNDoubleStrand> CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction, bool mock = false);
   //! Creates a single strand
   /*!
     \param the length of the double strand in base pairs
     \param starting point of the double strand
     \param direction vector
   */
-  ADNPointer<ADNSingleStrand> CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction);
+  ADNPointer<ADNSingleStrand> CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction, bool mock = false);
 
   ADNPointer<ADNLoop> CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq, ADNPointer<ADNPart> part = nullptr);
 
