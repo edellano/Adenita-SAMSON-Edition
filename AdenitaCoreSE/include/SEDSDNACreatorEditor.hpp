@@ -100,12 +100,16 @@ public :
 	//@}
 
   void SetMode(bool m);
+  void SetShowBox(bool s);
+  void SetBoxSize(double height, double width, double depth);
 
 private:
   ADNPointer<ADNPart> generateStrand(bool mock = false);
   void displayStrand();
+  void displayBox();
   void resetPositions();
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
+  void ShowBox();
 
   bool dsMode_ = true;  // true for dsDNA, false for ssDNA
 
@@ -118,6 +122,10 @@ private:
   Positions positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
+  bool showBox_ = false;
+  SBQuantity::length boxHeight_;
+  SBQuantity::length boxWidth_;
+  SBQuantity::length boxDepth_;
 };
 
 

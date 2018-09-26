@@ -28,6 +28,18 @@ void SEDSDNACreatorEditor::SetMode(bool m)
   dsMode_ = m;
 }
 
+void SEDSDNACreatorEditor::SetShowBox(bool s)
+{
+  showBox_ = s;
+}
+
+void SEDSDNACreatorEditor::SetBoxSize(double height, double width, double depth)
+{
+  boxHeight_ = SBQuantity::nanometer(height);
+  boxWidth_ = SBQuantity::nanometer(width);
+  boxDepth_ = SBQuantity::nanometer(depth);
+}
+
 ADNPointer<ADNPart> SEDSDNACreatorEditor::generateStrand(bool mock)
 {
   ADNPointer<ADNPart> part = new ADNPart();
@@ -44,6 +56,48 @@ ADNPointer<ADNPart> SEDSDNACreatorEditor::generateStrand(bool mock)
   }
 
   return part;
+}
+
+void SEDSDNACreatorEditor::displayBox()
+{
+  if (showBox_) {
+    // draw a box centered at origin
+    SBVector3 x = SBVector3(1.0, 0.0, 0.0);
+    SBVector3 y = SBVector3(0.0, 1.0, 0.0);
+    SBVector3 z = SBVector3(0.0, 0.0, 1.0);
+
+    auto xMax = boxWidth_ * 0.5;
+    auto xMin = -xMax;
+    auto yMax = boxHeight_ * 0.5;
+    auto yMin = -yMax;
+    auto zMax = boxDepth_ * 0.5;
+    auto zMin = -zMax;
+
+    SBPosition3 v1 = xMin * x + yMax * y + zMax * z;
+    SBPosition3 v2 = xMax * x + yMax * y + zMax * z;
+    SBPosition3 v3 = xMax * x + yMin * y + zMax * z;
+    SBPosition3 v4 = xMin * x + yMin * y + zMax * z;
+    SBPosition3 v5 = xMin * x + yMax * y + zMin * z;
+    SBPosition3 v6 = xMax * x + yMax * y + zMin * z;
+    SBPosition3 v7 = xMax * x + yMin * y + zMin * z;
+    SBPosition3 v8 = xMin * x + yMin * y + zMin * z;
+
+
+    ADNDisplayHelper::displayLine(v1, v2);
+    ADNDisplayHelper::displayLine(v2, v3);
+    ADNDisplayHelper::displayLine(v3, v4);
+    ADNDisplayHelper::displayLine(v4, v1);
+
+    ADNDisplayHelper::displayLine(v5, v6);
+    ADNDisplayHelper::displayLine(v6, v7);
+    ADNDisplayHelper::displayLine(v7, v8);
+    ADNDisplayHelper::displayLine(v8, v5);
+
+    ADNDisplayHelper::displayLine(v1, v5);
+    ADNDisplayHelper::displayLine(v2, v6);
+    ADNDisplayHelper::displayLine(v3, v7);
+    ADNDisplayHelper::displayLine(v4, v8);
+  }
 }
 
 void SEDSDNACreatorEditor::resetPositions()
@@ -181,6 +235,7 @@ void SEDSDNACreatorEditor::display() {
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
 
   SEConfig& config = SEConfig::GetInstance();
+  displayBox();
 
   if (display_) {
     SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
