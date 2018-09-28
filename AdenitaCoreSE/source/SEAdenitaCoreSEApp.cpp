@@ -263,7 +263,7 @@ void SEAdenitaCoreSEApp::DeleteNucleotide()
     ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
     auto newStrands = ADNBasicOperations::DeleteNucleotide(part, nt);
     if (ss->getNumberOfNucleotides() == 0) {
-      // also delete single strand
+      // also delete single strand if was left empty
       ADNBasicOperations::DeleteSingleStrand(ss);
     }
        

@@ -231,9 +231,13 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
     if (ntNext != nullptr) {
       ntNext->SetEnd(e);
       ss->SetFivePrime(ntNext);
+      res.first = ss;
+    }
+    else {
+      // e should be FiveAndThreePrime
+      part->DeregisterSingleStrand(ss);
     }
     part->DeregisterNucleotide(nt);
-    res.first = ss;
   }
   else {
     // first break
