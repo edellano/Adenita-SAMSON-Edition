@@ -105,17 +105,9 @@ namespace DASCreator {
     \param length of the double strand in base pairs
     \param position of the 5' in space
     \param direction of the double strand
+    \param whether to generate a mock part or not
   */
-  ADNPointer<ADNDoubleStrand> AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction);
-
-  //! Helper function that adds a double strand containing only the high-level model (base segments) to a mock ADNPart
-  /*!
-    \param the ADNPart to which the double strand will be added
-    \param length of the double strand in base pairs
-    \param position of the 5' in space
-    \param direction of the double strand
-  */
-  ADNPointer<ADNDoubleStrand> AddMockDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction);
+  ADNPointer<ADNDoubleStrand> AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction, bool mock = false);
 
   //! Helper function that creates a single strand B-DNA like in a ADNPart
   /*!
