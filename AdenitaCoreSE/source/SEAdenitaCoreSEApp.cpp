@@ -303,6 +303,8 @@ void SEAdenitaCoreSEApp::SetStart()
     auto nt = nts[0];
     ADNBasicOperations::SetStart(nt);
   }
+
+  ResetVisualModel();
 }
 
 void SEAdenitaCoreSEApp::MergeComponents()
