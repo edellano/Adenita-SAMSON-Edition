@@ -499,6 +499,24 @@ void SEAdenitaCoreSEAppGUI::onCalculateBindingRegions()
   t->CalculateBindingRegions();
 }
 
+void SEAdenitaCoreSEAppGUI::onTwistDoubleHelix()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->TwistDoubleHelix();
+}
+
+void SEAdenitaCoreSEAppGUI::onSetStart()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->SetStart();
+}
+
+void SEAdenitaCoreSEAppGUI::onMergeComponents()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->MergeComponents();
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";

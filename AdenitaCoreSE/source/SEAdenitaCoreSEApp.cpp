@@ -292,6 +292,38 @@ void SEAdenitaCoreSEApp::Kinetoplast(SBQuantity::length radius, SBPosition3 cent
   ResetVisualModel();
 }
 
+void SEAdenitaCoreSEApp::SetStart()
+{
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  if (nts.size() > 1) {
+    // order the nts w.r.t. the single strand they belong
+    // and perform the operation only once per ss
+  }
+  else if (nts.size() == 1) {
+    auto nt = nts[0];
+    ADNBasicOperations::SetStart(nt);
+  }
+}
+
+void SEAdenitaCoreSEApp::MergeComponents()
+{
+  auto parts = GetNanorobot()->GetSelectedParts();
+  if (parts.size() > 1) {
+    // Merge the parts in batches of 2
+    ADNPointer<ADNPart> fPart = parts[0];
+    SB_FOR(ADNPointer<ADNPart> part, parts) {
+      if (part == fPart) continue;
+
+      ADNPointer<ADNPart> newPart = ADNBasicOperations::MergeParts(fPart, part);
+      GetNanorobot()->DeregisterPart(part);
+      part->getParent()->removeChild(part());
+      fPart = newPart;
+    }
+    //GetNanorobot()->RegisterPart(fPart);
+    //ResetVisualModel();
+  }
+}
+
 void SEAdenitaCoreSEApp::CalculateBindingRegions()
 {
   // get selected part
@@ -310,6 +342,25 @@ void SEAdenitaCoreSEApp::CalculateBindingRegions()
   if (part != nullptr) {
     auto p = PIPrimer3();
     p.Calculate(part, 100, 5, 16);
+  }
+}
+
+void SEAdenitaCoreSEApp::TwistDoubleHelix()
+{
+  double deg = ADNConstants::BP_ROT;
+  auto dss = GetNanorobot()->GetSelectedDoubleStrands();
+
+  DASBackToTheAtom btta = DASBackToTheAtom();
+  SEConfig& config = SEConfig::GetInstance();
+
+  SB_FOR(ADNPointer<ADNDoubleStrand> ds, dss) {
+    ADNBasicOperations::TwistDoubleHelix(ds, deg);
+    // recalculate positions
+    btta.SetDoubleStrandPositions(ds);
+    if (config.use_atomic_details) {
+      // todo: calculate all atoms just for a double strand
+      //btta.GenerateAllAtomModel(ds);
+    }
   }
 }
 

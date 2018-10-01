@@ -532,6 +532,7 @@ void ADNSingleStrand::AddNucleotide(ADNPointer<ADNNucleotide> nt, ADNPointer<ADN
 void ADNSingleStrand::ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq) {
   if (nt == fivePrime_) return;
 
+  std::string seq = GetSequence();
   auto origThreePrime = threePrime_;
   auto loopNt = origThreePrime;
   auto stopNt = nt->GetPrev();
@@ -544,7 +545,6 @@ void ADNSingleStrand::ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq) {
   }
   
   if (shiftSeq) {
-    std::string seq = GetSequence();
     SetSequence(seq);
   }
 }

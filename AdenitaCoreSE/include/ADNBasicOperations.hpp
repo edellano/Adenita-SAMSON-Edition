@@ -25,6 +25,12 @@ namespace ADNBasicOperations {
   void MutateNucleotide(ADNPointer<ADNNucleotide> nt, DNABlocks newType, bool changePair = true);
   void SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss, std::string seq, bool changePair = true);
   void MutateBasePairIntoLoopPair(ADNPointer<ADNBaseSegment> bs);
+  //! Shift start of the strand to the selected nucleotide and sequence.
+  /*!
+    \param a ADNPointer to the ADNNucleotide which should be the new 5' of its strand
+    \param whether to keep the sequence as it was (reset it from new 5' on)
+  */
+  void SetStart(ADNPointer<ADNNucleotide> nt, bool resetSequence = false);
 
   // Geometric operations
   void TwistDoubleHelix(ADNPointer<ADNDoubleStrand> ds, double deg);

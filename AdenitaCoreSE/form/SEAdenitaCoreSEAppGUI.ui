@@ -467,24 +467,38 @@
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="3">
-           <widget class="QPushButton" name="btnCatenanes">
+          <item row="0" column="4">
+           <widget class="QPushButton" name="btnTwistDoubleHelix">
             <property name="text">
-             <string>Catenanes</string>
+             <string>Twist Double Helix</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
+          <item row="0" column="3">
+           <widget class="QPushButton" name="btnSetStart">
+            <property name="text">
+             <string>Set Start</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="7">
+           <widget class="QPushButton" name="btnKinetoplast">
+            <property name="text">
+             <string>Kinetoplast</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
            <widget class="QPushButton" name="btnDSRing">
             <property name="text">
              <string>dsDNA Ring</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="4">
-           <widget class="QPushButton" name="btnKinetoplast">
+          <item row="0" column="6">
+           <widget class="QPushButton" name="btnCatenanes">
             <property name="text">
-             <string>Kinetoplast</string>
+             <string>Catenanes</string>
             </property>
            </widget>
           </item>
@@ -495,10 +509,17 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="5">
+          <item row="0" column="8">
            <widget class="QPushButton" name="btnCalculateBindingRegions">
             <property name="text">
              <string>Calculate Binding Regions</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="btnMergeComponents">
+            <property name="text">
+             <string>Merge Components</string>
             </property>
            </widget>
           </item>
@@ -737,6 +758,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnTwistDoubleHelix</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onTwistDoubleHelix()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>476</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnMergeComponents</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onMergeComponents()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>366</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSetStart</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onSetStart()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>512</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -755,5 +824,8 @@
   <slot>onCatenanes()</slot>
   <slot>onKinetoplast()</slot>
   <slot>onCalculateBindingRegions()</slot>
+  <slot>onTwistDoubleHelix()</slot>
+  <slot>onSetStart()</slot>
+  <slot>onMergeComponents()</slot>
  </slots>
 </ui>
