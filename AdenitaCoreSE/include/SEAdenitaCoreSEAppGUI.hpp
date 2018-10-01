@@ -72,6 +72,9 @@ public slots:
   void onCatenanes();
   void onKinetoplast();
   void onCalculateBindingRegions();
+  void onTwistDoubleHelix();
+  void onSetStart();
+  void onMergeComponents();
 
 private:
   std::string IsJsonCadnano(QString filename);

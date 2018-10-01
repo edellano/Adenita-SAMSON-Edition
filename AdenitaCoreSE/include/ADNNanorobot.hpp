@@ -57,7 +57,7 @@ public:
   CollectionMap<ADNBaseSegment> GetSelectedBaseSegments();
   //! Returns all currently selected ADNSingleStrand
   CollectionMap<ADNSingleStrand> GetSelectedSingleStrands();
-  //! Returns all currently selected ADNSingleStrand
+  //! Returns all currently selected ADNDoubleStrand
   CollectionMap<ADNDoubleStrand> GetSelectedDoubleStrands();
   //! Return the single strands of an ADNPart
   /*!

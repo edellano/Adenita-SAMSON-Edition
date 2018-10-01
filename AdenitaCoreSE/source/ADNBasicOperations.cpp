@@ -384,6 +384,12 @@ void ADNBasicOperations::MutateBasePairIntoLoopPair(ADNPointer<ADNBaseSegment> b
   bs->SetCell(lp());
 }
 
+void ADNBasicOperations::SetStart(ADNPointer<ADNNucleotide> nt, bool resetSequence)
+{
+  auto ss = nt->GetStrand();
+  ss->ShiftStart(nt, resetSequence);
+}
+
 void ADNBasicOperations::TwistDoubleHelix(ADNPointer<ADNDoubleStrand> ds, double deg)
 {
   ds->SetInitialTwistAngle(deg);

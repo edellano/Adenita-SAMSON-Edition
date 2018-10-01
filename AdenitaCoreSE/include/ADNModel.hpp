@@ -254,10 +254,10 @@ public:
   void AddNucleotideFivePrime(ADNPointer<ADNNucleotide> nt);  // add nucleotide to the five prime end
   void AddNucleotide(ADNPointer<ADNNucleotide> nt, ADNPointer<ADNNucleotide> nextNt);  // add nucleotide at any position
 
-  /**
-  * Shift start of the strand to the selected nucleotide and sequence.
-  * Positions of backbone and sidechain are not recalculated.
-  * \param the selected nucleotide
+  //! Shift start of the strand to the selected nucleotide and sequence.
+  /*!
+    \param a ADNPointer to the ADNNucleotide which should be the new 5' of its strand
+    \param whether to keep the sequence as it was (reset it from new 5' on)
   */
   void ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq = false);
   /**
