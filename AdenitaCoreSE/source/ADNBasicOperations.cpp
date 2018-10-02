@@ -390,6 +390,49 @@ void ADNBasicOperations::SetStart(ADNPointer<ADNNucleotide> nt, bool resetSequen
   ss->ShiftStart(nt, resetSequence);
 }
 
+void ADNBasicOperations::MoveStrand(ADNPointer<ADNPart> oldPart, ADNPointer<ADNPart> part, ADNPointer<ADNDoubleStrand> ds)
+{
+  oldPart->DeregisterDoubleStrand(ds);
+  part->RegisterDoubleStrand(ds);
+
+  auto bs = ds->GetFirstBaseSegment();
+  std::vector<ADNPointer<ADNSingleStrand>> strands;
+  while (bs != nullptr) {
+    oldPart->DeregisterBaseSegment(bs);
+    part->RegisterBaseSegmentEnd(ds, bs);
+
+    auto nts = bs->GetNucleotides();
+    SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+      ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
+      if (std::find(strands.begin(), strands.end(), ss) == strands.end()) {
+        MoveStrand(oldPart, part, ss);
+        strands.push_back(ss);
+      }
+    }
+  }
+
+}
+
+void ADNBasicOperations::MoveStrand(ADNPointer<ADNPart> oldPart, ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> ss)
+{
+  oldPart->DeregisterSingleStrand(ss);
+  part->RegisterSingleStrand(ss);
+
+  auto nt = ss->GetFivePrime();
+  while (nt != nullptr) {
+    oldPart->DeregisterNucleotide(nt);
+    part->RegisterNucleotideThreePrime(ss, nt);
+
+    auto atoms = nt->GetAtoms();
+    SB_FOR(ADNPointer<ADNAtom> at, atoms) {
+      NucleotideGroup g = NucleotideGroup::Backbone;
+      if (!at->IsInBackbone()) g = NucleotideGroup::SideChain;
+      oldPart->DeregisterAtom(at);
+      part->RegisterAtom(nt, g, at);
+    }
+  }
+}
+
 void ADNBasicOperations::TwistDoubleHelix(ADNPointer<ADNDoubleStrand> ds, double deg)
 {
   ds->SetInitialTwistAngle(deg);
