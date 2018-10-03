@@ -31,6 +31,16 @@ void PIBindingRegion::SetLastNt(ADNPointer<ADNNucleotide> nt)
   lastNt_ = nt;
 }
 
+ADNPointer<ADNPart> PIBindingRegion::GetPart()
+{
+  return part_;
+}
+
+void PIBindingRegion::SetPart(ADNPointer<ADNPart> part)
+{
+  part_ = part;
+}
+
 void PIBindingRegion::SetThermParam(ThermParam res)
 {
   thermParam_ = res;
