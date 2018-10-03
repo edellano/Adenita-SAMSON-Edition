@@ -67,24 +67,19 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
   AddPartToActiveLayer(part);
 }
 
-void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, bool all)
+void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, ADNPointer<ADNPart> part)
 {
   // get selected part
   SBDocument* doc = SAMSON::getActiveDocument();
   SBNodeIndexer nodes;
   doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
-  // only take one
   CollectionMap<ADNPart> parts;
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isSelected()) {
-      auto part = static_cast<ADNPart*>(node);
-      parts.addReferenceTarget(part);
-    }
+  if (part == nullptr) {
+    parts = GetNanorobot()->GetParts();
   }
-
-  if (parts.size() == 0 || all) {
-    auto parts = GetNanorobot()->GetParts();
+  else {
+    parts.addReferenceTarget(part());
   }
 
   QFileInfo file = QFileInfo(filename);
@@ -127,23 +122,15 @@ void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string seq)
 
 }
 
-void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, bool all)
+void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part)
 {
   // get selected part
   SBDocument* doc = SAMSON::getActiveDocument();
   SBNodeIndexer nodes;
   doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
-  // only take one
-  ADNPointer<ADNPart> part = nullptr;
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isSelected()) {
-      part = static_cast<ADNPart*>(node);
-    }
-  }
-
-  if (part == nullptr || all) {
-    // nothing selected: export all
+  CollectionMap<ADNPart> parts;
+  if (part == nullptr) {
     ADNLoader::OutputToOxDNA(GetNanorobot(), folder.toStdString(), options);
   }
   else {
@@ -390,6 +377,19 @@ ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
     nanorobot = nanorobots_.at(doc);
   }
   return nanorobot;
+}
+
+QStringList SEAdenitaCoreSEApp::GetPartsNameList()
+{
+  QStringList names;
+
+  auto parts = GetNanorobot()->GetParts();
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    std::string n = p->GetName();
+    names << n.c_str();
+  }
+
+  return names;
 }
 
 void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
