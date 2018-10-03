@@ -108,12 +108,12 @@ void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
   auto singleStrands = p->GetSingleStrands();
 
   std::vector<ADNPointer<ADNNucleotide>> added_nt;
+  unsigned int numRegions = 0;
 
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
     ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
 
     int regionSize = 0;
-    unsigned int numRegions = 0;
 
     SBNodeIndexer nodeIndexer;
     while (nt != nullptr) {
@@ -126,6 +126,12 @@ void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
 
         if (sc_next != nullptr && st_cur != nullptr && st_cur->GetPrev() != nullptr) {
           if (sc_next->GetPair() == st_cur->GetPrev()) {
+            endOfRegion = false;
+          }
+        }
+        else if (st_cur == nullptr) {
+          // group up in one binding region the contiguous unpaired nts
+          if (sc_next->GetPair() == nullptr) {
             endOfRegion = false;
           }
         }
