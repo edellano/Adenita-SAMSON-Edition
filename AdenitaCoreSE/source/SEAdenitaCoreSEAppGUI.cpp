@@ -218,35 +218,61 @@ void SEAdenitaCoreSEAppGUI::onExport()
   QStringList itemsSelection;
   itemsSelection << "Selected Part" << "Workspace";
 
-  typeSelection_ = new QComboBox();
-  typeSelection_->addItems(itemsSelection);
+  QComboBox* typeSelection = new QComboBox();
+  typeSelection->addItems(itemsSelection);
 
   QStringList itemsExportType;
   itemsExportType << "Sequence list" << "oxDNA";
-  exportType_ = new QComboBox();
-  exportType_->addItems(itemsExportType);
+  QComboBox* exportType = new QComboBox();
+  exportType->addItems(itemsExportType);
 
   QPushButton* acceptButton = new QPushButton(tr("Export"));
   acceptButton->setDefault(true);
   QPushButton* cancelButton = new QPushButton(tr("Cancel"));
 
-  QDialogButtonBox* buttonBox_ = new QDialogButtonBox(Qt::Horizontal);
-  buttonBox_->addButton(acceptButton, QDialogButtonBox::ActionRole);
-  buttonBox_->addButton(cancelButton, QDialogButtonBox::ActionRole);
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal);
+  buttonBox->addButton(acceptButton, QDialogButtonBox::ActionRole);
+  buttonBox->addButton(cancelButton, QDialogButtonBox::ActionRole);
 
   QObject::connect(cancelButton, SIGNAL(released()), dialog, SLOT(close()));
-  QObject::connect(acceptButton, SIGNAL(released()), this, SLOT(onAcceptExport()));
+  QObject::connect(acceptButton, SIGNAL(released()), dialog, SLOT(accept()));
 
   QGridLayout *mainLayout = new QGridLayout;
   mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-  mainLayout->addWidget(typeSelection_, 0, 0);
-  mainLayout->addWidget(exportType_, 1, 0);
-  mainLayout->addWidget(buttonBox_, 2, 0);
+  mainLayout->addWidget(typeSelection, 0, 0);
+  mainLayout->addWidget(exportType, 1, 0);
+  mainLayout->addWidget(buttonBox, 2, 0);
 
   dialog->setLayout(mainLayout);
   dialog->setWindowTitle(tr("Export design"));
 
-  dialog->exec();
+  int dialogCode = dialog->exec();
+
+  if (dialogCode == QDialog::Accepted) {
+    
+    bool nanorobot = true;
+    auto val = typeSelection->currentIndex();
+    if (val != 1) nanorobot = false;
+
+    QString eType = exportType->currentText();
+
+    SEAdenitaCoreSEApp* t = getApp();
+    if (eType == "Sequence list") {
+      // export sequences
+      auto filename = QFileDialog::getSaveFileName(this, tr("Sequence List"), QDir::currentPath(), tr("Sequence List (*.csv)"));
+      t->ExportToSequenceList(filename, nanorobot);
+    }
+    else if (eType == "oxDNA") {
+      ADNAuxiliary::OxDNAOptions options;
+      options.boxSizeX_ = 0.0;
+      options.boxSizeY_ = 0.0;
+      options.boxSizeZ_ = 0.0;
+
+      QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
+      t->ExportToOxDNA(folder, options, nanorobot);
+    }
+
+  }
 }
 
 void SEAdenitaCoreSEAppGUI::onSetScaffold()
@@ -284,31 +310,6 @@ void SEAdenitaCoreSEAppGUI::onCenterPart()
   SEAdenitaCoreSEApp *t = getApp();
   t->CenterPart();
   SAMSON::getActiveCamera()->center();
-}
-
-void SEAdenitaCoreSEAppGUI::onAcceptExport()
-{
-  bool nanorobot = true;
-  auto val = typeSelection_->currentIndex();
-  if (val != 1) nanorobot = false;
-
-  QString exportType = exportType_->currentText();
-
-  SEAdenitaCoreSEApp* t = getApp();
-  if (exportType == "Sequence list") {
-    // export sequences
-    auto filename = QFileDialog::getSaveFileName(this, tr("Sequence List"), QDir::currentPath(), tr("Sequence List (*.csv)"));
-    t->ExportToSequenceList(filename, nanorobot);
-  }
-  else if (exportType == "oxDNA") {
-    ADNAuxiliary::OxDNAOptions options;
-    options.boxSizeX_ = 0.0;
-    options.boxSizeY_ = 0.0;
-    options.boxSizeZ_ = 0.0;
-
-    QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
-    t->ExportToOxDNA(folder, options, nanorobot);
-  } 
 }
 
 void SEAdenitaCoreSEAppGUI::onConnectSingleStrands()

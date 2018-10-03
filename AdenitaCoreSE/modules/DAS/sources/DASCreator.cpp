@@ -449,3 +449,14 @@ ADNPointer<ADNSingleStrand> DASCreator::AddSingleStrandToADNPart(ADNPointer<ADNP
 
   return ss;
 }
+
+void DASCreatorEditors::resetPositions(Positions& pos)
+{
+  pos.First = SBPosition3();
+  pos.Second = SBPosition3();
+  pos.Third = SBPosition3();
+  pos.Fourth = SBPosition3();
+  pos.Fifth = SBPosition3();
+  pos.Sixth = SBPosition3();
+  pos.cnt = 0;
+}
