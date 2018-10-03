@@ -105,20 +105,9 @@ private:
 
   ADNPointer<ADNPart> generateNanotube(bool mock = false);
   void displayNanotube();
-  void resetPositions();
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
 
-  struct Positions {
-    SBPosition3 First;
-    SBPosition3 Second;
-    SBPosition3 Third;
-    SBPosition3 Fourth;
-    SBPosition3 Fifth;
-    SBPosition3 Sixth;
-    int cnt = 0;
-  };
-
-  Positions positions_;
+  DASCreatorEditors::Positions positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
   RoutingType routing_ = RoutingType::None;

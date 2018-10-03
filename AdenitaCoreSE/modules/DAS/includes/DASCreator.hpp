@@ -129,5 +129,17 @@ namespace DASCreator {
 
 namespace DASCreatorEditors {
   
+  //! Store positions
+  struct Positions {
+    SBPosition3 First;
+    SBPosition3 Second;
+    SBPosition3 Third;
+    SBPosition3 Fourth;
+    SBPosition3 Fifth;
+    SBPosition3 Sixth;
+    int cnt = 0;
+  };
 
+  void resetPositions(Positions& pos);
+  void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
 };

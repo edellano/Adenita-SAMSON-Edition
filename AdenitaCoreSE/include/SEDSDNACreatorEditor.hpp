@@ -107,19 +107,12 @@ private:
   ADNPointer<ADNPart> generateStrand(bool mock = false);
   void displayStrand();
   void displayBox();
-  void resetPositions();
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
   void ShowBox();
 
   bool dsMode_ = true;  // true for dsDNA, false for ssDNA
 
-  struct Positions {
-    SBPosition3 First;
-    SBPosition3 Second;
-    int cnt = 0;
-  };
-
-  Positions positions_;
+  DASCreatorEditors::Positions positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
   bool showBox_ = false;

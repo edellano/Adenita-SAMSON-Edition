@@ -58,17 +58,6 @@ void SENanotubeCreatorEditor::displayNanotube()
   ADNDisplayHelper::displayPart(tempPart_);
 }
 
-void SENanotubeCreatorEditor::resetPositions()
-{
-  positions_.First = SBPosition3();
-  positions_.Second = SBPosition3();
-  positions_.Third = SBPosition3();
-  positions_.Fourth = SBPosition3();
-  positions_.Fifth = SBPosition3();
-  positions_.Sixth = SBPosition3();
-  positions_.cnt = 0;
-}
-
 void SENanotubeCreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
 {
   SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
@@ -217,7 +206,7 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
     router->Route(part);
     sendPartToAdenita(part);
 
-    resetPositions();
+    DASCreatorEditors::resetPositions(positions_);
     display_ = false;
     tempPart_ == nullptr;
   }

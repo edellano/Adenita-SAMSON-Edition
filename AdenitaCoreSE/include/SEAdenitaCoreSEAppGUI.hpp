@@ -61,7 +61,6 @@ public slots:
   void onSaveFile();
   void onExport();
   void onSetScaffold();
-  void onAcceptExport();
   void onConnectSingleStrands();
   void onBreak();
   void onDelete();
@@ -81,7 +80,7 @@ private:
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
 
-  QComboBox* typeSelection_ = nullptr;
-  QComboBox* exportType_ = nullptr;
+  //QComboBox* typeSelection_ = nullptr;
+  //QComboBox* exportType_ = nullptr;
 };
 
