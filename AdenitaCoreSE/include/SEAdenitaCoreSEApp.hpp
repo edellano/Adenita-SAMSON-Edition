@@ -42,8 +42,8 @@ public :
   void SaveFile(QString filename, bool all);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename);
-  void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, bool all);
-  void ExportToSequenceList(QString filename, bool all);
+  void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part = nullptr);
+  void ExportToSequenceList(QString filename, ADNPointer<ADNPart> part = nullptr);
   void SetScaffoldSequence(std::string seq);
   void ResetVisualModel();
   // Modifications
@@ -64,6 +64,8 @@ public :
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
 
   ADNNanorobot* GetNanorobot();
+
+  QStringList GetPartsNameList();
 
   // Exposed for editors
   void AddPartToActiveLayer(ADNPointer<ADNPart> part);

@@ -213,13 +213,31 @@ void SEAdenitaCoreSEAppGUI::onSaveFile()
 
 void SEAdenitaCoreSEAppGUI::onExport()
 {
+  SEAdenitaCoreSEApp* t = getApp();
+
   QDialog* dialog = new QDialog();
 
-  QStringList itemsSelection;
-  itemsSelection << "Selected Part" << "Workspace";
+  //QStringList itemsSelection;
+  //QStringList itemsSelection = t->GetPartsNameList();
+  //itemsSelection << "Selected Part" << "Workspace";
+  //itemsSelection << "Selected Part" << "Workspace";
 
   QComboBox* typeSelection = new QComboBox();
-  typeSelection->addItems(itemsSelection);
+  
+  auto nr = t->GetNanorobot();
+  auto parts = nr->GetParts();
+  int i = 0;
+  std::map<int, ADNPointer<ADNPart>> indexParts;
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    std::string n = p->GetName();
+    typeSelection->insertItem(i, QString::fromStdString(n));
+    indexParts.insert(std::make_pair(i, p));
+    ++i;
+  }
+  typeSelection->insertItem(i, QString::fromStdString("SelectedPart"));
+  int sel_idx = i;
+  typeSelection->insertItem(i+1, QString::fromStdString("Workspace"));
+  int all_idx = i + 1;
 
   QStringList itemsExportType;
   itemsExportType << "Sequence list" << "oxDNA";
@@ -250,17 +268,21 @@ void SEAdenitaCoreSEAppGUI::onExport()
 
   if (dialogCode == QDialog::Accepted) {
     
-    bool nanorobot = true;
     auto val = typeSelection->currentIndex();
-    if (val != 1) nanorobot = false;
+    ADNPointer<ADNPart> part = nullptr;
+    if (val == sel_idx) {
+      part = nr->GetSelectedParts()[0];
+    }
+    else if (val != all_idx) {
+      part = indexParts.at(val);
+    }
 
     QString eType = exportType->currentText();
 
-    SEAdenitaCoreSEApp* t = getApp();
     if (eType == "Sequence list") {
       // export sequences
       auto filename = QFileDialog::getSaveFileName(this, tr("Sequence List"), QDir::currentPath(), tr("Sequence List (*.csv)"));
-      t->ExportToSequenceList(filename, nanorobot);
+      t->ExportToSequenceList(filename, part);
     }
     else if (eType == "oxDNA") {
       ADNAuxiliary::OxDNAOptions options;
@@ -269,7 +291,7 @@ void SEAdenitaCoreSEAppGUI::onExport()
       options.boxSizeZ_ = 0.0;
 
       QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
-      t->ExportToOxDNA(folder, options, nanorobot);
+      t->ExportToOxDNA(folder, options, part);
     }
 
   }
