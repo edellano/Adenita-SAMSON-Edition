@@ -9,14 +9,17 @@
 
 class PIPrimer3 {
 public:
-  PIPrimer3() = default;
+  static PIPrimer3& GetInstance();
   ~PIPrimer3() = default;
 
   void CreateBindingRegions(ADNPointer<ADNPart> p);
   CollectionMap<PIBindingRegion> GetBindingRegions();
+  CollectionMap<PIBindingRegion> GetBindingRegions(ADNPointer<ADNPart> p);
   void Calculate(ADNPointer<ADNPart> p, int oligo_conc, int mv, int dv);
 
 private:
+  PIPrimer3() = default;
+
   double GetMinGibbsFreeEnergy();
   double GetMaxGibbsFreeEnergy();
   double GetMinMeltingTemperature();
@@ -24,5 +27,5 @@ private:
 
   ThermParam ExecuteNtthal(std::string leftSequence, std::string rightSequence, int oligo_conc, int mv, int dv);
 
-  CollectionMap<PIBindingRegion> regions_;
+  std::map<ADNPart*, CollectionMap<PIBindingRegion>> regionsMap_;
 };

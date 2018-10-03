@@ -329,7 +329,7 @@ void SEAdenitaCoreSEApp::CalculateBindingRegions()
   }
 
   if (part != nullptr) {
-    auto p = PIPrimer3();
+    PIPrimer3& p = PIPrimer3::GetInstance();
     p.Calculate(part, 100, 5, 16);
   }
 }

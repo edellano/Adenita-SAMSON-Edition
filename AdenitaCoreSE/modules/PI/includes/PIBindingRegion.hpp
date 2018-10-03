@@ -29,6 +29,8 @@ public:
   double getTemp() const;
 
   void SetLastNt(ADNPointer<ADNNucleotide> nt);
+  ADNPointer<ADNPart> GetPart();
+  void SetPart(ADNPointer<ADNPart> part);
   void SetThermParam(ThermParam res);
 
   void RegisterBindingRegion();
@@ -38,6 +40,7 @@ public:
 private:
   ThermParam thermParam_;
   ADNPointer<ADNNucleotide> lastNt_;
+  ADNPointer<ADNPart> part_;
 };
 SB_REGISTER_TARGET_TYPE(PIBindingRegion, "PIBindingRegion", "171D8E12-FCB6-4770-A026-1AADC94BE325");
 SB_DECLARE_BASE_TYPE(PIBindingRegion, SBNodeGroup);

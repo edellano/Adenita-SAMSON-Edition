@@ -2,7 +2,27 @@
 
 CollectionMap<PIBindingRegion> PIPrimer3::GetBindingRegions()
 {
-  return regions_;
+  CollectionMap<PIBindingRegion> regions;
+
+  for (auto it = regionsMap_.begin(); it != regionsMap_.end(); ++it) {
+    CollectionMap<PIBindingRegion> regs = it->second;
+    SB_FOR(ADNPointer<PIBindingRegion> r, regs) {
+      regions.addReferenceTarget(r());
+    }
+  }
+
+  return regions;
+}
+
+PIPrimer3 & PIPrimer3::GetInstance()
+{
+  static PIPrimer3 instance;
+  return instance;
+}
+
+CollectionMap<PIBindingRegion> PIPrimer3::GetBindingRegions(ADNPointer<ADNPart> p)
+{
+  return regionsMap_.at(p());
 }
 
 ThermParam PIPrimer3::ExecuteNtthal(std::string leftSequence, std::string rightSequence, int oligo_conc, int mv, int dv)
@@ -64,8 +84,10 @@ ThermParam PIPrimer3::ExecuteNtthal(std::string leftSequence, std::string rightS
 
 void PIPrimer3::Calculate(ADNPointer<ADNPart> p, int oligo_conc, int mv, int dv)
 {
-  CreateBindingRegions(p);
-  auto regions = GetBindingRegions();
+  if (regionsMap_.find(p()) == regionsMap_.end()) {
+    CreateBindingRegions(p);
+  }
+  auto regions = GetBindingRegions(p);
 
   SB_FOR(ADNPointer<PIBindingRegion> r, regions) {
     auto seqs = r->GetSequences();
@@ -76,6 +98,13 @@ void PIPrimer3::Calculate(ADNPointer<ADNPart> p, int oligo_conc, int mv, int dv)
 
 void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
 {
+  if (regionsMap_.find(p()) != regionsMap_.end()) {
+    regionsMap_[p()].clear();
+  }
+  else {
+    regionsMap_.insert(std::make_pair(p(), CollectionMap<PIBindingRegion>()));
+  }
+
   auto singleStrands = p->GetSingleStrands();
 
   std::vector<ADNPointer<ADNNucleotide>> added_nt;
@@ -115,8 +144,9 @@ void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
           regionSize = 0;
           std::string name = "Binding Region " + std::to_string(numRegions);
           ADNPointer<PIBindingRegion> region = new PIBindingRegion(name, nodeIndexer);
+          region->SetPart(p);
           region->RegisterBindingRegion();
-          regions_.addReferenceTarget(region());
+          regionsMap_[p()].addReferenceTarget(region());
           region->SetLastNt(nt);
           ++numRegions;
           nodeIndexer.clear();
