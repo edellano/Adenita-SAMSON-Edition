@@ -308,9 +308,9 @@ void SEAdenitaCoreSEApp::MergeComponents()
       part->getParent()->removeChild(part());
       fPart = newPart;
     }
-    //GetNanorobot()->RegisterPart(fPart);
-    //ResetVisualModel();
+    ResetVisualModel();
   }
+  
 }
 
 void SEAdenitaCoreSEApp::CalculateBindingRegions()

@@ -98,10 +98,13 @@ ADNPointer<ADNPart> ADNBasicOperations::MergeParts(ADNPointer<ADNPart> part1, AD
     part->RegisterDoubleStrand(ds);
     auto bs = ds->GetFirstBaseSegment();
     while (bs != nullptr) {
-      part2->DeregisterBaseSegment(bs);
-      part->RegisterBaseSegmentEnd(ds, bs);
-      bs = bs->GetNext();
+      auto bsNext = bs->GetNext();
+      part2->DeregisterBaseSegment(bs, false);
+      part->RegisterBaseSegmentEnd(ds, bs, false);
+      bs = bsNext;
     }
+    auto numBs = ds->GetBaseSegments().size();
+    int test = 1;
   }
 
   auto singleStrands = part2->GetSingleStrands();
@@ -110,18 +113,19 @@ ADNPointer<ADNPart> ADNBasicOperations::MergeParts(ADNPointer<ADNPart> part1, AD
     part->RegisterSingleStrand(ss);
     auto nt = ss->GetFivePrime();
     while (nt != nullptr) {
-      part2->DeregisterNucleotide(nt);
-      part->RegisterNucleotideThreePrime(ss, nt);
+      auto ntNext = nt->GetNext();
+      part2->DeregisterNucleotide(nt, false);
+      part->RegisterNucleotideThreePrime(ss, nt, false);
 
       auto atoms = nt->GetAtoms();
       SB_FOR(ADNPointer<ADNAtom> atom, atoms) {
-        part2->DeregisterAtom(atom);
+        part2->DeregisterAtom(atom, false);
         NucleotideGroup g = NucleotideGroup::SideChain;
         if (atom->IsInBackbone()) g = NucleotideGroup::Backbone;
         part->RegisterAtom(nt, g, atom);
       }
 
-      nt = nt->GetNext();
+      nt = ntNext;
     }
   }
 
