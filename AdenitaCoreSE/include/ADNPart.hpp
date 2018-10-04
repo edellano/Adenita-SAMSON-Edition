@@ -20,11 +20,12 @@ public:
   void SetName(const std::string &name);
 
   void RegisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
-  void RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs);
+  void RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs, bool addToDs = true);
   void RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
-  void RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
-  void RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt);
-  void RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, ADNPointer<ADNNucleotide> ntNext);
+  void RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, bool addToSs = true);
+  void RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, bool addToSs = true);
+  void RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, 
+    ADNPointer<ADNNucleotide> ntNext, bool addToSs = true);
   void RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at, bool create = false);
 
   unsigned int GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs);
@@ -48,10 +49,10 @@ public:
   int getNumberOfBaseSegments() const;
 
   void DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
-  void DeregisterNucleotide(ADNPointer<ADNNucleotide> nt);
+  void DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFromSs = true);
   void DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
-  void DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs);
-  void DeregisterAtom(ADNPointer<ADNAtom> atom);
+  void DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs, bool removeFromDs = true);
+  void DeregisterAtom(ADNPointer<ADNAtom> atom, bool removeFromAtom = true);
 
 protected:
 private:
