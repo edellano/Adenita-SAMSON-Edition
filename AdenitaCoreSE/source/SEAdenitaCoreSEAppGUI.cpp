@@ -540,6 +540,12 @@ void SEAdenitaCoreSEAppGUI::onMergeComponents()
   t->MergeComponents();
 }
 
+void SEAdenitaCoreSEAppGUI::onTestNeighbors()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->TestNeighbors();
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";

@@ -11,6 +11,7 @@
 #include "SEConfig.hpp"
 #include "SEAdenitaVisualModel.hpp"
 #include "PIPrimer3.hpp"
+#include "PINeighbors.hpp"
 
 
 /// This class implements the functionality of the app
@@ -59,6 +60,7 @@ public :
   void SetStart();
   void MergeComponents();
   void TwistDoubleHelix();
+  void TestNeighbors();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events

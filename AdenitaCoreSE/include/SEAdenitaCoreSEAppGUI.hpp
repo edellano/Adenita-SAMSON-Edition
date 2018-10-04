@@ -74,6 +74,7 @@ public slots:
   void onTwistDoubleHelix();
   void onSetStart();
   void onMergeComponents();
+  void onTestNeighbors();
 
 private:
   std::string IsJsonCadnano(QString filename);

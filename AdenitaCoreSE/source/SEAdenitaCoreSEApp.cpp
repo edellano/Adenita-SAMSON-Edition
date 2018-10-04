@@ -353,6 +353,27 @@ void SEAdenitaCoreSEApp::TwistDoubleHelix()
   }
 }
 
+void SEAdenitaCoreSEApp::TestNeighbors()
+{
+  // get selected nucleotide and part
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  if (nts.size() == 0) return;
+
+  ADNPointer<ADNNucleotide> nt = nts[0];
+  ADNPointer<ADNPart> part = GetNanorobot()->GetPart(nt->GetStrand());
+  // create neighbor list
+  SBQuantity::length cutOff = SBQuantity::nanometer(ADNConstants::BP_RISE) + SBQuantity::nanometer(0.5);
+  auto neighbors = PINeighbors(part, cutOff);
+
+  // highlight neighbors of selected nucleotide
+  auto ntNeighbors = neighbors.GetNeighbors(nt);
+  SB_FOR(ADNPointer<ADNNucleotide> ntN, ntNeighbors) {
+    ntN->setSelectionFlag(true);
+  }
+
+  ResetVisualModel();
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
