@@ -362,8 +362,8 @@ void SEAdenitaCoreSEApp::TestNeighbors()
   ADNPointer<ADNNucleotide> nt = nts[0];
   ADNPointer<ADNPart> part = GetNanorobot()->GetPart(nt->GetStrand());
   // create neighbor list
-  SBQuantity::length cutOff = SBQuantity::nanometer(ADNConstants::BP_RISE) + SBQuantity::nanometer(0.5);
-  auto neighbors = PINeighbors(part, cutOff);
+  SBQuantity::length cutOff = SBQuantity::nanometer(ADNConstants::BP_RISE) + SBQuantity::nanometer(1.0);
+  auto neighbors = ADNNeighbors(part, cutOff);
 
   // highlight neighbors of selected nucleotide
   auto ntNeighbors = neighbors.GetNeighbors(nt);

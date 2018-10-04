@@ -4,6 +4,7 @@
 #include "SEAdenitaCoreSEAppGUI.hpp"
 #include "ADNNanorobot.hpp"
 #include "ADNSaveAndLoad.hpp"
+#include "ADNNeighbors.hpp"
 #include "DASDaedalus.hpp"
 #include "DASBackToTheAtom.hpp"
 #include "DASCadnano.hpp"
@@ -11,7 +12,6 @@
 #include "SEConfig.hpp"
 #include "SEAdenitaVisualModel.hpp"
 #include "PIPrimer3.hpp"
-#include "PINeighbors.hpp"
 
 
 /// This class implements the functionality of the app
