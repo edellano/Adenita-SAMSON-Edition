@@ -1,17 +1,17 @@
-#include "PINeighbors.hpp"
+#include "ADNNeighbors.hpp"
 
-PINeighbors::PINeighbors(ADNPointer<ADNPart> part, SBQuantity::length cutOff, bool fromOwnSingleStrand)
+ADNNeighbors::ADNNeighbors(ADNPointer<ADNPart> part, SBQuantity::length cutOff)
 {
   cutOff_ = cutOff;
   headList_ = std::vector<unsigned int>(part->GetNumberOfNucleotides());
   numNeighborsList_ = std::vector<unsigned int>(part->GetNumberOfNucleotides());
 
-  InitializeNeighbors(part, fromOwnSingleStrand);
+  InitializeNeighbors(part);
 }
 
-PINeighborNt * PINeighbors::GetPINucleotide(ADNPointer<ADNNucleotide> nt)
+ADNNeighborNt * ADNNeighbors::GetPINucleotide(ADNPointer<ADNNucleotide> nt)
 {
-  PINeighborNt* piNt = nullptr;
+  ADNNeighborNt* piNt = nullptr;
 
   for (auto &p: ntIndices_) {
     piNt = p.second;
@@ -21,9 +21,9 @@ PINeighborNt * PINeighbors::GetPINucleotide(ADNPointer<ADNNucleotide> nt)
   return piNt;
 }
 
-std::vector<PINeighborNt*> PINeighbors::GetNeighbors(PINeighborNt* nt)
+std::vector<ADNNeighborNt*> ADNNeighbors::GetNeighbors(ADNNeighborNt* nt)
 {
-  std::vector<PINeighborNt*> neighbors;
+  std::vector<ADNNeighborNt*> neighbors;
 
   unsigned int idx = nt->GetId();
   unsigned int pos = headList_[idx];
@@ -31,16 +31,16 @@ std::vector<PINeighborNt*> PINeighbors::GetNeighbors(PINeighborNt* nt)
 
   for (unsigned int i = 0; i < sz; ++i) {
     unsigned int neighborIdx = neighborList_[pos + i];
-    PINeighborNt* nt = ntIndices_.at(neighborIdx);
+    ADNNeighborNt* nt = ntIndices_.at(neighborIdx);
     neighbors.push_back(nt);
   }
 
   return neighbors;
 }
 
-CollectionMap<ADNNucleotide> PINeighbors::GetNeighbors(ADNPointer<ADNNucleotide> nt)
+CollectionMap<ADNNucleotide> ADNNeighbors::GetNeighbors(ADNPointer<ADNNucleotide> nt)
 {
-  PINeighborNt* piNt = GetPINucleotide(nt);
+  ADNNeighborNt* piNt = GetPINucleotide(nt);
   // repeat code to avoid an extra loop
   CollectionMap<ADNNucleotide> neighbors;
 
@@ -50,14 +50,24 @@ CollectionMap<ADNNucleotide> PINeighbors::GetNeighbors(ADNPointer<ADNNucleotide>
 
   for (unsigned int i = 0; i < sz; ++i) {
     unsigned int neighborIdx = neighborList_[pos + i];
-    PINeighborNt* nt = ntIndices_.at(neighborIdx);
+    ADNNeighborNt* nt = ntIndices_.at(neighborIdx);
     neighbors.addReferenceTarget(nt->GetNucleotide()());
   }
 
   return neighbors;
 }
 
-void PINeighbors::InitializeNeighbors(ADNPointer<ADNPart> part, bool fromOwnSingleStrand)
+void ADNNeighbors::SetFromOwnSingleStrand(bool b)
+{
+  fromOwnSingleStrand_ = b;
+}
+
+void ADNNeighbors::SetIncludePairs(bool b)
+{
+  includePairs_ = b;
+}
+
+void ADNNeighbors::InitializeNeighbors(ADNPointer<ADNPart> part)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
 
@@ -73,7 +83,7 @@ void PINeighbors::InitializeNeighbors(ADNPointer<ADNPart> part, bool fromOwnSing
     SBPosition3 pos1 = nt1->GetPosition();
     // store just first nt1
     if (i == 0) {
-      PINeighborNt* piNt1 = new PINeighborNt(i, nt1);
+      ADNNeighborNt* piNt1 = new ADNNeighborNt(i, nt1);
       ntIndices_.insert(std::make_pair(i, piNt1));
     }
     // update head list with position
@@ -94,11 +104,15 @@ void PINeighbors::InitializeNeighbors(ADNPointer<ADNPart> part, bool fromOwnSing
 
       // first time of the loop we create the other indices
       if (create_index) {
-        PINeighborNt* piNt2 = new PINeighborNt(j, nt2);
+        ADNNeighborNt* piNt2 = new ADNNeighborNt(j, nt2);
         ntIndices_.insert(std::make_pair(j, piNt2));
       }
 
-      if (!fromOwnSingleStrand && nt2->GetStrand() == nt1->GetStrand()) {
+      if (!fromOwnSingleStrand_ && nt2->GetStrand() == nt1->GetStrand()) {
+        continue;
+      }
+
+      if (!includePairs_ && nt2->GetPair() == nt1) {
         continue;
       }
 
