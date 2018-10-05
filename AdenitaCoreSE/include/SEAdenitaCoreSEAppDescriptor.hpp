@@ -22,7 +22,7 @@ SB_CLASS_BEGIN(SEAdenitaCoreSEApp);
 
 	SB_INTERFACE_BEGIN;
 
-    SB_FUNCTION_1(void, SEAdenitaCoreSEApp, AddPartToActiveLayer, ADNPointer<ADNPart>);
+    SB_FUNCTION_3(void, SEAdenitaCoreSEApp, AddPartToActiveLayer, ADNPointer<ADNPart>, bool, bool);
 
 	SB_INTERFACE_END;
 

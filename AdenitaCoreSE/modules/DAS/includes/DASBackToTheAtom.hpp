@@ -44,6 +44,8 @@ public:
   void GenerateAllAtomModel(ADNPointer<ADNPart> origami);
   
   void CheckDistances(ADNPointer<ADNPart> part);
+
+  void PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool positionsFromNucleotide = false);
   //void SetAllAtomsPostions(ADNPointer<ADNPart> origami);
   // for cadnano
   /*void SetAllAtomsPostions2D(ADNPointer<ADNPart> origami);
@@ -94,7 +96,6 @@ private:
   void PopulateNucleotideWithAllAtoms(ADNPointer<ADNPart> origami, ADNPointer<ADNNucleotide> nt);
   void CreateBonds(ADNPointer<ADNPart> origami);
   void FindAtomsPositions(ADNPointer<ADNNucleotide> nt);
-  void PopulateWithMockAtoms(ADNPointer<ADNPart> origami);
 
   /*!
    * Calculate the center of mass of backbone and sidechain w.r.t. atom coordinates

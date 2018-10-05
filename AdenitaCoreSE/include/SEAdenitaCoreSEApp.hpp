@@ -71,7 +71,7 @@ public :
   QStringList GetPartsNameList();
 
   // Exposed for editors
-  void AddPartToActiveLayer(ADNPointer<ADNPart> part);
+  void AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions = true, bool positionsFromNucleotides = false);
 
 private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);

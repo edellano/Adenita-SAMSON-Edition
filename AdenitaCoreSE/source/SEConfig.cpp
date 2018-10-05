@@ -6,8 +6,27 @@ SEConfig & SEConfig::GetInstance()
   return instance;
 }
 
+void SEConfig::updateDebugConfig()
+{
+  FILE* fp = fopen(DEBUG_CONFIGPATH.c_str(), "rb");
+  if (fp != NULL) {
+    char readBuffer[65536];
+    FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+    setting_.ParseStream(is);
+
+    if (setting_.FindMember("min_cutoff") != setting_.MemberEnd()) {
+      debugOptions.minCutOff = setting_["min_cutoff"].GetDouble();
+    }
+    
+    if (setting_.FindMember("max_cutoff") != setting_.MemberEnd()) {
+      debugOptions.maxCutOff = setting_["max_cutoff"].GetDouble();
+    }
+  }
+}
+
 SEConfig::SEConfig() {
   loadConfig();
+  loadDebugConfig();
 }
 
 void SEConfig::loadConfig() {
@@ -115,6 +134,36 @@ void SEConfig::loadConfig() {
   configFileWatcher_.addPath(DEFAULT_CONFIGPATH.c_str());
 
   QObject::connect(&configFileWatcher_, SIGNAL(fileChanged(const QString &)), this, SLOT(updateConfig()));
+}
+
+void SEConfig::loadDebugConfig()
+{
+  QFileInfo check_file(DEBUG_CONFIGPATH.c_str());
+
+  if (!(check_file.exists() && check_file.isFile())) {
+    StringBuffer s;
+    Writer<StringBuffer> writer(s);
+
+    writer.StartObject();
+
+    writer.Key("min_cutoff");
+    writer.Double(debugOptions.minCutOff);
+
+    writer.Key("max_cutoff");
+    writer.Double(debugOptions.maxCutOff);
+
+    writer.EndObject();
+
+    std::ofstream out(DEBUG_CONFIGPATH);
+    out << s.GetString();
+    out.close();
+  }
+
+  updateDebugConfig();
+
+  debugConfigFileWatcher_.addPath(DEBUG_CONFIGPATH.c_str());
+
+  QObject::connect(&debugConfigFileWatcher_, SIGNAL(fileChanged(const QString &)), this, SLOT(updateDebugConfig()));
 }
 
 void SEConfig::updateConfig() {

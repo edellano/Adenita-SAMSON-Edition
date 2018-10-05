@@ -177,6 +177,11 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
     nt_l->SetE2(ublas::column(new_basis, 1));
     nt_l->SetE3(ublas::column(new_basis, 2));
 
+    //ublas::vector<double> e3 = nt_l->GetE3();
+    //std::string msg = std::to_string(e3[0]) + " " + std::to_string(e3[1]) + " " + std::to_string(e3[2]);
+    //ADNLogger& logger = ADNLogger::GetLogger();
+    //logger.LogDebug(msg);
+
     // Set new residue positions
     SBPosition3 p_left = UblasToSBPosition(ublas::row(new_pos, 0));
     nt_l->SetPosition(p_left);
@@ -204,6 +209,11 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
     nt_r->SetE1(ublas::column(basis_r, 0));
     nt_r->SetE2(ublas::column(basis_r, 1));
     nt_r->SetE3(ublas::column(basis_r, 2));
+
+    //ublas::vector<double> e3 = nt_r->GetE3();
+    //std::string msg = std::to_string(e3[0]) + " " + std::to_string(e3[1]) + " " + std::to_string(e3[2]);
+    //ADNLogger& logger = ADNLogger::GetLogger();
+    //logger.LogDebug(msg);
 
     // Set positions
     SBPosition3 p_right = UblasToSBPosition(ublas::row(new_pos, 3));
@@ -468,7 +478,7 @@ void DASBackToTheAtom::FindAtomsPositions(ADNPointer<ADNNucleotide> nt)
   }
 }
 
-void DASBackToTheAtom::PopulateWithMockAtoms(ADNPointer<ADNPart> origami)
+void DASBackToTheAtom::PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool positionsFromNucleotide)
 {
   auto nts = origami->GetNucleotides();
   SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
@@ -476,8 +486,13 @@ void DASBackToTheAtom::PopulateWithMockAtoms(ADNPointer<ADNPart> origami)
     auto sc = nt->GetSidechain();
 
     auto cBB = bb->GetCenterAtom();
-    origami->RegisterAtom(nt, NucleotideGroup::Backbone, cBB);
     auto cSC = sc->GetCenterAtom();
+    if (positionsFromNucleotide) {
+      cBB->SetPosition(nt->GetPosition());
+      cSC->SetPosition(nt->GetPosition());
+    }
+    
+    origami->RegisterAtom(nt, NucleotideGroup::Backbone, cBB);
     origami->RegisterAtom(nt, NucleotideGroup::SideChain, cSC);
     // hiding atoms here cause when they are created is too slow
     nt->HideCenterAtoms();
@@ -728,7 +743,6 @@ int DASBackToTheAtom::SetAtomsPositions(CollectionMap<ADNAtom> atoms, ublas::mat
 }
 
 void DASBackToTheAtom::SetNucleotidesPostions(ADNPointer<ADNPart> part) {
-  PopulateWithMockAtoms(part);
   auto doubleStrands = part->GetDoubleStrands();
   SB_FOR(ADNPointer<ADNDoubleStrand> ds, doubleStrands) {
     SetDoubleStrandPositions(ds);
