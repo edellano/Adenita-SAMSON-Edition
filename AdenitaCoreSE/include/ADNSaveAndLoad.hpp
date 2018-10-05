@@ -34,7 +34,8 @@ namespace ADNLoader {
   void OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std::string folder);
 
   // generic functions
-  ADNPointer<ADNPart> GeneratePartFromAtomic();
+  //! Populates base segments and double strands from nucleotides and single strands
+  void BuildTopScales(ADNPointer<ADNPart> part);
 
   struct NucleotideWrap {
     ADNPointer<ADNNucleotide> nt_;

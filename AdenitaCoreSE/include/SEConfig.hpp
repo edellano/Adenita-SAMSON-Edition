@@ -21,6 +21,11 @@ enum SEConfigMode {
   ELISA = 3
 };
 
+struct DebugOptions {
+  double minCutOff = 0.0;  // nm
+  double maxCutOff = 0.345;  // nm
+};
+
 class SEConfig : public QObject {
   Q_OBJECT
 public:
@@ -104,19 +109,25 @@ public:
   SEConfigMode mode = DEBUG_NO_LOG; //which mode of the software active. debug_log, debug_no_log, haichao, elisa
   // detecting crossovers
   
+  // debug
+  DebugOptions debugOptions;
+
 public slots:
   void updateConfig();
+  void updateDebugConfig();
 
 private:
   // private constructors to implement singleton
   SEConfig();
   
-  //const std::string DEFAULT_CONFIGPATH = SAMSON::getUserDataPath() + "/adenita_settings.json";
+  const std::string DEBUG_CONFIGPATH = SAMSON::getUserDataPath() + "/adenita_debug_settings.json";
   const std::string DEFAULT_CONFIGPATH = SAMSON::getUserDataPath() + "/adenita_settings.json";
   Document setting_;
   QFileSystemWatcher configFileWatcher_;
+  QFileSystemWatcher debugConfigFileWatcher_;
 
   void loadConfig();
+  void loadDebugConfig();
   void writeDoubleArray(Writer<StringBuffer> & writer, std::string key, double * arr, int length);
   void readDoubleArray(Value & val, double * arr, int length);
 };

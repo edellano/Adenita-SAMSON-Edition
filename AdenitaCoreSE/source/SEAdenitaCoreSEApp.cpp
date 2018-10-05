@@ -362,11 +362,10 @@ void SEAdenitaCoreSEApp::TestNeighbors()
   ADNPointer<ADNNucleotide> nt = nts[0];
   ADNPointer<ADNPart> part = GetNanorobot()->GetPart(nt->GetStrand());
   // create neighbor list
-  SBQuantity::length maxCutOff = SBQuantity::nanometer(ADNConstants::BP_RISE) + SBQuantity::nanometer(0.85);
-  SBQuantity::length minCutOff = SBQuantity::nanometer(ADNConstants::BP_RISE) + SBQuantity::nanometer(0.50);
+  SEConfig& config = SEConfig::GetInstance();
   auto neighbors = ADNNeighbors();
-  neighbors.SetMaxCutOff(maxCutOff);
-  neighbors.SetMinCutOff(minCutOff);
+  neighbors.SetMaxCutOff(SBQuantity::nanometer(config.debugOptions.maxCutOff));
+  neighbors.SetMinCutOff(SBQuantity::nanometer(config.debugOptions.minCutOff));
   neighbors.SetIncludePairs(true);
   neighbors.InitializeNeighbors(part);
 
@@ -384,7 +383,7 @@ void SEAdenitaCoreSEApp::ImportFromOxDNA(std::string topoFile, std::string confi
   auto res = ADNLoader::InputFromOxDNA(topoFile, configFile);
   if (!res.first) {
     ADNPointer<ADNPart> p = res.second;
-    AddPartToActiveLayer(p);
+    AddPartToActiveLayer(p, false, true);
     ResetVisualModel();
   }
 }
@@ -428,15 +427,18 @@ QStringList SEAdenitaCoreSEApp::GetPartsNameList()
   return names;
 }
 
-void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
+void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions, bool positionsFromNucleotides)
 {
   DASBackToTheAtom btta = DASBackToTheAtom();
-  btta.SetNucleotidesPostions(part);
-  SEConfig& config = SEConfig::GetInstance();
-  if (config.use_atomic_details) {
-    btta.GenerateAllAtomModel(part);
+  btta.PopulateWithMockAtoms(part, positionsFromNucleotides);
+  if (calculatePositions) {
+    btta.SetNucleotidesPostions(part);
+    SEConfig& config = SEConfig::GetInstance();
+    if (config.use_atomic_details) {
+      btta.GenerateAllAtomModel(part);
+    }
+    //btta.CheckDistances(part);
   }
-  btta.CheckDistances(part);
 
   GetNanorobot()->RegisterPart(part);
 

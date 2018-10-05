@@ -1030,89 +1030,121 @@ std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoF
 
   if (!error) {
     // create base pairs and double strands
-    auto dh_radius = SBQuantity::nanometer(ADNConstants::DH_DIAMETER)*0.5;
-    SBQuantity::length maxCutOff = dh_radius + SBQuantity::nanometer(0.1);
-    SBQuantity::length minCutOff = dh_radius - SBQuantity::nanometer(0.1);
-    auto neighbors = ADNNeighbors();
-    neighbors.SetMaxCutOff(maxCutOff);
-    neighbors.SetMinCutOff(minCutOff);
-    neighbors.SetIncludePairs(true);
-    neighbors.InitializeNeighbors(part);
+    BuildTopScales(part);
 
-    auto singleStrands = part->GetSingleStrands();
-    ADNPointer<ADNDoubleStrand> ds = nullptr;
-
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
-      int number = 0;
-
-      while (nt != nullptr) {
-        SBPosition3 posNt = nt->GetPosition();
-        auto e2Nt = nt->GetE2();
-
-        auto ntBors = neighbors.GetNeighbors(nt);
-        double maxCos = 0.0;
-
-        ADNPointer<ADNNucleotide> pair = nullptr;
-        // check possible base pairing against the neighbors
-        SB_FOR(ADNPointer<ADNNucleotide> bor, ntBors) {
-          SBPosition3 posBor = bor->GetPosition();
-          SBPosition3 dif = posBor - posNt;
-          auto e2Bor = bor->GetE2();
-          // check right directionality and co-planarity
-          double t = ublas::inner_prod(e2Nt, e2Bor);
-          // check that they are "in front" of each other
-          ublas::vector<double> df = ADNAuxiliary::SBPositionToUblas(dif);
-          double n = ublas::inner_prod(e2Nt, df);
-          double angle_threshold = 0.5;
-          if (n > 0 && t < 0.0 && abs(t) > cos(ADNVectorMath::DegToRad(angle_threshold))) {
-            // possible paired, take most coplanar
-            if (abs(t) > maxCos) {
-              pair = bor;
-              maxCos = abs(t);
-            }
-          }
-        }
-
-        ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment(CellType::BasePair);
-        SBPosition3 bsPos = posNt + SBQuantity::nanometer(ADNConstants::DH_DIAMETER * 0.5) * ADNAuxiliary::UblasVectorToSBVector(e2Nt);
-        ublas::vector<double> e3 = nt->GetE3();
-        ublas::vector<double> e1 = nt->GetE1();
-        ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(bs->GetCell()());
-        bp->SetLeftNucleotide(nt);
-        nt->SetBaseSegment(bs);
-        if (pair != nullptr) {
-          bp->SetRightNucleotide(pair);
-          pair->SetBaseSegment(bs);
-          bsPos = (posNt + pair->GetPosition())*0.5;
-        }
-
-        bs->SetPosition(bsPos);
-        bs->SetE3(e3);
-        bs->SetE2(e2Nt);
-        bs->SetE1(e1);
-        bs->SetNumber(number);
-
-        // add to corresponding double strand
-        if (ds == nullptr) {
-          ds = new ADNDoubleStrand();
-          part->RegisterDoubleStrand(ds);
-        }
-        part->RegisterBaseSegmentEnd(ds, bs);
-
-        bool breakDs = false;
-        if (pair == nullptr && nt->GetEnd() != NotEnd) breakDs = true;
-        else if (pair != nullptr && nt->GetEnd() != NotEnd && pair->GetEnd() != NotEnd) breakDs = true;
-
-        if (breakDs) ds = nullptr;
-
-        ++number;
-        nt = nt->GetNext();
-      }
-    }
   }
   
   return std::make_pair(error, part);
+}
+
+void ADNLoader::BuildTopScales(ADNPointer<ADNPart> part)
+{
+  auto dh_radius = SBQuantity::nanometer(ADNConstants::DH_DIAMETER)*0.5;
+  SBQuantity::length maxCutOff = dh_radius + SBQuantity::nanometer(0.2);
+  SBQuantity::length minCutOff = dh_radius - SBQuantity::nanometer(0.2);
+  auto neighbors = ADNNeighbors();
+  neighbors.SetMaxCutOff(maxCutOff);
+  neighbors.SetMinCutOff(minCutOff);
+  neighbors.SetIncludePairs(true);
+  neighbors.InitializeNeighbors(part);
+
+  auto singleStrands = part->GetSingleStrands();
+  ADNPointer<ADNDoubleStrand> ds = nullptr;
+
+  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+    ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
+    int number = 0;
+
+    while (nt != nullptr) {
+      if (nt->GetBaseSegment() != nullptr) {
+        nt = nt->GetNext();
+        continue;
+      }
+
+      SBPosition3 posNt = nt->GetPosition();
+      auto e2Nt = nt->GetE2();
+
+      auto ntBors = neighbors.GetNeighbors(nt);
+      double maxCos = 0.0;
+
+      ADNPointer<ADNNucleotide> pair = nullptr;
+      // check possible base pairing against the neighbors
+      SB_FOR(ADNPointer<ADNNucleotide> bor, ntBors) {
+        SBPosition3 posBor = bor->GetPosition();
+        SBPosition3 dif = posBor - posNt;
+        auto e2Bor = bor->GetE2();
+        // check right directionality and co-planarity
+        double t = ublas::inner_prod(e2Nt, e2Bor);
+        // check that they are "in front" of each other
+        ublas::vector<double> df = ADNAuxiliary::SBPositionToUblas(dif);
+        double n = ublas::inner_prod(e2Nt, df);
+        double angle_threshold = 10.0;
+        if (n > 0 && t < 0.0 && abs(t) > cos(ADNVectorMath::DegToRad(angle_threshold))) {
+          // possible paired, take most coplanar
+          if (abs(t) > maxCos) {
+            pair = bor;
+            maxCos = abs(t);
+          }
+        }
+      }
+
+      ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment(CellType::BasePair);
+      SBPosition3 bsPos = posNt + SBQuantity::nanometer(ADNConstants::DH_DIAMETER * 0.5) * ADNAuxiliary::UblasVectorToSBVector(e2Nt);
+      ublas::vector<double> e3 = nt->GetE3();
+      //ADNLogger& logger = ADNLogger::GetLogger();
+      //std::string msg = std::to_string(e3[0]) + " " + std::to_string(e3[1]) + " " + std::to_string(e3[2]);
+      //logger.LogDebug(msg);
+      ublas::vector<double> e1 = nt->GetE1();
+      ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(bs->GetCell()());
+      bp->SetLeftNucleotide(nt);
+      nt->SetBaseSegment(bs);
+      if (pair != nullptr) {
+        bp->SetRightNucleotide(pair);
+        pair->SetBaseSegment(bs);
+        bsPos = (posNt + pair->GetPosition())*0.5;
+      }
+
+      bs->SetPosition(bsPos);
+      bs->SetE3(e3);
+      bs->SetE2(e2Nt);
+      bs->SetE1(e1);
+      bs->SetNumber(number);
+
+      // add to corresponding double strand
+      if (ds == nullptr) {
+        ds = new ADNDoubleStrand();
+        part->RegisterDoubleStrand(ds);
+      }
+      part->RegisterBaseSegmentEnd(ds, bs);
+
+      bool breakDs = false;
+      double turningThreshold = 0.0;
+      if (pair == nullptr && nt->GetEnd() != NotEnd) breakDs = true;
+      else if (pair != nullptr && nt->GetEnd() != NotEnd && pair->GetEnd() != NotEnd) breakDs = true;
+      if (nt->GetEnd() != ThreePrime) {
+        // if huge change in directionality, make new strand
+        ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
+        ublas::vector<double> e3Next = ntNext->GetE3();
+        auto theta = ublas::inner_prod(e3, e3Next);
+        if (theta < 0.9) {
+          int test = 1;
+        }
+        if (theta < turningThreshold) breakDs = true;
+      }
+      if (pair != nullptr && pair->GetEnd() != FivePrime) {
+        // if huge change in directionality, make new strand
+        ADNPointer<ADNNucleotide> pairPrev = pair->GetPrev();
+        ublas::vector<double> e3Prev = pairPrev->GetE3();
+        auto theta = ublas::inner_prod(pair->GetE3(), e3Prev);
+        if (theta < turningThreshold) breakDs = true;
+      }
+
+      if (breakDs) ds = nullptr;
+
+      ++number;
+      nt = nt->GetNext();
+    }
+  }
 }
 
 void ADNLoader::OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std::string folder)
