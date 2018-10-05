@@ -18,7 +18,7 @@ private:
 
 class ADNNeighbors {
 public:
-  ADNNeighbors(ADNPointer<ADNPart> part, SBQuantity::length cutOff);
+  ADNNeighbors();
   ~ADNNeighbors() = default;
 
   ADNNeighborNt* GetPINucleotide(ADNPointer<ADNNucleotide> nt);
@@ -27,9 +27,15 @@ public:
 
   void SetFromOwnSingleStrand(bool b);
   void SetIncludePairs(bool b);
+  void SetMaxCutOff(SBQuantity::length cutOff);
+  void SetMinCutOff(SBQuantity::length cutOff);
+
+  void InitializeNeighbors(ADNPointer<ADNPart> part);
 
 private:
-  SBQuantity::length cutOff_;
+  SBQuantity::length maxCutOff_;
+  SBQuantity::length minCutOff_;
+
   std::map<unsigned int, ADNNeighborNt*> ntIndices_;
   std::vector<unsigned int> neighborList_;
   std::vector<unsigned int> headList_;
@@ -37,6 +43,4 @@ private:
 
   bool fromOwnSingleStrand_ = false;
   bool includePairs_ = false;
-
-  void InitializeNeighbors(ADNPointer<ADNPart> part);
 };

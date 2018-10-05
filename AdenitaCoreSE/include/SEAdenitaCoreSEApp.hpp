@@ -61,6 +61,7 @@ public :
   void MergeComponents();
   void TwistDoubleHelix();
   void TestNeighbors();
+  void ImportFromOxDNA(std::string topoFile, std::string configFile);
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events

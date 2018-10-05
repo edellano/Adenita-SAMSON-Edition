@@ -912,7 +912,7 @@ std::ofstream ADNLoader::CreateOutputFile(std::string fname, std::string folder,
 std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoFile, std::string configFile)
 {
   ADNPointer<ADNPart> part = new ADNPart();
-  bool error = true;
+  bool error = false;
   std::vector<NucleotideWrap> oxDNAIndices;
 
   // parse topology file
@@ -926,8 +926,7 @@ std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoF
     bool fstLine = true;
     error = false;
 
-    while (topo.good()) {
-      std::getline(topo, line);
+    while (std::getline(topo, line)) {
       if (fstLine) {
         fstLine = false;
         continue;  // first line of topology contains number of chains and nucleotides
@@ -947,12 +946,14 @@ std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoF
 
       if (numChain != currChain) {
         ss = new ADNSingleStrand();
+        ss->SetDefaultName();
         part->RegisterSingleStrand(ss);
+        currChain = numChain;
       }
 
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
       nt->SetType(ADNModel::ResidueNameToType(base));
-      ss->AddNucleotideThreePrime(nt);  // for now we just asume the nucleotides are ordered
+      part->RegisterNucleotideThreePrime(ss, nt);
 
       // if last nucleotide next is same as first close
 
@@ -977,12 +978,12 @@ std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoF
       int lineCount = 0;
       error = false;
 
-      while (config.good()) {
+      while (std::getline(config, line)) {
         if (lineCount > 2) {
 
           std::vector<std::string> cont;
           boost::split(cont, line, boost::is_any_of(" "));
-          if (cont.size() != 14) {
+          if (cont.size() != 15) {
             error = true;
             break;
           }
@@ -1029,104 +1030,89 @@ std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoF
 
   if (!error) {
     // create base pairs and double strands
-    std::vector< ADNPointer<ADNBaseSegment> > basePairs = FindBasePairs(oxDNAIndices);
-    DetectDoubleStrands(part, basePairs);
-  }
-  
-  return std::make_pair(error, part);
-}
+    auto dh_radius = SBQuantity::nanometer(ADNConstants::DH_DIAMETER)*0.5;
+    SBQuantity::length maxCutOff = dh_radius + SBQuantity::nanometer(0.1);
+    SBQuantity::length minCutOff = dh_radius - SBQuantity::nanometer(0.1);
+    auto neighbors = ADNNeighbors();
+    neighbors.SetMaxCutOff(maxCutOff);
+    neighbors.SetMinCutOff(minCutOff);
+    neighbors.SetIncludePairs(true);
+    neighbors.InitializeNeighbors(part);
 
-std::vector< ADNPointer<ADNBaseSegment> > ADNLoader::FindBasePairs(std::vector<NucleotideWrap> nts)
-{
-  std::vector< ADNPointer<ADNBaseSegment> > basePairs;
-  SBQuantity::length threshold = SBQuantity::nanometer(ADNConstants::BP_THRESHOLD);
+    auto singleStrands = part->GetSingleStrands();
+    ADNPointer<ADNDoubleStrand> ds = nullptr;
 
-  for (auto wrF : nts) {
-    ADNPointer<ADNNucleotide> fNt = wrF.nt_;
-    if (wrF.paired_ == false) {
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
+      int number = 0;
 
-      for (auto wrS : nts) {
-        ADNPointer<ADNNucleotide> sNt = wrS.nt_;
+      while (nt != nullptr) {
+        SBPosition3 posNt = nt->GetPosition();
+        auto e2Nt = nt->GetE2();
 
-        if (wrS.paired_ == false && sNt != fNt && sNt->GetStrand() != fNt->GetStrand()) {
-          // check distances
-          SBQuantity::length dist = (fNt->GetPosition() - sNt->GetPosition()).norm();
-          if (dist <= threshold) {
-            ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
-            ADNPointer<ADNBasePair> bp = new ADNBasePair();
-            bs->SetCell(bp());
+        auto ntBors = neighbors.GetNeighbors(nt);
+        double maxCos = 0.0;
 
-            // nucleotide in chain with lower id goes left
-            if (wrF.strandId_ < wrS.strandId_ ) {
-              bp->SetLeftNucleotide(fNt);
-              bp->SetRightNucleotide(sNt);
+        ADNPointer<ADNNucleotide> pair = nullptr;
+        // check possible base pairing against the neighbors
+        SB_FOR(ADNPointer<ADNNucleotide> bor, ntBors) {
+          SBPosition3 posBor = bor->GetPosition();
+          SBPosition3 dif = posBor - posNt;
+          auto e2Bor = bor->GetE2();
+          // check right directionality and co-planarity
+          double t = ublas::inner_prod(e2Nt, e2Bor);
+          // check that they are "in front" of each other
+          ublas::vector<double> df = ADNAuxiliary::SBPositionToUblas(dif);
+          double n = ublas::inner_prod(e2Nt, df);
+          double angle_threshold = 0.5;
+          if (n > 0 && t < 0.0 && abs(t) > cos(ADNVectorMath::DegToRad(angle_threshold))) {
+            // possible paired, take most coplanar
+            if (abs(t) > maxCos) {
+              pair = bor;
+              maxCos = abs(t);
             }
-            else {
-              bp->SetLeftNucleotide(sNt);
-              bp->SetRightNucleotide(fNt);
-            }
-
-            bs->SetPosition((fNt->GetPosition() + sNt->GetPosition()) * 0.5);
-            bs->SetE3(fNt->GetE3());
-
-            fNt->SetPair(sNt);
-            sNt->SetPair(fNt);
-            wrF.paired_ = true;
-            wrS.paired_ = true;
-
-            basePairs.push_back(bs);
           }
         }
-      }
-    }
-  }
-  return basePairs;
-}
 
-std::vector<ADNPointer<ADNDoubleStrand>> ADNLoader::DetectDoubleStrands(ADNPointer<ADNPart> part, std::vector<ADNPointer<ADNBaseSegment>> bss)
-{
-  std::vector<ADNPointer<ADNDoubleStrand>> doubleStrands;
-
-  auto cosThreshold = cos(ADNVectorMath::DegToRad(ADNConstants::DS_ANGLE_THRESHOLD));
-  // loop over chains to create double strands
-
-  for (ADNPointer<ADNSingleStrand> c : part->GetSingleStrands()) {
-    auto nt = c->GetFivePrime();
-    ublas::vector<double> prevDir = nt->GetE3();
-    ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
-    part->RegisterDoubleStrand(ds);
-    while (nt != nullptr) {
-      ublas::vector<double> dir = nt->GetE3();
-      auto bs = nt->GetBaseSegment();
-
-      if (abs(ublas::inner_prod(dir, prevDir)) < cosThreshold) {
-        // change of direction: check if strand is finished
-        auto pair = nt->GetPair();
+        ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment(CellType::BasePair);
+        SBPosition3 bsPos = posNt + SBQuantity::nanometer(ADNConstants::DH_DIAMETER * 0.5) * ADNAuxiliary::UblasVectorToSBVector(e2Nt);
+        ublas::vector<double> e3 = nt->GetE3();
+        ublas::vector<double> e1 = nt->GetE1();
+        ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(bs->GetCell()());
+        bp->SetLeftNucleotide(nt);
+        nt->SetBaseSegment(bs);
         if (pair != nullptr) {
-          ublas::vector<double> pairDir = pair->GetE3();
-          if (abs(ublas::inner_prod(dir, prevDir)) < cosThreshold) {
-            ds = new ADNDoubleStrand();
-            part->RegisterDoubleStrand(ds);
-          }
-          else {
-            nt = pair;
-          }
+          bp->SetRightNucleotide(pair);
+          pair->SetBaseSegment(bs);
+          bsPos = (posNt + pair->GetPosition())*0.5;
         }
-        else {
+
+        bs->SetPosition(bsPos);
+        bs->SetE3(e3);
+        bs->SetE2(e2Nt);
+        bs->SetE1(e1);
+        bs->SetNumber(number);
+
+        // add to corresponding double strand
+        if (ds == nullptr) {
           ds = new ADNDoubleStrand();
           part->RegisterDoubleStrand(ds);
         }
+        part->RegisterBaseSegmentEnd(ds, bs);
+
+        bool breakDs = false;
+        if (pair == nullptr && nt->GetEnd() != NotEnd) breakDs = true;
+        else if (pair != nullptr && nt->GetEnd() != NotEnd && pair->GetEnd() != NotEnd) breakDs = true;
+
+        if (breakDs) ds = nullptr;
+
+        ++number;
+        nt = nt->GetNext();
       }
-
-      part->RegisterBaseSegmentEnd(ds, bs);
-
-      prevDir = dir;
-      nt = nt->GetNext();
     }
-
   }
-
-  return doubleStrands;
+  
+  return std::make_pair(error, part);
 }
 
 void ADNLoader::OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std::string folder)

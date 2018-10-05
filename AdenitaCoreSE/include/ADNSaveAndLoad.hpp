@@ -2,6 +2,7 @@
 
 #include "ADNNanorobot.hpp"
 #include "ADNBasicOperations.hpp"
+#include "ADNNeighbors.hpp"
 #include "rapidjson/document.h"
 #include "rapidjson/pointer.h"
 #include "rapidjson/writer.h"
@@ -41,6 +42,5 @@ namespace ADNLoader {
     int ntId_ = -1;
     int strandId_ = -1;
   };
-  std::vector < ADNPointer<ADNBaseSegment> > FindBasePairs(std::vector<NucleotideWrap> nts);
-  std::vector < ADNPointer<ADNDoubleStrand> > DetectDoubleStrands(ADNPointer<ADNPart> part, std::vector < ADNPointer<ADNBaseSegment> > bss);
+
 }

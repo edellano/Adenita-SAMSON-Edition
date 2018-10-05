@@ -362,8 +362,13 @@ void SEAdenitaCoreSEApp::TestNeighbors()
   ADNPointer<ADNNucleotide> nt = nts[0];
   ADNPointer<ADNPart> part = GetNanorobot()->GetPart(nt->GetStrand());
   // create neighbor list
-  SBQuantity::length cutOff = SBQuantity::nanometer(ADNConstants::BP_RISE) + SBQuantity::nanometer(1.0);
-  auto neighbors = ADNNeighbors(part, cutOff);
+  SBQuantity::length maxCutOff = SBQuantity::nanometer(ADNConstants::BP_RISE) + SBQuantity::nanometer(0.85);
+  SBQuantity::length minCutOff = SBQuantity::nanometer(ADNConstants::BP_RISE) + SBQuantity::nanometer(0.50);
+  auto neighbors = ADNNeighbors();
+  neighbors.SetMaxCutOff(maxCutOff);
+  neighbors.SetMinCutOff(minCutOff);
+  neighbors.SetIncludePairs(true);
+  neighbors.InitializeNeighbors(part);
 
   // highlight neighbors of selected nucleotide
   auto ntNeighbors = neighbors.GetNeighbors(nt);
@@ -372,6 +377,16 @@ void SEAdenitaCoreSEApp::TestNeighbors()
   }
 
   ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::ImportFromOxDNA(std::string topoFile, std::string configFile)
+{
+  auto res = ADNLoader::InputFromOxDNA(topoFile, configFile);
+  if (!res.first) {
+    ADNPointer<ADNPart> p = res.second;
+    AddPartToActiveLayer(p);
+    ResetVisualModel();
+  }
 }
 
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
