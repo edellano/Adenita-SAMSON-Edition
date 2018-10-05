@@ -75,6 +75,7 @@ public slots:
   void onSetStart();
   void onMergeComponents();
   void onTestNeighbors();
+  void onOxDNAImport();
 
 private:
   std::string IsJsonCadnano(QString filename);

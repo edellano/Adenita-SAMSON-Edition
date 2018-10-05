@@ -1,12 +1,9 @@
 #include "ADNNeighbors.hpp"
 
-ADNNeighbors::ADNNeighbors(ADNPointer<ADNPart> part, SBQuantity::length cutOff)
-{
-  cutOff_ = cutOff;
-  headList_ = std::vector<unsigned int>(part->GetNumberOfNucleotides());
-  numNeighborsList_ = std::vector<unsigned int>(part->GetNumberOfNucleotides());
 
-  InitializeNeighbors(part);
+ADNNeighbors::ADNNeighbors()
+{
+  minCutOff_ = SBQuantity::nanometer(0.0);
 }
 
 ADNNeighborNt * ADNNeighbors::GetPINucleotide(ADNPointer<ADNNucleotide> nt)
@@ -67,11 +64,24 @@ void ADNNeighbors::SetIncludePairs(bool b)
   includePairs_ = b;
 }
 
+void ADNNeighbors::SetMaxCutOff(SBQuantity::length cutOff)
+{
+  maxCutOff_ = cutOff;
+}
+
+void ADNNeighbors::SetMinCutOff(SBQuantity::length cutOff)
+{
+  minCutOff_ = cutOff;
+}
+
 void ADNNeighbors::InitializeNeighbors(ADNPointer<ADNPart> part)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
 
   auto nts = part->GetNucleotides();
+  headList_ = std::vector<unsigned int>(nts.size());
+  numNeighborsList_ = std::vector<unsigned int>(nts.size());
+
   int create_index = true;
   unsigned int neighborIdx = 0;
 
@@ -117,7 +127,8 @@ void ADNNeighbors::InitializeNeighbors(ADNPointer<ADNPart> part)
       }
 
       SBPosition3 pos2 = nt2->GetPosition();
-      if ((pos2-pos1).norm() < cutOff_) {
+      auto dist = (pos2 - pos1).norm();
+      if (dist < maxCutOff_ && dist > minCutOff_) {
         // neighbors
         neighborList_.push_back(j);
         ++neighborIdx;

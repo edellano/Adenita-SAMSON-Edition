@@ -546,6 +546,14 @@ void SEAdenitaCoreSEAppGUI::onTestNeighbors()
   t->TestNeighbors();
 }
 
+void SEAdenitaCoreSEAppGUI::onOxDNAImport()
+{
+  QString topoFile = QFileDialog::getOpenFileName(this, tr("Select a topology file"), QDir::currentPath(), tr("(OxDNA topology *.*)"));
+  QString configFile = QFileDialog::getOpenFileName(this, tr("Select a configuration file"), QDir::currentPath(), tr("(OxDNA configuration *.*)"));
+  SEAdenitaCoreSEApp* t = getApp();
+  t->ImportFromOxDNA(topoFile.toStdString(), configFile.toStdString());
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";
