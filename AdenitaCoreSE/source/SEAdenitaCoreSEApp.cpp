@@ -388,6 +388,13 @@ void SEAdenitaCoreSEApp::ImportFromOxDNA(std::string topoFile, std::string confi
   }
 }
 
+void SEAdenitaCoreSEApp::FromDatagraph()
+{
+  ADNPointer<ADNPart> part = ADNLoader::GenerateModelFromDatagraph();
+  AddPartToActiveLayer(part, false, true);
+  ResetVisualModel();
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();

@@ -76,13 +76,11 @@ public slots:
   void onMergeComponents();
   void onTestNeighbors();
   void onOxDNAImport();
+  void onFromDatagraph();
 
 private:
   std::string IsJsonCadnano(QString filename);
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
-
-  //QComboBox* typeSelection_ = nullptr;
-  //QComboBox* exportType_ = nullptr;
 };
 

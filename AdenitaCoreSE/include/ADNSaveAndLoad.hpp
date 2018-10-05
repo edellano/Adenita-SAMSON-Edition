@@ -23,6 +23,9 @@ namespace ADNLoader {
   // pdb
   ADNPointer<ADNPart> LoadPartFromPDB(std::string filename, int id = -1);
 
+  // samson
+  ADNPointer<ADNPart> GenerateModelFromDatagraph();
+
   // oxdna
   void OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options);
   void OutputToOxDNA(ADNNanorobot* nanorobot, std::string folder, ADNAuxiliary::OxDNAOptions options);

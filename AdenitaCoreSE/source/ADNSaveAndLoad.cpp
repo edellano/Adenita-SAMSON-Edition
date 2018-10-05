@@ -786,6 +786,88 @@ void ADNLoader::SaveNanorobotToJson(ADNNanorobot * nr, std::string filename)
   file.close();
 }
 
+ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph()
+{
+  ADNPointer<ADNPart> part = new ADNPart();
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, SBNode::IsType(SBNode::Chain));
+
+  SB_FOR(SBNode* node, nodes) {
+    SBPointer<SBChain> chain = static_cast<SBChain*>(node);
+
+    ADNPointer<ADNSingleStrand> ss = new ADNSingleStrand();
+    ss->SetDefaultName();
+    part->RegisterSingleStrand(ss);
+
+    SBPointerList<SBStructuralNode> children = *chain->getChildren();
+    SBPosition3 prevPos;
+
+    SB_FOR(SBStructuralNode* n, children) {
+      SBPointer<SBResidue> res = static_cast<SBResidue*>(n);
+      if (!res->isNucleicAcid()) continue;
+
+      SBPosition3 pos = SBPosition3();
+      SBPosition3 bbPos = SBPosition3();
+      SBPosition3 scPos = SBPosition3();
+      int count = 0;
+      SBPointer<SBBackbone> bb = res->getBackbone();
+      SBPointerList<SBStructuralNode> bbAtoms = *bb->getChildren();
+      SB_FOR(SBStructuralNode* at, bbAtoms) {
+        SBPointer<SBAtom> atom = static_cast<SBAtom*>(at);
+        pos += atom->getPosition();
+        bbPos += atom->getPosition();
+        ++count;
+      }
+      bbPos /= count;
+      int scCount = 0;
+
+      SBPointer<SBSideChain> sc = res->getSideChain();
+      SBPointerList<SBStructuralNode> scAtoms = *sc->getChildren();
+      SB_FOR(SBStructuralNode* at, scAtoms) {
+        SBPointer<SBAtom> atom = static_cast<SBAtom*>(at);
+        pos += atom->getPosition();
+        scPos += atom->getPosition();
+        ++count;
+        ++scCount;
+      }
+      pos /= count;
+      scPos /= scCount;
+
+      // Calculate local axis
+      SBVector3 e3SB = (prevPos - pos).normalizedVersion();
+      SBVector3 e2SB = (scPos - bbPos).normalizedVersion();
+
+      ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(e3SB);
+      ublas::vector<double> e2 = ADNAuxiliary::SBVectorToUblasVector(e2SB);
+      ublas::vector<double> e1 = ADNVectorMath::CrossProduct(e2, e3);
+
+      ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+      nt->SetPosition(pos);
+      nt->SetE3(e3);
+      nt->SetE2(e2);
+      nt->SetE1(e1);
+      nt->SetType(res->getResidueType());
+
+      part->RegisterNucleotideThreePrime(ss, nt);
+      prevPos = pos;
+    }
+    // fix directionality of first nucleotide
+    if (ss->getNumberOfNucleotides() > 1) {
+      auto fPrime = ss->GetFivePrime();
+      SBVector3 newE3 = (fPrime->GetNext()->GetPosition() - fPrime->GetPosition()).normalizedVersion();
+      ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(newE3);
+      fPrime->SetE3(e3);
+    }
+
+  }
+
+  BuildTopScales(part);
+
+  return part;
+}
+
 void ADNLoader::OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options)
 {
   std::string fnameConf = "config.conf";
