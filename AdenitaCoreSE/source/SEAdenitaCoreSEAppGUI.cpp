@@ -554,6 +554,12 @@ void SEAdenitaCoreSEAppGUI::onOxDNAImport()
   t->ImportFromOxDNA(topoFile.toStdString(), configFile.toStdString());
 }
 
+void SEAdenitaCoreSEAppGUI::onFromDatagraph()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->FromDatagraph();
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";
