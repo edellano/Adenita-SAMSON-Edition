@@ -70,38 +70,83 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
 
   if (nt_r == nullptr && nt_l == nullptr) return;
 
-  // scaffold nucleotide is always on the left
-  std::pair<DNABlocks, DNABlocks> pair_type;
-  if (nt_l == nullptr) {
-    pair_type = std::make_pair(ADNModel::GetComplementaryBase(nt_r->GetType()), nt_r->GetType());
-  }
-  else if (nt_r == nullptr) {
-    pair_type = std::make_pair(nt_l->GetType(), ADNModel::GetComplementaryBase(nt_l->GetType()));
-  }
-  else {
-    pair_type = std::make_pair(nt_l->GetType(), nt_r->GetType());
-  }
+  NtPair pair = GetIdealBasePairNucleotides(nt_l, nt_r);
+  nt_left = pair.first;
+  nt_right = pair.second;
 
-  // set this for NN pairs
-  nt_left = da_dt_.first;
-  nt_right = da_dt_.second;
-  if (pair_type == std::make_pair(DNABlocks::DA, DNABlocks::DT)) {
-    nt_left = da_dt_.first;
-    nt_right = da_dt_.second;
+  ublas::matrix<double> positions = CreatePositionsMatrix(pair);
+
+  // Place c.o.m. at bs position
+  ublas::vector<double> sys_cm = ADNAuxiliary::SBPositionToUblas(bs->GetPosition());
+  ublas::vector<double> t_vec = sys_cm - ADNVectorMath::CalculateCM(positions);
+  ublas::matrix<double> input = ublas::matrix<double>(6, 3);
+
+  ublas::row(input, 0) = ADNAuxiliary::SBPositionToUblas(nt_left->GetPosition());
+  ublas::row(input, 1) = ADNAuxiliary::SBPositionToUblas(nt_left->GetBackbonePosition());
+  ublas::row(input, 2) = ADNAuxiliary::SBPositionToUblas(nt_left->GetSidechainPosition());
+  ublas::row(input, 3) = ADNAuxiliary::SBPositionToUblas(nt_right->GetPosition());
+  ublas::row(input, 4) = ADNAuxiliary::SBPositionToUblas(nt_right->GetBackbonePosition());
+  ublas::row(input, 5) = ADNAuxiliary::SBPositionToUblas(nt_right->GetSidechainPosition());
+
+  // Calculate new residue positions in this system
+  // Rotate system so z goes in proper direction
+  ublas::matrix<double> subspace = CalculateBaseSegmentBasis(bs);
+
+  // to calculate untwisted positions
+  ublas::matrix<double> new_basisNoTwist = subspace;
+  // apply rotation to basis (rotation has to be negative)
+  double angle = -ADNVectorMath::DegToRad(initialAngleDegrees) - ADNVectorMath::DegToRad(bs->GetNumber() * ADNConstants::BP_ROT);
+  ublas::matrix<double> rot_mat = ADNVectorMath::MakeRotationMatrix(bs->GetE3(), angle);
+  ublas::matrix<double> new_basis = ADNVectorMath::ApplyTransformation(rot_mat, subspace);
+  // Apply transformation
+  new_basis = ublas::trans(new_basis);
+  ublas::matrix<double> new_pos = ADNVectorMath::ApplyTransformation(new_basis, input);
+  new_pos = ADNVectorMath::Translate(new_pos, t_vec);
+  // Apply transformation for non twisted postions
+  new_basisNoTwist = ublas::trans(new_basisNoTwist);
+  ublas::matrix<double> new_posNoTwist = ADNVectorMath::ApplyTransformation(new_basisNoTwist, input);
+  new_posNoTwist = ADNVectorMath::Translate(new_posNoTwist, t_vec);
+
+  if (nt_l != nullptr) {
+    nt_l->SetE1(ublas::column(new_basis, 0));
+    nt_l->SetE2(ublas::column(new_basis, 1));
+    nt_l->SetE3(ublas::column(new_basis, 2));
+
+    // Set new residue positions
+    SBPosition3 p_left = UblasToSBPosition(ublas::row(new_pos, 0));
+    nt_l->SetPosition(p_left);
+    SBPosition3 p_bb_left = UblasToSBPosition(ublas::row(new_pos, 1));
+    nt_l->SetBackbonePosition(p_bb_left);
+    SBPosition3 p_sc_left = UblasToSBPosition(ublas::row(new_pos, 2));
+    nt_l->SetSidechainPosition(p_sc_left);
   }
-  else if (pair_type == std::make_pair(DNABlocks::DC, DNABlocks::DG)) {
-    nt_left = dc_dg_.first;
-    nt_right = dc_dg_.second;
+  
+  if (nt_r != nullptr) {
+    // right nt has a slightly different basis
+    ublas::matrix<double> local_basis = ublas::identity_matrix<double>(3);
+    local_basis.at_element(0, 0) = -1;
+    local_basis.at_element(1, 1) = -1;
+    local_basis.at_element(2, 2) = -1;
+    auto basis_r = ublas::prod(new_basis, local_basis);
+    //auto basis_r = ublas::prod(new_basis, ublas::identity_matrix<double>(3));
+    nt_r->SetE1(ublas::column(basis_r, 0));
+    nt_r->SetE2(ublas::column(basis_r, 1));
+    nt_r->SetE3(ublas::column(basis_r, 2));
+
+    // Set positions
+    SBPosition3 p_right = UblasToSBPosition(ublas::row(new_pos, 3));
+    nt_r->SetPosition(p_right);
+    SBPosition3 p_bb_right = UblasToSBPosition(ublas::row(new_pos, 4));
+    nt_r->SetBackbonePosition(p_bb_right);
+    SBPosition3 p_sc_right = UblasToSBPosition(ublas::row(new_pos, 5));
+    nt_r->SetSidechainPosition(p_sc_right);
   }
-  else if (pair_type == std::make_pair(DNABlocks::DG, DNABlocks::DC)) {
-    nt_left = dg_dc_.first;
-    nt_right = dg_dc_.second;
-  }
-  else if (pair_type == std::make_pair(DNABlocks::DT, DNABlocks::DA)) {
-    nt_left = dt_da_.first;
-    nt_right = dt_da_.second;
-  }
-  // Calculate total center of mass
+}
+
+ublas::matrix<double> DASBackToTheAtom::CreatePositionsMatrix(NtPair pair)
+{
+  ADNPointer<ADNNucleotide> nt_left = pair.first;
+  ADNPointer<ADNNucleotide> nt_right = pair.second;
   size_t cols = 3;
   auto ntLeftAtoms = nt_left->GetAtoms();
   auto ntRightAtoms = nt_right->GetAtoms();
@@ -119,117 +164,8 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
     ublas::row(positions, i) = ac_blas;
     ++i;
   }
-  // Place c.o.m. at bs position
-  ublas::vector<double> sys_cm = ADNAuxiliary::SBPositionToUblas(bs->GetPosition());
-  ublas::vector<double> t_vec = sys_cm - ADNVectorMath::CalculateCM(positions);
-  ublas::matrix<double> input = ublas::matrix<double>(6, 3);
 
-  ublas::row(input, 0) = ADNAuxiliary::SBPositionToUblas(nt_left->GetPosition());
-  ublas::row(input, 1) = ADNAuxiliary::SBPositionToUblas(nt_left->GetBackbonePosition());
-  ublas::row(input, 2) = ADNAuxiliary::SBPositionToUblas(nt_left->GetSidechainPosition());
-  ublas::row(input, 3) = ADNAuxiliary::SBPositionToUblas(nt_right->GetPosition());
-  ublas::row(input, 4) = ADNAuxiliary::SBPositionToUblas(nt_right->GetBackbonePosition());
-  ublas::row(input, 5) = ADNAuxiliary::SBPositionToUblas(nt_right->GetSidechainPosition());
-
-  // Calculate new residue positions in this system
-  // Rotate system so z goes in proper direction
-  ublas::vector<double> new_z(3);
-  auto direction = bs->GetE3();
-  new_z[0] = direction[0];
-  new_z[1] = direction[1];
-  new_z[2] = direction[2];
-  new_z /= ublas::norm_2(new_z);
-  // if normal_ or u_ are defined we already have the subspace
-  ublas::matrix<double> subspace(0, 3);
-  if (ublas::norm_2(bs->GetE2()) > 0) {
-    ublas::vector<double> normal = bs->GetE2();
-    ublas::vector<double> u(3);
-    if (ublas::norm_2(bs->GetE1()) > 0) {
-      u = bs->GetE1();
-    }
-    else {
-      u = ADNVectorMath::CrossProduct(new_z, normal);
-    }
-    ADNVectorMath::AddRowToMatrix(subspace, u);
-    ADNVectorMath::AddRowToMatrix(subspace, normal);
-  }
-  else {
-    subspace = ADNVectorMath::FindOrthogonalSubspace(new_z);
-  }
-  ADNVectorMath::AddRowToMatrix(subspace, new_z);
-  // to calculate untwisted positions
-  ublas::matrix<double> new_basisNoTwist = subspace;
-  // apply rotation to basis (rotation has to be negative)
-  double angle = -ADNVectorMath::DegToRad(initialAngleDegrees) - ADNVectorMath::DegToRad(bs->GetNumber() * ADNConstants::BP_ROT);
-  ublas::matrix<double> rot_mat = ADNVectorMath::MakeRotationMatrix(new_z, angle);
-  ublas::matrix<double> new_basis = ADNVectorMath::ApplyTransformation(rot_mat, subspace);
-  // Apply transformation
-  new_basis = ublas::trans(new_basis);
-  ublas::matrix<double> new_pos = ADNVectorMath::ApplyTransformation(new_basis, input);
-  new_pos = ADNVectorMath::Translate(new_pos, t_vec);
-  // Apply transformation for non twisted postions
-  new_basisNoTwist = ublas::trans(new_basisNoTwist);
-  ublas::matrix<double> new_posNoTwist = ADNVectorMath::ApplyTransformation(new_basisNoTwist, input);
-  new_posNoTwist = ADNVectorMath::Translate(new_posNoTwist, t_vec);
-
-  if (nt_l != nullptr) {
-    nt_l->SetE1(ublas::column(new_basis, 0));
-    nt_l->SetE2(ublas::column(new_basis, 1));
-    nt_l->SetE3(ublas::column(new_basis, 2));
-
-    //ublas::vector<double> e3 = nt_l->GetE3();
-    //std::string msg = std::to_string(e3[0]) + " " + std::to_string(e3[1]) + " " + std::to_string(e3[2]);
-    //ADNLogger& logger = ADNLogger::GetLogger();
-    //logger.LogDebug(msg);
-
-    // Set new residue positions
-    SBPosition3 p_left = UblasToSBPosition(ublas::row(new_pos, 0));
-    nt_l->SetPosition(p_left);
-    SBPosition3 p_bb_left = UblasToSBPosition(ublas::row(new_pos, 1));
-    nt_l->SetBackbonePosition(p_bb_left);
-    SBPosition3 p_sc_left = UblasToSBPosition(ublas::row(new_pos, 2));
-    nt_l->SetSidechainPosition(p_sc_left);
-    // Set untwisted positions
-    //p_left = UblasToSBPosition(ublas::row(new_posNoTwist, 0));
-    //nt_l->SetPositionNoTwist(p_left);
-    //p_bb_left = UblasToSBPosition(ublas::row(new_posNoTwist, 1));
-    //nt_l->SetBackboneCenterNoTwist(p_bb_left);
-    //p_sc_left = UblasToSBPosition(ublas::row(new_posNoTwist, 2));
-    //nt_l->SetSidechainCenterNoTwist(p_sc_left);
-  }
-  
-  if (nt_r != nullptr) {
-    // right nt has a slightly different basis
-    ublas::matrix<double> local_basis = ublas::identity_matrix<double>(3);
-    local_basis.at_element(0, 0) = -1;
-    local_basis.at_element(1, 1) = -1;
-    local_basis.at_element(2, 2) = -1;
-    auto basis_r = ublas::prod(new_basis, local_basis);
-    //auto basis_r = ublas::prod(new_basis, ublas::identity_matrix<double>(3));
-    nt_r->SetE1(ublas::column(basis_r, 0));
-    nt_r->SetE2(ublas::column(basis_r, 1));
-    nt_r->SetE3(ublas::column(basis_r, 2));
-
-    //ublas::vector<double> e3 = nt_r->GetE3();
-    //std::string msg = std::to_string(e3[0]) + " " + std::to_string(e3[1]) + " " + std::to_string(e3[2]);
-    //ADNLogger& logger = ADNLogger::GetLogger();
-    //logger.LogDebug(msg);
-
-    // Set positions
-    SBPosition3 p_right = UblasToSBPosition(ublas::row(new_pos, 3));
-    nt_r->SetPosition(p_right);
-    SBPosition3 p_bb_right = UblasToSBPosition(ublas::row(new_pos, 4));
-    nt_r->SetBackbonePosition(p_bb_right);
-    SBPosition3 p_sc_right = UblasToSBPosition(ublas::row(new_pos, 5));
-    nt_r->SetSidechainPosition(p_sc_right);
-    // Set untwisted positions
-    //p_right = UblasToSBPosition(ublas::row(new_posNoTwist, 3));
-    //nt_r->SetPositionNoTwist(p_right);
-    //p_bb_right = UblasToSBPosition(ublas::row(new_posNoTwist, 4));
-    //nt_r->SetBackboneCenterNoTwist(p_bb_right);
-    //p_sc_right = UblasToSBPosition(ublas::row(new_posNoTwist, 5));
-    //nt_r->SetSidechainCenterNoTwist(p_sc_right); 
-  }
+  return positions;
 }
 
 void DASBackToTheAtom::SetPositionLoopNucleotides(ADNPointer<ADNBaseSegment> bs) {
@@ -362,6 +298,78 @@ void DASBackToTheAtom::CheckDistances(ADNPointer<ADNPart> part)
         }
       }
     }
+  }
+}
+
+void DASBackToTheAtom::UntwistNucleotidePosition(ADNPointer<ADNNucleotide> nt)
+{
+  ADNPointer<ADNBaseSegment> bs = nt->GetBaseSegment();
+
+  ADNPointer<ADNCell> cell = bs->GetCell();
+  if (cell->GetType() != CellType::BasePair) return;
+
+  ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(cell());
+  ADNPointer<ADNNucleotide> nt_l = bp->GetLeftNucleotide();
+  ADNPointer<ADNNucleotide> nt_r = bp->GetRightNucleotide();
+
+  if (nt_r == nullptr && nt_l == nullptr) return;
+
+  NtPair pair = GetIdealBasePairNucleotides(nt_l, nt_r);
+  ADNPointer<ADNNucleotide> nt_left = pair.first;
+  ADNPointer<ADNNucleotide> nt_right = pair.second;
+  ublas::matrix<double> positions = CreatePositionsMatrix(pair);
+
+  ublas::matrix<double> basisNoTwist = CalculateBaseSegmentBasis(bs);
+
+  // Place c.o.m. at bs position
+  ublas::vector<double> sys_cm = ADNAuxiliary::SBPositionToUblas(bs->GetPosition());
+  ublas::vector<double> t_vec = sys_cm - ADNVectorMath::CalculateCM(positions);
+  ublas::matrix<double> input = ublas::matrix<double>(6, 3);
+
+  ublas::row(input, 0) = ADNAuxiliary::SBPositionToUblas(nt_left->GetPosition());
+  ublas::row(input, 1) = ADNAuxiliary::SBPositionToUblas(nt_left->GetBackbonePosition());
+  ublas::row(input, 2) = ADNAuxiliary::SBPositionToUblas(nt_left->GetSidechainPosition());
+  ublas::row(input, 3) = ADNAuxiliary::SBPositionToUblas(nt_right->GetPosition());
+  ublas::row(input, 4) = ADNAuxiliary::SBPositionToUblas(nt_right->GetBackbonePosition());
+  ublas::row(input, 5) = ADNAuxiliary::SBPositionToUblas(nt_right->GetSidechainPosition());
+  // Apply transformation for non twisted postions
+  basisNoTwist = ublas::trans(basisNoTwist);
+  ublas::matrix<double> posNoTwist = ADNVectorMath::ApplyTransformation(basisNoTwist, input);
+  posNoTwist = ADNVectorMath::Translate(posNoTwist, t_vec);
+
+  if (nt_l != nullptr) {
+    nt_l->SetE1(ublas::column(basisNoTwist, 0));
+    nt_l->SetE2(ublas::column(basisNoTwist, 1));
+    nt_l->SetE3(ublas::column(basisNoTwist, 2));
+
+    // Set new residue positions
+    SBPosition3 p_left = UblasToSBPosition(ublas::row(posNoTwist, 0));
+    nt_l->SetPosition(p_left);
+    SBPosition3 p_bb_left = UblasToSBPosition(ublas::row(posNoTwist, 1));
+    nt_l->SetBackbonePosition(p_bb_left);
+    SBPosition3 p_sc_left = UblasToSBPosition(ublas::row(posNoTwist, 2));
+    nt_l->SetSidechainPosition(p_sc_left);
+  }
+
+  if (nt_r != nullptr) {
+    // right nt has a slightly different basis
+    ublas::matrix<double> local_basis = ublas::identity_matrix<double>(3);
+    local_basis.at_element(0, 0) = -1;
+    local_basis.at_element(1, 1) = -1;
+    local_basis.at_element(2, 2) = -1;
+    auto basis_r = ublas::prod(basisNoTwist, local_basis);
+    //auto basis_r = ublas::prod(new_basis, ublas::identity_matrix<double>(3));
+    nt_r->SetE1(ublas::column(basis_r, 0));
+    nt_r->SetE2(ublas::column(basis_r, 1));
+    nt_r->SetE3(ublas::column(basis_r, 2));
+
+    // Set positions
+    SBPosition3 p_right = UblasToSBPosition(ublas::row(posNoTwist, 3));
+    nt_r->SetPosition(p_right);
+    SBPosition3 p_bb_right = UblasToSBPosition(ublas::row(posNoTwist, 4));
+    nt_r->SetBackbonePosition(p_bb_right);
+    SBPosition3 p_sc_right = UblasToSBPosition(ublas::row(posNoTwist, 5));
+    nt_r->SetSidechainPosition(p_sc_right);
   }
 }
 
@@ -1030,6 +1038,72 @@ std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> DASBackToTheAtom
   }
 
   return std::make_pair(nt_left, nt_right);
+}
+
+NtPair DASBackToTheAtom::GetIdealBasePairNucleotides(ADNPointer<ADNNucleotide> nt_l, ADNPointer<ADNNucleotide> nt_r)
+{
+  // scaffold nucleotide is always on the left
+  std::pair<DNABlocks, DNABlocks> pair_type;
+  if (nt_l == nullptr) {
+    pair_type = std::make_pair(ADNModel::GetComplementaryBase(nt_r->GetType()), nt_r->GetType());
+  }
+  else if (nt_r == nullptr) {
+    pair_type = std::make_pair(nt_l->GetType(), ADNModel::GetComplementaryBase(nt_l->GetType()));
+  }
+  else {
+    pair_type = std::make_pair(nt_l->GetType(), nt_r->GetType());
+  }
+
+  NtPair pair = da_dt_;
+
+  if (pair_type == std::make_pair(DNABlocks::DA, DNABlocks::DT)) {
+    pair = da_dt_;
+  }
+  else if (pair_type == std::make_pair(DNABlocks::DC, DNABlocks::DG)) {
+    pair = dc_dg_;
+  }
+  else if (pair_type == std::make_pair(DNABlocks::DG, DNABlocks::DC)) {
+    pair = dg_dc_;
+  }
+  else if (pair_type == std::make_pair(DNABlocks::DT, DNABlocks::DA)) {
+    pair = dt_da_;
+  }
+
+  return pair;
+}
+
+ublas::matrix<double> DASBackToTheAtom::CalculateBaseSegmentBasis(ADNPointer<ADNBaseSegment> bs)
+{
+  ublas::vector<double> new_z(3);
+  auto direction = bs->GetE3();
+  new_z[0] = direction[0];
+  new_z[1] = direction[1];
+  new_z[2] = direction[2];
+  new_z /= ublas::norm_2(new_z);
+  bs->SetE3(new_z);
+  // if normal_ or u_ are defined we already have the subspace
+  ublas::matrix<double> subspace(0, 3);
+  if (ublas::norm_2(bs->GetE2()) > 0) {
+    ublas::vector<double> normal = bs->GetE2();
+    ublas::vector<double> u(3);
+    if (ublas::norm_2(bs->GetE1()) > 0) {
+      u = bs->GetE1();
+    }
+    else {
+      u = ADNVectorMath::CrossProduct(new_z, normal);
+      bs->SetE1(u);
+    }
+    ADNVectorMath::AddRowToMatrix(subspace, u);
+    ADNVectorMath::AddRowToMatrix(subspace, normal);
+  }
+  else {
+    subspace = ADNVectorMath::FindOrthogonalSubspace(new_z);
+    bs->SetE1(ublas::row(subspace, 0));
+    bs->SetE2(ublas::row(subspace, 1));
+  }
+  ADNVectorMath::AddRowToMatrix(subspace, new_z);
+
+  return subspace;
 }
 
 ADNPointer<ADNNucleotide> DASBackToTheAtom::ParsePDB(std::string source) {
