@@ -815,10 +815,12 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph()
       SBPointer<SBBackbone> bb = res->getBackbone();
       SBPointerList<SBStructuralNode> bbAtoms = *bb->getChildren();
       SB_FOR(SBStructuralNode* at, bbAtoms) {
-        SBPointer<SBAtom> atom = static_cast<SBAtom*>(at);
-        pos += atom->getPosition();
-        bbPos += atom->getPosition();
-        ++count;
+        if (at->getType() == SBNode::Atom) {
+          SBPointer<SBAtom> atom = static_cast<SBAtom*>(at);
+          pos += atom->getPosition();
+          bbPos += atom->getPosition();
+          ++count;
+        }
       }
       bbPos /= count;
       int scCount = 0;
@@ -826,11 +828,13 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph()
       SBPointer<SBSideChain> sc = res->getSideChain();
       SBPointerList<SBStructuralNode> scAtoms = *sc->getChildren();
       SB_FOR(SBStructuralNode* at, scAtoms) {
-        SBPointer<SBAtom> atom = static_cast<SBAtom*>(at);
-        pos += atom->getPosition();
-        scPos += atom->getPosition();
-        ++count;
-        ++scCount;
+        if (at->getType() == SBNode::Atom) {
+          SBPointer<SBAtom> atom = static_cast<SBAtom*>(at);
+          pos += atom->getPosition();
+          scPos += atom->getPosition();
+          ++count;
+          ++scCount;
+        }
       }
       pos /= count;
       scPos /= scCount;
