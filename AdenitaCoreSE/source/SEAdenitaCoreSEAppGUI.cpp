@@ -560,6 +560,12 @@ void SEAdenitaCoreSEAppGUI::onFromDatagraph()
   t->FromDatagraph();
 }
 
+void SEAdenitaCoreSEAppGUI::onUntwistNucleotide()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->UntwistNucleotide();
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";

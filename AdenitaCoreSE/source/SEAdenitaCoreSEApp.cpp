@@ -395,6 +395,16 @@ void SEAdenitaCoreSEApp::FromDatagraph()
   ResetVisualModel();
 }
 
+void SEAdenitaCoreSEApp::UntwistNucleotide()
+{
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  DASBackToTheAtom btta;
+  SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+    btta.UntwistNucleotidePosition(nt);
+  }
+  ResetVisualModel();
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   ADNLogger& logger = ADNLogger::GetLogger();

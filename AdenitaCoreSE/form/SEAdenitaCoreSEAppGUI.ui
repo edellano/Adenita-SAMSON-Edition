@@ -463,21 +463,21 @@
            <x>0</x>
            <y>0</y>
            <width>1311</width>
-           <height>41</height>
+           <height>54</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="8">
+           <widget class="QPushButton" name="btnDSRing">
+            <property name="text">
+             <string>dsDNA Ring</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="9">
            <widget class="QPushButton" name="btnCatenanes">
             <property name="text">
              <string>Catenanes</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="7">
-           <widget class="QPushButton" name="btnTwistDoubleHelix">
-            <property name="text">
-             <string>Twist Double Helix</string>
             </property>
            </widget>
           </item>
@@ -488,13 +488,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="8">
-           <widget class="QPushButton" name="btnDSRing">
-            <property name="text">
-             <string>dsDNA Ring</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="11">
            <widget class="QPushButton" name="btnCalculateBindingRegions">
             <property name="text">
@@ -502,17 +495,10 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="10">
-           <widget class="QPushButton" name="btnKinetoplast">
+          <item row="0" column="7">
+           <widget class="QPushButton" name="btnTwistDoubleHelix">
             <property name="text">
-             <string>Kinetoplast</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3" colspan="2">
-           <widget class="QPushButton" name="btnCenterPart">
-            <property name="text">
-             <string>Center Part</string>
+             <string>Twist Double Helix</string>
             </property>
            </widget>
           </item>
@@ -537,10 +523,31 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="3" colspan="2">
+           <widget class="QPushButton" name="btnCenterPart">
+            <property name="text">
+             <string>Center Part</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="10">
+           <widget class="QPushButton" name="btnKinetoplast">
+            <property name="text">
+             <string>Kinetoplast</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QPushButton" name="btnDataGraph">
             <property name="text">
              <string>From Datagraph</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="btnUntwist">
+            <property name="text">
+             <string>Untwist nuccleotide</string>
             </property>
            </widget>
           </item>
@@ -875,6 +882,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnUntwist</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onUntwistNucleotide()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>63</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -899,5 +922,6 @@
   <slot>onTestNeighbors()</slot>
   <slot>onOxDNAImport()</slot>
   <slot>onFromDatagraph()</slot>
+  <slot>onUntwistNucleotide()</slot>
  </slots>
 </ui>
