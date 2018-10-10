@@ -4,6 +4,7 @@
 #include "SEAdenitaVisualModelPropertiesDescriptor.hpp"
 #include "ADNModelDescriptor.hpp"
 #include "ADNPartDescriptor.hpp"
+#include "ADNConformationsDescriptor.hpp"
 #include "SEWireframeEditorDescriptor.hpp"
 #include "SEBreakEditorDescriptor.hpp"
 #include "SEDeleteEditorDescriptor.hpp"
@@ -39,6 +40,7 @@ SB_ELEMENT_CLASSES_BEGIN;
   SB_ELEMENT_CLASS(ADNBaseSegment);
   SB_ELEMENT_CLASS(ADNDoubleStrand);
   SB_ELEMENT_CLASS(ADNPart);
+  SB_ELEMENT_CLASS(ADNConformation);
   SB_ELEMENT_CLASS(PIBindingRegion);
   SB_ELEMENT_CLASS(SEAdenitaVisualModel);
   SB_ELEMENT_CLASS(SEAdenitaVisualModelProperties);

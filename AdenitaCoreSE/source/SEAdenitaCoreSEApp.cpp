@@ -65,6 +65,17 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
   part = cad.CreateCadnanoPart(filename.toStdString());
   
   AddPartToActiveLayer(part);
+
+  cad.CreateConformations(part);
+  auto conf3D = cad.Get3DConformation();
+  auto conf2D = cad.Get2DConformation();
+  auto conf1D = cad.Get1DConformation();
+  conf3D->create();
+  conf2D->create();
+  conf1D->create();
+  SAMSON::getActiveDocument()->addChild(conf3D());
+  SAMSON::getActiveDocument()->addChild(conf2D());
+  SAMSON::getActiveDocument()->addChild(conf1D());
 }
 
 void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, ADNPointer<ADNPart> part)

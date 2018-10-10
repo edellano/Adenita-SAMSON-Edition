@@ -320,41 +320,6 @@ bool ADNNucleotide::GlobalBaseIsSet() {
   return set;
 }
 
-//void ADNNucleotide::CopyAtoms(ADNPointer<ADNNucleotide> target) {
-//
-//  ADNPointer<ADNBackbone> bb(new ADNBackbone());
-//  ADNPointer<ADNSidechain> sc(new ADNSidechain());
-//
-//  std::map<int, int> atomMap;
-//
-//  ADNPointer<ADNBackbone> bbO = GetBackbone();
-//  auto bb0Atoms = bbO->GetAtoms();
-//  SB_FOR(ADNPointer<ADNAtom> oat, bb0Atoms) {
-//    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
-//    bb->AddAtom(atom);
-//    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
-//  }
-//  ADNPointer<ADNSidechain> scO = GetSidechain();
-//  auto sc0Atoms = scO->GetAtoms();
-//  SB_FOR(ADNPointer<ADNAtom> oat, sc0Atoms) {
-//    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
-//    sc->AddAtom(atom);
-//    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
-//  }
-//
-//  /*auto bonds = GetBonds();
-//  for (auto b : bonds) {
-//    ADNPointer<ADNAtom> b1 = b.first;
-//    ADNPointer<ADNAtom> b2 = b.second;
-//    auto newB1 = atomMap.at(b1);
-//    auto newB2 = atomMap.at(b2);
-//    target->AddBond(newB1, newB2);
-//  }*/
-//
-//  target->SetBackbone(bb);
-//  target->SetSidechain(sc);
-//}
-
 ADNSingleStrand::ADNSingleStrand(const ADNSingleStrand & other)
 {
   *this = other;
