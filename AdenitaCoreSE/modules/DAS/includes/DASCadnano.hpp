@@ -12,6 +12,7 @@
 #include "ADNNanorobot.hpp"
 #include "ADNAuxiliary.hpp"
 #include "ADNConstants.hpp"
+#include "ADNConformations.hpp"
 #include "DASLattices.hpp"
 
 
@@ -74,7 +75,9 @@ struct VGrid {
 
   void AddTube(VTube tube);
 
-  SBPosition3 GetGridCellPos3D(int vStrandId, int z, unsigned int row, unsigned int column);
+  SBPosition3 GetGridCellPos3D(int z, unsigned int row, unsigned int column);
+  SBPosition3 GetGridCellPos2D(int vStrandId, int z, bool isScaffold);
+  SBPosition3 GetGridCellPos1D(int vStrandId, int ntId);
 };
 
 class DASCadnano {
@@ -83,6 +86,14 @@ private:
   CadnanoJSONFile json_;
   VGrid vGrid_;
   std::map<Vstrand*, std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>>> cellBsMap_;
+  //! To speed up calculation of 1D conformation we keep track to relative position of nt whithin the single strand
+  std::map<ADNNucleotide*, int> ntPositions_;
+  std::map<ADNSingleStrand*, int> ssId_;
+  int lastKey = -1;
+
+  SBPointer<SBMStructuralModelConformation> conformation3D_;
+  SBPointer<SBMStructuralModelConformation> conformation2D_;
+  SBPointer<SBMStructuralModelConformation> conformation1D_;
 
   void ParseJSON(std::string filename);
   void ParseCadnanoFormat3(Document& d);
@@ -96,10 +107,18 @@ private:
 
   static DNABlocks GetComplementaryBase(DNABlocks type);
   bool IsThereBase(vec4 data);
+  void AddSingleStrandToMap(ADNPointer<ADNSingleStrand> ss);
 
 public:
   DASCadnano() = default;
   ~DASCadnano() = default;
 
+  SBPointer<SBMStructuralModelConformation> Get3DConformation();
+  SBPointer<SBMStructuralModelConformation> Get2DConformation();
+  SBPointer<SBMStructuralModelConformation> Get1DConformation();
+
   ADNPointer<ADNPart> CreateCadnanoPart(std::string file);
+
+  //! once 3D model has been created, set 2D and 1D positions
+  void CreateConformations(ADNPointer<ADNPart> nanorobot);
 };

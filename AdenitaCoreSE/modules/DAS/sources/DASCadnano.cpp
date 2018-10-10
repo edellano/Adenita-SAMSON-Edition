@@ -169,8 +169,8 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
     bool firstBs = true;
 
     Vstrand* vs = &json_.vstrands_[tube.vStrandId_];
-    SBPosition3 initPos = vGrid_.GetGridCellPos3D(tube.vStrandId_, tube.initPos_, vs->row_, vs->col_);
-    SBPosition3 endPos = vGrid_.GetGridCellPos3D(tube.vStrandId_, tube.endPos_, vs->row_, vs->col_);
+    SBPosition3 initPos = vGrid_.GetGridCellPos3D(tube.initPos_, vs->row_, vs->col_);
+    SBPosition3 endPos = vGrid_.GetGridCellPos3D(tube.endPos_, vs->row_, vs->col_);
     int length = tube.endPos_ - tube.initPos_ + 1;
     SBVector3 dir = (endPos - initPos).normalizedVersion();
 
@@ -191,7 +191,7 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
       int max_iter = vs->loops_[tube.initPos_ + i];
       if (max_iter > 0) max_iter = 1;  // a loop is contained in a base segment
       for (int k = 0; k <= max_iter; k++) {
-        fp = vGrid_.GetGridCellPos3D(tube.vStrandId_, tube.initPos_ + i, vs->row_, vs->col_);
+        fp = vGrid_.GetGridCellPos3D(tube.initPos_ + i, vs->row_, vs->col_);
         double factor = 1.0;
         if ((vs->row_ + vs->col_) % 2 == 0) factor = -1.0;
 
@@ -230,6 +230,7 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNPart> nanorobot)
   scaff->SetName("Scaffold");
   scaff->IsScaffold(true);
   nanorobot->RegisterSingleStrand(scaff);
+  AddSingleStrandToMap(scaff);
 
   //trace scaffold through vstrands
   TraceSingleStrand(startVstrand, startVstrandPos, scaff, nanorobot);
@@ -261,6 +262,7 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot)
     ++sid;
     staple->IsScaffold(false);
     nanorobot->RegisterSingleStrand(staple);
+    AddSingleStrandToMap(staple);
 
     TraceSingleStrand(vStrandId, z, staple, nanorobot, false);
   }
@@ -280,6 +282,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
   vec4 curVstrandElem;
   if (left) curVstrandElem = vstrands[startVStrand].scaf_[startVStrandPos];
   else curVstrandElem = vstrands[startVStrand].stap_[startVStrandPos];
+  int count = 0;
   while (true) {
 
     std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> bs_positions = cellBsMap_.at(&json_.vstrands_[vStrandId]);
@@ -304,8 +307,10 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
         //add loop
         ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
         nanorobot->RegisterNucleotideThreePrime(ss, nt);
+        ntPositions_.insert(std::make_pair(nt(), count));
+        ++count;
 
-        SBPosition3 pos3D = vGrid_.GetGridCellPos3D(vStrandId, z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
+        SBPosition3 pos3D = vGrid_.GetGridCellPos3D(z, vstrands[vStrandId].row_, vstrands[vStrandId].col_);
 
         // fetch base segment
         int p = 0;
@@ -382,6 +387,60 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
   }
 }
 
+void DASCadnano::CreateConformations(ADNPointer<ADNPart> nanorobot)
+{
+  std::string name = json_.name_;
+  SBNodeIndexer nodeIndexer;
+  nanorobot->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNAtom")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  conformation3D_ = new SBMStructuralModelConformation(name + " 3D", nodeIndexer);
+  conformation2D_ = new SBMStructuralModelConformation(name + " 2D", nodeIndexer);
+  conformation1D_ = new SBMStructuralModelConformation(name + " 1D", nodeIndexer);
+
+  for (auto it = cellBsMap_.begin(); it != cellBsMap_.end(); ++it) {
+    Vstrand* vs = it->first;
+    int vStrandId = vs->num_;
+    std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> values = it->second;
+
+    for (auto jt = values.begin(); jt != values.end(); ++jt) {
+      std::pair<int, int> bsNumAndLoop = jt->first;
+      ADNPointer<ADNBaseSegment> bs = jt->second;
+      int z = bsNumAndLoop.first;
+      auto nts = bs->GetNucleotides();
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+        ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
+        SBPosition3 pos2D = vGrid_.GetGridCellPos2D(vStrandId, z, ss->IsScaffold());
+        SBPosition3 pos1D = vGrid_.GetGridCellPos1D(ssId_[ss()], ntPositions_[nt()]);
+        auto ats = nt->GetBackbone()->GetAtoms();
+        SB_FOR(ADNPointer<ADNAtom> at, ats) {
+          conformation2D_->setPosition(at(), pos2D);
+          conformation1D_->setPosition(at(), pos1D);
+        }
+        ats = nt->GetSidechain()->GetAtoms();
+        SB_FOR(ADNPointer<ADNAtom> at, ats) {
+          conformation2D_->setPosition(at(), pos2D);
+          conformation1D_->setPosition(at(), pos1D);
+        }
+      }
+    }
+  }
+}
+
+SBPointer<SBMStructuralModelConformation> DASCadnano::Get3DConformation()
+{
+  return conformation3D_;
+}
+
+SBPointer<SBMStructuralModelConformation> DASCadnano::Get2DConformation()
+{
+  return conformation2D_;
+}
+
+SBPointer<SBMStructuralModelConformation> DASCadnano::Get1DConformation()
+{
+  return conformation1D_;
+}
+
 ADNPointer<ADNPart> DASCadnano::CreateCadnanoPart(std::string file)
 {
   ParseJSON(file);
@@ -398,6 +457,13 @@ bool DASCadnano::IsThereBase(vec4 data) {
   if ((data.n0 != -1 && data.n1 != -1) || (data.n2 != -1 && data.n3 != -1)) base = true;
 
   return base;
+}
+
+void DASCadnano::AddSingleStrandToMap(ADNPointer<ADNSingleStrand> ss)
+{
+  int key = lastKey + 1;
+  ssId_.insert(std::make_pair(ss(), key));
+  lastKey = key;
 }
 
 void VGrid::CreateLattice(LatticeType lType)
@@ -418,10 +484,44 @@ void VGrid::AddTube(VTube tube)
   vDoubleStrands_.push_back(tube);
 }
 
-SBPosition3 VGrid::GetGridCellPos3D(int vStrandId, int z, unsigned int row, unsigned int column)
+SBPosition3 VGrid::GetGridCellPos3D(int z, unsigned int row, unsigned int column)
 {
   auto zPos = z * bp_rise_;
   LatticeCell lc = lattice_.GetLatticeCell(row, column);
   SBPosition3 pos = SBPosition3(SBQuantity::nanometer(zPos), SBQuantity::nanometer(lc.x_), SBQuantity::nanometer(lc.y_));
+  return pos;
+}
+
+SBPosition3 VGrid::GetGridCellPos2D(int vStrandId, int z, bool isScaffold)
+{
+  SBPosition3 pos;
+  double hPos = vStrandId * ADNConstants::DH_DIAMETER;
+  double zPos = z * ADNConstants::BP_RISE;
+  
+  if (vStrandId % 2 == 0) {
+    if (!isScaffold) hPos += ADNConstants::BP_CADNANO_DIST;
+  }
+  else {
+    if (isScaffold) hPos += ADNConstants::BP_CADNANO_DIST;
+  }
+
+  pos[0] = SBQuantity::nanometer(zPos);
+  pos[1] = SBQuantity::nanometer(hPos);
+  pos[2] = SBQuantity::nanometer(0.0);
+
+  return pos;
+}
+
+SBPosition3 VGrid::GetGridCellPos1D(int ssId, int ntNum)
+{
+  SBPosition3 pos;
+
+  double x = ssId * ADNConstants::DH_DIAMETER;
+  double y = -ntNum / 2.0f;
+
+  pos[0] = SBQuantity::nanometer(x);
+  pos[1] = SBQuantity::nanometer(y);
+  pos[2] = SBQuantity::nanometer(0.0);
+
   return pos;
 }
