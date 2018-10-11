@@ -1247,28 +1247,40 @@ void SEAdenitaVisualModel::displayBaseBairConnections()
   ADNArray<float> colors = ADNArray<float>(4, nPositions);
   ADNArray<unsigned int> flags = ADNArray<unsigned int>(nPositions);
 
-  unsigned int posIndex = 0;
+  unsigned int j = 0;
   std::vector<unsigned int> registerIndices;
   for (auto &p : ntMap) {
     ADNPointer<ADNNucleotide> nt = p.first;
     ADNPointer<ADNNucleotide> pair = nt->GetPair();
-    unsigned int numNtPaired = p.second;
-    colors.SetRow(numNtPaired, baseColors->GetColor(nt));
+    unsigned int index = p.second;
+    //colors.SetRow(numNtPaired, baseColors->GetColor(nt));
    
-    positions_(numNtPaired, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
-    positions_(numNtPaired, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
-    positions_(numNtPaired, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
+    colors(index, 0) = 1.0f;
+    colors(index, 1) = 0.0f;
+    colors(index, 2) = 0.0f;
+    colors(index, 3) = 1.0f;
 
-    radii(numNtPaired) = config.nucleotide_E_radius;
-    flags(numNtPaired) = 0;
+    positions_(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
+    positions_(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
+    positions_(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
 
-    if (std::find(registerIndices.begin(), registerIndices.end(), ntMap[pair()]) == registerIndices.end()) {
-      // we only need to insert the indices once per pair
-      indices(2 * posIndex) = numNtPaired;
-      indices(2 * posIndex + 1) = ntMap[pair()];
-      registerIndices.push_back(numNtPaired);
-      ++posIndex;
-    }
+    //radii(index) = config.nucleotide_E_radius;
+    radii(index) = 100;
+    flags(index) = 0;
+
+
+    indices(2 * j) = index;
+    indices(2 * j + 1) = ntMap[pair()];
+    //registerIndices.push_back(index);
+    ++j;
+
+    //if (std::find(registerIndices.begin(), registerIndices.end(), ntMap[pair()]) == registerIndices.end()) {
+    //  // we only need to insert the indices once per pair
+    //  indices(2 * j) = index;
+    //  indices(2 * j + 1) = ntMap[pair()];
+    //  registerIndices.push_back(index);
+    //  ++j;
+    //}
   }
 
   SAMSON::displayCylinders(
