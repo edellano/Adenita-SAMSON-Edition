@@ -78,12 +78,14 @@
 //}
 
 // todo: calculate positions
-ADNPointer<ADNDoubleStrand> DASCreator::CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction)
+ADNPointer<ADNDoubleStrand> DASCreator::CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction, bool mock)
 {
-  return AddDoubleStrandToADNPart(part, length, start, direction);
+  ADNPointer<ADNDoubleStrand> ds = AddDoubleStrandToADNPart(part, length, start, direction, mock);
+
+  return ds;
 }
 
-ADNPointer<ADNSingleStrand> DASCreator::CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction)
+ADNPointer<ADNSingleStrand> DASCreator::CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction, bool mock)
 {
   return AddSingleStrandToADNPart(part, length, start, direction);
 }
@@ -171,12 +173,8 @@ ADNPointer<ADNPart> DASCreator::CreateNanotube(SBQuantity::length radius, SBPosi
       pos_p[2] = 0.0;
       ublas::vector<double> trf = ublas::prod(ublas::trans(subspace), pos_p);
       SBPosition3 dsPosition = SBPosition3(SBQuantity::picometer(trf[0]), SBQuantity::picometer(trf[1]), SBQuantity::picometer(trf[2])) + center;
-      if (mock) {
-        AddMockDoubleStrandToADNPart(nanorobot, length, dsPosition, direction);
-      }
-      else {
-        AddDoubleStrandToADNPart(nanorobot, length, dsPosition, direction);
-      }
+      AddDoubleStrandToADNPart(nanorobot, length, dsPosition, direction, mock);
+
       t += newTheta;
     }
 
@@ -207,21 +205,58 @@ ADNPointer<ADNPart> DASCreator::CreateDSRing(SBQuantity::length radius, SBPositi
   return part;
 }
 
-ADNPointer<ADNPart> DASCreator::CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock)
+ADNPointer<ADNPart> DASCreator::CreateLinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int number, bool mock)
 {
   ADNPointer<ADNPart> part = new ADNPart();
   // calculate overlap
-  SBQuantity::length dist = radius*0.7;
+  SBQuantity::length dist = radius*0.8;
+  // total distance spanning the catenanes
+  SBQuantity::length totalLength = 2 * radius*number - dist*(number - 1);
   SBVector3 v = SBVector3(1.0, 0.0, 0.0);
   SBVector3 w = SBVector3(0.0, 1.0, 0.0);
-  auto center1 = center - dist*v;
-  auto center2 = center + dist*v;
+
+  SBPosition3 start = center - (totalLength*0.5 + radius)*v;
   double pi = atan(1.0) * 4.0;
   double theta = pi*0.5*0.95;
-  auto normal1 = normal+cos(theta)*w;
-  auto normal2 = normal+cos(theta)*(-w);
-  DASCreator::AddDSRingToADNPart(part, radius, center1, normal1.normalizedVersion());
-  DASCreator::AddDSRingToADNPart(part, radius, center2, normal2.normalizedVersion());
+  for (int i = 0; i < number; i++) {
+    auto n = normal+cos(theta)*w;
+    DASCreator::AddDSRingToADNPart(part, radius, start, n.normalizedVersion());
+    // calculate next center and normal
+    start = start + (2 * radius - dist)*v;
+    w *= -1.0;
+  }
+
+  return part;
+}
+
+ADNPointer<ADNPart> DASCreator::CreateHexagonalCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols, bool mock)
+{
+  ADNPointer<ADNPart> part = new ADNPart();
+
+  double edgeDist = radius.getValue() * 2 * 0.8;
+  DASLattice lattice = DASLattice(LatticeType::Honeycomb, edgeDist, rows, cols);
+
+  double pi = atan(1.0) * 4.0;
+  double w = 1.0;
+  double theta = 0.1;
+  // create a ring at every point of the lattice
+  auto numRows = lattice.GetNumberRows();
+  auto numCols = lattice.GetNumberCols();
+  for (unsigned int i = 0; i < numRows; ++i) {
+    for (unsigned int j = 0; j < numCols; ++j) {
+      auto sigW = w;
+      if ((i + j) % 2 == 0) sigW *= -1.0;
+      LatticeCell cell = lattice.GetLatticeCell(i, j);
+      SBPosition3 c = SBPosition3(SBQuantity::picometer(cell.x_), SBQuantity::picometer(cell.y_), SBQuantity::nanometer(0.0)) + center;
+
+      ublas::vector<double> normal(3.0, 0.0);
+      normal[0] = 1.0;
+      normal[1] = theta;
+      normal[2] = pi * 0.5 + sigW * pi * 0.5;
+      SBVector3 n = ADNAuxiliary::UblasVectorToSBVector(ADNVectorMath::Spherical2Cartesian(normal));
+      DASCreator::AddDSRingToADNPart(part, radius, c, n.normalizedVersion());
+    }
+  }
 
   return part;
 }
@@ -269,13 +304,6 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddDSRingToADNPart(ADNPointer<ADNPart> p
     Position3D pos = center;
     pos += a*ADNAuxiliary::UblasVectorToSBVector(xVec);
     pos += b*ADNAuxiliary::UblasVectorToSBVector(yVec);
-    /*pos[0] += a;
-    pos[1] += b;
-    pos[2] += SBQuantity::length(0.0);*/
-    // transform position to coordinate system given by normal
-    //auto new_basis = ublas::trans(subspace);
-    //auto new_pos = ublas::prod(new_basis, ADNAuxiliary::SBPositionToUblas(pos));
-    //pos = ADNAuxiliary::UblasVectorToSBPosition(new_pos);
     bs->SetPosition(pos);
     bs->SetE3(direction);
     bs->SetE2(ADNAuxiliary::SBVectorToUblasVector(normal));
@@ -316,11 +344,14 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddDSRingToADNPart(ADNPointer<ADNPart> p
 
   ssLeft->SetDefaultName();
   ssRight->SetDefaultName();
+  ssLeft->IsCircular(true);
+  ssRight->IsCircular(true);
+  ds->IsCircular(true);
 
   return ds;
 }
 
-ADNPointer<ADNDoubleStrand> DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction)
+ADNPointer<ADNDoubleStrand> DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction, bool mock)
 {
   SBPosition3 delt = SBQuantity::nanometer(ADNConstants::BP_RISE) * direction;
   SBPosition3 pos = start;
@@ -328,11 +359,17 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNP
   ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
   part->RegisterDoubleStrand(ds);
 
-  ADNPointer<ADNSingleStrand> ssLeft = new ADNSingleStrand();
-  part->RegisterSingleStrand(ssLeft);
+  ADNPointer<ADNSingleStrand> ssLeft = nullptr;
+  ADNPointer<ADNSingleStrand> ssRight = nullptr;
+  if (!mock) {
+    ssLeft = new ADNSingleStrand();
+    part->RegisterSingleStrand(ssLeft);
+    ssRight = new ADNSingleStrand();
+    part->RegisterSingleStrand(ssRight);
 
-  ADNPointer<ADNSingleStrand> ssRight = new ADNSingleStrand();
-  part->RegisterSingleStrand(ssRight);
+    ssLeft->SetDefaultName();
+    ssRight->SetDefaultName();
+  }
 
   for (size_t i = 0; i < length; ++i) {
     ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
@@ -340,57 +377,32 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNP
     bs->SetPosition(pos);
     bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(direction));
     bs->SetNumber(boost::numeric_cast<int>(i));
-
     ADNPointer<ADNBasePair> cell = new ADNBasePair();
-    // create nucleotides
-    ADNPointer<ADNNucleotide> ntLeft = new ADNNucleotide();
-    part->RegisterNucleotideThreePrime(ssLeft, ntLeft);
-    cell->SetLeftNucleotide(ntLeft);
-    ntLeft->SetPosition(bs->GetPosition());
-    ntLeft->SetBackbonePosition(bs->GetPosition());
-    ntLeft->SetSidechainPosition(bs->GetPosition());
-    ntLeft->SetBaseSegment(bs);
-    ntLeft->SetType(DNABlocks::DI);
 
-    ADNPointer<ADNNucleotide> ntRight = new ADNNucleotide();
-    part->RegisterNucleotideFivePrime(ssRight, ntRight);
-    cell->SetRightNucleotide(ntRight);
-    ntRight->SetPosition(bs->GetPosition());
-    ntRight->SetBackbonePosition(bs->GetPosition());
-    ntRight->SetSidechainPosition(bs->GetPosition());
-    ntRight->SetBaseSegment(bs);
-    ntRight->SetType(DNABlocks::DI);
+    if (!mock) {
+      // create nucleotides
+      ADNPointer<ADNNucleotide> ntLeft = new ADNNucleotide();
+      part->RegisterNucleotideThreePrime(ssLeft, ntLeft);
+      cell->SetLeftNucleotide(ntLeft);
+      ntLeft->SetPosition(bs->GetPosition());
+      ntLeft->SetBackbonePosition(bs->GetPosition());
+      ntLeft->SetSidechainPosition(bs->GetPosition());
+      ntLeft->SetBaseSegment(bs);
+      ntLeft->SetType(DNABlocks::DI);
 
-    ntLeft->SetPair(ntRight);
-    ntRight->SetPair(ntLeft);
+      ADNPointer<ADNNucleotide> ntRight = new ADNNucleotide();
+      part->RegisterNucleotideFivePrime(ssRight, ntRight);
+      cell->SetRightNucleotide(ntRight);
+      ntRight->SetPosition(bs->GetPosition());
+      ntRight->SetBackbonePosition(bs->GetPosition());
+      ntRight->SetSidechainPosition(bs->GetPosition());
+      ntRight->SetBaseSegment(bs);
+      ntRight->SetType(DNABlocks::DI);
 
+      ntLeft->SetPair(ntRight);
+      ntRight->SetPair(ntLeft);
+    }
     bs->SetCell(cell());
-
-    part->RegisterBaseSegmentEnd(ds, bs);
-
-    pos += delt;
-  }
-
-  ssLeft->SetDefaultName();
-  ssRight->SetDefaultName();
-
-  return ds;
-}
-
-ADNPointer<ADNDoubleStrand> DASCreator::AddMockDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction)
-{
-  SBPosition3 delt = SBQuantity::nanometer(ADNConstants::BP_RISE) * direction;
-  SBPosition3 pos = start;
-
-  ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
-  part->RegisterDoubleStrand(ds);
-
-  for (size_t i = 0; i < length; ++i) {
-    ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment(CellType::BasePair);
-
-    bs->SetPosition(pos);
-    bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(direction));
-    bs->SetNumber(boost::numeric_cast<int>(i));
 
     part->RegisterBaseSegmentEnd(ds, bs);
 
@@ -406,19 +418,23 @@ ADNPointer<ADNSingleStrand> DASCreator::AddSingleStrandToADNPart(ADNPointer<ADNP
   SBPosition3 pos = start;
 
   ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
-
+  part->RegisterDoubleStrand(ds);
   // create nucleotides
   ADNPointer<ADNSingleStrand> ss = new ADNSingleStrand();
+  part->RegisterSingleStrand(ss);
 
   for (size_t i = 0; i < length; ++i) {
     ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
-    ds->AddBaseSegmentEnd(bs);
+    bs->SetPosition(pos);
+    bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(direction));
+    bs->SetNumber(boost::numeric_cast<int>(i));
+    part->RegisterBaseSegmentEnd(ds, bs);
 
     ADNPointer<ADNBasePair> bp = new ADNBasePair();
     bs->SetCell(bp());
-    bs->SetPosition(pos);
 
     ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+    part->RegisterNucleotideThreePrime(ss, nt);
     nt->SetType(DNABlocks::DI);
     nt->SetPosition(bs->GetPosition());
     nt->SetBackbonePosition(bs->GetPosition());
@@ -426,12 +442,21 @@ ADNPointer<ADNSingleStrand> DASCreator::AddSingleStrandToADNPart(ADNPointer<ADNP
     nt->SetBaseSegment(bs);
     bp->SetLeftNucleotide(nt);
 
-    ss->AddNucleotideThreePrime(nt);
-
     pos += delt;
   }
 
   ss->SetDefaultName();
 
   return ss;
+}
+
+void DASCreatorEditors::resetPositions(Positions& pos)
+{
+  pos.First = SBPosition3();
+  pos.Second = SBPosition3();
+  pos.Third = SBPosition3();
+  pos.Fourth = SBPosition3();
+  pos.Fifth = SBPosition3();
+  pos.Sixth = SBPosition3();
+  pos.cnt = 0;
 }

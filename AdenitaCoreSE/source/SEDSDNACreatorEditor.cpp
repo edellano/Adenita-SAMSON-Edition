@@ -23,6 +23,95 @@ SEDSDNACreatorEditor::~SEDSDNACreatorEditor() {
 
 SEDSDNACreatorEditorGUI* SEDSDNACreatorEditor::getPropertyWidget() const { return static_cast<SEDSDNACreatorEditorGUI*>(propertyWidget); }
 
+void SEDSDNACreatorEditor::SetMode(bool m)
+{
+  dsMode_ = m;
+}
+
+void SEDSDNACreatorEditor::SetShowBox(bool s)
+{
+  showBox_ = s;
+}
+
+void SEDSDNACreatorEditor::SetBoxSize(double height, double width, double depth)
+{
+  boxHeight_ = SBQuantity::nanometer(height);
+  boxWidth_ = SBQuantity::nanometer(width);
+  boxDepth_ = SBQuantity::nanometer(depth);
+}
+
+ADNPointer<ADNPart> SEDSDNACreatorEditor::generateStrand(bool mock)
+{
+  ADNPointer<ADNPart> part = new ADNPart();
+
+  auto roundHeight = (positions_.Second - positions_.First).norm();
+  auto numNucleotides = roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE);
+  SBVector3 dir = (positions_.Second - positions_.First).normalizedVersion();
+
+  if (dsMode_) {
+    DASCreator::CreateDoubleStrand(part, numNucleotides.getValue(), positions_.First, dir, mock);
+  }
+  else {
+    DASCreator::CreateSingleStrand(part, numNucleotides.getValue(), positions_.First, dir, mock);
+  }
+
+  return part;
+}
+
+void SEDSDNACreatorEditor::displayBox()
+{
+  if (showBox_) {
+    // draw a box centered at origin
+    SBVector3 x = SBVector3(1.0, 0.0, 0.0);
+    SBVector3 y = SBVector3(0.0, 1.0, 0.0);
+    SBVector3 z = SBVector3(0.0, 0.0, 1.0);
+
+    auto xMax = boxWidth_ * 0.5;
+    auto xMin = -xMax;
+    auto yMax = boxHeight_ * 0.5;
+    auto yMin = -yMax;
+    auto zMax = boxDepth_ * 0.5;
+    auto zMin = -zMax;
+
+    SBPosition3 v1 = xMin * x + yMax * y + zMax * z;
+    SBPosition3 v2 = xMax * x + yMax * y + zMax * z;
+    SBPosition3 v3 = xMax * x + yMin * y + zMax * z;
+    SBPosition3 v4 = xMin * x + yMin * y + zMax * z;
+    SBPosition3 v5 = xMin * x + yMax * y + zMin * z;
+    SBPosition3 v6 = xMax * x + yMax * y + zMin * z;
+    SBPosition3 v7 = xMax * x + yMin * y + zMin * z;
+    SBPosition3 v8 = xMin * x + yMin * y + zMin * z;
+
+
+    ADNDisplayHelper::displayLine(v1, v2);
+    ADNDisplayHelper::displayLine(v2, v3);
+    ADNDisplayHelper::displayLine(v3, v4);
+    ADNDisplayHelper::displayLine(v4, v1);
+
+    ADNDisplayHelper::displayLine(v5, v6);
+    ADNDisplayHelper::displayLine(v6, v7);
+    ADNDisplayHelper::displayLine(v7, v8);
+    ADNDisplayHelper::displayLine(v8, v5);
+
+    ADNDisplayHelper::displayLine(v1, v5);
+    ADNDisplayHelper::displayLine(v2, v6);
+    ADNDisplayHelper::displayLine(v3, v7);
+    ADNDisplayHelper::displayLine(v4, v8);
+  }
+}
+
+void SEDSDNACreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
+{
+  SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  adenita->AddPartToActiveLayer(nanotube);
+  adenita->ResetVisualModel();
+}
+
+void SEDSDNACreatorEditor::displayStrand()
+{
+  ADNDisplayHelper::displayPart(tempPart_);
+}
+
 SBCContainerUUID SEDSDNACreatorEditor::getUUID() const { return SBCContainerUUID("2F353D32-A630-8800-5FCA-14EBA6AC36F9"); }
 
 QString SEDSDNACreatorEditor::getName() const { 
@@ -93,6 +182,30 @@ void SEDSDNACreatorEditor::display() {
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
 
+  SEConfig& config = SEConfig::GetInstance();
+  displayBox();
+
+  if (display_) {
+    SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+
+    if (positions_.cnt == 1) {
+      ADNDisplayHelper::displayLine(positions_.First, currentPosition);
+      positions_.Second = currentPosition;
+    }
+
+    if (config.preview_editor) tempPart_ = generateStrand(true);
+
+    if (tempPart_ != nullptr) {
+      glEnable(GL_DEPTH_TEST);
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+      displayStrand();
+
+      glDisable(GL_BLEND);
+      glDisable(GL_DEPTH_TEST);
+    }
+  }
 }
 
 void SEDSDNACreatorEditor::displayForShadow() {
@@ -117,6 +230,10 @@ void SEDSDNACreatorEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  if (positions_.cnt == 0) {
+    positions_.First = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    positions_.cnt++;
+  }
 }
 
 void SEDSDNACreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
@@ -124,13 +241,27 @@ void SEDSDNACreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  if (positions_.cnt == 1) {
+    positions_.Second = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    positions_.cnt++;
+
+    ADNPointer<ADNPart> part = generateStrand();
+    sendPartToAdenita(part);
+    DASCreatorEditors::resetPositions(positions_);
+    display_ = false;
+    tempPart_ == nullptr;
+  }
 }
 
 void SEDSDNACreatorEditor::mouseMoveEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
-
+  if (event->buttons() == Qt::LeftButton) {
+    display_ = true;
+    SAMSON::requestViewportUpdate();
+  }
+  SAMSON::requestViewportUpdate();
 }
 
 void SEDSDNACreatorEditor::mouseDoubleClickEvent(QMouseEvent* event) {

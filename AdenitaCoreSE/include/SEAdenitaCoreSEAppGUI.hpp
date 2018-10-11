@@ -5,6 +5,7 @@
 #include "ui_SEAdenitaCoreSEAppGUI.h"
 #include <QMessageBox>
 #include <QComboBox>
+#include <QSpinBox>
 
 
 class SEAdenitaCoreSEApp;
@@ -60,21 +61,27 @@ public slots:
   void onSaveFile();
   void onExport();
   void onSetScaffold();
-  void onCenterPart();
-  void onAcceptExport();
   void onConnectSingleStrands();
   void onBreak();
   void onDelete();
   void onChangeScaffold(int idx);
+  // Debug
+  void onCenterPart();
   void onDSRing();
   void onCatenanes();
+  void onKinetoplast();
+  void onCalculateBindingRegions();
+  void onTwistDoubleHelix();
+  void onSetStart();
+  void onMergeComponents();
+  void onTestNeighbors();
+  void onOxDNAImport();
+  void onFromDatagraph();
+  void onUntwistNucleotide();
 
 private:
   std::string IsJsonCadnano(QString filename);
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
-
-  QComboBox* typeSelection_ = nullptr;
-  QComboBox* exportType_ = nullptr;
 };
 

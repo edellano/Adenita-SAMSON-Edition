@@ -2,6 +2,7 @@
 
 #include "ADNConstants.hpp"
 #include "ADNPart.hpp"
+#include "ADNConformations.hpp"
 
 
 //! ADNNanorobot: main interface to Adenita logical model.
@@ -57,7 +58,7 @@ public:
   CollectionMap<ADNBaseSegment> GetSelectedBaseSegments();
   //! Returns all currently selected ADNSingleStrand
   CollectionMap<ADNSingleStrand> GetSelectedSingleStrands();
-  //! Returns all currently selected ADNSingleStrand
+  //! Returns all currently selected ADNDoubleStrand
   CollectionMap<ADNDoubleStrand> GetSelectedDoubleStrands();
   //! Return the single strands of an ADNPart
   /*!
@@ -155,7 +156,26 @@ public:
   */
   void HideCenterAtoms(ADNPointer<ADNNucleotide> nt);
 
+  //! Return all conformations
+  /*!
+    \return A CollectionMap with all conformations
+  */
+  CollectionMap<ADNConformation> GetConformations();
+  //! Return all conformations from a ADNPart
+  /*!
+    \param A ADNPointer to a ADNPart
+    \return A CollectionMap with all conformations belonging to a given ADNPart
+  */
+  CollectionMap<ADNConformation> GetConformations(ADNPointer<ADNPart> part);
+  //! Register a conformation
+  /*!
+    \param A ADNPart to whcih the conformation belongs to
+    \param A ADNPointer to a ADNConformation
+  */
+  void RegisterConformation(ADNPointer<ADNConformation> conformation);
+
 
 private:
   CollectionMap<ADNPart> partsIndex_;
+  CollectionMap<ADNConformation> conformationsIndex_;
 };

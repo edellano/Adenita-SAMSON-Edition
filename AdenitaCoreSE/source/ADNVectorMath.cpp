@@ -106,19 +106,11 @@ namespace ADNVectorMath {
 
   ublas::vector<double> InitializeVector(size_t size) {
     ublas::vector<double> vec(size, 0.0);
-    //for (auto vit = vec.begin(); vit != vec.end(); ++vit) {
-    //  vec(vit.index()) = 0.0;
-    //}
     return vec;
   }
 
   ublas::matrix<double> InitializeMatrix(size_t sz_r, size_t sz_c) {
     ublas::matrix<double> mat(sz_r, sz_c, 0.0);
-    //for (auto rit = mat.begin1(); rit != mat.end1(); ++rit) {
-    //  for (auto cit = mat.begin2(); cit != mat.end2(); ++cit) {
-    //    mat(*rit, *cit) = 0.0;
-    //  }
-    //}
     return mat;
   }
 
@@ -302,6 +294,37 @@ namespace ADNVectorMath {
     return coords;
   }
 
+  ublas::vector<double> Spherical2Cartesian(ublas::vector<double> spher)
+  {
+    double r = spher[0];
+    double theta = spher[1];
+    double phi = spher[2];
+    ublas::vector<double> cart(3, 0.0);
+    cart[0] = r * sin(theta) * cos(phi);  // x
+    cart[1] = r * sin(theta) * sin(phi);  // y
+    cart[2] = r * cos(theta);  // z
+    return cart;
+  }
+
+  SBVector3 SBCrossProduct(SBVector3 v, SBVector3 w)
+  {
+    std::vector<double> v_std = { v[0].getValue(), v[1].getValue(), v[2].getValue() };
+    std::vector<double> w_std = { w[0].getValue(), w[1].getValue(), w[2].getValue() };
+    ublas::vector<double> v_boost = ADNVectorMath::CreateBoostVector(v_std);
+    ublas::vector<double> w_boost = ADNVectorMath::CreateBoostVector(w_std);
+    ublas::vector<double> u_boost = ADNVectorMath::CrossProduct(v_boost, w_boost);
+    u_boost /= ublas::norm_2(u_boost);
+    std::vector<double> u_std = ADNVectorMath::CreateStdVector(u_boost);
+    SBVector3 u = SBVector3(u_std[0], u_std[1], u_std[2]);
+    return u;
+  }
+
+  double SBInnerProduct(SBVector3 v, SBVector3 w)
+  {
+    auto res = v[0] * w[0] + v[1] * w[1] + v[2] * w[2];
+    return res.getValue();
+  }
+
   ublas::matrix<double> FindOrthogonalSubspace(ublas::vector<double> z) {
     z /= ublas::norm_2(z);
     ublas::vector<double> x(3, 0.0);
@@ -329,57 +352,4 @@ namespace ADNVectorMath {
     ublas::row(subspace, 1) = y;
     return subspace;
   }
-
-  /*ublas::vector<double> CreateBoostVector(SBPosition3 pos) {
-    ublas::vector<double> vex(3);
-    vex[0] = pos[0].getValue();
-    vex[1] = pos[1].getValue();
-    vex[2] = pos[2].getValue();
-    return vex;
-  }
-
-  ublas::vector<double> CreateBoostVector(SBVector3 vec) {
-    ublas::vector<double> vex(3);
-    vex[0] = vec[0].getValue();
-    vex[1] = vec[1].getValue();
-    vex[2] = vec[2].getValue();
-    return vex;
-  }
-
-  SBPosition3 CreateSBPosition(ublas::vector<double> vec) {
-    SBPosition3 pos = SBPosition3(
-      SBQuantity::picometer(vec[0]),
-      SBQuantity::picometer(vec[1]),
-      SBQuantity::picometer(vec[2])
-      );
-
-    return pos;
-  }
-
-  SBVector3 CreateSBVector(ublas::vector<double> vec) {
-    SBVector3 sbVec = SBVector3(
-     vec[0], vec[1], vec[2]
-      );
-    return sbVec;
-  }*/
-
-  //SBPosition3 CalculateCM(SBNode* nodes) {
-  //  SBPosition3 center = SBPosition3();
-  //  SBNodeIndexer atoms;
-  //  nodes->getNodes(atoms, SBNode::IsType(SBNode::Atom));
-
-  //  int numAtoms = 0;
-  //  SB_FOR(SBNode* node, atoms) {
-  //    SBAtom* curAtom = static_cast<SBAtom*>(node);
-  //    SBPosition3 curAtomPos = curAtom->getPosition();
-
-  //    //todo discard H
-  //    center += curAtomPos;
-  //    numAtoms++;
-  //  }
-
-  //  center /= numAtoms;
-
-  //  return center;
-  //}
 };

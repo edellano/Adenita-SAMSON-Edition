@@ -33,7 +33,7 @@ void ADNLogger::ClearLog()
 void ADNLogger::LogDebug(float value)
 {
   SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == "debug_log") {
+  if (config.mode == DEBUG_LOG) {
     Log(value);
   }
 }
@@ -41,7 +41,7 @@ void ADNLogger::LogDebug(float value)
 void ADNLogger::LogDebug(int value)
 {
   SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == "debug_log") {
+  if (config.mode == DEBUG_LOG) {
     Log(value);
   }
 }
@@ -49,7 +49,7 @@ void ADNLogger::LogDebug(int value)
 void ADNLogger::LogDebug(std::string value)
 {
   SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == "debug_log") {
+  if (config.mode == DEBUG_LOG) {
     Log(value);
   }
 }
@@ -57,7 +57,7 @@ void ADNLogger::LogDebug(std::string value)
 void ADNLogger::LogDebug(QString value)
 {
   SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == "debug_log") {
+  if (config.mode == DEBUG_LOG) {
     Log(value);
   }
 }
@@ -65,7 +65,7 @@ void ADNLogger::LogDebug(QString value)
 void ADNLogger::LogDebug(ublas::vector<double> v)
 {
   SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == "debug_log") {
+  if (config.mode == DEBUG_LOG) {
     Log(v);
   }
 }
@@ -73,7 +73,7 @@ void ADNLogger::LogDebug(ublas::vector<double> v)
 void ADNLogger::LogDebug(std::string name, ublas::vector<double> v)
 {
   SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == "debug_log") {
+  if (config.mode == DEBUG_LOG) {
     Log(name, v);
   }
 }
@@ -81,7 +81,7 @@ void ADNLogger::LogDebug(std::string name, ublas::vector<double> v)
 void ADNLogger::LogDebug(ublas::matrix<double> m)
 {
   SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == "debug_log") {
+  if (config.mode == DEBUG_LOG) {
     Log(m);
   }
 }
@@ -89,7 +89,7 @@ void ADNLogger::LogDebug(ublas::matrix<double> m)
 time_t ADNLogger::LogDebugPassedSeconds(time_t time1, std::string text)
 {
   SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == "debug_log") {
+  if (config.mode == DEBUG_LOG) {
     return LogPassedSeconds(time1, text);
   }
 

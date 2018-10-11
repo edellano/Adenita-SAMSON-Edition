@@ -167,8 +167,8 @@ public:
   void SetPair(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetPair();
 
-  ADNPointer<ADNNucleotide> GetPrev();
-  ADNPointer<ADNNucleotide> GetNext();
+  ADNPointer<ADNNucleotide> GetPrev(bool checkCircular = false);
+  ADNPointer<ADNNucleotide> GetNext(bool checkCircular = false);
   ADNPointer<ADNSingleStrand> GetStrand();
   SBNode* getSingleStrand() const;
 
@@ -233,6 +233,8 @@ public:
   ADNPointer<ADNNucleotide> GetThreePrime();
   SBNode* getThreePrime() const;
 
+  ADNPointer<ADNNucleotide> GetNthNucleotide(int n);
+
   // if using these functions, make sure nucleotides are properly added
   void SetFivePrime(ADNPointer<ADNNucleotide> nt);
   void SetThreePrime(ADNPointer<ADNNucleotide> nt);
@@ -241,6 +243,10 @@ public:
   bool IsScaffold() const;
   bool getIsScaffold() const;
   void setIsScaffold(bool b);
+  void IsCircular(bool c);
+  bool IsCircular() const;
+  bool getIsCircular() const;
+  void setIsCircular(bool b);
   int getNumberOfNucleotides() const;
   CollectionMap<ADNNucleotide> GetNucleotides() const;
   ADNPointer<ADNNucleotide> GetNucleotide(unsigned int id) const;
@@ -248,10 +254,10 @@ public:
   void AddNucleotideFivePrime(ADNPointer<ADNNucleotide> nt);  // add nucleotide to the five prime end
   void AddNucleotide(ADNPointer<ADNNucleotide> nt, ADNPointer<ADNNucleotide> nextNt);  // add nucleotide at any position
 
-  /**
-  * Shift start of the strand to the selected nucleotide and sequence.
-  * Positions of backbone and sidechain are not recalculated.
-  * \param the selected nucleotide
+  //! Shift start of the strand to the selected nucleotide and sequence.
+  /*!
+    \param a ADNPointer to the ADNNucleotide which should be the new 5' of its strand
+    \param whether to keep the sequence as it was (reset it from new 5' on)
   */
   void ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq = false);
   /**
@@ -267,10 +273,12 @@ public:
   double getGCContent() const;
 
   void SetSequence(std::string seq);
+  void setSequence(std::string seq);
   void SetDefaultName();
 
 private:
   bool isScaffold_ = false;
+  bool isCircular_ = false;
   ADNPointer<ADNNucleotide> fivePrime_;
   ADNPointer<ADNNucleotide> threePrime_;
 };
@@ -409,10 +417,10 @@ public:
   void setNumber(int n);
   int getNumber() const;
 
-  ADNPointer<ADNBaseSegment> GetPrev() const;
-  ADNPointer<ADNBaseSegment> GetNext() const;
+  ADNPointer<ADNBaseSegment> GetPrev(bool checkCircular = false) const;
+  ADNPointer<ADNBaseSegment> GetNext(bool checkCircular = false) const;
 
-  ADNPointer<ADNDoubleStrand> GetDoubleStrand();
+  ADNPointer<ADNDoubleStrand> GetDoubleStrand() const;
   CollectionMap<ADNNucleotide> GetNucleotides();
 
   void SetCell(ADNCell* c);  // we use raw pointers so subclassing will work
@@ -445,6 +453,11 @@ public:
   int GetLength() const;
   int getLength() const;
 
+  void IsCircular(bool c);
+  bool IsCircular() const;
+  bool getIsCircular() const;
+  void setIsCircular(bool b);
+
   CollectionMap<ADNBaseSegment> GetBaseSegments() const;
   ADNPointer<ADNBaseSegment> GetNthBaseSegment(int n);  // return the base segment by position in the double strand
 
@@ -457,6 +470,7 @@ public:
   void AddBaseSegmentEnd(ADNPointer<ADNBaseSegment> bs);
 
 private:
+  bool isCircular_ = false;
   ADNPointer<ADNBaseSegment> start_ = nullptr;
   ADNPointer<ADNBaseSegment> end_ = nullptr;
   double initialTwistAngle_ = 0.0;

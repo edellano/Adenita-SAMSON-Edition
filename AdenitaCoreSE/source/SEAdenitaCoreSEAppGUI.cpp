@@ -85,7 +85,7 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
 
   // disable debug menu if compiling in release mode
   #if NDEBUG
-  ui.tabWidget->removeTab(0);
+  ui.tabWidget->removeTab(2);
   #endif
 }
 
@@ -213,40 +213,88 @@ void SEAdenitaCoreSEAppGUI::onSaveFile()
 
 void SEAdenitaCoreSEAppGUI::onExport()
 {
+  SEAdenitaCoreSEApp* t = getApp();
+
   QDialog* dialog = new QDialog();
 
-  QStringList itemsSelection;
-  itemsSelection << "Selected Part" << "Workspace";
+  //QStringList itemsSelection;
+  //QStringList itemsSelection = t->GetPartsNameList();
+  //itemsSelection << "Selected Part" << "Workspace";
+  //itemsSelection << "Selected Part" << "Workspace";
 
-  typeSelection_ = new QComboBox();
-  typeSelection_->addItems(itemsSelection);
+  QComboBox* typeSelection = new QComboBox();
+  
+  auto nr = t->GetNanorobot();
+  auto parts = nr->GetParts();
+  int i = 0;
+  std::map<int, ADNPointer<ADNPart>> indexParts;
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    std::string n = p->GetName();
+    typeSelection->insertItem(i, QString::fromStdString(n));
+    indexParts.insert(std::make_pair(i, p));
+    ++i;
+  }
+  typeSelection->insertItem(i, QString::fromStdString("SelectedPart"));
+  int sel_idx = i;
+  typeSelection->insertItem(i+1, QString::fromStdString("Workspace"));
+  int all_idx = i + 1;
 
   QStringList itemsExportType;
   itemsExportType << "Sequence list" << "oxDNA";
-  exportType_ = new QComboBox();
-  exportType_->addItems(itemsExportType);
+  QComboBox* exportType = new QComboBox();
+  exportType->addItems(itemsExportType);
 
   QPushButton* acceptButton = new QPushButton(tr("Export"));
   acceptButton->setDefault(true);
   QPushButton* cancelButton = new QPushButton(tr("Cancel"));
 
-  QDialogButtonBox* buttonBox_ = new QDialogButtonBox(Qt::Horizontal);
-  buttonBox_->addButton(acceptButton, QDialogButtonBox::ActionRole);
-  buttonBox_->addButton(cancelButton, QDialogButtonBox::ActionRole);
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal);
+  buttonBox->addButton(acceptButton, QDialogButtonBox::ActionRole);
+  buttonBox->addButton(cancelButton, QDialogButtonBox::ActionRole);
 
   QObject::connect(cancelButton, SIGNAL(released()), dialog, SLOT(close()));
-  QObject::connect(acceptButton, SIGNAL(released()), this, SLOT(onAcceptExport()));
+  QObject::connect(acceptButton, SIGNAL(released()), dialog, SLOT(accept()));
 
   QGridLayout *mainLayout = new QGridLayout;
   mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-  mainLayout->addWidget(typeSelection_, 0, 0);
-  mainLayout->addWidget(exportType_, 1, 0);
-  mainLayout->addWidget(buttonBox_, 2, 0);
+  mainLayout->addWidget(typeSelection, 0, 0);
+  mainLayout->addWidget(exportType, 1, 0);
+  mainLayout->addWidget(buttonBox, 2, 0);
 
   dialog->setLayout(mainLayout);
   dialog->setWindowTitle(tr("Export design"));
 
-  dialog->exec();
+  int dialogCode = dialog->exec();
+
+  if (dialogCode == QDialog::Accepted) {
+    
+    auto val = typeSelection->currentIndex();
+    ADNPointer<ADNPart> part = nullptr;
+    if (val == sel_idx) {
+      part = nr->GetSelectedParts()[0];
+    }
+    else if (val != all_idx) {
+      part = indexParts.at(val);
+    }
+
+    QString eType = exportType->currentText();
+
+    if (eType == "Sequence list") {
+      // export sequences
+      auto filename = QFileDialog::getSaveFileName(this, tr("Sequence List"), QDir::currentPath(), tr("Sequence List (*.csv)"));
+      t->ExportToSequenceList(filename, part);
+    }
+    else if (eType == "oxDNA") {
+      ADNAuxiliary::OxDNAOptions options;
+      options.boxSizeX_ = 0.0;
+      options.boxSizeY_ = 0.0;
+      options.boxSizeZ_ = 0.0;
+
+      QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
+      t->ExportToOxDNA(folder, options, part);
+    }
+
+  }
 }
 
 void SEAdenitaCoreSEAppGUI::onSetScaffold()
@@ -284,31 +332,6 @@ void SEAdenitaCoreSEAppGUI::onCenterPart()
   SEAdenitaCoreSEApp *t = getApp();
   t->CenterPart();
   SAMSON::getActiveCamera()->center();
-}
-
-void SEAdenitaCoreSEAppGUI::onAcceptExport()
-{
-  bool nanorobot = true;
-  auto val = typeSelection_->currentIndex();
-  if (val != 1) nanorobot = false;
-
-  QString exportType = exportType_->currentText();
-
-  SEAdenitaCoreSEApp* t = getApp();
-  if (exportType == "Sequence list") {
-    // export sequences
-    auto filename = QFileDialog::getSaveFileName(this, tr("Sequence List"), QDir::currentPath(), tr("Sequence List (*.csv)"));
-    t->ExportToSequenceList(filename, nanorobot);
-  }
-  else if (exportType == "oxDNA") {
-    ADNAuxiliary::OxDNAOptions options;
-    options.boxSizeX_ = 0.0;
-    options.boxSizeY_ = 0.0;
-    options.boxSizeZ_ = 0.0;
-
-    QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
-    t->ExportToOxDNA(folder, options, nanorobot);
-  } 
 }
 
 void SEAdenitaCoreSEAppGUI::onConnectSingleStrands()
@@ -378,18 +401,169 @@ void SEAdenitaCoreSEAppGUI::onDSRing()
 
 void SEAdenitaCoreSEAppGUI::onCatenanes()
 {
-  bool ok;
-  double radius = QInputDialog::getDouble(this, "Radius", "Choose the radius of a ring (nm)", 20.0, 0.0, 99999.9, 2, &ok);
-  SBQuantity::length R = SBQuantity::nanometer(radius);
-  SBVector3 normal = SBVector3();
-  normal[0] = 0.0;
-  normal[1] = 0.0;
-  normal[2] = 1.0;
-  SBPosition3 center = SBPosition3();
-  if (ok) {
+  QDialog* dialog = new QDialog();
+
+  QLabel* numberLabel = new QLabel();
+  numberLabel->setText("Number of catenanes");
+  QSpinBox* number = new QSpinBox();
+  number->setRange(1, 9999);
+  number->setValue(2);
+
+  QLabel* radiusLabel = new QLabel();
+  radiusLabel->setText("Radius (nm)");
+  QDoubleSpinBox* radius = new QDoubleSpinBox();
+  radius->setRange(0.0, 99999.9);
+  radius->setValue(20.0);
+  radius->setDecimals(2);
+
+  QPushButton* acceptButton = new QPushButton(tr("Create catenanes"));
+  acceptButton->setDefault(true);
+  QPushButton* cancelButton = new QPushButton(tr("Cancel"));
+
+  QDialogButtonBox* buttonBox_ = new QDialogButtonBox(Qt::Horizontal);
+  buttonBox_->addButton(acceptButton, QDialogButtonBox::ActionRole);
+  buttonBox_->addButton(cancelButton, QDialogButtonBox::ActionRole);
+
+  QObject::connect(cancelButton, SIGNAL(released()), dialog, SLOT(reject()));
+  QObject::connect(acceptButton, SIGNAL(released()), dialog, SLOT(accept()));
+
+  QGridLayout *mainLayout = new QGridLayout;
+  mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+  mainLayout->addWidget(numberLabel, 0, 0);
+  mainLayout->addWidget(number, 0, 1);
+  mainLayout->addWidget(radiusLabel, 1, 0);
+  mainLayout->addWidget(radius, 1, 1);
+  mainLayout->addWidget(buttonBox_, 2, 0);
+
+  dialog->setLayout(mainLayout);
+  dialog->setWindowTitle(tr("Create Catenanes"));
+
+  int dialogCode = dialog->exec();
+
+  if (dialogCode == QDialog::Accepted ) {
+    int num = number->value();
+    SBQuantity::length R = SBQuantity::nanometer(radius->value());
+    SBVector3 normal = SBVector3();
+    normal[0] = 0.0;
+    normal[1] = 0.0;
+    normal[2] = 1.0;
+    SBPosition3 center = SBPosition3();
     SEAdenitaCoreSEApp* t = getApp();
-    t->CreateCatenanes(R, center, normal);
+    t->LinearCatenanes(R, center, normal, num);
   }
+}
+
+void SEAdenitaCoreSEAppGUI::onKinetoplast()
+{
+  QDialog* dialog = new QDialog();
+
+  QLabel* rowsLabel = new QLabel();
+  rowsLabel->setText("Number of rows");
+  QSpinBox* rows = new QSpinBox();
+  rows->setRange(1, 9999);
+  rows->setValue(2);
+
+  QLabel* colsLabel = new QLabel();
+  colsLabel->setText("Number of columns");
+  QSpinBox* cols = new QSpinBox();
+  cols->setRange(1, 9999);
+  cols->setValue(3);
+
+  QLabel* radiusLabel = new QLabel();
+  radiusLabel->setText("Radius (nm)");
+  QDoubleSpinBox* radius = new QDoubleSpinBox();
+  radius->setRange(0.0, 99999.9);
+  radius->setValue(20.0);
+  radius->setDecimals(2);
+
+  QPushButton* acceptButton = new QPushButton(tr("Create catenanes"));
+  acceptButton->setDefault(true);
+  QPushButton* cancelButton = new QPushButton(tr("Cancel"));
+
+  QDialogButtonBox* buttonBox_ = new QDialogButtonBox(Qt::Horizontal);
+  buttonBox_->addButton(acceptButton, QDialogButtonBox::ActionRole);
+  buttonBox_->addButton(cancelButton, QDialogButtonBox::ActionRole);
+
+  QObject::connect(cancelButton, SIGNAL(released()), dialog, SLOT(reject()));
+  QObject::connect(acceptButton, SIGNAL(released()), dialog, SLOT(accept()));
+
+  QGridLayout *mainLayout = new QGridLayout;
+  mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+  mainLayout->addWidget(rowsLabel, 0, 0);
+  mainLayout->addWidget(rows, 0, 1);
+  mainLayout->addWidget(colsLabel, 1, 0);
+  mainLayout->addWidget(cols, 1, 1);
+  mainLayout->addWidget(radiusLabel, 2, 0);
+  mainLayout->addWidget(radius, 2, 1);
+  mainLayout->addWidget(buttonBox_, 3, 0);
+
+  dialog->setLayout(mainLayout);
+  dialog->setWindowTitle(tr("Create Kinetoplast"));
+
+  int dialogCode = dialog->exec();
+
+  if (dialogCode == QDialog::Accepted) {
+    int r = rows->value();
+    int c = cols->value();
+    SBQuantity::length R = SBQuantity::nanometer(radius->value());
+    SBVector3 normal = SBVector3();
+    normal[0] = 0.0;
+    normal[1] = 0.0;
+    normal[2] = 1.0;
+    SBPosition3 center = SBPosition3();
+    SEAdenitaCoreSEApp* t = getApp();
+    t->Kinetoplast(R, center, normal, r, c);
+  }
+}
+
+void SEAdenitaCoreSEAppGUI::onCalculateBindingRegions()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->CalculateBindingRegions();
+}
+
+void SEAdenitaCoreSEAppGUI::onTwistDoubleHelix()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->TwistDoubleHelix();
+}
+
+void SEAdenitaCoreSEAppGUI::onSetStart()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->SetStart();
+}
+
+void SEAdenitaCoreSEAppGUI::onMergeComponents()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->MergeComponents();
+}
+
+void SEAdenitaCoreSEAppGUI::onTestNeighbors()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->TestNeighbors();
+}
+
+void SEAdenitaCoreSEAppGUI::onOxDNAImport()
+{
+  QString topoFile = QFileDialog::getOpenFileName(this, tr("Select a topology file"), QDir::currentPath(), tr("(OxDNA topology *.*)"));
+  QString configFile = QFileDialog::getOpenFileName(this, tr("Select a configuration file"), QDir::currentPath(), tr("(OxDNA configuration *.*)"));
+  SEAdenitaCoreSEApp* t = getApp();
+  t->ImportFromOxDNA(topoFile.toStdString(), configFile.toStdString());
+}
+
+void SEAdenitaCoreSEAppGUI::onFromDatagraph()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->FromDatagraph();
+}
+
+void SEAdenitaCoreSEAppGUI::onUntwistNucleotide()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->UntwistNucleotide();
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)

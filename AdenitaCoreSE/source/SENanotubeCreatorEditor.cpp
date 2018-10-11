@@ -55,64 +55,7 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
 
 void SENanotubeCreatorEditor::displayNanotube()
 {
-  SEConfig& config = SEConfig::GetInstance();
-
-  auto doubleStrands = tempPart_->GetDoubleStrands();
-  unsigned int nPositions = tempPart_->GetNumberOfBaseSegments();
-
-  ADNArray<float> positions = ADNArray<float>(3, nPositions);
-  ADNArray<float> radiiV = ADNArray<float>(nPositions);
-  ADNArray<unsigned int> flags = ADNArray<unsigned int>(nPositions);
-  ADNArray<float> colorsV = ADNArray<float>(4, nPositions);
-  ADNArray<unsigned int> nodeIndices = ADNArray<unsigned int>(nPositions);
-
-  unsigned int index = 0;
-
-  SB_FOR(auto doubleStrand, doubleStrands) {
-    auto baseSegments = doubleStrand->GetBaseSegments();
-
-    SB_FOR(auto baseSegment, baseSegments) {
-      auto cell = baseSegment->GetCell();
-
-      if (cell->GetType() == BasePair) {
-        SBPosition3 pos = baseSegment->GetPosition();
-        positions(index, 0) = (float)pos.v[0].getValue();
-        positions(index, 1) = (float)pos.v[1].getValue();
-        positions(index, 2) = (float)pos.v[2].getValue();
-      }
-
-      colorsV(index, 0) = config.double_strand_color[0];
-      colorsV(index, 1) = config.double_strand_color[1];
-      colorsV(index, 2) = config.double_strand_color[2];
-      colorsV(index, 3) = 0.4f;
-
-      radiiV(index) = config.base_pair_radius;
-
-      flags(index) = baseSegment->getInheritedFlags();
-
-      ++index;
-
-    }
-  }
-  
-  SAMSON::displaySpheres(
-    nPositions,
-    positions.GetArray(),
-    radiiV.GetArray(),
-    colorsV.GetArray(),
-    flags.GetArray());
-
-}
-
-void SENanotubeCreatorEditor::resetPositions()
-{
-  positions_.First = SBPosition3();
-  positions_.Second = SBPosition3();
-  positions_.Third = SBPosition3();
-  positions_.Fourth = SBPosition3();
-  positions_.Fifth = SBPosition3();
-  positions_.Sixth = SBPosition3();
-  positions_.cnt = 0;
+  ADNDisplayHelper::displayPart(tempPart_);
 }
 
 void SENanotubeCreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
@@ -263,7 +206,7 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
     router->Route(part);
     sendPartToAdenita(part);
 
-    resetPositions();
+    DASCreatorEditors::resetPositions(positions_);
     display_ = false;
     tempPart_ == nullptr;
   }
