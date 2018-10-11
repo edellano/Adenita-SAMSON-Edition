@@ -112,6 +112,12 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
     nt_l->SetE2(ublas::column(new_basis, 1));
     nt_l->SetE3(ublas::column(new_basis, 2));
 
+    if (nt_l->GetStrand()->IsScaffold()) {
+      ADNLogger& logger = ADNLogger::GetLogger();
+      std::string msg = "Left: " + std::to_string(nt_l->GetE3()[0]) + " " + std::to_string(nt_l->GetE3()[1]) + " " + std::to_string(nt_l->GetE3()[2]);
+      logger.LogDebug(msg);
+    }
+
     // Set new residue positions
     SBPosition3 p_left = UblasToSBPosition(ublas::row(new_pos, 0));
     nt_l->SetPosition(p_left);
@@ -132,6 +138,12 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
     nt_r->SetE1(ublas::column(basis_r, 0));
     nt_r->SetE2(ublas::column(basis_r, 1));
     nt_r->SetE3(ublas::column(basis_r, 2));
+
+    if (nt_r->GetStrand()->IsScaffold()) {
+      ADNLogger& logger = ADNLogger::GetLogger();
+      std::string msg = "Right: " + std::to_string(nt_r->GetE3()[0]) + " " + std::to_string(nt_r->GetE3()[1]) + " " + std::to_string(nt_r->GetE3()[2]);
+      logger.LogDebug(msg);
+    }
 
     // Set positions
     SBPosition3 p_right = UblasToSBPosition(ublas::row(new_pos, 3));
