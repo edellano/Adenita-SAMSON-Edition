@@ -103,7 +103,7 @@ private:
   void CreateEdgeMap(ADNPointer<ADNPart> nanorobot);
   void CreateScaffold(ADNPointer<ADNPart> nanorobot);
   void CreateStaples(ADNPointer<ADNPart> nanorobot);
-  void TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> nanorobot, bool left = true);
+  void TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> nanorobot, bool scaf = true);
 
   static DNABlocks GetComplementaryBase(DNABlocks type);
   bool IsThereBase(vec4 data);
