@@ -178,12 +178,12 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
     if (cellBsMap_.find(vs) != cellBsMap_.end()) positions = cellBsMap_.at(vs);
 
     SEConfig& config = SEConfig::GetInstance();
-    int magic_number = config.magic_number;  //  this is a magic number to fix crossovers
+    //int magic_number = config.magic_number;  //  this is a magic number to fix crossovers
 
-    int bs_number = tube.initPos_ + magic_number;
-    if ((vs->row_ + vs->col_) % 2 != 0) {
+    int bs_number = tube.initPos_;  // +magic_number;
+    /*if ((vs->row_ + vs->col_) % 2 != 0) {
       bs_number += 6;
-    }
+    }*/
 
     SBPosition3 fp = initPos;
     for (int i = 0; i < length; ++i) {
@@ -305,8 +305,8 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
       int max_iter = vstrands[vStrandId].loops_[z];
       bool left = true;
       Vstrand vs = vstrands[vStrandId];
-      if (scaf && vStrandId % 2 != 0) left = false;
-      else if (!scaf && vStrandId % 2 == 0) left = false;
+      if (scaf && vStrandId % 2 == 0) left = false;
+      else if (!scaf && vStrandId % 2 != 0) left = false;
 
       for (int k = 0; k <= max_iter; k++) {
         //add loop
