@@ -4,12 +4,14 @@
 #include "SEAdenitaCoreSEAppGUI.hpp"
 #include "ADNNanorobot.hpp"
 #include "ADNSaveAndLoad.hpp"
+#include "ADNNeighbors.hpp"
 #include "DASDaedalus.hpp"
 #include "DASBackToTheAtom.hpp"
 #include "DASCadnano.hpp"
 #include "DASComplexOperations.hpp"
 #include "SEConfig.hpp"
 #include "SEAdenitaVisualModel.hpp"
+#include "PIPrimer3.hpp"
 
 
 /// This class implements the functionality of the app
@@ -41,8 +43,8 @@ public :
   void SaveFile(QString filename, bool all);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename);
-  void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, bool all);
-  void ExportToSequenceList(QString filename, bool all);
+  void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part = nullptr);
+  void ExportToSequenceList(QString filename, ADNPointer<ADNPart> part = nullptr);
   void SetScaffoldSequence(std::string seq);
   void ResetVisualModel();
   // Modifications
@@ -52,15 +54,26 @@ public :
   // Debug
   void CenterPart();
   void CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);
-  void CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);
+  void LinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int num);
+  void Kinetoplast(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols);
+  void CalculateBindingRegions();
+  void SetStart();
+  void MergeComponents();
+  void TwistDoubleHelix();
+  void TestNeighbors();
+  void ImportFromOxDNA(std::string topoFile, std::string configFile);
+  void FromDatagraph();
+  void UntwistNucleotide();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
 
   ADNNanorobot* GetNanorobot();
 
+  QStringList GetPartsNameList();
+
   // Exposed for editors
-  void AddPartToActiveLayer(ADNPointer<ADNPart> part);
+  void AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions = true, bool positionsFromNucleotides = false);
 
 private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);

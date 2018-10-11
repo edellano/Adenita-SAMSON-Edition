@@ -137,10 +137,12 @@ void ADNPart::DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss)
   singleStrandsIndex_.removeReferenceTarget(ss());
 }
 
-void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt)
+void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFromSs)
 {
-  ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
-  ss->removeChild(nt());
+  if (removeFromSs) {
+    ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
+    ss->removeChild(nt());
+  }
   nucleotidesIndex_.removeReferenceTarget(nt());
 }
 
@@ -152,15 +154,15 @@ void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
   doubleStrandsIndex_.removeReferenceTarget(ds());
 }
 
-void ADNPart::DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs)
+void ADNPart::DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs, bool removeFromDs)
 {
-  bs->getParent()->removeChild(bs());
+  if (removeFromDs) bs->getParent()->removeChild(bs());
   baseSegmentsIndex_.removeReferenceTarget(bs());
 }
 
-void ADNPart::DeregisterAtom(ADNPointer<ADNAtom> atom)
+void ADNPart::DeregisterAtom(ADNPointer<ADNAtom> atom, bool removeFromAtom)
 {
-  atom->getParent()->removeChild(atom());
+  if (removeFromAtom) atom->getParent()->removeChild(atom());
   atomsIndex_.removeReferenceTarget(atom());
 }
 
@@ -172,23 +174,24 @@ void ADNPart::RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss)
   singleStrandsIndex_.addReferenceTarget(ss());
 }
 
-void ADNPart::RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt)
+void ADNPart::RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, bool addToSs)
 {
-  ss->AddNucleotideThreePrime(nt);
+  if (addToSs) ss->AddNucleotideThreePrime(nt);
 
   nucleotidesIndex_.addReferenceTarget(nt());
 }
 
-void ADNPart::RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt)
+void ADNPart::RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, bool addToSs)
 {
-  ss->AddNucleotideFivePrime(nt);
+  if (addToSs) ss->AddNucleotideFivePrime(nt);
 
   nucleotidesIndex_.addReferenceTarget(nt());
 }
 
-void ADNPart::RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, ADNPointer<ADNNucleotide> ntNext)
+void ADNPart::RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, 
+  ADNPointer<ADNNucleotide> ntNext, bool addToSs)
 {
-  ss->AddNucleotide(nt, ntNext);
+  if (addToSs) ss->AddNucleotide(nt, ntNext);
 
   nucleotidesIndex_.addReferenceTarget(nt());
 }
@@ -204,9 +207,9 @@ void ADNPart::RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNP
   }
 }
 
-void ADNPart::RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs)
+void ADNPart::RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs, bool addToDs)
 {
-  ds->AddBaseSegmentEnd(bs);
+  if (addToDs) ds->AddBaseSegmentEnd(bs);
 
   baseSegmentsIndex_.addReferenceTarget(bs());
 }

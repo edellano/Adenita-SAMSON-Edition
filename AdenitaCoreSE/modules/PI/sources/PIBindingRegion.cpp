@@ -6,9 +6,39 @@ PIBindingRegion & PIBindingRegion::operator=(const PIBindingRegion & other)
   return *this;
 }
 
+double PIBindingRegion::getEntropy() const
+{
+  return thermParam_.dS_;
+}
+
+double PIBindingRegion::getEntalpy() const
+{
+  return thermParam_.dH_;
+}
+
+double PIBindingRegion::getGibbs() const
+{
+  return thermParam_.dG_;
+}
+
+double PIBindingRegion::getTemp() const
+{
+  return thermParam_.T_;
+}
+
 void PIBindingRegion::SetLastNt(ADNPointer<ADNNucleotide> nt)
 {
   lastNt_ = nt;
+}
+
+ADNPointer<ADNPart> PIBindingRegion::GetPart()
+{
+  return part_;
+}
+
+void PIBindingRegion::SetPart(ADNPointer<ADNPart> part)
+{
+  part_ = part;
 }
 
 void PIBindingRegion::SetThermParam(ThermParam res)
@@ -18,7 +48,8 @@ void PIBindingRegion::SetThermParam(ThermParam res)
 
 void PIBindingRegion::RegisterBindingRegion()
 {
-  SAMSON::getActiveLayer()->addChild(this);
+  create();
+  SAMSON::getActiveDocument()->addChild(this);
 }
 
 void PIBindingRegion::UnregisterBindingRegion()
@@ -35,11 +66,11 @@ std::pair<std::string, std::string> PIBindingRegion::GetSequences()
   auto ntLeft = lastNt_;
   while (ntLeft != nullptr) {
     char left = ADNModel::GetResidueName(ntLeft->GetType());
-    leftSeq.insert(0, std::to_string(left));
+    leftSeq.insert(0, std::string(1, left));
     auto pair = ntLeft->GetPair();
     if (pair != nullptr) {
       char right = ADNModel::GetResidueName(pair->GetType());
-      rightSeq.append(std::to_string(right));
+      rightSeq.append(std::string(1, right));
     }
     ntLeft = ntLeft->GetPrev();
   }

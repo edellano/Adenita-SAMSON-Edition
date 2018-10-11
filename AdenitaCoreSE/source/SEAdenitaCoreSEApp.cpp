@@ -65,26 +65,32 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
   part = cad.CreateCadnanoPart(filename.toStdString());
   
   AddPartToActiveLayer(part);
+
+  cad.CreateConformations(part);
+  auto conf3D = cad.Get3DConformation();
+  auto conf2D = cad.Get2DConformation();
+  auto conf1D = cad.Get1DConformation();
+  conf3D->create();
+  conf2D->create();
+  conf1D->create();
+  SAMSON::getActiveDocument()->addChild(conf3D());
+  SAMSON::getActiveDocument()->addChild(conf2D());
+  SAMSON::getActiveDocument()->addChild(conf1D());
 }
 
-void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, bool all)
+void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, ADNPointer<ADNPart> part)
 {
   // get selected part
   SBDocument* doc = SAMSON::getActiveDocument();
   SBNodeIndexer nodes;
   doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
-  // only take one
   CollectionMap<ADNPart> parts;
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isSelected()) {
-      auto part = static_cast<ADNPart*>(node);
-      parts.addReferenceTarget(part);
-    }
+  if (part == nullptr) {
+    parts = GetNanorobot()->GetParts();
   }
-
-  if (parts.size() == 0 || all) {
-    auto parts = GetNanorobot()->GetParts();
+  else {
+    parts.addReferenceTarget(part());
   }
 
   QFileInfo file = QFileInfo(filename);
@@ -127,23 +133,15 @@ void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string seq)
 
 }
 
-void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, bool all)
+void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part)
 {
   // get selected part
   SBDocument* doc = SAMSON::getActiveDocument();
   SBNodeIndexer nodes;
   doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
-  // only take one
-  ADNPointer<ADNPart> part = nullptr;
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isSelected()) {
-      part = static_cast<ADNPart*>(node);
-    }
-  }
-
-  if (part == nullptr || all) {
-    // nothing selected: export all
+  CollectionMap<ADNPart> parts;
+  if (part == nullptr) {
     ADNLoader::OutputToOxDNA(GetNanorobot(), folder.toStdString(), options);
   }
   else {
@@ -263,7 +261,7 @@ void SEAdenitaCoreSEApp::DeleteNucleotide()
     ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
     auto newStrands = ADNBasicOperations::DeleteNucleotide(part, nt);
     if (ss->getNumberOfNucleotides() == 0) {
-      // also delete single strand
+      // also delete single strand if was left empty
       ADNBasicOperations::DeleteSingleStrand(ss);
     }
        
@@ -278,10 +276,143 @@ void SEAdenitaCoreSEApp::CreateDSRing(SBQuantity::length radius, SBPosition3 cen
   ResetVisualModel();
 }
 
-void SEAdenitaCoreSEApp::CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal)
+void SEAdenitaCoreSEApp::LinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int num)
 {
-  auto part = DASCreator::CreateCatenanes(radius, center, normal);
+  auto part = DASCreator::CreateLinearCatenanes(radius, center, normal, num);
   AddPartToActiveLayer(part);
+  ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::Kinetoplast(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols)
+{
+  auto part = DASCreator::CreateHexagonalCatenanes(radius, center, normal, rows, cols);
+  AddPartToActiveLayer(part);
+  ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::SetStart()
+{
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  if (nts.size() > 1) {
+    // order the nts w.r.t. the single strand they belong
+    // and perform the operation only once per ss
+  }
+  else if (nts.size() == 1) {
+    auto nt = nts[0];
+    ADNBasicOperations::SetStart(nt);
+  }
+
+  ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::MergeComponents()
+{
+  auto parts = GetNanorobot()->GetSelectedParts();
+  if (parts.size() > 1) {
+    // Merge the parts in batches of 2
+    ADNPointer<ADNPart> fPart = parts[0];
+    SB_FOR(ADNPointer<ADNPart> part, parts) {
+      if (part == fPart) continue;
+
+      ADNPointer<ADNPart> newPart = ADNBasicOperations::MergeParts(fPart, part);
+      GetNanorobot()->DeregisterPart(part);
+      part->getParent()->removeChild(part());
+      fPart = newPart;
+    }
+    ResetVisualModel();
+  }
+  
+}
+
+void SEAdenitaCoreSEApp::CalculateBindingRegions()
+{
+  // get selected part
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  ADNPointer<ADNPart> part = nullptr;
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isSelected()) {
+      part = static_cast<ADNPart*>(node);
+    }
+  }
+
+  if (part != nullptr) {
+    PIPrimer3& p = PIPrimer3::GetInstance();
+    p.Calculate(part, 100, 5, 16);
+  }
+}
+
+void SEAdenitaCoreSEApp::TwistDoubleHelix()
+{
+  double deg = ADNConstants::BP_ROT;
+  auto dss = GetNanorobot()->GetSelectedDoubleStrands();
+
+  DASBackToTheAtom btta = DASBackToTheAtom();
+  SEConfig& config = SEConfig::GetInstance();
+
+  SB_FOR(ADNPointer<ADNDoubleStrand> ds, dss) {
+    ADNBasicOperations::TwistDoubleHelix(ds, deg);
+    // recalculate positions
+    btta.SetDoubleStrandPositions(ds);
+    if (config.use_atomic_details) {
+      // todo: calculate all atoms just for a double strand
+      //btta.GenerateAllAtomModel(ds);
+    }
+  }
+}
+
+void SEAdenitaCoreSEApp::TestNeighbors()
+{
+  // get selected nucleotide and part
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  if (nts.size() == 0) return;
+
+  ADNPointer<ADNNucleotide> nt = nts[0];
+  ADNPointer<ADNPart> part = GetNanorobot()->GetPart(nt->GetStrand());
+  // create neighbor list
+  SEConfig& config = SEConfig::GetInstance();
+  auto neighbors = ADNNeighbors();
+  neighbors.SetMaxCutOff(SBQuantity::nanometer(config.debugOptions.maxCutOff));
+  neighbors.SetMinCutOff(SBQuantity::nanometer(config.debugOptions.minCutOff));
+  neighbors.SetIncludePairs(true);
+  neighbors.InitializeNeighbors(part);
+
+  // highlight neighbors of selected nucleotide
+  auto ntNeighbors = neighbors.GetNeighbors(nt);
+  SB_FOR(ADNPointer<ADNNucleotide> ntN, ntNeighbors) {
+    ntN->setSelectionFlag(true);
+  }
+
+  ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::ImportFromOxDNA(std::string topoFile, std::string configFile)
+{
+  auto res = ADNLoader::InputFromOxDNA(topoFile, configFile);
+  if (!res.first) {
+    ADNPointer<ADNPart> p = res.second;
+    AddPartToActiveLayer(p, false, true);
+    ResetVisualModel();
+  }
+}
+
+void SEAdenitaCoreSEApp::FromDatagraph()
+{
+  ADNPointer<ADNPart> part = ADNLoader::GenerateModelFromDatagraph();
+  AddPartToActiveLayer(part, false, true);
+  ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::UntwistNucleotide()
+{
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  DASBackToTheAtom btta;
+  SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+    btta.UntwistNucleotidePosition(nt);
+  }
   ResetVisualModel();
 }
 
@@ -311,15 +442,31 @@ ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
   return nanorobot;
 }
 
-void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part)
+QStringList SEAdenitaCoreSEApp::GetPartsNameList()
+{
+  QStringList names;
+
+  auto parts = GetNanorobot()->GetParts();
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    std::string n = p->GetName();
+    names << n.c_str();
+  }
+
+  return names;
+}
+
+void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions, bool positionsFromNucleotides)
 {
   DASBackToTheAtom btta = DASBackToTheAtom();
-  btta.SetNucleotidesPostions(part);
-  SEConfig& config = SEConfig::GetInstance();
-  if (config.use_atomic_details) {
-    btta.GenerateAllAtomModel(part);
+  btta.PopulateWithMockAtoms(part, positionsFromNucleotides);
+  if (calculatePositions) {
+    btta.SetNucleotidesPostions(part);
+    SEConfig& config = SEConfig::GetInstance();
+    if (config.use_atomic_details) {
+      btta.GenerateAllAtomModel(part);
+    }
+    //btta.CheckDistances(part);
   }
-  btta.CheckDistances(part);
 
   GetNanorobot()->RegisterPart(part);
 

@@ -64,6 +64,16 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
       this,
       SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
   }
+
+  SB_FOR(auto part, parts) {
+    part->connectStructuralSignalToSlot(
+      this,
+      SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent));
+  }
+  
+  SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
+    this, 
+    SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
   
   changeScale(6);
 
@@ -1063,6 +1073,77 @@ void SEAdenitaVisualModel::display() {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_DEPTH_TEST);
 
+  int iScale = (int)scale_;
+  if (iScale == STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+    SEConfig& config = SEConfig::GetInstance();
+    ADNLogger& logger = ADNLogger::GetLogger();
+
+    auto parts = nanorobot_->GetParts();
+
+    SB_FOR(auto part, parts) {
+
+      auto singleStrands = nanorobot_->GetSingleStrands(part);
+
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+
+        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+
+          auto index = ntMap_[nt()];
+          capData_(index) = 0;
+          flags_(index) = nt->getInheritedFlags();
+          nodeIndices_(index) = nt->getNodeIndex();
+
+          positions_(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
+          positions_(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
+          positions_(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
+          
+          if (nanorobot_->IsScaffold(ss))
+          {
+            colorsV_(index, 0) = config.nucleotide_E_Color[0];
+            colorsV_(index, 1) = config.nucleotide_E_Color[1];
+            colorsV_(index, 2) = config.nucleotide_E_Color[2];
+            colorsV_(index, 3) = config.nucleotide_E_Color[3];
+          }
+          else
+          {
+            int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
+
+            colorsV_(index, 0) = config.staple_colors[stapleColorNum * 4 + 0];
+            colorsV_(index, 1) = config.staple_colors[stapleColorNum * 4 + 1];
+            colorsV_(index, 2) = config.staple_colors[stapleColorNum * 4 + 2];
+            colorsV_(index, 3) = config.staple_colors[stapleColorNum * 4 + 3];
+          }
+
+          colorsE_(index, 0) = colorsV_(index, 0);
+          colorsE_(index, 1) = colorsV_(index, 1);
+          colorsE_(index, 2) = colorsV_(index, 2);
+          colorsE_(index, 3) = colorsV_(index, 3);
+
+          radiiV_(index) = config.nucleotide_V_radius;
+          radiiE_(index) = config.nucleotide_V_radius;
+
+          //strand direction
+          if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
+            radiiE_(index) = config.nucleotide_E_radius;
+          }
+
+          if (!ss->isVisible()) {
+            colorsV_(index, 3) = 0.0f;
+            radiiV_(index) = 0.0f;
+            radiiE_(index) = 0.0f;
+            colorsE_(index, 3) = 0.0f;
+          }
+          else if (!nt->isVisible()) {
+            colorsV_(index, 3) = 0.0f;
+            colorsE_(index, 3) = 0.0f;
+          }
+        }
+      }
+    }
+  }
+  
   if (nCylinders_ > 0) {
     SAMSON::displayCylinders(
       nCylinders_,
@@ -1081,6 +1162,10 @@ void SEAdenitaVisualModel::display() {
     radiiV_.GetArray(),
     colorsV_.GetArray(),
     flags_.GetArray());
+  
+
+
+  
 
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
@@ -1164,17 +1249,25 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
     changeScale(scale_, false);
   }
+
+
+
 }
 
 void SEAdenitaVisualModel::onDocumentEvent(SBDocumentEvent* documentEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle document events 
+
 }
 
-void SEAdenitaVisualModel::onStructuralEvent(SBStructuralEvent* documentEvent) {
+void SEAdenitaVisualModel::onStructuralEvent(SBStructuralEvent* structuralEvent) {
 	
 	//// SAMSON Element generator pro tip: implement this function if you need to handle structural events (e.g. when a structural node for which you provide a visual representation is updated)
- // ADNLogger& logger = ADNLogger::GetLogger();
- // changeScale(scale_);
+  ADNLogger& logger = ADNLogger::GetLogger();
+  // changeScale(scale_);
+  if (structuralEvent->getType() == SBStructuralEvent::MobilityFlagChanged) {
+    SAMSON::requestViewportUpdate();
+  }
+
 }
 

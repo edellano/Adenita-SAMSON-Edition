@@ -32,6 +32,36 @@ void SEDSDNACreatorEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+void SEDSDNACreatorEditorGUI::onSetDSDNA(bool b)
+{
+  SEDSDNACreatorEditor* t = getEditor();
+  t->SetMode(b);
+}
+
+void SEDSDNACreatorEditorGUI::onSetSSDNA(bool b)
+{
+  SEDSDNACreatorEditor* t = getEditor();
+  t->SetMode(!b);
+}
+
+void SEDSDNACreatorEditorGUI::onShowBox(bool s)
+{
+  SEDSDNACreatorEditor* t = getEditor();
+  t->SetShowBox(s);
+  if (s) {
+    onChangeBoxSize();
+  }
+}
+
+void SEDSDNACreatorEditorGUI::onChangeBoxSize()
+{
+  double height = ui.spnBoxHeight->value();
+  double width = ui.spnBoxWidth->value();
+  double depth = ui.spnBoxDepth->value();
+  SEDSDNACreatorEditor* t = getEditor();
+  t->SetBoxSize(height, width, depth);
+}
+
 SBCContainerUUID SEDSDNACreatorEditorGUI::getUUID() const { return SBCContainerUUID( "751903AE-14BC-F0B9-01D9-D2CF8412AEF9" );}
 
 QPixmap SEDSDNACreatorEditorGUI::getLogo() const { 

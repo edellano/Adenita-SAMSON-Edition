@@ -786,6 +786,92 @@ void ADNLoader::SaveNanorobotToJson(ADNNanorobot * nr, std::string filename)
   file.close();
 }
 
+ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph()
+{
+  ADNPointer<ADNPart> part = new ADNPart();
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, SBNode::IsType(SBNode::Chain));
+
+  SB_FOR(SBNode* node, nodes) {
+    SBPointer<SBChain> chain = static_cast<SBChain*>(node);
+
+    ADNPointer<ADNSingleStrand> ss = new ADNSingleStrand();
+    ss->SetDefaultName();
+    part->RegisterSingleStrand(ss);
+
+    SBPointerList<SBStructuralNode> children = *chain->getChildren();
+    SBPosition3 prevPos;
+
+    SB_FOR(SBStructuralNode* n, children) {
+      SBPointer<SBResidue> res = static_cast<SBResidue*>(n);
+      if (!res->isNucleicAcid()) continue;
+
+      SBPosition3 pos = SBPosition3();
+      SBPosition3 bbPos = SBPosition3();
+      SBPosition3 scPos = SBPosition3();
+      int count = 0;
+      SBPointer<SBBackbone> bb = res->getBackbone();
+      SBPointerList<SBStructuralNode> bbAtoms = *bb->getChildren();
+      SB_FOR(SBStructuralNode* at, bbAtoms) {
+        if (at->getType() == SBNode::Atom) {
+          SBPointer<SBAtom> atom = static_cast<SBAtom*>(at);
+          pos += atom->getPosition();
+          bbPos += atom->getPosition();
+          ++count;
+        }
+      }
+      bbPos /= count;
+      int scCount = 0;
+
+      SBPointer<SBSideChain> sc = res->getSideChain();
+      SBPointerList<SBStructuralNode> scAtoms = *sc->getChildren();
+      SB_FOR(SBStructuralNode* at, scAtoms) {
+        if (at->getType() == SBNode::Atom) {
+          SBPointer<SBAtom> atom = static_cast<SBAtom*>(at);
+          pos += atom->getPosition();
+          scPos += atom->getPosition();
+          ++count;
+          ++scCount;
+        }
+      }
+      pos /= count;
+      scPos /= scCount;
+
+      // Calculate local axis
+      SBVector3 e3SB = (prevPos - pos).normalizedVersion();
+      SBVector3 e2SB = (scPos - bbPos).normalizedVersion();
+
+      ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(e3SB);
+      ublas::vector<double> e2 = ADNAuxiliary::SBVectorToUblasVector(e2SB);
+      ublas::vector<double> e1 = ADNVectorMath::CrossProduct(e2, e3);
+
+      ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+      nt->SetPosition(pos);
+      nt->SetE3(e3);
+      nt->SetE2(e2);
+      nt->SetE1(e1);
+      nt->SetType(res->getResidueType());
+
+      part->RegisterNucleotideThreePrime(ss, nt);
+      prevPos = pos;
+    }
+    // fix directionality of first nucleotide
+    if (ss->getNumberOfNucleotides() > 1) {
+      auto fPrime = ss->GetFivePrime();
+      SBVector3 newE3 = (fPrime->GetNext()->GetPosition() - fPrime->GetPosition()).normalizedVersion();
+      ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(newE3);
+      fPrime->SetE3(e3);
+    }
+
+  }
+
+  BuildTopScales(part);
+
+  return part;
+}
+
 void ADNLoader::OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options)
 {
   std::string fnameConf = "config.conf";
@@ -846,6 +932,10 @@ void ADNLoader::SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrand
   unsigned int ntId = 0;
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
     ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
+    // calculate five prime and three prime ids
+    int numNt = ss->getNumberOfNucleotides();
+    int fivePrimeId = ntId;
+    int threePrimeId = fivePrimeId + numNt;
     do {
       // config file info
       SBPosition3 pos = nt->GetPosition();
@@ -862,9 +952,17 @@ void ADNLoader::SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrand
       // topology file info
       std::string base(1, ADNModel::GetResidueName(nt->GetType()));
       std::string threePrime = "-1";
-      if (nt->GetPrev() != nullptr) threePrime = std::to_string(ntId - 1);
+      auto ntPrev = nt->GetPrev(true);
+      if (ntPrev != nullptr) {
+        if (ntPrev->GetEnd() == ThreePrime) threePrime = std::to_string(threePrimeId);
+        else threePrime = std::to_string(ntId - 1);
+      }
       std::string fivePrime = "-1";
-      if (nt->GetNext() != nullptr) fivePrime = std::to_string(ntId + 1);
+      auto ntNext = nt->GetNext(true);
+      if (ntNext != nullptr) {
+        if (ntNext->GetEnd() == FivePrime) fivePrime = std::to_string(fivePrimeId);
+        else fivePrime = std::to_string(ntId + 1);
+      }
 
       outTopo << std::to_string(strandId) + " " + base + " " + threePrime + " " + fivePrime << std::endl;
 
@@ -876,7 +974,7 @@ void ADNLoader::SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrand
   }
 }
 
-std::ofstream ADNLoader::CreateOutputFile(std::string fname, std::string folder)
+std::ofstream ADNLoader::CreateOutputFile(std::string fname, std::string folder, bool sign)
 {
   std::ofstream output(folder + "/" + fname);
 
@@ -890,8 +988,249 @@ std::ofstream ADNLoader::CreateOutputFile(std::string fname, std::string folder)
   strftime(buffer, sizeof(buffer), "%d-%m-%Y %I:%M:%S", timeinfo);
   std::string str(buffer);
 
-  output << "## File created with Adenita on " + str + "\n";
+  if (sign) {
+    output << "## File created with Adenita on " + str + "\n";
+  }
+  
   return output;
+}
+
+std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoFile, std::string configFile)
+{
+  ADNPointer<ADNPart> part = new ADNPart();
+  bool error = false;
+  std::vector<NucleotideWrap> oxDNAIndices;
+
+  // parse topology file
+  std::ifstream topo(topoFile);
+  if (topo.is_open()) {
+
+    std::string line;
+    ADNPointer<ADNSingleStrand> ss;
+    int currChain = -1;
+    int currNt = 0;
+    bool fstLine = true;
+    error = false;
+
+    while (std::getline(topo, line)) {
+      if (fstLine) {
+        fstLine = false;
+        continue;  // first line of topology contains number of chains and nucleotides
+      }
+
+      std::vector<std::string> cont;
+      boost::split(cont, line, boost::is_any_of(" "));
+      if (cont.size() != 4) {
+        error = true;
+        break;
+      }
+
+      int numChain = std::stoi(cont[0]);
+      char base = cont[1][0];
+      int numPrevNt = std::stoi(cont[2]);
+      int numNextNt = std::stoi(cont[3]);
+
+      if (numChain != currChain) {
+        ss = new ADNSingleStrand();
+        ss->SetDefaultName();
+        part->RegisterSingleStrand(ss);
+        currChain = numChain;
+      }
+
+      ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+      nt->SetType(ADNModel::ResidueNameToType(base));
+      part->RegisterNucleotideThreePrime(ss, nt);
+
+      // if last nucleotide next is same as first close
+
+      // insert wraper
+      NucleotideWrap w = NucleotideWrap();
+      w.nt_ = nt;
+      w.ntId_ = currNt;
+      w.strandId_ = currChain;
+      oxDNAIndices.push_back(w);
+
+      currNt++;
+    }
+  }
+
+  // parse config file and set positions if topology file was parsed correctly
+  if (!error) {
+    std::ifstream config(configFile);
+
+    if (config.is_open()) {
+
+      std::string line;
+      int lineCount = 0;
+      error = false;
+
+      while (std::getline(config, line)) {
+        if (lineCount > 2) {
+
+          std::vector<std::string> cont;
+          boost::split(cont, line, boost::is_any_of(" "));
+          if (cont.size() != 15) {
+            error = true;
+            break;
+          }
+
+          double x = std::stod(cont[0]);
+          double y = std::stod(cont[1]);
+          double z = std::stod(cont[2]);
+          double e2x = std::stod(cont[3]);
+          double e2y = std::stod(cont[4]);
+          double e2z = std::stod(cont[5]);
+          double e1x = std::stod(cont[6]);
+          double e1y = std::stod(cont[7]);
+          double e1z = std::stod(cont[8]);
+
+          if (oxDNAIndices.size() > (lineCount - 3)) {
+            SBPosition3 pos = SBPosition3(SBQuantity::nanometer(x), SBQuantity::nanometer(y), SBQuantity::nanometer(z));
+            ublas::vector<double> e2 = ublas::vector<double>(3, 0.0);
+            e2[0] = e2x;
+            e2[1] = e2y;
+            e2[2] = e2z;
+            ublas::vector<double> e1 = ublas::vector<double>(3, 0.0); 
+            e1[0] = e1x;
+            e1[1] = e1y;
+            e1[2] = e1z;
+            ublas::vector<double> e3 = ADNVectorMath::CrossProduct(e1, e2);
+
+            auto w = oxDNAIndices.at(lineCount - 3);
+            auto nt = w.nt_;
+            nt->SetPosition(pos);
+            nt->SetE2(e2);
+            nt->SetE1(e1);
+            nt->SetE3(e3);
+          }
+          else {
+            error = true;
+            break;
+          }
+        }
+
+        lineCount++;
+      }
+    }
+  }
+
+  if (!error) {
+    // create base pairs and double strands
+    BuildTopScales(part);
+
+  }
+  
+  return std::make_pair(error, part);
+}
+
+void ADNLoader::BuildTopScales(ADNPointer<ADNPart> part)
+{
+  auto dh_radius = SBQuantity::nanometer(ADNConstants::DH_DIAMETER)*0.5;
+  SBQuantity::length maxCutOff = dh_radius + SBQuantity::nanometer(0.2);
+  SBQuantity::length minCutOff = dh_radius - SBQuantity::nanometer(0.2);
+  auto neighbors = ADNNeighbors();
+  neighbors.SetMaxCutOff(maxCutOff);
+  neighbors.SetMinCutOff(minCutOff);
+  neighbors.SetIncludePairs(true);
+  neighbors.InitializeNeighbors(part);
+
+  auto singleStrands = part->GetSingleStrands();
+  ADNPointer<ADNDoubleStrand> ds = nullptr;
+
+  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+    ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
+    int number = 0;
+
+    while (nt != nullptr) {
+      if (nt->GetBaseSegment() != nullptr) {
+        nt = nt->GetNext();
+        continue;
+      }
+
+      SBPosition3 posNt = nt->GetPosition();
+      auto e2Nt = nt->GetE2();
+
+      auto ntBors = neighbors.GetNeighbors(nt);
+      double maxCos = 0.0;
+
+      ADNPointer<ADNNucleotide> pair = nullptr;
+      // check possible base pairing against the neighbors
+      SB_FOR(ADNPointer<ADNNucleotide> bor, ntBors) {
+        SBPosition3 posBor = bor->GetPosition();
+        SBPosition3 dif = posBor - posNt;
+        auto e2Bor = bor->GetE2();
+        // check right directionality and co-planarity
+        double t = ublas::inner_prod(e2Nt, e2Bor);
+        // check that they are "in front" of each other
+        ublas::vector<double> df = ADNAuxiliary::SBPositionToUblas(dif);
+        double n = ublas::inner_prod(e2Nt, df);
+        double angle_threshold = 10.0;
+        if (n > 0 && t < 0.0 && abs(t) > cos(ADNVectorMath::DegToRad(angle_threshold))) {
+          // possible paired, take most coplanar
+          if (abs(t) > maxCos) {
+            pair = bor;
+            maxCos = abs(t);
+          }
+        }
+      }
+
+      ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment(CellType::BasePair);
+      SBPosition3 bsPos = posNt + SBQuantity::nanometer(ADNConstants::DH_DIAMETER * 0.5) * ADNAuxiliary::UblasVectorToSBVector(e2Nt);
+      ublas::vector<double> e3 = nt->GetE3();
+      //ADNLogger& logger = ADNLogger::GetLogger();
+      //std::string msg = std::to_string(e3[0]) + " " + std::to_string(e3[1]) + " " + std::to_string(e3[2]);
+      //logger.LogDebug(msg);
+      ublas::vector<double> e1 = nt->GetE1();
+      ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(bs->GetCell()());
+      bp->SetLeftNucleotide(nt);
+      nt->SetBaseSegment(bs);
+      if (pair != nullptr) {
+        bp->SetRightNucleotide(pair);
+        pair->SetBaseSegment(bs);
+        bsPos = (posNt + pair->GetPosition())*0.5;
+      }
+
+      bs->SetPosition(bsPos);
+      bs->SetE3(e3);
+      bs->SetE2(e2Nt);
+      bs->SetE1(e1);
+      bs->SetNumber(number);
+
+      // add to corresponding double strand
+      if (ds == nullptr) {
+        ds = new ADNDoubleStrand();
+        part->RegisterDoubleStrand(ds);
+      }
+      part->RegisterBaseSegmentEnd(ds, bs);
+
+      bool breakDs = false;
+      double turningThreshold = 0.0;
+      if (pair == nullptr && nt->GetEnd() != NotEnd) breakDs = true;
+      else if (pair != nullptr && nt->GetEnd() != NotEnd && pair->GetEnd() != NotEnd) breakDs = true;
+      if (nt->GetEnd() != ThreePrime) {
+        // if huge change in directionality, make new strand
+        ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
+        ublas::vector<double> e3Next = ntNext->GetE3();
+        auto theta = ublas::inner_prod(e3, e3Next);
+        if (theta < 0.9) {
+          int test = 1;
+        }
+        if (theta < turningThreshold) breakDs = true;
+      }
+      if (pair != nullptr && pair->GetEnd() != FivePrime) {
+        // if huge change in directionality, make new strand
+        ADNPointer<ADNNucleotide> pairPrev = pair->GetPrev();
+        ublas::vector<double> e3Prev = pairPrev->GetE3();
+        auto theta = ublas::inner_prod(pair->GetE3(), e3Prev);
+        if (theta < turningThreshold) breakDs = true;
+      }
+
+      if (breakDs) ds = nullptr;
+
+      ++number;
+      nt = nt->GetNext();
+    }
+  }
 }
 
 void ADNLoader::OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std::string folder)
@@ -936,112 +1275,3 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, std::string filename)
 	
 	file.close();
 }
-
-////ANTPart & ANTPart::GenerateANTNanorobot() {
-////  ANTNanorobot nr = ANTNanorobot();
-////
-////  SBNodeIndexer chainIndexer;
-////  SAMSON::getActiveDocument()->getNodes(chainIndexer, SBNode::IsType(SBNode::Chain));
-////  
-////  int chainIndex = 0;
-////  std::pair<int, size_t> max_strand = std::make_pair(-1, 0);
-////  int j_id = 0;
-////  int bs_id = 0;
-////  SBPosition3 offset = SBPosition3();
-////  offset[0] = 0.5 * SBQuantity::angstrom(ANTConstants::BP_RISE * 10);
-////  SBVector3 dir = SBVector3();
-////
-////  for (unsigned int i = 0; i < chainIndexer.size(); i++) {
-////    SBNode* chain = chainIndexer[i];
-////    ANTSingleStrand * singleStrand = new ANTSingleStrand();
-////    singleStrand->chain_ = static_cast<SBChain*>(chain);
-////    singleStrand->chainName_ = singleStrand->chain_->getName();
-////    singleStrand->id_ = chainIndex;
-////    chainIndex++;
-////    nr.AddStrand(singleStrand);
-////
-////    SBNodeIndexer residues;
-////    chain->getNodes(residues, SBNode::IsType(SBNode::Residue));
-////
-////    //add nodes to singlestrands according to the chain index
-////    int nucleotideIndex = 0;
-////    ANTNucleotide* nt_prev = nullptr;
-////    BaseSegment* prev_bs = nullptr;
-////    Joint* prev_j = new Joint();
-////    prev_j->id_ = j_id;
-////    ++j_id;
-////    nr.AddJoint(prev_j);
-////
-////    for (unsigned int j = 0; j < residues.size(); j++) {
-////      SBResidue* residue = static_cast<SBResidue*>(residues[j]);
-////      std::string residueName = residue->getName();
-////
-////      SBNodeIndexer backboneList;
-////      residue->getNodes(backboneList, SBNode::IsType(SBNode::Backbone));
-////      SBNode* backbone = backboneList[0];
-////
-////      SBNodeIndexer sidechainList;
-////      residue->getNodes(sidechainList, SBNode::IsType(SBNode::SideChain));
-////      SBNode* sidechain = sidechainList[0];
-////
-////      ANTNucleotide * nucleotide = new ANTNucleotide(residue, backbone, sidechain);
-////      nucleotide->id_ = nucleotideIndex;
-////      singleStrand->nucleotides_.insert(std::make_pair(nucleotide->id_, nucleotide));
-////
-////      nucleotide->SetBackboneCenter(ANTVectorMath::CalculateCM(backbone));
-////      nucleotide->SetSidechainCenter(ANTVectorMath::CalculateCM(sidechain));
-////      SBPosition3 s = ANTVectorMath::CalculateCM(residue);
-////      nucleotide->SetPosition(s);
-////
-////      // update dir and offset
-////      if (j + 1 < residues.size()) {
-////        SBResidue* next_res = static_cast<SBResidue*>(residues[j + 1]);
-////        SBPosition3 t = ANTVectorMath::CalculateCM(next_res);
-////        dir = (t - s).normalizedVersion();
-////        offset = 0.5 * SBQuantity::angstrom(ANTConstants::BP_RISE * 10) * (prev_j->position_ - s).normalizedVersion();
-////      }
-////
-////      SBSideChain* sc = static_cast<SBSideChain*>(sidechain);
-////      SBBackbone* bb = static_cast<SBBackbone*>(backbone);
-////      nucleotide->residue_ = residue;
-////      nucleotide->sidechain_ = sc;
-////      nucleotide->backbone_ = bb;
-////
-////      char inputBaseSymbol = ANTAuxiliary::getBaseSymbol(sidechain);
-////      nucleotide->type_ = residue_names_.right.at(inputBaseSymbol);
-////
-////      nucleotide->prev_ = nt_prev;
-////      if (nt_prev != nullptr) nt_prev->next_ = nucleotide;
-////
-////      // add basesegments and joints
-////      if (j == 0) prev_j->position_ = s - offset;
-////      Joint* jo = new Joint();
-////      jo->id_ = j_id;
-////      ++j_id;
-////      jo->position_ = s + offset;
-////      JointPair jpair = std::make_pair(prev_j, jo);
-////      BaseSegment* bs = new BaseSegment(prev_j, jo);
-////      nr.AddJoint(jo);
-////      nr.AddBaseSegment(jpair, bs);
-////      bs->previous_ = prev_bs;
-////      if (prev_bs != nullptr) prev_bs->next_ = bs;
-////      bs->id_ = bs_id;
-////      ++bs_id;
-////      bs->number_ = j;
-////      bs->direction_ = dir;
-////      bs->nt_ = nucleotide;
-////
-////      nucleotideIndex++;
-////      nt_prev = nucleotide;
-////      prev_j = jo;
-////    }
-////
-////    //set nucleotide as threePrime and fivePrime ends
-////    singleStrand->SetNucleotidesEnd();
-////    size_t num_nts = singleStrand->nucleotides_.size();
-////    if (num_nts > max_strand.second) max_strand = std::make_pair(singleStrand->id_, num_nts);
-////  }
-////  nr.SetScaffold(max_strand.first);
-////  nr.SetNtSegmentMap();
-////  return nr;
-////}

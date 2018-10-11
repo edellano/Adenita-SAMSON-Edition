@@ -23,10 +23,12 @@ namespace ADNDisplayHelper {
   void displayDirectedCylinder(SBPosition3 start, SBPosition3 end);
   void displayDirectedCylinder(SBPosition3 start, SBPosition3 end, float * color, int radius);
   void displayPlane(SBVector3 vec, SBPosition3 shift);
-  //void displayTriangleMesh(ANTPolyhedron * polyhedron);
-  //void displayPolyhedron(ANTPart * part);
   void displayOrthoPlane(SBVector3 vec, SBPosition3 shift);
   void displaySphere(SBPosition3 pos, float radius);
-  //void displayLoop(ANTNucleotide * start, ANTNucleotide * end, ANTNucleotideList loopNts);
+  //! Display only the top scales of a part
+  /*!
+    \param ADNPointer to the ADNPart
+  */
+  void displayPart(ADNPointer<ADNPart> part);
 };
 

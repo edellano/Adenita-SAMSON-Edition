@@ -97,16 +97,32 @@ ADNPointer<ADNNucleotide> ADNNucleotide::GetPair()
   return pair_;
 }
 
-ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev()
+ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev(bool checkCircular)
 {
-  auto p = static_cast<ADNNucleotide*>(getPreviousNucleicAcid());
-  return ADNPointer<ADNNucleotide>(p);
+  ADNPointer<ADNNucleotide> p = static_cast<ADNNucleotide*>(getPreviousNucleicAcid());
+
+  if (checkCircular) {
+    auto strand = GetStrand();
+    if (strand->IsCircular() && end_ == FivePrime) {
+      p = strand->GetThreePrime();
+    }
+  }
+
+  return p;
 }
 
-ADNPointer<ADNNucleotide> ADNNucleotide::GetNext()
+ADNPointer<ADNNucleotide> ADNNucleotide::GetNext(bool checkCircular)
 {
-  auto p = static_cast<ADNNucleotide*>(getNextNucleicAcid());
-  return ADNPointer<ADNNucleotide>(p);
+  ADNPointer<ADNNucleotide> p = static_cast<ADNNucleotide*>(getNextNucleicAcid());
+  
+  if (checkCircular) {
+    auto strand = GetStrand();
+    if (strand->IsCircular() && end_ == ThreePrime) {
+      p = strand->GetFivePrime();
+    }
+  }
+
+  return p;
 }
 
 ADNPointer<ADNSingleStrand> ADNNucleotide::GetStrand()
@@ -304,41 +320,6 @@ bool ADNNucleotide::GlobalBaseIsSet() {
   return set;
 }
 
-//void ADNNucleotide::CopyAtoms(ADNPointer<ADNNucleotide> target) {
-//
-//  ADNPointer<ADNBackbone> bb(new ADNBackbone());
-//  ADNPointer<ADNSidechain> sc(new ADNSidechain());
-//
-//  std::map<int, int> atomMap;
-//
-//  ADNPointer<ADNBackbone> bbO = GetBackbone();
-//  auto bb0Atoms = bbO->GetAtoms();
-//  SB_FOR(ADNPointer<ADNAtom> oat, bb0Atoms) {
-//    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
-//    bb->AddAtom(atom);
-//    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
-//  }
-//  ADNPointer<ADNSidechain> scO = GetSidechain();
-//  auto sc0Atoms = scO->GetAtoms();
-//  SB_FOR(ADNPointer<ADNAtom> oat, sc0Atoms) {
-//    ADNPointer<ADNAtom> atom(new ADNAtom(*oat));
-//    sc->AddAtom(atom);
-//    atomMap.insert(std::make_pair(oat->getNodeIndex(), atom->getNodeIndex()));
-//  }
-//
-//  /*auto bonds = GetBonds();
-//  for (auto b : bonds) {
-//    ADNPointer<ADNAtom> b1 = b.first;
-//    ADNPointer<ADNAtom> b2 = b.second;
-//    auto newB1 = atomMap.at(b1);
-//    auto newB2 = atomMap.at(b2);
-//    target->AddBond(newB1, newB2);
-//  }*/
-//
-//  target->SetBackbone(bb);
-//  target->SetSidechain(sc);
-//}
-
 ADNSingleStrand::ADNSingleStrand(const ADNSingleStrand & other)
 {
   *this = other;
@@ -385,6 +366,19 @@ SBNode * ADNSingleStrand::getThreePrime() const
   return threePrime_();
 }
 
+ADNPointer<ADNNucleotide> ADNSingleStrand::GetNthNucleotide(int n)
+{
+  ADNPointer<ADNNucleotide> nt = nullptr;
+  if (n <= getNumberOfNucleotides()) {
+    nt = fivePrime_;
+    for (int i = 0; i < n; ++i) {
+      nt = nt->GetNext();
+    }
+  }
+  
+  return nt;
+}
+
 void ADNSingleStrand::SetFivePrime(ADNPointer<ADNNucleotide> nt)
 {
   fivePrime_ = nt;
@@ -413,6 +407,26 @@ bool ADNSingleStrand::getIsScaffold() const
 void ADNSingleStrand::setIsScaffold(bool b)
 {
   IsScaffold(b);
+}
+
+void ADNSingleStrand::IsCircular(bool c)
+{
+  isCircular_ = c;
+}
+
+bool ADNSingleStrand::IsCircular() const
+{
+  return isCircular_;
+}
+
+bool ADNSingleStrand::getIsCircular() const
+{
+  return IsCircular();
+}
+
+void ADNSingleStrand::setIsCircular(bool b)
+{
+  IsCircular(b);
 }
 
 int ADNSingleStrand::getNumberOfNucleotides() const
@@ -483,18 +497,19 @@ void ADNSingleStrand::AddNucleotide(ADNPointer<ADNNucleotide> nt, ADNPointer<ADN
 void ADNSingleStrand::ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq) {
   if (nt == fivePrime_) return;
 
+  std::string seq = GetSequence();
   auto origThreePrime = threePrime_;
   auto loopNt = origThreePrime;
   auto stopNt = nt->GetPrev();
 
   while (loopNt != stopNt) {
-    removeChild(loopNt());
-    AddNucleotideFivePrime(loopNt);
+    auto cpNt = loopNt;
     loopNt = loopNt->GetPrev();
+    removeChild(cpNt());
+    AddNucleotideFivePrime(cpNt);
   }
   
   if (shiftSeq) {
-    std::string seq = GetSequence();
     SetSequence(seq);
   }
 }
@@ -546,15 +561,21 @@ void ADNSingleStrand::SetSequence(std::string seq) {
   ADNPointer<ADNNucleotide> nt = fivePrime_;
   int count = 0;
   while (nt != nullptr) {
-    DNABlocks type = ADNModel::ResidueNameToType(seq[count]);
+    DNABlocks type = DNABlocks::DI;
+    if (seq.size() > count) type = ADNModel::ResidueNameToType(seq[count]);
     nt->SetType(type);
-    if (isScaffold_ && nt->GetPair() != nullptr) {
+    if (nt->GetPair() != nullptr) {
       DNABlocks compType = ADNModel::GetComplementaryBase(type);
       nt->GetPair()->SetType(compType);
     }
     nt = nt->GetNext();
     ++count;
   }
+}
+
+void ADNSingleStrand::setSequence(std::string seq)
+{
+  SetSequence(seq);
 }
 
 void ADNSingleStrand::SetDefaultName() {
@@ -788,13 +809,13 @@ std::map<std::string, std::vector<std::string>> ADNModel::GetNucleotideBonds(DNA
 
 ADNBaseSegment::ADNBaseSegment(CellType cellType) : PositionableSB(), Orientable(), SBStructuralGroup() {
   if (cellType == BasePair) {
-    cell_ = new ADNBasePair();
+    SetCell(new ADNBasePair());
   }
   else if (cellType == LoopPair) {
-    cell_ = new ADNLoopPair();
+    SetCell(new ADNLoopPair());
   }
   else if (cellType == SkipPair) {
-    cell_ = new ADNSkipPair();
+    SetCell(new ADNSkipPair());
   }
 }
 
@@ -835,19 +856,35 @@ int ADNBaseSegment::getNumber() const
   return GetNumber();
 }
 
-ADNPointer<ADNBaseSegment> ADNBaseSegment::GetPrev() const
+ADNPointer<ADNBaseSegment> ADNBaseSegment::GetPrev(bool checkCircular) const
 {
-  auto p = static_cast<ADNBaseSegment*>(getPreviousStructuralNode());
-  return ADNPointer<ADNBaseSegment>(p);
+  ADNPointer<ADNBaseSegment> p = static_cast<ADNBaseSegment*>(getPreviousStructuralNode());
+
+  if (checkCircular) {
+    auto ds = GetDoubleStrand();
+    if (ds->IsCircular() && GetNumber() == 0) {
+      // is the first bs
+      p = ds->GetLastBaseSegment();
+    }
+  }
+  return p;
 }
 
-ADNPointer<ADNBaseSegment> ADNBaseSegment::GetNext() const
+ADNPointer<ADNBaseSegment> ADNBaseSegment::GetNext(bool checkCircular) const
 {
-  auto p = static_cast<ADNBaseSegment*>(getNextStructuralNode());
-  return ADNPointer<ADNBaseSegment>(p);
+  ADNPointer<ADNBaseSegment> p = static_cast<ADNBaseSegment*>(getNextStructuralNode());
+
+  if (checkCircular) {
+    auto ds = GetDoubleStrand();
+    if (ds->IsCircular() && this == ds->GetLastBaseSegment()()) {
+      // is the last bs
+      p = ds->GetFirstBaseSegment();
+    }
+  }
+  return p;
 }
 
-ADNPointer<ADNDoubleStrand> ADNBaseSegment::GetDoubleStrand()
+ADNPointer<ADNDoubleStrand> ADNBaseSegment::GetDoubleStrand() const
 {
   auto p = static_cast<ADNDoubleStrand*>(getParent());
   return ADNPointer<ADNDoubleStrand>(p);
@@ -925,6 +962,26 @@ int ADNDoubleStrand::GetLength() const
 int ADNDoubleStrand::getLength() const
 {
   return GetLength();
+}
+
+void ADNDoubleStrand::IsCircular(bool c)
+{
+  isCircular_ = c;
+}
+
+bool ADNDoubleStrand::IsCircular() const
+{
+  return isCircular_;
+}
+
+bool ADNDoubleStrand::getIsCircular() const
+{
+  return IsCircular();
+}
+
+void ADNDoubleStrand::setIsCircular(bool b)
+{
+  IsCircular(b);
 }
 
 CollectionMap<ADNBaseSegment> ADNDoubleStrand::GetBaseSegments() const

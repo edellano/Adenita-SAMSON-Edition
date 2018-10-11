@@ -25,6 +25,26 @@ namespace ADNBasicOperations {
   void MutateNucleotide(ADNPointer<ADNNucleotide> nt, DNABlocks newType, bool changePair = true);
   void SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss, std::string seq, bool changePair = true);
   void MutateBasePairIntoLoopPair(ADNPointer<ADNBaseSegment> bs);
+  //! Shift start of the strand to the selected nucleotide and sequence.
+  /*!
+    \param a ADNPointer to the ADNNucleotide which should be the new 5' of its strand
+    \param whether to keep the sequence as it was (reset it from new 5' on)
+  */
+  void SetStart(ADNPointer<ADNNucleotide> nt, bool resetSequence = false);
+  //! Moves an ADNDoubleStrand to another ADNPart
+  /*!
+    \param ADNPointer to the part that contains the double strand
+    \param ADNPointer to the new part
+    \param ADNPointer to the ADNDoubleStrand we want to move
+  */
+  void MoveStrand(ADNPointer<ADNPart> oldPart, ADNPointer<ADNPart> part, ADNPointer<ADNDoubleStrand> ds);
+  //! Moves an ADNDoubleStrand to another ADNPart
+  /*!
+    \param ADNPointer to the part that contains the double strand
+    \param ADNPointer to the new part
+    \param ADNPointer to the ADNDoubleStrand we want to move
+  */
+  void MoveStrand(ADNPointer<ADNPart> oldPart, ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> ss);
 
   // Geometric operations
   void TwistDoubleHelix(ADNPointer<ADNDoubleStrand> ds, double deg);

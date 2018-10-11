@@ -3,9 +3,10 @@
 #include "ADNNanorobot.hpp"
 #include "ADNConstants.hpp"
 #include "ADNBasicOperations.hpp"
+#include "DASLattices.hpp"
+
 
 // type of editor enumeration
-
 namespace DASCreator {
 
   enum EditorType {
@@ -28,14 +29,14 @@ namespace DASCreator {
     \param starting point of the double strand
     \param direction vector
   */
-  ADNPointer<ADNDoubleStrand> CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction);
+  ADNPointer<ADNDoubleStrand> CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction, bool mock = false);
   //! Creates a single strand
   /*!
     \param the length of the double strand in base pairs
     \param starting point of the double strand
     \param direction vector
   */
-  ADNPointer<ADNSingleStrand> CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction);
+  ADNPointer<ADNSingleStrand> CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction, bool mock = false);
 
   ADNPointer<ADNLoop> CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq, ADNPointer<ADNPart> part = nullptr);
 
@@ -71,9 +72,21 @@ namespace DASCreator {
     \param the radius of the ring
     \param position of the center of the ring
     \param normal to the ring
+    \param number of linear rings
     \param whether to create a mock part containing only the high-level details
   */
-  ADNPointer<ADNPart> CreateCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock = false);
+  ADNPointer<ADNPart> CreateLinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int number, bool mock = false);
+
+  //! Creates a ADNPart containing interlocked double stranded DNA Rings in a hexagonal lattice
+  /*!
+    \param the radius of the ring
+    \param position of the center of the ring lattice
+    \param normal to the ring lattice
+    \param number of rows in the lattice
+    \param number of columns in the lattice
+    \param whether to create a mock part containing only the high-level details
+  */
+  ADNPointer<ADNPart> CreateHexagonalCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols, bool mock = false);
 
   //ADNPart* CreateTwoTubes(size_t length, SBPosition3 start, SBVector3 direction, SBVector3 sepDir);
   
@@ -92,17 +105,9 @@ namespace DASCreator {
     \param length of the double strand in base pairs
     \param position of the 5' in space
     \param direction of the double strand
+    \param whether to generate a mock part or not
   */
-  ADNPointer<ADNDoubleStrand> AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction);
-
-  //! Helper function that adds a double strand containing only the high-level model (base segments) to a mock ADNPart
-  /*!
-    \param the ADNPart to which the double strand will be added
-    \param length of the double strand in base pairs
-    \param position of the 5' in space
-    \param direction of the double strand
-  */
-  ADNPointer<ADNDoubleStrand> AddMockDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction);
+  ADNPointer<ADNDoubleStrand> AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction, bool mock = false);
 
   //! Helper function that creates a single strand B-DNA like in a ADNPart
   /*!
@@ -120,4 +125,21 @@ namespace DASCreator {
   ///** Generates a small system for debuging crossovers purposes
   // */
   //ADNPart* DebugCrossoversPart();
+};
+
+namespace DASCreatorEditors {
+  
+  //! Store positions
+  struct Positions {
+    SBPosition3 First;
+    SBPosition3 Second;
+    SBPosition3 Third;
+    SBPosition3 Fourth;
+    SBPosition3 Fifth;
+    SBPosition3 Sixth;
+    int cnt = 0;
+  };
+
+  void resetPositions(Positions& pos);
+  void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
 };

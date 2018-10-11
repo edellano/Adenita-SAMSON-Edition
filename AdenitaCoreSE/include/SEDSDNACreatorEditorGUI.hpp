@@ -51,6 +51,13 @@ public:
 
 	//@}
 
+public slots:
+
+  void onSetDSDNA(bool b);
+  void onSetSSDNA(bool b);
+  void onShowBox(bool s);
+  void onChangeBoxSize();
+
 private:
 
 	Ui::SEDSDNACreatorEditorGUIClass									ui;

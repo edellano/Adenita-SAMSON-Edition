@@ -112,8 +112,9 @@ SB_CLASS_BEGIN(ADNSingleStrand);
 
     SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNSingleStrand, Name, "Name", "Properties");
     SB_ATTRIBUTE_READ_WRITE(bool, ADNSingleStrand, IsScaffold, "Is Scaffold", "Properties");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNSingleStrand, IsCircular, "Is Circular", "Properties");
     SB_ATTRIBUTE_READ_ONLY(int, ADNSingleStrand, NumberOfNucleotides, "Nucleotides", "Properties");
-    // SB_ATTRIBUTE_READ_ONLY(std::string, ADNSingleStrand, Sequence, "Sequence", "Properties");
+    SB_ATTRIBUTE_READ_WRITE(std::string, ADNSingleStrand, Sequence, "Sequence", "Properties");
     SB_ATTRIBUTE_READ_ONLY(double, ADNSingleStrand, GCContent, "GC %", "Properties");
     SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSingleStrand, FivePrime, "5'", "Properties");
     SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSingleStrand, ThreePrime, "3'", "Properties");
@@ -265,6 +266,7 @@ SB_CLASS_BEGIN(ADNDoubleStrand);
     SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNDoubleStrand, Name, "Name", "Properties");
     SB_ATTRIBUTE_READ_ONLY(int, ADNDoubleStrand, Length, "Length", "Properties");
     SB_ATTRIBUTE_READ_ONLY(double, ADNDoubleStrand, InitialTwistAngle, "Helical twist offset", "Properties");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNDoubleStrand, IsCircular, "Is Circular", "Properties");
     SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNDoubleStrand, FirstBaseSegment, "First base segment", "Double strand extremes");
     SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNDoubleStrand, LastBaseSegment, "Last base segment", "Double strand extremes");
 

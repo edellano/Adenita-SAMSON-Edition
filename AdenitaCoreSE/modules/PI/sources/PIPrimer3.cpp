@@ -2,7 +2,27 @@
 
 CollectionMap<PIBindingRegion> PIPrimer3::GetBindingRegions()
 {
-  return regions_;
+  CollectionMap<PIBindingRegion> regions;
+
+  for (auto it = regionsMap_.begin(); it != regionsMap_.end(); ++it) {
+    CollectionMap<PIBindingRegion> regs = it->second;
+    SB_FOR(ADNPointer<PIBindingRegion> r, regs) {
+      regions.addReferenceTarget(r());
+    }
+  }
+
+  return regions;
+}
+
+PIPrimer3 & PIPrimer3::GetInstance()
+{
+  static PIPrimer3 instance;
+  return instance;
+}
+
+CollectionMap<PIBindingRegion> PIPrimer3::GetBindingRegions(ADNPointer<ADNPart> p)
+{
+  return regionsMap_.at(p());
 }
 
 ThermParam PIPrimer3::ExecuteNtthal(std::string leftSequence, std::string rightSequence, int oligo_conc, int mv, int dv)
@@ -28,7 +48,7 @@ ThermParam PIPrimer3::ExecuteNtthal(std::string leftSequence, std::string rightS
   QString firstLine = strLines[0];
 
   ThermParam res;
-  if (strLines.size() != 6) { //if there the region is unbound
+  if (strLines.size() != 6) {  //if there the region is unbound
     res.dS_ = FLT_MAX;
     res.dH_ = FLT_MAX;
     res.dG_ = FLT_MAX;
@@ -64,8 +84,10 @@ ThermParam PIPrimer3::ExecuteNtthal(std::string leftSequence, std::string rightS
 
 void PIPrimer3::Calculate(ADNPointer<ADNPart> p, int oligo_conc, int mv, int dv)
 {
-  CreateBindingRegions(p);
-  auto regions = GetBindingRegions();
+  if (regionsMap_.find(p()) == regionsMap_.end()) {
+    CreateBindingRegions(p);
+  }
+  auto regions = GetBindingRegions(p);
 
   SB_FOR(ADNPointer<PIBindingRegion> r, regions) {
     auto seqs = r->GetSequences();
@@ -76,42 +98,67 @@ void PIPrimer3::Calculate(ADNPointer<ADNPart> p, int oligo_conc, int mv, int dv)
 
 void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
 {
+  if (regionsMap_.find(p()) != regionsMap_.end()) {
+    regionsMap_[p()].clear();
+  }
+  else {
+    regionsMap_.insert(std::make_pair(p(), CollectionMap<PIBindingRegion>()));
+  }
+
   auto singleStrands = p->GetSingleStrands();
+
+  std::vector<ADNPointer<ADNNucleotide>> added_nt;
+  unsigned int numRegions = 0;
 
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
     ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
 
     int regionSize = 0;
-    unsigned int numRegions = 0;
 
-    ADNPointer<PIBindingRegion> region;
+    SBNodeIndexer nodeIndexer;
     while (nt != nullptr) {
-      if (regionSize == 0) {
-        region = new PIBindingRegion();
-        //region->RegisterBindingRegion();
-        //regions_.addReferenceTarget(region());
-        ++numRegions;
-      }
 
-      bool endOfRegion = true;
+      if (std::find(added_nt.begin(), added_nt.end(), nt) == added_nt.end()) {
+        bool endOfRegion = true;
 
-      auto st_cur = nt->GetPair();
-      auto sc_next = nt->GetNext();
+        auto st_cur = nt->GetPair();
+        auto sc_next = nt->GetNext();
 
-      if (sc_next != nullptr && st_cur != nullptr && st_cur->GetPrev() != nullptr) {
-        if (sc_next->GetPair() == st_cur->GetPrev()) {
-          endOfRegion = false;
+        if (sc_next != nullptr && st_cur != nullptr && st_cur->GetPrev() != nullptr) {
+          if (sc_next->GetPair() == st_cur->GetPrev()) {
+            endOfRegion = false;
+          }
+        }
+        else if (st_cur == nullptr) {
+          // group up in one binding region the contiguous unpaired nts
+          if (sc_next->GetPair() == nullptr) {
+            endOfRegion = false;
+          }
+        }
+
+        nodeIndexer.addNode(nt());
+        added_nt.push_back(nt);
+        auto pair = nt->GetPair();
+        if (pair != nullptr) {
+          nodeIndexer.addNode(pair());
+          added_nt.push_back(pair);
+        }
+
+        ++regionSize;
+
+        if (endOfRegion) {
+          regionSize = 0;
+          std::string name = "Binding Region " + std::to_string(numRegions);
+          ADNPointer<PIBindingRegion> region = new PIBindingRegion(name, nodeIndexer);
+          region->SetPart(p);
+          region->RegisterBindingRegion();
+          regionsMap_[p()].addReferenceTarget(region());
+          region->SetLastNt(nt);
+          ++numRegions;
+          nodeIndexer.clear();
         }
       }
 
-      //region->addChild(nt());
-      //region->SetLastNt(nt);
-
-      ++regionSize;
-
-      if (endOfRegion) {
-        regionSize = 0;
-      }
       nt = nt->GetNext();
     }
   }
