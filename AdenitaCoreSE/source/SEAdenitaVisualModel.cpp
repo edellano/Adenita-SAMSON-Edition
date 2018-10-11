@@ -1267,20 +1267,14 @@ void SEAdenitaVisualModel::displayBaseBairConnections()
     //radii(index) = config.nucleotide_E_radius;
     radii(index) = 100;
     flags(index) = 0;
-
-
-    indices(2 * j) = index;
-    indices(2 * j + 1) = ntMap[pair()];
-    //registerIndices.push_back(index);
-    ++j;
-
-    //if (std::find(registerIndices.begin(), registerIndices.end(), ntMap[pair()]) == registerIndices.end()) {
-    //  // we only need to insert the indices once per pair
-    //  indices(2 * j) = index;
-    //  indices(2 * j + 1) = ntMap[pair()];
-    //  registerIndices.push_back(index);
-    //  ++j;
-    //}
+        
+    if (std::find(registerIndices.begin(), registerIndices.end(), ntMap[pair()]) == registerIndices.end()) {
+      // we only need to insert the indices once per pair
+      indices(2 * j) = index;
+      indices(2 * j + 1) = ntMap[pair()];
+      registerIndices.push_back(index);
+      ++j;
+    }
   }
 
   SAMSON::displayCylinders(
