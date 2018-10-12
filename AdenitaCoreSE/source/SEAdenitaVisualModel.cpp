@@ -75,7 +75,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
     this, 
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
   
-  changeScale(6);
+  changeScale(7);
 
   orderVisibility();
   
@@ -1253,19 +1253,18 @@ void SEAdenitaVisualModel::displayBaseBairConnections()
     ADNPointer<ADNNucleotide> nt = p.first;
     ADNPointer<ADNNucleotide> pair = nt->GetPair();
     unsigned int index = p.second;
-    //colors.SetRow(numNtPaired, baseColors->GetColor(nt));
+    colors.SetRow(index, baseColors->GetColor(nt));
    
-    colors(index, 0) = 1.0f;
+    /*colors(index, 0) = 1.0f;
     colors(index, 1) = 0.0f;
     colors(index, 2) = 0.0f;
     colors(index, 3) = 1.0f;
+*/
+    positions(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
+    positions(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
+    positions(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
 
-    positions_(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
-    positions_(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
-    positions_(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
-
-    //radii(index) = config.nucleotide_E_radius;
-    radii(index) = 100;
+    radii(index) = config.nucleotide_E_radius;
     flags(index) = 0;
         
     if (std::find(registerIndices.begin(), registerIndices.end(), ntMap[pair()]) == registerIndices.end()) {
