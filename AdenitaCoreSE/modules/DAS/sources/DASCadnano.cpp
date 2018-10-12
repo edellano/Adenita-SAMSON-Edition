@@ -178,12 +178,12 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
     if (cellBsMap_.find(vs) != cellBsMap_.end()) positions = cellBsMap_.at(vs);
 
     SEConfig& config = SEConfig::GetInstance();
-    int magic_number = config.magic_number;  //  this is a magic number to fix crossovers
+    //int magic_number = config.magic_number;  //  this is a magic number to fix crossovers
 
-    int bs_number = tube.initPos_ + magic_number;
-    if ((vs->row_ + vs->col_) % 2 != 0) {
+    int bs_number = tube.initPos_;  // +magic_number;
+    /*if ((vs->row_ + vs->col_) % 2 != 0) {
       bs_number += 6;
-    }
+    }*/
 
     SBPosition3 fp = initPos;
     for (int i = 0; i < length; ++i) {
@@ -271,7 +271,7 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot)
   logger.Log(msg);
 }
 
-void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> nanorobot, bool left)
+void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> nanorobot, bool scaf)
 {
   ADNLogger& logger = ADNLogger::GetLogger();
   //trace scaffold through vstrands
@@ -280,7 +280,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
   int vStrandId = startVStrand;
   int z = startVStrandPos;
   vec4 curVstrandElem;
-  if (left) curVstrandElem = vstrands[startVStrand].scaf_[startVStrandPos];
+  if (scaf) curVstrandElem = vstrands[startVStrand].scaf_[startVStrandPos];
   else curVstrandElem = vstrands[startVStrand].stap_[startVStrandPos];
   int count = 0;
   while (true) {
@@ -303,6 +303,11 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
     }
     else {
       int max_iter = vstrands[vStrandId].loops_[z];
+      bool left = true;
+      Vstrand vs = vstrands[vStrandId];
+      if (scaf && vStrandId % 2 == 0) left = false;
+      else if (!scaf && vStrandId % 2 != 0) left = false;
+
       for (int k = 0; k <= max_iter; k++) {
         //add loop
         ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
@@ -344,7 +349,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
           if (c->GetType() == LoopPair) {
             ADNPointer<ADNLoopPair> lp = static_cast<ADNLoopPair*>(c());
             ADNPointer<ADNLoop> loop;
-            if (left) loop = lp->GetLeftLoop();
+            if (scaf) loop = lp->GetLeftLoop();
             else loop = lp->GetRightLoop();
 
             if (loop == nullptr) {
@@ -378,7 +383,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
     //find next scaf element
     auto nextVstrand = json_.vstrands_[curVstrandElem.n2];
     vec4 nextVstrandElem;
-    if (left) nextVstrandElem = nextVstrand.scaf_[curVstrandElem.n3];
+    if (scaf) nextVstrandElem = nextVstrand.scaf_[curVstrandElem.n3];
     else nextVstrandElem = nextVstrand.stap_[curVstrandElem.n3];
 
     vStrandId = curVstrandElem.n2;
