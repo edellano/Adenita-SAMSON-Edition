@@ -664,6 +664,21 @@ void ADNDisplayHelper::displaySphere(SBPosition3 pos, float radius)
     flags.GetArray());
 }
 
+void ADNDisplayHelper::displayBasePairConnection(ADNPointer<ADNNucleotide> nt)
+{
+  auto pair = nt->GetPair();
+  
+  if (pair != nullptr) {
+    float * color = new float[4];
+    color[0] = 0.5f;
+    color[1] = 0.5f;
+    color[2] = 0.5f;
+    color[3] = 1.0f;
+
+    displayDirectedCylinder(nt->GetBackbonePosition(), pair->GetBackbonePosition(), color, 100);
+  }
+}
+
 void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part)
 {
   SEConfig& config = SEConfig::GetInstance();
