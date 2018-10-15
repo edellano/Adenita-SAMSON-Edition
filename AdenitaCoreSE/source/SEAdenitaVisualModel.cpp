@@ -1103,7 +1103,7 @@ void SEAdenitaVisualModel::display() {
     flags_.GetArray());
   
 
-  displayBaseBairConnections(true);
+  displayForDebugging();
 
 
 
@@ -1296,6 +1296,31 @@ void SEAdenitaVisualModel::displayBaseBairConnections(bool onlySelected)
     colors.GetArray(),
     flags.GetArray()
     );
+
+}
+
+void SEAdenitaVisualModel::displayForDebugging()
+{
+  SEConfig& config = SEConfig::GetInstance();
+  auto parts = nanorobot_->GetParts();
+
+  SB_FOR(auto part, parts) {
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        if (nt->isSelected()) {
+          if (config.display_nucleotide_basis) {
+            ADNDisplayHelper::displayBaseVectors(nt);
+          }
+        }
+      }
+    }
+  }
+
+  if (config.display_base_pairing) {
+    displayBaseBairConnections(true);
+  }
 
 }
 
