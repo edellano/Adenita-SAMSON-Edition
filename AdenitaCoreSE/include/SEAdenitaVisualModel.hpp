@@ -76,6 +76,7 @@ public :
   virtual void												display();																///< Displays the visual model
 	virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
+  virtual void                        displayBaseBairConnections();
 
 	virtual void												expandBounds(SBIAPosition3& bounds) const;								///< Expands the bounds to make sure the visual model fits inside them
 

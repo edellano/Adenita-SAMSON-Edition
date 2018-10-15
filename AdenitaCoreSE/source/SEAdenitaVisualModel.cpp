@@ -75,7 +75,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
     this, 
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
   
-  changeScale(6);
+  changeScale(7);
 
   orderVisibility();
   
@@ -397,7 +397,8 @@ void SEAdenitaVisualModel::prepareArraysForDisplay()
   else if (scale_ < (float)DOUBLE_HELIX_PATH) {
     //70 - 79
     prepareScale7to8(interpolated); //todo
-    //if (config.display_base_pairing) displayBasePairConnections(scale_);
+    //if (config.display_base_pairing) displayBasePair
+    (scale_);
 
   }
   else if (scale_ < (float)EDGES_VERTICES) {
@@ -819,7 +820,6 @@ void SEAdenitaVisualModel::prepareScale9(bool forSelection /*= false*/)
   flags_ = ADNArray<unsigned int>(nPositions_);
   colorsV_ = ADNArray<float>(4, nPositions_);
   nodeIndices_ = ADNArray<unsigned int>(nPositions_);
-  indices_ = ADNArray<unsigned int>(nCylinders_ * 2);
   capData_ = ADNArray<unsigned int>(nPositions_);
 
   unsigned int index = 0;
@@ -1074,23 +1074,21 @@ void SEAdenitaVisualModel::display() {
   glEnable(GL_DEPTH_TEST);
 
   int iScale = (int)scale_;
-  if (iScale == STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
-    SEConfig& config = SEConfig::GetInstance();
-    ADNLogger& logger = ADNLogger::GetLogger();
 
-    auto parts = nanorobot_->GetParts();
+  SEConfig& config = SEConfig::GetInstance();
+  ADNLogger& logger = ADNLogger::GetLogger();
+
+  auto parts = nanorobot_->GetParts();
+
+  if (iScale == STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+    unsigned int index = 0;
 
     SB_FOR(auto part, parts) {
-
       auto singleStrands = nanorobot_->GetSingleStrands(part);
-
       SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-
         auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-
         SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
 
-          auto index = ntMap_[nt()];
           capData_(index) = 0;
           flags_(index) = nt->getInheritedFlags();
           nodeIndices_(index) = nt->getNodeIndex();
@@ -1139,9 +1137,12 @@ void SEAdenitaVisualModel::display() {
             colorsV_(index, 3) = 0.0f;
             colorsE_(index, 3) = 0.0f;
           }
+
+          ++index;
         }
       }
     }
+
   }
   
   if (nCylinders_ > 0) {
@@ -1164,8 +1165,7 @@ void SEAdenitaVisualModel::display() {
     flags_.GetArray());
   
 
-
-  
+  displayBaseBairConnections();
 
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
@@ -1211,6 +1211,82 @@ void SEAdenitaVisualModel::displayForSelection() {
     radiiV_.GetArray(),
     nodeIndices_.GetArray()
     );
+}
+
+void SEAdenitaVisualModel::displayBaseBairConnections()
+{
+  SEConfig& config = SEConfig::GetInstance();
+
+  auto baseColors = colors_.at(REGULAR);
+  auto parts = nanorobot_->GetParts();
+
+  unsigned int numPairedNts = 0;
+  std::map<ADNNucleotide*, unsigned int> ntMap;
+
+  //determine how many nucleotides have pairs 
+
+  SB_FOR(auto part, parts) {
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        if (nt->GetPair() != nullptr) {
+          ntMap.insert(make_pair(nt(), numPairedNts));
+          ++numPairedNts;
+        }
+      }
+    }
+  }
+
+  unsigned int nPositions = boost::numeric_cast<unsigned int>(ntMap.size());
+  unsigned int nCylinders = nPositions / 2;
+
+  ADNArray<float> positions = ADNArray<float>(3, nPositions);
+  ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
+  ADNArray<float> radii = ADNArray<float>(nPositions);
+  ADNArray<float> colors = ADNArray<float>(4, nPositions);
+  ADNArray<unsigned int> flags = ADNArray<unsigned int>(nPositions);
+
+  unsigned int j = 0;
+  std::vector<unsigned int> registerIndices;
+  for (auto &p : ntMap) {
+    ADNPointer<ADNNucleotide> nt = p.first;
+    ADNPointer<ADNNucleotide> pair = nt->GetPair();
+    unsigned int index = p.second;
+    colors.SetRow(index, baseColors->GetColor(nt));
+   
+    /*colors(index, 0) = 1.0f;
+    colors(index, 1) = 0.0f;
+    colors(index, 2) = 0.0f;
+    colors(index, 3) = 1.0f;
+*/
+    positions(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
+    positions(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
+    positions(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
+
+    radii(index) = config.nucleotide_E_radius;
+    flags(index) = 0;
+        
+    if (std::find(registerIndices.begin(), registerIndices.end(), ntMap[pair()]) == registerIndices.end()) {
+      // we only need to insert the indices once per pair
+      indices(2 * j) = index;
+      indices(2 * j + 1) = ntMap[pair()];
+      registerIndices.push_back(index);
+      ++j;
+    }
+  }
+
+  SAMSON::displayCylinders(
+    nCylinders,
+    nPositions,
+    indices.GetArray(),
+    positions.GetArray(),
+    radii.GetArray(),
+    nullptr,
+    colors.GetArray(),
+    flags.GetArray()
+    );
+
 }
 
 void SEAdenitaVisualModel::expandBounds(SBIAPosition3& bounds) const {
