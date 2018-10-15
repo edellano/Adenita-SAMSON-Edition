@@ -679,6 +679,21 @@ void ADNDisplayHelper::displayBasePairConnection(ADNPointer<ADNNucleotide> nt)
   }
 }
 
+void ADNDisplayHelper::displayBaseVectors(ADNPointer<ADNNucleotide> nt)
+{
+  SBVector3 e1 = SBVector3(nt->GetE1()[0], nt->GetE1()[1], nt->GetE1()[2]);
+  SBVector3 e2 = SBVector3(nt->GetE2()[0], nt->GetE2()[1], nt->GetE2()[2]);
+  SBVector3 e3 = SBVector3(nt->GetE3()[0], nt->GetE3()[1], nt->GetE3()[2]);
+
+  float e1_c[] = { 0, 0, 1, 1 };
+  float e2_c[] = { 1, 0, 0, 1 };
+  float e3_c[] = { 0, 1, 0, 1 };
+
+  displayVector(e1, nt->GetBackbonePosition(), e1_c, 700);
+  displayVector(e2, nt->GetBackbonePosition(), e2_c, 700);
+  displayVector(e3, nt->GetBackbonePosition(), e3_c, 700);
+}
+
 void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part)
 {
   SEConfig& config = SEConfig::GetInstance();
@@ -756,7 +771,7 @@ void ADNDisplayHelper::displayVector(SBVector3 vec, SBPosition3 shift, float * c
 
   end += shift;
 
-  displayDirectedCylinder(shift, end, color, 10);
+  displayDirectedCylinder(shift, end, color, 50);
 }
 
 void ADNDisplayHelper::displayArrow(SBVector3 vec, SBPosition3 start)
