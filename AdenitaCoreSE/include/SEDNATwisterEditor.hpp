@@ -8,6 +8,8 @@
 #include "SBDynamicalEvent.hpp"
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
+#include "ADNNanorobot.hpp"
+#include "DASBackToTheAtom.hpp"
 
 /// This class implements an editor
 
@@ -94,6 +96,9 @@ public :
 
 	//@}
 
+  SBPosition3														spherePosition;
+  SBQuantity::length										sphereRadius;
+  bool															    activeSphere;
 };
 
 
