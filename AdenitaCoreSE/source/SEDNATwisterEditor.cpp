@@ -165,6 +165,10 @@ void SEDNATwisterEditor::mouseReleaseEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  if (event->button() == Qt::MouseButton::LeftButton) {
+    activeSphere = false;
+    SAMSON::requestViewportUpdate();
+  }
 }
 
 void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
@@ -189,18 +193,25 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
   SAMSON::requestViewportUpdate();
 
   if (activeSphere) {
-    SBNodeIndexer nodeIndexer;
-    SAMSON::getActiveDocument()->getNodes(nodeIndexer, SBNode::IsType(SBNode::Atom));
+    SBDocument* doc = SAMSON::getActiveDocument();
+    SBNodeIndexer nodes;
+    doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNNucleotide")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
-    SB_FOR(SBNode * node, nodeIndexer) {
-      SBAtom* atom = (SBAtom *)node;
-      SBPosition3 atomPosition = atom->getPosition();
-      SBPosition3 vectorFromSphereCenter = atomPosition - spherePosition;
+    DASBackToTheAtom btta;
+
+    SB_FOR(SBNode* node, nodes) {
+      ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
+      SBPosition3 pos = nt->GetSidechainPosition();
+      SBPosition3 vectorFromSphereCenter = pos - spherePosition;
+     
       if (vectorFromSphereCenter.norm() < sphereRadius) {
         vectorFromSphereCenter = vectorFromSphereCenter * (sphereRadius / vectorFromSphereCenter.norm());
-        atom->setPosition(spherePosition + vectorFromSphereCenter);
+        btta.UntwistNucleotidePosition(nt);
+        SAMSON::requestViewportUpdate();
+
       }
     }
+
   }
 }
 
