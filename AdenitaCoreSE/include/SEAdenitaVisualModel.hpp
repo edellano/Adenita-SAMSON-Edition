@@ -3,6 +3,7 @@
 #include "SBMVisualModel.hpp"
 #include "SBGApp.hpp" 
 #include "SEAdenitaCoreSEApp.hpp"
+#include "ADNDisplayHelper.hpp"
 
 #include "SBBaseEvent.hpp"
 #include "SBDocumentEvent.hpp"
@@ -74,9 +75,11 @@ public :
   virtual void												changeVisibility(double layer);																///< Displays the visual model
 	
   virtual void												display();																///< Displays the visual model
-	virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
+  virtual void												displayPlatingBackbone();
+  virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
-  virtual void                        displayBaseBairConnections();
+  virtual void                        displayBaseBairConnections(bool onlySelected);
+  virtual void                        displayForDebugging();
 
 	virtual void												expandBounds(SBIAPosition3& bounds) const;								///< Expands the bounds to make sure the visual model fits inside them
 
