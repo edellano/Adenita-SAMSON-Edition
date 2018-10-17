@@ -21,7 +21,7 @@ SB_CLASS_BEGIN(SEAdenitaVisualModelProperties);
 	SB_FACTORY_END;
 
 	SB_INTERFACE_BEGIN;
-
+    
 	SB_INTERFACE_END;
 
 SB_CLASS_END(SEAdenitaVisualModelProperties);
