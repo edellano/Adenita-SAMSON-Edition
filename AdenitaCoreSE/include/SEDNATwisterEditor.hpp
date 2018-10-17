@@ -94,6 +94,9 @@ public :
 
 	//@}
 
+  SBPosition3														spherePosition;
+  SBQuantity::length												sphereRadius;
+  bool															activeSphere;
 };
 
 

@@ -10,6 +10,13 @@ SEDNATwisterEditor::SEDNATwisterEditor() {
 	propertyWidget->loadDefaultSettings();
 	SAMSON::addWidget(propertyWidget);
 
+  activeSphere = false;
+  sphereRadius = SBQuantity::angstrom(2.0);
+  spherePosition = SBPosition3();
+
+  SAMSON::requestViewportUpdate();
+
+
 }
 
 SEDNATwisterEditor::~SEDNATwisterEditor() {
@@ -92,6 +99,36 @@ void SEDNATwisterEditor::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
+  
+
+  float position[3];
+  float radius[1];
+  float color[4];
+  unsigned int flag[1];
+
+  position[0] = spherePosition[0].getValue();
+  position[1] = spherePosition[1].getValue();
+  position[2] = spherePosition[2].getValue();
+
+  radius[0] = sphereRadius.getValue();
+
+  if (activeSphere) {
+    color[0] = 0.f;
+    color[1] = 1.f;
+    color[2] = 1.f;
+    color[3] = 1.f;
+  }
+  else {
+    color[0] = 0.f;
+    color[1] = 1.f;
+    color[2] = 0.f;
+    color[3] = 1.f;
+
+  }
+
+  flag[0] = 0;
+
+  SAMSON::displaySpheres(1, position, radius, color, flag);
 
 }
 
@@ -117,6 +154,10 @@ void SEDNATwisterEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  if (event->button() == Qt::MouseButton::LeftButton) {
+    activeSphere = true;
+    SAMSON::requestViewportUpdate();
+  }
 }
 
 void SEDNATwisterEditor::mouseReleaseEvent(QMouseEvent* event) {
@@ -131,6 +172,36 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+
+  SBPosition3 nodePosition;
+  SBNode* pickedNode = SAMSON::getNode(event->pos(), nodePosition);
+
+  if (pickedNode == NULL) {
+
+    spherePosition = SAMSON::getWorldPositionFromViewportPosition(event->pos());
+  }
+  else {
+
+    spherePosition = SAMSON::getWorldPositionFromViewportPosition(event->pos(),
+      nodePosition);
+  }
+
+  SAMSON::requestViewportUpdate();
+
+  if (activeSphere) {
+    SBNodeIndexer nodeIndexer;
+    SAMSON::getActiveDocument()->getNodes(nodeIndexer, SBNode::IsType(SBNode::Atom));
+
+    SB_FOR(SBNode * node, nodeIndexer) {
+      SBAtom* atom = (SBAtom *)node;
+      SBPosition3 atomPosition = atom->getPosition();
+      SBPosition3 vectorFromSphereCenter = atomPosition - spherePosition;
+      if (vectorFromSphereCenter.norm() < sphereRadius) {
+        vectorFromSphereCenter = vectorFromSphereCenter * (sphereRadius / vectorFromSphereCenter.norm());
+        atom->setPosition(spherePosition + vectorFromSphereCenter);
+      }
+    }
+  }
 }
 
 void SEDNATwisterEditor::mouseDoubleClickEvent(QMouseEvent* event) {
@@ -144,6 +215,10 @@ void SEDNATwisterEditor::wheelEvent(QWheelEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
+
+  int angle = event->delta();
+  sphereRadius = sphereRadius * pow(1.002, angle);
+  SAMSON::requestViewportUpdate();
 
 }
 
