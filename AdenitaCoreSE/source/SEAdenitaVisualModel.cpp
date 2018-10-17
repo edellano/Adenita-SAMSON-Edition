@@ -1847,20 +1847,20 @@ void SEAdenitaVisualModel::displayForDebugging()
   SEConfig& config = SEConfig::GetInstance();
   auto parts = nanorobot_->GetParts();
 
-  SB_FOR(auto part, parts) {
-    auto singleStrands = nanorobot_->GetSingleStrands(part);
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        if (nt->isSelected()) {
-          if (config.display_nucleotide_basis) {
+  if (config.display_nucleotide_basis) {
+
+    SB_FOR(auto part, parts) {
+      auto singleStrands = nanorobot_->GetSingleStrands(part);
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+          if (nt->isSelected()) {
             ADNDisplayHelper::displayBaseVectors(nt);
           }
         }
       }
     }
   }
-
   if (config.display_base_pairing) {
     displayBaseBairConnections(true);
   }
@@ -1919,9 +1919,9 @@ void SEAdenitaVisualModel::onStructuralEvent(SBStructuralEvent* structuralEvent)
 	//// SAMSON Element generator pro tip: implement this function if you need to handle structural events (e.g. when a structural node for which you provide a visual representation is updated)
   ADNLogger& logger = ADNLogger::GetLogger();
   // changeScale(scale_);
-  if (structuralEvent->getType() == SBStructuralEvent::MobilityFlagChanged) {
-    SAMSON::requestViewportUpdate();
-  }
+  //if (structuralEvent->getType() == SBStructuralEvent::MobilityFlagChanged) {
+  //  SAMSON::requestViewportUpdate();
+  //}
 
 }
 
