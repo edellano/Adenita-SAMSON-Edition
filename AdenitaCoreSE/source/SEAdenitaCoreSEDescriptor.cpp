@@ -12,6 +12,7 @@
 #include "SEDSDNACreatorEditorDescriptor.hpp"
 #include "SENanotubeCreatorEditorDescriptor.hpp"
 #include "PIBindingRegionDescriptor.hpp"
+#include "SEDNATwisterEditorDescriptor.hpp"
 
 
 
@@ -50,6 +51,7 @@ SB_ELEMENT_CLASSES_BEGIN;
   SB_ELEMENT_CLASS(SEConnectSSDNAEditor);
   SB_ELEMENT_CLASS(SEDSDNACreatorEditor);
   SB_ELEMENT_CLASS(SENanotubeCreatorEditor);
+  SB_ELEMENT_CLASS(SEDNATwisterEditor);
 
 SB_ELEMENT_CLASSES_END;
 
