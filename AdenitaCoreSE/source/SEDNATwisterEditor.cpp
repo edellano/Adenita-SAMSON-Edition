@@ -1,5 +1,6 @@
 #include "SEDNATwisterEditor.hpp"
 #include "SAMSON.hpp"
+#include <QOpenGLFunctions_4_3_Core>
 
 
 SEDNATwisterEditor::SEDNATwisterEditor() {
@@ -115,21 +116,26 @@ void SEDNATwisterEditor::display() {
   if (activeSphere) {
     color[0] = 0.f;
     color[1] = 1.f;
-    color[2] = 1.f;
-    color[3] = 1.f;
+    color[2] = 0.f;
+    color[3] = 0.3f;
   }
   else {
     color[0] = 0.f;
     color[1] = 1.f;
-    color[2] = 0.f;
-    color[3] = 1.f;
-
+    color[2] = 1.f;
+    color[3] = 0.3f;
   }
 
   flag[0] = 0;
 
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_DEPTH_TEST);
+
   SAMSON::displaySpheres(1, position, radius, color, flag);
 
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_BLEND);
 }
 
 void SEDNATwisterEditor::displayForShadow() {
