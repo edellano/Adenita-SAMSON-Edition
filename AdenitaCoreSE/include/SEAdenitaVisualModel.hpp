@@ -34,10 +34,10 @@ public :
     ALL_ATOMS_BALLS = 2,
     NUCLEOTIDES_BACKBONE = 3,
     NUCLEOTIDES_SIDECHAIN = 4,
-    NUCLEOTIDES_SCAFFOLD = 5,
-    STAPLES_SCAFFOLD_PLAITING_SIDECHAIN = 6,
-    STAPLES_SCAFFOLD_PLAITING_BACKBONE = 7,
-    SCAFFOLD_PATH = 8,
+    NUCLEOTIDES_PARALLEL = 5,
+    NUCLEOTIDES_SCAFFOLD = 6,
+    STAPLES_SCAFFOLD_PLAITING_SIDECHAIN = 7,
+    STAPLES_SCAFFOLD_PLAITING_BACKBONE = 8,
     DOUBLE_STRANDS = 9,
     OBJECTS = 10
   };
@@ -81,10 +81,10 @@ public :
   virtual void												displayAtomsBalls();
   virtual void												displayNucleotideBackbone();
   virtual void												displayNucleotideSideChain();
+  virtual void												displayNucleotideParallel();
   virtual void												displayNucleotideScaffoldPlaiting();
   virtual void												displayPlatingSideChain();
   virtual void												displayPlatingBackbone();
-  virtual void												displayScaffoldPath();
   virtual void												displayDoubleStrands();
   virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
