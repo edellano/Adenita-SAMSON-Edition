@@ -1917,7 +1917,7 @@ void SEAdenitaVisualModel::onDocumentEvent(SBDocumentEvent* documentEvent) {
 void SEAdenitaVisualModel::onStructuralEvent(SBStructuralEvent* structuralEvent) {
 	
 	//// SAMSON Element generator pro tip: implement this function if you need to handle structural events (e.g. when a structural node for which you provide a visual representation is updated)
-  ADNLogger& logger = ADNLogger::GetLogger();
+  //ADNLogger& logger = ADNLogger::GetLogger();
   // changeScale(scale_);
   //if (structuralEvent->getType() == SBStructuralEvent::MobilityFlagChanged) {
   //  SAMSON::requestViewportUpdate();
