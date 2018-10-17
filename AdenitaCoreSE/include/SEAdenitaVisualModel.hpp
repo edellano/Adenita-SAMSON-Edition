@@ -37,8 +37,8 @@ public :
     NUCLEOTIDES_SCAFFOLD = 5,
     STAPLES_SCAFFOLD_PLAITING_SIDECHAIN = 6,
     STAPLES_SCAFFOLD_PLAITING_BACKBONE = 7,
-    DOUBLE_HELIX_PATH = 8,
-    EDGES_VERTICES = 9,
+    SCAFFOLD_PATH = 8,
+    DOUBLE_STRANDS = 9,
     OBJECTS = 10
   };
 
@@ -71,11 +71,21 @@ public :
 	/// \name Rendering
 	//@{
   float       												getScale();																
+  virtual void												changeDiscreteScale(int scale, bool createIndex = true);																///< Displays the visual model
   virtual void												changeScale(double scale, bool createIndex = true);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
 	
   virtual void												display();																///< Displays the visual model
+  virtual void												displayAtomsLines();
+  virtual void												displayAtomsSticks();
+  virtual void												displayAtomsBalls();
+  virtual void												displayNucleotideBackbone();
+  virtual void												displayNucleotideSideChain();
+  virtual void												displayNucleotideScaffoldPlaiting();
+  virtual void												displayPlatingSideChain();
   virtual void												displayPlatingBackbone();
+  virtual void												displayScaffoldPath();
+  virtual void												displayDoubleStrands();
   virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
   virtual void                        displayBaseBairConnections(bool onlySelected);
