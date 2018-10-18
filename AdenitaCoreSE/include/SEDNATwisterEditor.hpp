@@ -10,6 +10,7 @@
 #include "SBAction.hpp"
 #include "ADNNanorobot.hpp"
 #include "DASBackToTheAtom.hpp"
+#include "ADNDisplayHelper.hpp"
 
 /// This class implements an editor
 
@@ -95,10 +96,13 @@ public :
 	SEDNATwisterEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
-
-  SBPosition3														spherePosition;
-  SBQuantity::length										sphereRadius;
-  bool															    activeSphere;
+  bool                                  altPressed_;
+  SBPosition3														spherePosition_;
+  SBPosition3														textPosition_;
+  string                                text_;
+  SBQuantity::length										sphereRadius_;
+  bool															    untwistingSphereActive_;
+  bool															    twistingSphereActive_;
 };
 
 

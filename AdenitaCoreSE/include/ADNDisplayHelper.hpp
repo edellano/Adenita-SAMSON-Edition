@@ -27,7 +27,8 @@ namespace ADNDisplayHelper {
   void displaySphere(SBPosition3 pos, float radius);
   void displayBasePairConnection(ADNPointer<ADNNucleotide> nt);
   void displayBaseVectors(ADNPointer<ADNNucleotide> nt);
-
+  void displayText(SBPosition3 pos, std::string text = "");
+  void displayTextBottomLeft(std::string text = "");
   //! Display only the top scales of a part
   /*!
     \param ADNPointer to the ADNPart

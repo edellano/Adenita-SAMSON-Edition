@@ -694,6 +694,32 @@ void ADNDisplayHelper::displayBaseVectors(ADNPointer<ADNNucleotide> nt)
   displayVector(e3, nt->GetBackbonePosition(), e3_c, 700);
 }
 
+void ADNDisplayHelper::displayText(SBPosition3 pos, std::string text /*= ""*/)
+{
+
+  float * color = new float[4];
+  color[0] = 1.0f;
+  color[1] = 1.0f;
+  color[2] = 1.0f;
+  color[3] = 1.0f;
+
+
+  SAMSON::displayText(
+    text,
+    pos,
+    QFont(QString("Helvetica"), 60),
+    color);
+}
+
+void ADNDisplayHelper::displayTextBottomLeft(std::string text /*= ""*/)
+{
+  SBPosition3 pos = SBPosition3(SBQuantity::nanometer(0),
+    SBQuantity::nanometer(10),
+    SBQuantity::nanometer(0));
+
+  displayText(pos, text);
+}
+
 void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part)
 {
   SEConfig& config = SEConfig::GetInstance();
