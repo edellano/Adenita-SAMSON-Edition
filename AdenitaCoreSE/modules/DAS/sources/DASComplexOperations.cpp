@@ -74,6 +74,56 @@ DASOperations::FourSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPa
       ssLeftOvers.fourth = secondStrand;
     }
   }
+  else {
+    // make strand circular
+  }
 
   return ssLeftOvers;
+}
+
+DASOperations::FourDoubleStrands DASOperations::CreateDsCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNBaseSegment> bs1, ADNPointer<ADNBaseSegment> bs2)
+{
+  FourDoubleStrands dsLeftOvers;
+
+  ADNPointer<ADNBaseSegment> firstBs = bs1;
+  ADNPointer<ADNBaseSegment> lastBs = bs2;
+  if (firstBs->GetDoubleStrand() != lastBs->GetDoubleStrand()) {
+    if (firstBs->IsEnd() && lastBs->IsEnd()) {
+      if (firstBs->IsLast() && lastBs->IsFirst()) {
+        firstBs = bs2;
+        lastBs = bs1;
+      }
+      auto firstStrand = firstBs->GetDoubleStrand();
+      auto lastStrand = lastBs->GetDoubleStrand();
+      ADNBasicOperations::MergeDoubleStrand(part, lastStrand, firstStrand);
+      dsLeftOvers.first = firstStrand;
+      dsLeftOvers.second = lastStrand;
+    }
+    else {
+      // break first base segment so it is the last
+      ADNPointer<ADNDoubleStrand> firstStrand = bs1->GetDoubleStrand();
+      if (!bs1->IsLast()) {
+        auto bsNext = bs1->GetNext();
+        auto pair1 = ADNBasicOperations::BreakDoubleStrand(part, bsNext);
+        dsLeftOvers.first = firstStrand;
+        firstStrand = pair1.first;
+      }
+      // break second nucleotide in 5'
+      ADNPointer<ADNDoubleStrand> secondStrand = bs2->GetDoubleStrand();
+      if (!bs2->IsFirst()) {
+        auto pair2 = ADNBasicOperations::BreakDoubleStrand(part, bs2);
+        dsLeftOvers.second = secondStrand;
+        secondStrand = pair2.second;
+      }
+      // connect trands
+      auto ssConnect = ADNBasicOperations::MergeDoubleStrand(part, firstStrand, secondStrand);
+      dsLeftOvers.third = firstStrand;
+      dsLeftOvers.fourth = secondStrand;
+    }
+  }
+  else {
+    // make strand circular
+  }
+
+  return dsLeftOvers;
 }

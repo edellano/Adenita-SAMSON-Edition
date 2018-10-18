@@ -884,6 +884,31 @@ ADNPointer<ADNBaseSegment> ADNBaseSegment::GetNext(bool checkCircular) const
   return p;
 }
 
+bool ADNBaseSegment::IsEnd()
+{
+  bool e = IsFirst() || IsLast();
+
+  return e;
+}
+
+bool ADNBaseSegment::IsFirst()
+{
+  bool e = false;
+  auto ds = GetDoubleStrand();
+  if (ds->GetFirstBaseSegment() == this) e = true;
+
+  return e;
+}
+
+bool ADNBaseSegment::IsLast()
+{
+  bool e = false;
+  auto ds = GetDoubleStrand();
+  if (ds->GetLastBaseSegment() == this) e = true;
+
+  return e;
+}
+
 ADNPointer<ADNDoubleStrand> ADNBaseSegment::GetDoubleStrand() const
 {
   auto p = static_cast<ADNDoubleStrand*>(getParent());
