@@ -36,7 +36,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1261</width>
+           <width>1293</width>
            <height>51</height>
           </rect>
          </property>
@@ -463,7 +463,7 @@
            <x>0</x>
            <y>0</y>
            <width>1311</width>
-           <height>54</height>
+           <height>65</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
@@ -471,6 +471,13 @@
            <widget class="QPushButton" name="btnDSRing">
             <property name="text">
              <string>dsDNA Ring</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="11">
+           <widget class="QPushButton" name="btnCalculateBindingRegions">
+            <property name="text">
+             <string>Calculate Binding Regions</string>
             </property>
            </widget>
           </item>
@@ -488,34 +495,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="11">
-           <widget class="QPushButton" name="btnCalculateBindingRegions">
-            <property name="text">
-             <string>Calculate Binding Regions</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="7">
-           <widget class="QPushButton" name="btnTwistDoubleHelix">
-            <property name="text">
-             <string>Twist Double Helix</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="btnOxDNAImport">
-            <property name="text">
-             <string>Import from oxDNA</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="btnTestNeighbors">
-            <property name="text">
-             <string>Test Neighbors</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="5">
            <widget class="QPushButton" name="btnMergeComponents">
             <property name="text">
@@ -530,6 +509,27 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="btnOxDNAImport">
+            <property name="text">
+             <string>Import from oxDNA</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="7">
+           <widget class="QPushButton" name="btnTwistDoubleHelix">
+            <property name="text">
+             <string>Twist Double Helix</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="btnTestNeighbors">
+            <property name="text">
+             <string>Test Neighbors</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="10">
            <widget class="QPushButton" name="btnKinetoplast">
             <property name="text">
@@ -541,13 +541,6 @@
            <widget class="QPushButton" name="btnDataGraph">
             <property name="text">
              <string>From Datagraph</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="btnUntwist">
-            <property name="text">
-             <string>Untwist nuccleotide</string>
             </property>
            </widget>
           </item>
@@ -882,22 +875,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>btnUntwist</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onUntwistNucleotide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>63</x>
-     <y>72</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>675</x>
-     <y>71</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -922,6 +899,5 @@
   <slot>onTestNeighbors()</slot>
   <slot>onOxDNAImport()</slot>
   <slot>onFromDatagraph()</slot>
-  <slot>onUntwistNucleotide()</slot>
  </slots>
 </ui>

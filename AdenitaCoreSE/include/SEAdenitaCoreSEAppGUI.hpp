@@ -77,7 +77,6 @@ public slots:
   void onTestNeighbors();
   void onOxDNAImport();
   void onFromDatagraph();
-  void onUntwistNucleotide();
 
 private:
   std::string IsJsonCadnano(QString filename);
