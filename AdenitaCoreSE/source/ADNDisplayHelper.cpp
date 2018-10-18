@@ -696,32 +696,24 @@ void ADNDisplayHelper::displayBaseVectors(ADNPointer<ADNNucleotide> nt)
 
 void ADNDisplayHelper::displayText(SBPosition3 pos, std::string text /*= ""*/)
 {
-  /*
-    if (text == "") {
-      double length = (end - start).norm().getValue();
-      length /= 1000;
 
-      stringstream stream;
-      stream << fixed << setprecision(2) << length;
-      string text = stream.str() + " nm";
-    }
+  float * color = new float[4];
+  color[0] = 1.0f;
+  color[1] = 1.0f;
+  color[2] = 1.0f;
+  color[3] = 1.0f;
 
-    float * color = new float[4];
-    color[0] = 1.0f;
-    color[1] = 1.0f;
-    color[2] = 1.0f;
-    color[3] = 1.0f;
 
-    SAMSON::displayText(
-      text,
-      pos,
-      QFont(QString("Helvetica"), 60),
-      color);*/
+  SAMSON::displayText(
+    text,
+    pos,
+    QFont(QString("Helvetica"), 60),
+    color);
 }
 
-void ADNDisplayHelper::displayTextTopLeft(std::string text /*= ""*/)
+void ADNDisplayHelper::displayTextBottomLeft(std::string text /*= ""*/)
 {
-  SBPosition3 pos = SBPosition3(SBQuantity::nanometer(10),
+  SBPosition3 pos = SBPosition3(SBQuantity::nanometer(0),
     SBQuantity::nanometer(10),
     SBQuantity::nanometer(0));
 

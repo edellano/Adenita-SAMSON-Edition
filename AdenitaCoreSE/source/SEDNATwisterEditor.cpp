@@ -15,7 +15,9 @@ SEDNATwisterEditor::SEDNATwisterEditor() {
   twistingSphereActive_ = false;
   sphereRadius_ = SBQuantity::angstrom(20.0f);
   spherePosition_ = SBPosition3();
+  textPosition_ = SBPosition3();
   altPressed_ = false;
+  text_ = "Untwisting";
   SAMSON::requestViewportUpdate();
 
 
@@ -140,6 +142,8 @@ void SEDNATwisterEditor::display() {
 
   SAMSON::displaySpheres(1, position, radius, color, flag);
 
+  ADNDisplayHelper::displayText(textPosition_, text_);
+
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
 }
@@ -208,6 +212,15 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
   else {
     spherePosition_ = SAMSON::getWorldPositionFromViewportPosition(event->pos(), nodePosition);
   }
+
+  textPosition_ = spherePosition_;
+
+  SBPosition3 offset = SBPosition3(
+    SBQuantity::angstrom(0),
+    SBQuantity::angstrom(sphereRadius_),
+    SBQuantity::angstrom(0));
+
+  textPosition_ -= offset;
 
   SAMSON::requestViewportUpdate();
 
@@ -281,6 +294,7 @@ void SEDNATwisterEditor::keyPressEvent(QKeyEvent* event) {
 
   if (event->key() == Qt::Key::Key_Alt) {
     altPressed_ = true;
+    text_ = "Twisting";
     SAMSON::requestViewportUpdate();
   }
 }
@@ -291,6 +305,7 @@ void SEDNATwisterEditor::keyReleaseEvent(QKeyEvent* event) {
 	// Implement this function to handle this event with your editor.
   if (event->key() == Qt::Key::Key_Alt) {
     altPressed_ = false;
+    text_ = "Untwisting";
     SAMSON::requestViewportUpdate();
   }
 }
