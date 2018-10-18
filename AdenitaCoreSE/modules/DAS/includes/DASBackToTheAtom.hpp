@@ -46,12 +46,19 @@ public:
   void CheckDistances(ADNPointer<ADNPart> part);
 
   void PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool positionsFromNucleotide = false);
-  //! Untwist nucleotide (remove the helix turn)
+
+  //! Set the backbone and sidechain position of the nucleotides of a base segment
   /*!
-  \param The nucleotide we want to untwist
-  \param Whether to also untwist the pair
+    \param The nucleotide we want to untwist
+    \param Whether to also untwist the pair
   */
-  void UntwistNucleotidePosition(ADNPointer<ADNNucleotide> nt);
+  void SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool set_pair, double initialAngleDegrees = 0.0);
+  //! Untwist the nucleotides of a base segment (remove the helix turn)
+  /*!
+    \param The base segment
+    \param Whether to also untwist the pair
+  */
+  void UntwistNucleotidesPosition(ADNPointer<ADNBaseSegment> bs);
   //void SetAllAtomsPostions(ADNPointer<ADNPart> origami);
   // for cadnano
   /*void SetAllAtomsPostions2D(ADNPointer<ADNPart> origami);
@@ -96,12 +103,18 @@ private:
    */
   NtPair ParseBasePairPDB(std::string source);
 
-  void SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool set_pair, double initialAngleDegrees = 0.0);
   void PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosition3 bsPositionPrev, SBPosition3 bsPositionNext);
 
   void PopulateNucleotideWithAllAtoms(ADNPointer<ADNPart> origami, ADNPointer<ADNNucleotide> nt);
   void CreateBonds(ADNPointer<ADNPart> origami);
   void FindAtomsPositions(ADNPointer<ADNNucleotide> nt);
+
+  //! Untwist the nucleotide (remove the helix turn)
+  /*!
+  \param The nucleotide we want to untwist
+  \param Whether to also untwist the pair
+  */
+  void UntwistNucleotidePosition(ADNPointer<ADNNucleotide> nt);
 
   //! Create positions matrix from a NtPair, every row in the matrix is the position of one atom
   ublas::matrix<double> CreatePositionsMatrix(NtPair pair);

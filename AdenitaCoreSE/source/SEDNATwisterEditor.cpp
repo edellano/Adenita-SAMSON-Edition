@@ -195,18 +195,18 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
   if (activeSphere) {
     SBDocument* doc = SAMSON::getActiveDocument();
     SBNodeIndexer nodes;
-    doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNNucleotide")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+    doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
     DASBackToTheAtom btta;
 
     SB_FOR(SBNode* node, nodes) {
-      ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
-      SBPosition3 pos = nt->GetSidechainPosition();
+      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+      SBPosition3 pos = bs->GetPosition();
       SBPosition3 vectorFromSphereCenter = pos - spherePosition;
      
       if (vectorFromSphereCenter.norm() < sphereRadius) {
         vectorFromSphereCenter = vectorFromSphereCenter * (sphereRadius / vectorFromSphereCenter.norm());
-        btta.UntwistNucleotidePosition(nt);
+        btta.UntwistNucleotidesPosition(bs);
         SAMSON::requestViewportUpdate();
 
       }

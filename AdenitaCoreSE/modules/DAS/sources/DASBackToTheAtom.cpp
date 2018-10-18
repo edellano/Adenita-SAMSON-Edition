@@ -155,6 +155,14 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
   }
 }
 
+void DASBackToTheAtom::UntwistNucleotidesPosition(ADNPointer<ADNBaseSegment> bs)
+{
+  auto nts = bs->GetNucleotides();
+  SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+    UntwistNucleotidePosition(nt);
+  }
+}
+
 ublas::matrix<double> DASBackToTheAtom::CreatePositionsMatrix(NtPair pair)
 {
   ADNPointer<ADNNucleotide> nt_left = pair.first;
