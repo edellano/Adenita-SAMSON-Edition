@@ -420,6 +420,13 @@ public:
   ADNPointer<ADNBaseSegment> GetPrev(bool checkCircular = false) const;
   ADNPointer<ADNBaseSegment> GetNext(bool checkCircular = false) const;
 
+  //! True if it's the first or last base segment
+  bool IsEnd();
+  //! True if it's the first base segment
+  bool IsFirst();
+  //! True if it's the first base segment
+  bool IsLast();
+
   ADNPointer<ADNDoubleStrand> GetDoubleStrand() const;
   CollectionMap<ADNNucleotide> GetNucleotides();
 

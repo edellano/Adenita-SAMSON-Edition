@@ -137,13 +137,14 @@ void ADNPart::DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss)
   singleStrandsIndex_.removeReferenceTarget(ss());
 }
 
-void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFromSs)
+void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFromSs, bool removeFromIndex)
 {
   if (removeFromSs) {
     ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
     ss->removeChild(nt());
   }
-  nucleotidesIndex_.removeReferenceTarget(nt());
+  
+  if (removeFromIndex) nucleotidesIndex_.removeReferenceTarget(nt());
 }
 
 void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
@@ -154,10 +155,10 @@ void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
   doubleStrandsIndex_.removeReferenceTarget(ds());
 }
 
-void ADNPart::DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs, bool removeFromDs)
+void ADNPart::DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs, bool removeFromDs, bool removeFromIndex)
 {
   if (removeFromDs) bs->getParent()->removeChild(bs());
-  baseSegmentsIndex_.removeReferenceTarget(bs());
+  if (removeFromIndex) baseSegmentsIndex_.removeReferenceTarget(bs());
 }
 
 void ADNPart::DeregisterAtom(ADNPointer<ADNAtom> atom, bool removeFromAtom)

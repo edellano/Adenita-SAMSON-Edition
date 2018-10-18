@@ -46,6 +46,12 @@ public:
     \return the ADNPart to which the ADNSingleStrand belongs to
   */
   ADNPointer<ADNPart> GetPart(ADNPointer<ADNSingleStrand> ss);
+  //! Returns the part to which an ADNDoubleStrand belongs
+  /*!
+    \param a pointer to a ADNDoubleStrand
+    \return the ADNPart to which the ADNDoubleStrand belongs to
+  */
+  ADNPointer<ADNPart> GetPart(ADNPointer<ADNDoubleStrand> ds);
   //! Returns all the registered ADNSingleStrand
   CollectionMap<ADNSingleStrand> GetSingleStrands() const;
   //! Returns all currently selected ADNPart
@@ -56,6 +62,8 @@ public:
   CollectionMap<ADNNucleotide> GetSelectedNucleotides();
   //! Returns all currently selected ADNBaseSegment
   CollectionMap<ADNBaseSegment> GetSelectedBaseSegments();
+  //! Returns all currently highlighted ADNBaseSegments
+  CollectionMap<ADNBaseSegment> GetHighlightedBaseSegments();
   //! Returns all currently selected ADNSingleStrand
   CollectionMap<ADNSingleStrand> GetSelectedSingleStrands();
   //! Returns all currently selected ADNDoubleStrand
@@ -71,6 +79,11 @@ public:
     \param a ADNPointer to a ADNSingleStrand. ADNSingleStrand is deleted
   */
   void RemoveSingleStrand(ADNPointer<ADNSingleStrand> ss);
+  //! Removes a double strand from the ADNPart to which it belongs
+  /*!
+    \param a ADNPointer to a ADNDoubleStrand. ADNDoubleStrand is deleted
+  */
+  void RemoveDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
   //! Adds a single strand to a ADNPart
   /*!
     \param a ADNPointer to a ADNSingleStrand

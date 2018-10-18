@@ -49,9 +49,9 @@ public:
   int getNumberOfBaseSegments() const;
 
   void DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss);
-  void DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFromSs = true);
+  void DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFromSs = true, bool removeFromIndex = true);
   void DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
-  void DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs, bool removeFromDs = true);
+  void DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs, bool removeFromDs = true, bool removeFromIndex = true);
   void DeregisterAtom(ADNPointer<ADNAtom> atom, bool removeFromAtom = true);
 
 protected:

@@ -110,6 +110,13 @@ ADNPointer<ADNPart> ADNNanorobot::GetPart(ADNPointer<ADNSingleStrand> ss)
   return part;
 }
 
+ADNPointer<ADNPart> ADNNanorobot::GetPart(ADNPointer<ADNDoubleStrand> ds)
+{
+  SBNode* parent = ds->getParent()->getParent();  // first parent is the structural model root
+  ADNPointer<ADNPart> part = static_cast<ADNPart*>(parent);
+  return part;
+}
+
 CollectionMap<ADNNucleotide> ADNNanorobot::GetSelectedNucleotides()
 {
   CollectionMap<ADNNucleotide> nts;
@@ -235,6 +242,12 @@ void ADNNanorobot::RemoveSingleStrand(ADNPointer<ADNSingleStrand> ss)
   part->DeregisterSingleStrand(ss);
 }
 
+void ADNNanorobot::RemoveDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
+{
+  auto part = GetPart(ds);
+  part->DeregisterDoubleStrand(ds);
+}
+
 void ADNNanorobot::AddSingleStrand(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> part)
 {
   part->RegisterSingleStrand(ss);
@@ -308,4 +321,23 @@ CollectionMap<ADNConformation> ADNNanorobot::GetConformations()
 void ADNNanorobot::RegisterConformation(ADNPointer<ADNConformation> conformation)
 {
   conformationsIndex_.addReferenceTarget(conformation());
+}
+
+CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
+{
+  CollectionMap<ADNBaseSegment> bss;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isHighlighted()) {
+      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+      bss.addReferenceTarget(bs());
+    }
+  }
+
+  return bss;
 }
