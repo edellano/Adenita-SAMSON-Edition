@@ -102,7 +102,6 @@ void SEDNATwisterEditor::display() {
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
   
-
   float position[3];
   float radius[1];
   float color[4];
@@ -233,6 +232,27 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
       }
     }
 
+  }
+  else if (twistingSphereActive_) {
+    SBDocument* doc = SAMSON::getActiveDocument();
+    SBNodeIndexer nodes;
+    doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+    DASBackToTheAtom btta;
+
+    SB_FOR(SBNode* node, nodes) {
+
+      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+      SBPosition3 pos = bs->GetPosition();
+      SBPosition3 vectorFromSphereCenter = pos - spherePosition_;
+
+      if (vectorFromSphereCenter.norm() < sphereRadius_) {
+        vectorFromSphereCenter = vectorFromSphereCenter * (sphereRadius_ / vectorFromSphereCenter.norm());
+        btta.SetNucleotidePosition(bs, true);
+        SAMSON::requestViewportUpdate();
+
+      }
+    }
   }
 }
 
