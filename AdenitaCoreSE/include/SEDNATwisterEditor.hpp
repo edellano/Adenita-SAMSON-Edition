@@ -95,10 +95,11 @@ public :
 	SEDNATwisterEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
-
-  SBPosition3														spherePosition;
-  SBQuantity::length										sphereRadius;
-  bool															    activeSphere;
+  bool                                  altPressed_;
+  SBPosition3														spherePosition_;
+  SBQuantity::length										sphereRadius_;
+  bool															    untwistingSphereActive_;
+  bool															    twistingSphereActive_;
 };
 
 
