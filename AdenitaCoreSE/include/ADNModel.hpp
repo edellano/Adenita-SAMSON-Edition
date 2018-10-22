@@ -199,6 +199,8 @@ public:
   CollectionMap<ADNAtom> GetAtoms();
   CollectionMap<ADNAtom> GetAtomsByName(std::string name);
   void HideCenterAtoms();
+  ADNPointer<ADNAtom> GetBackboneCenterAtom();
+  ADNPointer<ADNAtom> GetSidechainCenterAtom();
 
   // Local base is always the standard basis */
   ublas::matrix<double> GetGlobalBasisTransformation();

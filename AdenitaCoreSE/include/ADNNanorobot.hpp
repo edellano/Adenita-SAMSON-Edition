@@ -186,6 +186,14 @@ public:
     \param A ADNPointer to a ADNConformation
   */
   void RegisterConformation(ADNPointer<ADNConformation> conformation);
+  //! Return the position of a nucleotide in a conformation
+  /*!
+    \param The conformation
+    \param a ADNPointer to the nucleotide
+    \return The position of the nucleotide in that conformation
+  */
+  SBPosition3 GetNucleotideBackbonePosition(ADNConformation  conformation, ADNPointer<ADNNucleotide> nt);
+  SBPosition3 GetNucleotideSidechainPosition(ADNConformation  conformation, ADNPointer<ADNNucleotide> nt);
 
 
 private:

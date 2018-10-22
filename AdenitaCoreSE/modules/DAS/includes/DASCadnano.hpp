@@ -91,9 +91,9 @@ private:
   std::map<ADNSingleStrand*, int> ssId_;
   int lastKey = -1;
 
-  SBPointer<SBMStructuralModelConformation> conformation3D_;
-  SBPointer<SBMStructuralModelConformation> conformation2D_;
-  SBPointer<SBMStructuralModelConformation> conformation1D_;
+  ADNPointer<ADNConformation> conformation3D_;
+  ADNPointer<ADNConformation> conformation2D_;
+  ADNPointer<ADNConformation> conformation1D_;
 
   void ParseJSON(std::string filename);
   void ParseCadnanoFormat3(Document& d);
