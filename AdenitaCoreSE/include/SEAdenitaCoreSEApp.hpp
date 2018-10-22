@@ -73,6 +73,7 @@ public :
 
   // Exposed for editors
   void AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions = true, bool positionsFromNucleotides = false);
+  void AddConformationToActiveLayer(ADNPointer<ADNConformation> conf);
 
 private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);

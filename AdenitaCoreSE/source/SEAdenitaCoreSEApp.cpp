@@ -67,15 +67,9 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
   AddPartToActiveLayer(part);
 
   cad.CreateConformations(part);
-  auto conf3D = cad.Get3DConformation();
-  auto conf2D = cad.Get2DConformation();
-  auto conf1D = cad.Get1DConformation();
-  conf3D->create();
-  conf2D->create();
-  conf1D->create();
-  SAMSON::getActiveDocument()->addChild(conf3D());
-  SAMSON::getActiveDocument()->addChild(conf2D());
-  SAMSON::getActiveDocument()->addChild(conf1D());
+  AddConformationToActiveLayer(cad.Get3DConformation());
+  AddConformationToActiveLayer(cad.Get2DConformation());
+  AddConformationToActiveLayer(cad.Get1DConformation());
 }
 
 void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, ADNPointer<ADNPart> part)
@@ -467,6 +461,15 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool cal
   part->create();
   SAMSON::getActiveLayer()->addChild(part());
   SAMSON::endHolding();
+}
+
+void SEAdenitaCoreSEApp::AddConformationToActiveLayer(ADNPointer<ADNConformation> conf)
+{
+  GetNanorobot()->RegisterConformation(conf);
+
+  conf->create();
+
+  SAMSON::getActiveDocument()->addChild(conf());
 }
 
 void SEAdenitaCoreSEApp::ConnectStructuralSignalSlots(ADNPointer<ADNPart> part)

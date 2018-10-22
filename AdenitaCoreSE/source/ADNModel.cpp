@@ -197,6 +197,18 @@ void ADNNucleotide::HideCenterAtoms()
   sc->HideCenterAtom();
 }
 
+ADNPointer<ADNAtom> ADNNucleotide::GetBackboneCenterAtom()
+{
+  auto bb = GetBackbone();
+  return bb->GetCenterAtom();
+}
+
+ADNPointer<ADNAtom> ADNNucleotide::GetSidechainCenterAtom()
+{
+  auto sc = GetSidechain();
+  return sc->GetCenterAtom();
+}
+
 CollectionMap<ADNAtom> ADNNucleotide::GetAtomsByName(std::string name)
 {
   CollectionMap<ADNAtom> res;

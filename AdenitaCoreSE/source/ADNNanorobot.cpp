@@ -318,9 +318,37 @@ CollectionMap<ADNConformation> ADNNanorobot::GetConformations()
   return conformationsIndex_;
 }
 
+CollectionMap<ADNConformation> ADNNanorobot::GetConformations(ADNPointer<ADNPart> part)
+{
+  CollectionMap<ADNConformation> confs;
+  SB_FOR(ADNPointer<ADNConformation> conf, conformationsIndex_) {
+    auto parent = conf->getParent();
+    ADNPointer<ADNPart> p = static_cast<ADNPart*>(parent);
+    if (p == part) confs.addReferenceTarget(conf());
+  }
+
+  return confs;
+}
+
 void ADNNanorobot::RegisterConformation(ADNPointer<ADNConformation> conformation)
 {
   conformationsIndex_.addReferenceTarget(conformation());
+}
+
+SBPosition3 ADNNanorobot::GetNucleotideBackbonePosition(ADNConformation conformation, ADNPointer<ADNNucleotide> nt)
+{
+  SBPosition3 pos;
+  auto at = nt->GetBackboneCenterAtom();
+  conformation.getPosition(at(), pos);
+  return pos;
+}
+
+SBPosition3 ADNNanorobot::GetNucleotideSidechainPosition(ADNConformation conformation, ADNPointer<ADNNucleotide> nt)
+{
+  SBPosition3 pos;
+  auto at = nt->GetSidechainCenterAtom();
+  conformation.getPosition(at(), pos);
+  return pos;
 }
 
 CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
