@@ -408,18 +408,7 @@ void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
 {
-  //auto singleStrands = GetNanorobot()->GetSelectedSingleStrands();
-  //auto doubleStrands = GetNanorobot()->GetSelectedDoubleStrands();
-  //auto nucleotides = GetNanorobot()->GetSelectedNucleotides();
-  //auto baseSegments = GetNanorobot()->GetSelectedBaseSegments();
 
-  //auto auxNode = documentEvent->getAuxiliaryNode();
-  //auto sender = documentEvent->getSender();
-
-  //auto an = static_cast<ADNNucleotide*>(auxNode);
-  //auto s = static_cast<ADNNucleotide*>(sender);
-
-  //auto test = 1;
 }
 
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()

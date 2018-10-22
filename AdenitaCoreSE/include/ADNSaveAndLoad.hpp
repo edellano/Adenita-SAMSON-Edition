@@ -40,11 +40,65 @@ namespace ADNLoader {
   //! Populates base segments and double strands from nucleotides and single strands
   void BuildTopScales(ADNPointer<ADNPart> part);
 
-  struct NucleotideWrap {
-    ADNPointer<ADNNucleotide> nt_;
-    bool paired_ = false;
-    int ntId_ = -1;
+  template <typename T>
+  struct Wrap {
+    ADNPointer<T> elem_;
+    int id_ = -1;
     int strandId_ = -1;
   };
 
+  using NucleotideWrap = Wrap<ADNNucleotide>;
+
+  template <class T>
+  class ElementMap {
+  public:
+    std::pair<bool, ADNPointer<T>> Get(int idx) {
+      ADNPointer<T> nt = nullptr;
+      bool success = false;
+      if (ids_.find(idx) != ids_.end()) {
+        nt = ids_.at(idx).elem_;
+        success = true;
+      }
+      return std::make_pair(success, nt);
+    };
+
+    int GetIndex(ADNPointer<T> nt, int sId = -1) {
+      int idx = -1;
+      if (pointers_.find(nt()) != pointers_.end()) {
+        Wrap<T> w = pointers_.at(nt());
+        idx = w.id_;
+      }
+      else {
+        idx = Insert(nt, sId);
+      }
+      return idx;
+    };
+
+    int Store(ADNPointer<T> elem, int id = -1, int sId = -1) {
+      return Insert(elem, sId, id);
+    }
+
+  private:
+    int Insert(ADNPointer<T> nt, int sId, int id = -1) {
+      auto key = GetNextKey();
+      if (id != -1) key = id;
+      Wrap<T> w;
+      w.elem_ = nt;
+      w.id_ = key;
+      w.strandId_ = sId;
+      ids_[key] = w;
+      pointers_.insert(std::make_pair(nt(), w));
+      return key;
+    };
+
+    int GetNextKey() {
+      int lkey = 0;
+      if (!ids_.empty()) lkey = ids_.rbegin()->first + 1;
+      return lkey;
+    };
+
+    std::map<int, Wrap<T>> ids_;
+    std::map<T*, Wrap<T>> pointers_;
+
+  };
 }
