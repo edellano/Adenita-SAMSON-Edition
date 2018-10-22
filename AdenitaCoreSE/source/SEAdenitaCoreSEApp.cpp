@@ -408,7 +408,18 @@ void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
 {
-  //ResetVisualModel();
+  //auto singleStrands = GetNanorobot()->GetSelectedSingleStrands();
+  //auto doubleStrands = GetNanorobot()->GetSelectedDoubleStrands();
+  //auto nucleotides = GetNanorobot()->GetSelectedNucleotides();
+  //auto baseSegments = GetNanorobot()->GetSelectedBaseSegments();
+
+  //auto auxNode = documentEvent->getAuxiliaryNode();
+  //auto sender = documentEvent->getSender();
+
+  //auto an = static_cast<ADNNucleotide*>(auxNode);
+  //auto s = static_cast<ADNNucleotide*>(sender);
+
+  //auto test = 1;
 }
 
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
@@ -480,22 +491,4 @@ void SEAdenitaCoreSEApp::ConnectStructuralSignalSlots(ADNPointer<ADNPart> part)
     this,
     SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
     );
-
-  //SB_FOR(auto singleStrand, singleStrands) {
-  //  auto nucleotides = singleStrand->GetNucleotides();
-
-  //  singleStrand->connectStructuralSignalToSlot(
-  //    this,
-  //    SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
-  //    );
-
-  //  SB_FOR(auto nucleotide, nucleotides) {
-  //    nucleotide->connectStructuralSignalToSlot(
-  //      this,
-  //      SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
-  //      );
-  //  }
-  //}
-
-
 }
