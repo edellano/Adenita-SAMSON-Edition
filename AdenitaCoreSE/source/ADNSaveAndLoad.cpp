@@ -28,7 +28,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
   std::string position = d["position"].GetString();
   part->SetPosition(ADNAuxiliary::StringToSBPosition(position));
 
-  std::map<int, ADNPointer<ADNNucleotide>> nts;
+  ElementMap<ADNNucleotide> nts;
   std::map<int, int> nexts;
   std::map<int, int> prevs;
   std::map<int, int> pairs;
@@ -51,7 +51,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
       nt->SetE2(ADNAuxiliary::StringToUblasVector(itr2->value["e2"].GetString()));
       nt->SetE3(ADNAuxiliary::StringToUblasVector(itr2->value["e3"].GetString()));
 
-      nts.insert(std::make_pair(std::stoi(itr2->name.GetString()), nt));
+      nts.Store(nt, std::stoi(itr2->name.GetString()));
       nexts.insert(std::make_pair(std::stoi(itr2->name.GetString()), itr2->value["next"].GetInt()));
       prevs.insert(std::make_pair(std::stoi(itr2->name.GetString()), itr2->value["prev"].GetInt()));
       pairs.insert(std::make_pair(std::stoi(itr2->name.GetString()), itr2->value["pair"].GetInt()));
@@ -59,12 +59,12 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
     
     int f_id = itr->value["fivePrimeId"].GetInt();
 
-    ADNPointer<ADNNucleotide> nt = nts.at(f_id);
+    ADNPointer<ADNNucleotide> nt = nts.Get(f_id).second;
     int currId = f_id;
     do {
       // pairing is done when parsing base segments
       int nextId = nexts.at(currId);   
-      nt = nts.at(currId);
+      nt = nts.Get(currId).second;
       part->RegisterNucleotideThreePrime(ss, nt);
       currId = nextId;
     } while (currId != -1);
@@ -100,12 +100,12 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
         int nt_id_right = right.GetInt();
         ADNPointer<ADNNucleotide> ntLeft = nullptr;
         if (nt_id_left > -1) {
-          ntLeft = nts.at(nt_id_left);
+          ntLeft = nts.Get(nt_id_left).second;
           ntLeft->SetBaseSegment(bs);
         }
         ADNPointer<ADNNucleotide> ntRight = nullptr;
         if (nt_id_right > -1) {
-          ntRight = nts.at(nt_id_right);
+          ntRight = nts.Get(nt_id_right).second;
           ntRight->SetBaseSegment(bs);
         }
         bp_cell->AddPair(ntLeft, ntRight);
@@ -124,8 +124,8 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
           int startNtId = left["startNt"].GetInt();
           int endNtId = left["endNt"].GetInt();
 
-          ADNPointer<ADNNucleotide> startNt = nts.at(startNtId);
-          ADNPointer<ADNNucleotide> lastNt = nts.at(endNtId);
+          ADNPointer<ADNNucleotide> startNt = nts.Get(startNtId).second;
+          ADNPointer<ADNNucleotide> lastNt = nts.Get(endNtId).second;
           ADNPointer<ADNSingleStrand> ss = startNt->GetStrand();
           leftLoop->SetStart(startNt);
           leftLoop->SetEnd(lastNt);
@@ -133,7 +133,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
           std::string nucleotides = left["nucleotides"].GetString();
           std::vector<int> ntVec = ADNAuxiliary::StringToVector(nucleotides);
           for (auto &i : ntVec) {
-            ADNPointer<ADNNucleotide> nt = nts.at(i);
+            ADNPointer<ADNNucleotide> nt = nts.Get(i).second;
             leftLoop->AddNucleotide(nt);
             nt->SetBaseSegment(bs);
           }
@@ -143,8 +143,8 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
           int startNtId = right["startNt"].GetInt();
           int endNtId = right["endNt"].GetInt();
 
-          ADNPointer<ADNNucleotide> startNt = nts.at(startNtId);
-          ADNPointer<ADNNucleotide> lastNt = nts.at(endNtId);
+          ADNPointer<ADNNucleotide> startNt = nts.Get(startNtId).second;
+          ADNPointer<ADNNucleotide> lastNt = nts.Get(endNtId).second;
           ADNPointer<ADNSingleStrand> ss = startNt->GetStrand();
           leftLoop->SetStart(startNt);
           leftLoop->SetEnd(lastNt);
@@ -152,7 +152,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
           std::string nucleotides = right["nucleotides"].GetString();
           std::vector<int> ntVec = ADNAuxiliary::StringToVector(nucleotides);
           for (auto &i : ntVec) {
-            ADNPointer<ADNNucleotide> nt = nts.at(i);
+            ADNPointer<ADNNucleotide> nt = nts.Get(i).second;
             rightLoop->AddNucleotide(nt);
             nt->SetBaseSegment(bs);
           }
