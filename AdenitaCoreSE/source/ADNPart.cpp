@@ -142,6 +142,8 @@ void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFrom
   if (removeFromSs) {
     ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
     ss->removeChild(nt());
+    auto bs = nt->GetBaseSegment();
+    bs->RemoveNucleotide(nt);
   }
   
   if (removeFromIndex) nucleotidesIndex_.removeReferenceTarget(nt());
