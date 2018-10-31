@@ -184,10 +184,10 @@ void SEAdenitaVisualModel::changeDimension(int dimension)
         auto index = ntMap_[nt()];
         SBPosition3 pos2D;
         //twoD->getPosition(index, pos2D);
-
+/*
         positions_(index, 0) = pos2D[0].getValue();
         positions_(index, 1) = pos2D[1].getValue();
-        positions_(index, 2) = pos2D[2].getValue();
+        positions_(index, 2) = pos2D[2].getValue();*/
         
       }
     }
