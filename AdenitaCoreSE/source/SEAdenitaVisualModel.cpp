@@ -1050,9 +1050,6 @@ void SEAdenitaVisualModel::display() {
   else if (iScale == NUCLEOTIDES_SIDECHAIN) {
     displayNucleotideSideChain();
   }
-  else if (iScale == NUCLEOTIDES_PARALLEL) {
-    displayNucleotideParallel();
-  }
   else if (iScale == NUCLEOTIDES_SCAFFOLD) {
     displayNucleotideScaffoldPlaiting();
   }
@@ -1224,58 +1221,6 @@ void SEAdenitaVisualModel::displayNucleotideSideChain()
   }
 }
 
-void SEAdenitaVisualModel::displayNucleotideParallel()
-{
-  SEConfig& config = SEConfig::GetInstance();
-  ADNLogger& logger = ADNLogger::GetLogger();
-
-  auto parts = nanorobot_->GetParts();
-
-  auto colors = colors_[ColorType::REGULAR];
-
-
-  SB_FOR(auto part, parts) {
-    auto singleStrands = nanorobot_->GetSingleStrands(part);
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        unsigned int index = ntMap_[nt()];
-
-        positions_(index, 0) = nanorobot_->GetNucleotideSidechainPosition(nt)[0].getValue();
-        positions_(index, 1) = nanorobot_->GetNucleotideSidechainPosition(nt)[1].getValue();
-        positions_(index, 2) = nanorobot_->GetNucleotideSidechainPosition(nt)[2].getValue();
-
-        capData_(index) = 0;
-        colorsE_.SetRow(index, nucleotideEColor_);
-        nodeIndices_(index) = nt->getNodeIndex();
-        flags_(index) = nt->getInheritedFlags();
-
-        auto baseColor = colors->GetColor(nt);
-        colorsV_.SetRow(index, baseColor);
-
-        radiiV_(index) = config.nucleotide_V_radius;
-        radiiE_(index) = config.nucleotide_E_radius;
-
-        //strand direction
-        if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
-          radiiE_(index) = config.nucleotide_E_radius;
-        }
-
-        if (!ss->isVisible()) {
-          colorsV_(index, 3) = 0.0f;
-          radiiV_(index) = 0.0f;
-          radiiE_(index) = 0.0f;
-          colorsE_(index, 3) = 0.0f;
-        }
-        else if (!nt->isVisible()) {
-          colorsV_(index, 3) = 0.0f;
-          colorsE_(index, 3) = 0.0f;
-        }
-
-      }
-    }
-  }
-}
 
 void SEAdenitaVisualModel::displayNucleotideScaffoldPlaiting()
 {
