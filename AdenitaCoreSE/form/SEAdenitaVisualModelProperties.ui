@@ -117,6 +117,9 @@
      </item>
      <item row="4" column="0" colspan="2">
       <widget class="QSlider" name="hslDimension">
+       <property name="minimum">
+        <number>1</number>
+       </property>
        <property name="maximum">
         <number>3</number>
        </property>
