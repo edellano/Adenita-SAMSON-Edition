@@ -72,6 +72,7 @@ public :
   float       												getScale();																
   virtual void												changeDiscreteScale(int scale, bool createIndex = true);																///< Displays the visual model
   virtual void												changeScale(double scale, bool createIndex = true);																///< Displays the visual model
+  virtual void												changeDimension(int dimension);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
 	
   virtual void												display();																///< Displays the visual model
@@ -138,6 +139,7 @@ private:
   ADNArray<float>	basePairingEColor_;
 
   double scale_;
+  int dim_;
 
   ADNNanorobot * nanorobot_;
 
