@@ -80,7 +80,6 @@ public :
   virtual void												displayAtomsBalls();
   virtual void												displayNucleotideBackbone();
   virtual void												displayNucleotideSideChain();
-  virtual void												displayNucleotideParallel();
   virtual void												displayNucleotideScaffoldPlaiting();
   virtual void												displayPlatingSideChain();
   virtual void												displayPlatingBackbone();
