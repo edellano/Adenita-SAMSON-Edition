@@ -117,6 +117,12 @@
      </item>
      <item row="4" column="0" colspan="2">
       <widget class="QSlider" name="hslDimension">
+       <property name="maximum">
+        <number>3</number>
+       </property>
+       <property name="value">
+        <number>3</number>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -135,8 +141,8 @@
    <slot>onSliderScaleChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>185</x>
-     <y>76</y>
+     <x>197</x>
+     <y>66</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -192,11 +198,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>hslDimension</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onSliderDimensionChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>149</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSliderScaleChanged(int)</slot>
   <slot>onSliderVisibilityChanged(int)</slot>
   <slot>onSpinboxVisibilityChanged(double)</slot>
   <slot>onDiscreteSliderScaleChanged(int)</slot>
+  <slot>onSliderDimensionChanged(int)</slot>
  </slots>
 </ui>

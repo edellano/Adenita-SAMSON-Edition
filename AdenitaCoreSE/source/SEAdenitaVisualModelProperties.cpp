@@ -142,6 +142,12 @@ void SEAdenitaVisualModelProperties::onSpinboxVisibilityChanged(double val)
   SAMSON::requestViewportUpdate();
 }
 
+void SEAdenitaVisualModelProperties::onSliderDimensionChanged(int val)
+{
+  visualModel->changeDimension(val); //todo this should depend on the previous scale
+  ui.lblDimension->setText(QString::number(val));
+}
+
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
 SEAdenitaVisualModelProperties::Observer::~Observer() {}
 

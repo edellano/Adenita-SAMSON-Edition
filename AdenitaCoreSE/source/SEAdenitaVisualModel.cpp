@@ -169,6 +169,31 @@ void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/
 
 
 
+void SEAdenitaVisualModel::changeDimension(int dimension)
+{
+  dim_ = dimension;
+
+  auto parts = nanorobot_->GetParts();
+
+  SB_FOR(auto part, parts) {
+    auto twoD = nanorobot_->GetConformations(part)[1];
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        auto index = ntMap_[nt()];
+        SBPosition3 pos2D;
+        //twoD->getPosition(index, pos2D);
+
+        positions_(index, 0) = pos2D[0].getValue();
+        positions_(index, 1) = pos2D[1].getValue();
+        positions_(index, 2) = pos2D[2].getValue();
+        
+      }
+    }
+  }
+}
+
 void SEAdenitaVisualModel::changeVisibility(double layer)
 {
 
@@ -1302,7 +1327,7 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
         positions_(index, 0) = nanorobot_->GetNucleotideSidechainPosition(nt)[0].getValue();
         positions_(index, 1) = nanorobot_->GetNucleotideSidechainPosition(nt)[1].getValue();
         positions_(index, 2) = nanorobot_->GetNucleotideSidechainPosition(nt)[2].getValue();
-
+       
         if (nanorobot_->IsScaffold(ss))
         {
           colorsV_(index, 0) = config.nucleotide_E_Color[0];
