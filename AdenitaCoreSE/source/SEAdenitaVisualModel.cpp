@@ -172,27 +172,36 @@ void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/
 void SEAdenitaVisualModel::changeDimension(int dimension)
 {
   dim_ = dimension;
+  ADNLogger& logger = ADNLogger::GetLogger();
+  /*
+    auto parts = nanorobot_->GetParts();
+    auto conformations = nanorobot_->GetConformations();
+    logger.Log(QString("num conformations"));
+    logger.Log(QString::number(conformations.size()));
 
-  auto parts = nanorobot_->GetParts();
+    auto conformation = conformations[dim_ - 1];
+    SB_FOR(auto part, parts) {
 
-  SB_FOR(auto part, parts) {
-    auto twoD = nanorobot_->GetConformations(part)[1];
-    auto singleStrands = nanorobot_->GetSingleStrands(part);
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        auto index = ntMap_[nt()];
-        SBPosition3 pos2D;
-        //twoD->getPosition(index, pos2D);
-/*
-        positions_(index, 0) = pos2D[0].getValue();
-        positions_(index, 1) = pos2D[1].getValue();
-        positions_(index, 2) = pos2D[2].getValue();*/
-        
+      auto singleStrands = nanorobot_->GetSingleStrands(part);
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+          auto index = ntMap_[nt()];
+
+          SBPosition3 pos;
+          conformation->getPosition(index, pos);
+
+          positions_(index, 0) = pos[0].getValue();
+          positions_(index, 1) = pos[1].getValue();
+          positions_(index, 2) = pos[2].getValue();
+        }
       }
-    }
-  }
+    }*/
+
+  SAMSON::requestViewportUpdate();
+
 }
+
 
 void SEAdenitaVisualModel::changeVisibility(double layer)
 {
@@ -203,9 +212,7 @@ void SEAdenitaVisualModel::changeVisibility(double layer)
   SB_FOR(auto part, parts) {
 
     auto singleStrands = nanorobot_->GetSingleStrands(part);
-
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-
       auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
       auto ssDist = sortedSingleStrandsByDist_[ss()];
 
@@ -1148,6 +1155,8 @@ void SEAdenitaVisualModel::displayNucleotideBackbone()
 
   auto colors = colors_[ColorType::REGULAR];
 
+  auto conformations = nanorobot_->GetConformations();
+  auto conformation = conformations[dim_ - 1];
 
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -1156,9 +1165,20 @@ void SEAdenitaVisualModel::displayNucleotideBackbone()
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
         unsigned int index = ntMap_[nt()];
 
-        positions_(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
-        positions_(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
-        positions_(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
+        if (dim_ == 3) {
+          positions_(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
+          positions_(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
+          positions_(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
+        }
+        else if (dim_ == 2 || dim_ == 1) {
+          SBPosition3 pos;
+          //conformation->getPosition(index, pos);
+          conformation->getPosition(nt()->GetBackboneCenterAtom()(), pos);
+
+          positions_(index, 0) = pos[0].getValue();
+          positions_(index, 1) = pos[1].getValue();
+          positions_(index, 2) = pos[2].getValue();
+        }
 
         capData_(index) = 0;
         colorsE_.SetRow(index, nucleotideEColor_);
@@ -1203,6 +1223,8 @@ void SEAdenitaVisualModel::displayNucleotideSideChain()
 
   auto colors = colors_[ColorType::REGULAR];
 
+  auto conformations = nanorobot_->GetConformations();
+  auto conformation = conformations[dim_ - 1];
 
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -1211,9 +1233,20 @@ void SEAdenitaVisualModel::displayNucleotideSideChain()
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
         unsigned int index = ntMap_[nt()];
 
-        positions_(index, 0) = nanorobot_->GetNucleotideSidechainPosition(nt)[0].getValue();
-        positions_(index, 1) = nanorobot_->GetNucleotideSidechainPosition(nt)[1].getValue();
-        positions_(index, 2) = nanorobot_->GetNucleotideSidechainPosition(nt)[2].getValue();
+        if (dim_ == 3) {
+          positions_(index, 0) = nanorobot_->GetNucleotideSidechainPosition(nt)[0].getValue();
+          positions_(index, 1) = nanorobot_->GetNucleotideSidechainPosition(nt)[1].getValue();
+          positions_(index, 2) = nanorobot_->GetNucleotideSidechainPosition(nt)[2].getValue();
+        }
+        else if (dim_ == 2 || dim_ == 1) {
+          SBPosition3 pos;
+          //conformation->getPosition(index, pos);
+          conformation->getPosition(nt()->GetSidechainCenterAtom()(), pos);
+
+          positions_(index, 0) = pos[0].getValue();
+          positions_(index, 1) = pos[1].getValue();
+          positions_(index, 2) = pos[2].getValue();
+        }
 
         capData_(index) = 0;
         colorsE_.SetRow(index, nucleotideEColor_);
@@ -1256,6 +1289,8 @@ void SEAdenitaVisualModel::displayNucleotideScaffoldPlaiting()
 
   auto colors = colors_[ColorType::REGULAR];
 
+  auto conformations = nanorobot_->GetConformations();
+  auto conformation = conformations[dim_ - 1];
 
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -1264,9 +1299,20 @@ void SEAdenitaVisualModel::displayNucleotideScaffoldPlaiting()
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
         unsigned int index = ntMap_[nt()];
 
-        positions_(index, 0) = nanorobot_->GetNucleotideSidechainPosition(nt)[0].getValue();
-        positions_(index, 1) = nanorobot_->GetNucleotideSidechainPosition(nt)[1].getValue();
-        positions_(index, 2) = nanorobot_->GetNucleotideSidechainPosition(nt)[2].getValue();
+        if (dim_ == 3) {
+          positions_(index, 0) = nanorobot_->GetNucleotideSidechainPosition(nt)[0].getValue();
+          positions_(index, 1) = nanorobot_->GetNucleotideSidechainPosition(nt)[1].getValue();
+          positions_(index, 2) = nanorobot_->GetNucleotideSidechainPosition(nt)[2].getValue();
+        }
+        else if (dim_ == 2 || dim_ == 1) {
+          SBPosition3 pos;
+          //conformation->getPosition(index, pos);
+          conformation->getPosition(nt()->GetSidechainCenterAtom()(), pos);
+
+          positions_(index, 0) = pos[0].getValue();
+          positions_(index, 1) = pos[1].getValue();
+          positions_(index, 2) = pos[2].getValue();
+        }
 
         capData_(index) = 0;
         colorsE_.SetRow(index, nucleotideEColor_);
@@ -1313,6 +1359,9 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
   SEConfig& config = SEConfig::GetInstance();
   auto parts = nanorobot_->GetParts();
 
+  auto conformations = nanorobot_->GetConformations();
+  auto conformation = conformations[dim_ - 1];
+  
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
@@ -1323,10 +1372,23 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
         capData_(index) = 0;
         flags_(index) = nt->getInheritedFlags();
         nodeIndices_(index) = nt->getNodeIndex();
+        
+        if (dim_ == 3) {
+          positions_(index, 0) = nanorobot_->GetNucleotideSidechainPosition(nt)[0].getValue();
+          positions_(index, 1) = nanorobot_->GetNucleotideSidechainPosition(nt)[1].getValue();
+          positions_(index, 2) = nanorobot_->GetNucleotideSidechainPosition(nt)[2].getValue();
+        }
+        else if (dim_ == 2 || dim_ == 1) {
+          SBPosition3 pos;
+          //conformation->getPosition(index, pos);
+          conformation->getPosition(nt()->GetSidechainCenterAtom()(), pos);
+          
+          positions_(index, 0) = pos[0].getValue();
+          positions_(index, 1) = pos[1].getValue();
+          positions_(index, 2) = pos[2].getValue();
+        }
 
-        positions_(index, 0) = nanorobot_->GetNucleotideSidechainPosition(nt)[0].getValue();
-        positions_(index, 1) = nanorobot_->GetNucleotideSidechainPosition(nt)[1].getValue();
-        positions_(index, 2) = nanorobot_->GetNucleotideSidechainPosition(nt)[2].getValue();
+        
        
         if (nanorobot_->IsScaffold(ss))
         {
@@ -1378,7 +1440,10 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
 {
   SEConfig& config = SEConfig::GetInstance();
   auto parts = nanorobot_->GetParts();
-  
+
+  auto conformations = nanorobot_->GetConformations();
+  auto conformation = conformations[dim_ - 1];
+
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
@@ -1390,9 +1455,19 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
         flags_(index) = nt->getInheritedFlags();
         nodeIndices_(index) = nt->getNodeIndex();
 
-        positions_(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
-        positions_(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
-        positions_(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
+        if (dim_ == 3) {
+          positions_(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
+          positions_(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
+          positions_(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
+        }
+        else if (dim_ == 2 || dim_ == 1) {
+          SBPosition3 pos;
+          conformation->getPosition(nt()->GetBackboneCenterAtom()(), pos);
+
+          positions_(index, 0) = pos[0].getValue();
+          positions_(index, 1) = pos[1].getValue();
+          positions_(index, 2) = pos[2].getValue();
+        }
 
         if (nanorobot_->IsScaffold(ss))
         {

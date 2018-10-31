@@ -139,7 +139,7 @@ private:
   ADNArray<float>	basePairingEColor_;
 
   double scale_;
-  int dim_;
+  int dim_ = 3;
 
   ADNNanorobot * nanorobot_;
 
