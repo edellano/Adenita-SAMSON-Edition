@@ -29,17 +29,16 @@ public :
   double const MAX_SCALE = 9.0;
 
   enum Scale {
-    ALL_ATOMS_LINES = 0,
-    ALL_ATOMS_STICKS = 1,
-    ALL_ATOMS_BALLS = 2,
-    NUCLEOTIDES_BACKBONE = 3,
-    NUCLEOTIDES_SIDECHAIN = 4,
-    NUCLEOTIDES_PARALLEL = 5,
-    NUCLEOTIDES_SCAFFOLD = 6,
-    STAPLES_SCAFFOLD_PLAITING_SIDECHAIN = 7,
-    STAPLES_SCAFFOLD_PLAITING_BACKBONE = 8,
-    DOUBLE_STRANDS = 9,
-    OBJECTS = 10
+    ALL_ATOMS_LINES,
+    ALL_ATOMS_STICKS,
+    ALL_ATOMS_BALLS,
+    NUCLEOTIDES_BACKBONE,
+    NUCLEOTIDES_SIDECHAIN,
+    NUCLEOTIDES_SCAFFOLD,
+    STAPLES_SCAFFOLD_PLAITING_SIDECHAIN,
+    STAPLES_SCAFFOLD_PLAITING_BACKBONE,
+    DOUBLE_STRANDS,
+    OBJECTS
   };
 
 	/// \name Constructors and destructors
@@ -73,6 +72,7 @@ public :
   float       												getScale();																
   virtual void												changeDiscreteScale(int scale, bool createIndex = true);																///< Displays the visual model
   virtual void												changeScale(double scale, bool createIndex = true);																///< Displays the visual model
+  virtual void												changeDimension(int dimension);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
 	
   virtual void												display();																///< Displays the visual model
@@ -81,7 +81,6 @@ public :
   virtual void												displayAtomsBalls();
   virtual void												displayNucleotideBackbone();
   virtual void												displayNucleotideSideChain();
-  virtual void												displayNucleotideParallel();
   virtual void												displayNucleotideScaffoldPlaiting();
   virtual void												displayPlatingSideChain();
   virtual void												displayPlatingBackbone();
@@ -140,6 +139,7 @@ private:
   ADNArray<float>	basePairingEColor_;
 
   double scale_;
+  int dim_ = 3;
 
   ADNNanorobot * nanorobot_;
 
