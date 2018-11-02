@@ -36,6 +36,19 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QSlider" name="hslDiscreteScale">
+       <property name="maximum">
+        <number>12</number>
+       </property>
+       <property name="value">
+        <number>6</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="0" colspan="2">
       <widget class="QSlider" name="hslScale">
        <property name="maximum">
@@ -61,21 +74,14 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLabel" name="lblScaleContext">
-       <property name="text">
-        <string>6</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Visibility</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="5" column="1">
       <widget class="QDoubleSpinBox" name="spbVisibility">
        <property name="singleStep">
         <double>0.050000000000000</double>
@@ -85,7 +91,7 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="0" colspan="2">
+     <item row="6" column="0" colspan="2">
       <widget class="QSlider" name="hslVisibility">
        <property name="value">
         <number>99</number>
@@ -95,13 +101,30 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="2">
-      <widget class="QSlider" name="hslDiscreteSlider">
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Dimension</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="lblDimension">
+       <property name="text">
+        <string>3</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="2">
+      <widget class="QSlider" name="hslDimension">
+       <property name="minimum">
+        <number>1</number>
+       </property>
        <property name="maximum">
-        <number>12</number>
+        <number>3</number>
        </property>
        <property name="value">
-        <number>6</number>
+        <number>3</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -121,8 +144,8 @@
    <slot>onSliderScaleChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>185</x>
-     <y>76</y>
+     <x>197</x>
+     <y>66</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -163,7 +186,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>hslDiscreteSlider</sender>
+   <sender>hslDiscreteScale</sender>
    <signal>sliderMoved(int)</signal>
    <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
    <slot>onDiscreteSliderScaleChanged(int)</slot>
@@ -178,11 +201,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>hslDimension</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onSliderDimensionChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>149</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSliderScaleChanged(int)</slot>
   <slot>onSliderVisibilityChanged(int)</slot>
   <slot>onSpinboxVisibilityChanged(double)</slot>
   <slot>onDiscreteSliderScaleChanged(int)</slot>
+  <slot>onSliderDimensionChanged(int)</slot>
  </slots>
 </ui>

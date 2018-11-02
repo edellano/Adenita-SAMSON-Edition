@@ -75,6 +75,7 @@ void                              onDiscreteSliderScaleChanged(int val);
 void                              onSliderScaleChanged(int val);
 void                              onSliderVisibilityChanged(int val);
 void                              onSpinboxVisibilityChanged(double val);
+void                              onSliderDimensionChanged(int val);
 
 private:
 
