@@ -49,7 +49,13 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNSingleStrand> ss)
   auto res = GetColor(ss(), sssColors_);
   auto color = res.second;
   if (res.first == false) {
-    // fetch default or random color
+    SEConfig& config = SEConfig::GetInstance();
+
+    int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
+    color(0) = config.staple_colors[stapleColorNum * 4 + 0];
+    color(1) = config.staple_colors[stapleColorNum * 4 + 1];
+    color(2) = config.staple_colors[stapleColorNum * 4 + 2];
+    color(3) = config.staple_colors[stapleColorNum * 4 + 3];
   }
 
   return color;

@@ -1332,7 +1332,9 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
 
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
-  
+
+  auto colors = colors_.at(REGULAR);
+
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
@@ -1370,12 +1372,9 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
         }
         else
         {
-          int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
+          auto color = colors->GetColor(ss);
+          colorsV_.SetRow(index, color);
 
-          colorsV_(index, 0) = config.staple_colors[stapleColorNum * 4 + 0];
-          colorsV_(index, 1) = config.staple_colors[stapleColorNum * 4 + 1];
-          colorsV_(index, 2) = config.staple_colors[stapleColorNum * 4 + 2];
-          colorsV_(index, 3) = config.staple_colors[stapleColorNum * 4 + 3];
         }
 
         colorsE_(index, 0) = colorsV_(index, 0);
@@ -1451,14 +1450,8 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
         }
         else
         {
-          auto baseColor = colors->GetColor(nt);
-          colorsV_.SetRow(index, baseColor);
-
-          //int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
-          //colorsV_(index, 0) = config.staple_colors[stapleColorNum * 4 + 0];
-          //colorsV_(index, 1) = config.staple_colors[stapleColorNum * 4 + 1];
-          //colorsV_(index, 2) = config.staple_colors[stapleColorNum * 4 + 2];
-          //colorsV_(index, 3) = config.staple_colors[stapleColorNum * 4 + 3];
+          auto color = colors->GetColor(ss);
+          colorsV_.SetRow(index, color);
         }
 
         colorsE_(index, 0) = colorsV_(index, 0);
