@@ -75,7 +75,8 @@ public :
   virtual void												changeScale(double scale, bool createIndex = true);																///< Displays the visual model
   virtual void												changeDimension(int dimension);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
-	
+  void                                changePropertyColors(int index);
+
   virtual void												display();																///< Displays the visual model
   virtual void												displayAtomsLines();
   virtual void												displayAtomsSticks();
@@ -96,6 +97,7 @@ public :
 	virtual void												collectAmbientOcclusion(const SBPosition3& boxOrigin, const SBPosition3& boxSize, unsigned int nCellsX, unsigned int nCellsY, unsigned int nCellsZ, float* ambientOcclusionData);		///< To collect ambient occlusion data
 
 	//@}
+
 
 	/// \name Events
 	//@{

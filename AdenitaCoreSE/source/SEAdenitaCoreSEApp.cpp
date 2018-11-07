@@ -337,6 +337,8 @@ void SEAdenitaCoreSEApp::CalculateBindingRegions()
     PIPrimer3& p = PIPrimer3::GetInstance();
     p.Calculate(part, 100, 5, 16);
   }
+
+
 }
 
 void SEAdenitaCoreSEApp::TwistDoubleHelix()

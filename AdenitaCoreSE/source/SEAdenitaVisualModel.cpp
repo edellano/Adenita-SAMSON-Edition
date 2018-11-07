@@ -55,7 +55,6 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   changeScale(7);
 
   //orderVisibility();
-  
 
 }
 
@@ -996,6 +995,39 @@ void SEAdenitaVisualModel::orderVisibility()
   for (int i = 0; i < singleStrandsSorted.size(); i++) {
     sortedSingleStrandsByDist_.insert(make_pair(singleStrandsSorted[i].first, singleStrandsSorted[i].second / max));
     //logger.Log(singleStrandsSorted[i].second);
+  }
+}
+
+void SEAdenitaVisualModel::changePropertyColors(int index)
+{
+  auto colors = colors_.at(MELTTEMP);
+
+  SEConfig& config = SEConfig::GetInstance();
+  
+  auto p = PIPrimer3::GetInstance();
+
+  auto parts = nanorobot_->GetParts();
+
+  SB_FOR(auto part, parts) {
+    auto regions = p.GetBindingRegions(part);
+
+    SB_FOR(auto region, regions) {
+      auto gibbs = region->getGibbs();
+
+      SBNodeIndexer nucleotides;
+      region->getNodes(nucleotides, SBNode::IsType(SBNode::Residue));
+      
+
+      SB_FOR(auto node, nucleotides) {
+        ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
+        ADNLogger& logger = ADNLogger::GetLogger();
+
+        logger.Log(QString::number(nt->getNodeIndex()));
+
+      }
+
+    }
+
   }
 }
 
