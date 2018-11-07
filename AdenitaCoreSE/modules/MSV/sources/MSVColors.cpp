@@ -66,6 +66,13 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNBaseSegment> bs)
   auto res = GetColor(bs(), bssColors_);
   auto color = res.second;
   if (res.first == false) {
+    SEConfig& config = SEConfig::GetInstance();
+
+    color(0) = config.double_strand_color[0];
+    color(1) = config.double_strand_color[1];
+    color(2) = config.double_strand_color[2];
+    color(3) = config.double_strand_color[3];
+
     // fetch default or random color
   }
 
