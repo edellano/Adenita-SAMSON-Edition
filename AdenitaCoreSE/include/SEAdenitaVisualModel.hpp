@@ -15,6 +15,7 @@
 #include "ADNNanorobot.hpp"
 #include "SEConfig.hpp"
 #include "MSVColors.hpp"
+#include "PIPrimer3.hpp"
 #include <QOpenGLFunctions_4_3_Core>
 
 
