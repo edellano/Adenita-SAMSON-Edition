@@ -32,7 +32,7 @@
      <item row="0" column="1">
       <widget class="QLabel" name="lblScale">
        <property name="text">
-        <string>6</string>
+        <string>7</string>
        </property>
       </widget>
      </item>
@@ -42,7 +42,7 @@
         <number>12</number>
        </property>
        <property name="value">
-        <number>6</number>
+        <number>7</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -61,10 +61,10 @@
         <number>10</number>
        </property>
        <property name="value">
-        <number>60</number>
+        <number>70</number>
        </property>
        <property name="sliderPosition">
-        <number>60</number>
+        <number>70</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
