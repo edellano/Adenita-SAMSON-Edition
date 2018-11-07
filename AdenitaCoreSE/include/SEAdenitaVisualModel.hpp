@@ -124,7 +124,6 @@ private:
   void												prepareScale9(bool forSelection = false); //scale 9: display polyhedron 
   void												highlightFlagChanged(); //scale 9: display polyhedron 
   SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
-  ADNArray<float>             getBaseColor(SBResidue::ResidueType baseSymbol);
   void                        orderVisibility();
 
   // general display properties 

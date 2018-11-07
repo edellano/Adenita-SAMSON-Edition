@@ -904,35 +904,6 @@ SEAdenitaCoreSEApp* SEAdenitaVisualModel::getAdenitaApp() const
   return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 }
 
-ADNArray<float> SEAdenitaVisualModel::getBaseColor(SBResidue::ResidueType baseSymbol)
-{
-  ADNArray<float> color;
-
-  if (baseSymbol == SBResidue::ResidueType::DA) {
-    //adenine
-    color = adenineColor_;
-  }
-  else if (baseSymbol == SBResidue::ResidueType::DT) {
-    //thymine
-    color = thymineColor_;
-  }
-  else if (baseSymbol == SBResidue::ResidueType::DG) {
-    //guanine
-    color = guanineColor_;
-  }
-  else if (baseSymbol == SBResidue::ResidueType::DC) {
-    //cytosine
-    color = cytosineColor_;
-  }
-  else {
-    color = nucleotideEColor_;
-  }
-
-  return color;
-}
-
-
-
 void SEAdenitaVisualModel::orderVisibility()
 {
 
@@ -1444,6 +1415,8 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
 
+  auto colors = colors_.at(REGULAR);
+
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
@@ -1478,12 +1451,14 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
         }
         else
         {
-          int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
+          auto baseColor = colors->GetColor(nt);
+          colorsV_.SetRow(index, baseColor);
 
-          colorsV_(index, 0) = config.staple_colors[stapleColorNum * 4 + 0];
-          colorsV_(index, 1) = config.staple_colors[stapleColorNum * 4 + 1];
-          colorsV_(index, 2) = config.staple_colors[stapleColorNum * 4 + 2];
-          colorsV_(index, 3) = config.staple_colors[stapleColorNum * 4 + 3];
+          //int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
+          //colorsV_(index, 0) = config.staple_colors[stapleColorNum * 4 + 0];
+          //colorsV_(index, 1) = config.staple_colors[stapleColorNum * 4 + 1];
+          //colorsV_(index, 2) = config.staple_colors[stapleColorNum * 4 + 2];
+          //colorsV_(index, 3) = config.staple_colors[stapleColorNum * 4 + 3];
         }
 
         colorsE_(index, 0) = colorsV_(index, 0);
