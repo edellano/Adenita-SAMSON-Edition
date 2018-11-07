@@ -1007,24 +1007,23 @@ void SEAdenitaVisualModel::changePropertyColors(int index)
   auto p = PIPrimer3::GetInstance();
 
   auto parts = nanorobot_->GetParts();
+  ADNLogger& logger = ADNLogger::GetLogger();
 
   SB_FOR(auto part, parts) {
     auto regions = p.GetBindingRegions(part);
 
     SB_FOR(auto region, regions) {
       auto gibbs = region->getGibbs();
-
-      SBNodeIndexer nucleotides;
-      region->getNodes(nucleotides, SBNode::IsType(SBNode::Residue));
+      auto nodeIndexer = region->getGroupNodes();
       
+      logger.Log(QString("size of binding region: "));
+      logger.Log(QString::number(nodeIndexer->size()));
+      
+      //SB_FOR(auto node, nucleotides) {
+      //  //ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
+      //  logger.Log(QString::number(node->getNodeIndex()));
+      //}
 
-      SB_FOR(auto node, nucleotides) {
-        ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
-        ADNLogger& logger = ADNLogger::GetLogger();
-
-        logger.Log(QString::number(nt->getNodeIndex()));
-
-      }
 
     }
 
