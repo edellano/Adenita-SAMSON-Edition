@@ -128,17 +128,9 @@ private:
 
   // general display properties 
   ADNArray<float> nucleotideEColor_;
-  ADNArray<float> stapleColors_;
-  ADNArray<float> adenineColor_;
-  ADNArray<float>	thymineColor_;
-  ADNArray<float>	cytosineColor_;
-  ADNArray<float>	guanineColor_;
-  ADNArray<float> undefinedNucleotideColor_;
-  ADNArray<float>	doubleHelixVColor_;
-  ADNArray<float>	doubleHelixEColor_;
-  ADNArray<float>	basePairingEColor_;
+  
 
-  double scale_;
+  double scale_ = 7;
   int dim_ = 3;
 
   ADNNanorobot * nanorobot_;
