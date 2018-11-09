@@ -1014,16 +1014,17 @@ void SEAdenitaVisualModel::changePropertyColors(int index)
 
     SB_FOR(auto region, regions) {
       auto gibbs = region->getGibbs();
-      auto nodeIndexer = region->getGroupNodes();
+      auto groupNodes = region->getGroupNodes();
       
-      logger.Log(QString("size of binding region: "));
-      logger.Log(QString::number(nodeIndexer->size()));
+      //logger.Log(QString("size of binding region: "));
+      //logger.Log(QString::number(nodeIndexer->size()));
       
-      //SB_FOR(auto node, nucleotides) {
-      //  //ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
-      //  logger.Log(QString::number(node->getNodeIndex()));
-      //}
-
+      for (unsigned i = 0; i < groupNodes->size(); i++) {
+        auto node = groupNodes[i];
+        logger.Log(QString("group node "));
+        logger.Log(QString::number(i));
+        
+      }
 
     }
 
