@@ -1022,7 +1022,6 @@ void SEAdenitaVisualModel::changePropertyColors(int index)
       auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
         regularColors->SetColor(color, nt);
-        meltingTempColors->SetColor(color, nt);
       }
     }
 
