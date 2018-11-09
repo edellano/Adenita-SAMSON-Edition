@@ -1000,7 +1000,8 @@ void SEAdenitaVisualModel::orderVisibility()
 
 void SEAdenitaVisualModel::changePropertyColors(int index)
 {
-  auto colors = colors_.at(MELTTEMP);
+  std::shared_ptr<MSVColors> & regularColors = colors_.at(REGULAR);
+  std::shared_ptr<MSVColors> & meltingTempColors = colors_.at(MELTTEMP);
 
   SEConfig& config = SEConfig::GetInstance();
   
@@ -1009,24 +1010,40 @@ void SEAdenitaVisualModel::changePropertyColors(int index)
   auto parts = nanorobot_->GetParts();
   ADNLogger& logger = ADNLogger::GetLogger();
 
+  ADNArray<float> color = ADNArray<float>(4);
+  color(0) = 1.0f;
+  color(1) = 0.4f;
+  color(2) = 0.0f;
+  color(3) = 1.0f;
+
   SB_FOR(auto part, parts) {
-    auto regions = p.GetBindingRegions(part);
-
-    SB_FOR(auto region, regions) {
-      auto gibbs = region->getGibbs();
-      auto groupNodes = region->getGroupNodes();
-      
-      //logger.Log(QString("size of binding region: "));
-      //logger.Log(QString::number(nodeIndexer->size()));
-      
-      for (unsigned i = 0; i < groupNodes->size(); i++) {
-        auto node = groupNodes[i];
-        logger.Log(QString("group node "));
-        logger.Log(QString::number(i));
-        
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        regularColors->SetColor(color, nt);
+        meltingTempColors->SetColor(color, nt);
       }
-
     }
+
+
+  //SB_FOR(auto part, parts) {
+  //  auto regions = p.GetBindingRegions(part);
+
+  //  SB_FOR(auto region, regions) {
+  //    auto gibbs = region->getGibbs();
+  //    auto groupNodes = region->getGroupNodes();
+  //    
+  //    for (unsigned i = 0; i < groupNodes->size(); i++) {
+  //      auto node = groupNodes->getReferenceTarget(i);
+  //      ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
+  //      colors->SetColor(color, nt);
+
+  //      //logger.Log(QString::number(nt->getNodeIndex()));
+  //      
+  //    }
+
+  //  }
 
   }
 }
