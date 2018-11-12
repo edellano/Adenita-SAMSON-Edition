@@ -161,6 +161,9 @@ private:
     MELTTEMP = 1,  // melting temperatures color map
     GIBBS = 2  // gibbs free energy color map
   };
+
+  ColorType curColorType_ = REGULAR;
+
   std::map<ColorType, MSVColors*> colors_;
 };
 

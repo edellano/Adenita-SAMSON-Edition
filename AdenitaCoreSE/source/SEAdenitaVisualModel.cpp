@@ -52,7 +52,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
     this, 
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
   
-  changeScale(7);
+  changeScale(4);
 
   //orderVisibility();
 
@@ -1000,8 +1000,9 @@ void SEAdenitaVisualModel::orderVisibility()
 
 void SEAdenitaVisualModel::changePropertyColors(int index)
 {
-  if (index == MELTTEMP) {
+  curColorType_ = static_cast<ColorType>(index);
 
+  if (index == MELTTEMP) {
     auto meltingTempColors = colors_.at(MELTTEMP);
 
     SEConfig& config = SEConfig::GetInstance();
@@ -1204,7 +1205,7 @@ void SEAdenitaVisualModel::displayNucleotideSideChain()
 
   auto parts = nanorobot_->GetParts();
 
-  auto colors = colors_[ColorType::REGULAR];
+  MSVColors * colors = colors_[curColorType_];;
 
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
