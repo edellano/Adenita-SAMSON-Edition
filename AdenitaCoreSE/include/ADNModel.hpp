@@ -430,6 +430,7 @@ public:
   bool IsLast();
 
   ADNPointer<ADNDoubleStrand> GetDoubleStrand() const;
+  SBNode* getDoubleStrand() const;
   CollectionMap<ADNNucleotide> GetNucleotides();
 
   void SetCell(ADNCell* c);  // we use raw pointers so subclassing will work

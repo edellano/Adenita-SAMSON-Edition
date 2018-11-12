@@ -927,6 +927,11 @@ ADNPointer<ADNDoubleStrand> ADNBaseSegment::GetDoubleStrand() const
   return ADNPointer<ADNDoubleStrand>(p);
 }
 
+SBNode * ADNBaseSegment::getDoubleStrand() const
+{
+  return GetDoubleStrand()();
+}
+
 CollectionMap<ADNNucleotide> ADNBaseSegment::GetNucleotides()
 {
   return cell_->GetNucleotides();
