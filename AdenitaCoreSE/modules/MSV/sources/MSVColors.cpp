@@ -73,7 +73,6 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNBaseSegment> bs)
     color(2) = config.double_strand_color[2];
     color(3) = config.double_strand_color[3];
 
-    // fetch default or random color
   }
 
   return color;

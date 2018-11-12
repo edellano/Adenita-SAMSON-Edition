@@ -35,7 +35,7 @@ private:
   }
 
   template<typename T>
-  void SetColor(ADNArray<float> color, T el, std::map<T, ADNArray<float>> searchMap) {
+  void SetColor(ADNArray<float> color, T el, std::map<T, ADNArray<float>> & searchMap) {
     searchMap[el] = color;
   }
 

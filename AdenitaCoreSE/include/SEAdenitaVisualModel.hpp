@@ -158,10 +158,10 @@ private:
   // new color implementation
   enum ColorType {
     REGULAR = 0,  // default color map
-    GIBBS = 1,  // gibbs free energy color map
-    MELTTEMP = 2  // melting temperatures color map
+    MELTTEMP = 1,  // melting temperatures color map
+    GIBBS = 2  // gibbs free energy color map
   };
-  std::map<ColorType, std::shared_ptr<MSVColors>> colors_;
+  std::map<ColorType, MSVColors*> colors_;
 };
 
 
