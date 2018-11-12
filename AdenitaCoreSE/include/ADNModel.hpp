@@ -167,9 +167,11 @@ public:
   void SetPair(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetPair();
 
-  ADNPointer<ADNNucleotide> GetPrev(bool checkCircular = false);
-  ADNPointer<ADNNucleotide> GetNext(bool checkCircular = false);
-  ADNPointer<ADNSingleStrand> GetStrand();
+  ADNPointer<ADNNucleotide> GetPrev(bool checkCircular = false) const;
+  SBNode* getPrev() const;
+  ADNPointer<ADNNucleotide> GetNext(bool checkCircular = false) const;
+  SBNode* getNext() const;
+  ADNPointer<ADNSingleStrand> GetStrand() const;
   SBNode* getSingleStrand() const;
 
   void SetBaseSegment(ADNPointer<ADNBaseSegment> bs);
