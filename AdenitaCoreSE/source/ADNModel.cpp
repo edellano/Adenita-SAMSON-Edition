@@ -332,6 +332,16 @@ bool ADNNucleotide::GlobalBaseIsSet() {
   return set;
 }
 
+bool ADNNucleotide::IsLeft()
+{
+  return bs_->IsLeft(this);
+}
+
+bool ADNNucleotide::IsRight()
+{
+  return bs_->IsRight(this);
+}
+
 ADNSingleStrand::ADNSingleStrand(const ADNSingleStrand & other)
 {
   *this = other;
@@ -965,6 +975,16 @@ void ADNBaseSegment::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   cell->RemoveNucleotide(nt);
 }
 
+bool ADNBaseSegment::IsLeft(ADNPointer<ADNNucleotide> nt)
+{
+  return cell_->IsLeft(nt);
+}
+
+bool ADNBaseSegment::IsRight(ADNPointer<ADNNucleotide> nt)
+{
+  return cell_->IsRight(nt);
+}
+
 ADNDoubleStrand::ADNDoubleStrand(const ADNDoubleStrand & other) : SBStructuralGroup(other)
 {
   *this = other;
@@ -1139,6 +1159,17 @@ void ADNBasePair::SetRightNucleotide(ADNPointer<ADNNucleotide> nt) {
   addChild(right_());
 }
 
+void ADNBasePair::SetRemainingNucleotide(ADNPointer<ADNNucleotide> nt)
+{
+  if (left_ != nullptr && right_ == nullptr) {
+    SetRightNucleotide(nt);
+  }
+  else if (left_ == nullptr && right_ != nullptr) {
+    SetLeftNucleotide(nt);
+  }
+  PairNucleotides();
+}
+
 void ADNBasePair::AddPair(ADNPointer<ADNNucleotide> left, ADNPointer<ADNNucleotide> right)
 {
   SetLeftNucleotide(left);
@@ -1172,6 +1203,22 @@ CollectionMap<ADNNucleotide> ADNBasePair::GetNucleotides()
   return nts;
 }
 
+bool ADNBasePair::IsLeft(ADNPointer<ADNNucleotide> nt)
+{
+  bool s = false;
+  if (left_ == nt) s = true;
+
+  return s;
+}
+
+bool ADNBasePair::IsRight(ADNPointer<ADNNucleotide> nt)
+{
+  bool s = false;
+  if (right_ == nt) s = true;
+
+  return s;
+}
+
 void ADNSkipPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
 }
 
@@ -1182,6 +1229,34 @@ void ADNLoopPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   if (right_ != nullptr) {
     right_->RemoveNucleotide(nt);
   }
+}
+
+bool ADNLoopPair::IsRight(ADNPointer<ADNNucleotide> nt)
+{
+  bool s = false;
+  auto nts = right_->GetNucleotides();
+  SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
+    if (c == nt) {
+      s = true;
+      break;
+    }
+  }
+
+  return s;
+}
+
+bool ADNLoopPair::IsLeft(ADNPointer<ADNNucleotide> nt)
+{
+  bool s = false;
+  auto nts = left_->GetNucleotides();
+  SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
+    if (c == nt) {
+      s = true;
+      break;
+    }
+  }
+
+  return s;
 }
 
 CollectionMap<ADNNucleotide> ADNLoopPair::GetNucleotides()
