@@ -241,6 +241,7 @@ SB_CLASS_BEGIN(ADNBaseSegment);
 
   SB_INTERFACE_BEGIN;
 
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNBaseSegment, DoubleStrand, "Double Strand", "Properties");
     SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNBaseSegment, Name, "Name", "Properties");
     SB_ATTRIBUTE_READ_ONLY(int, ADNBaseSegment, Number, "Number", "Properties");
     SB_ATTRIBUTE_READ_ONLY(std::string, ADNBaseSegment, CellType, "Contains", "Properties");
