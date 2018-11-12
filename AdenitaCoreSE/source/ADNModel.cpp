@@ -97,7 +97,7 @@ ADNPointer<ADNNucleotide> ADNNucleotide::GetPair()
   return pair_;
 }
 
-ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev(bool checkCircular)
+ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev(bool checkCircular) const
 {
   ADNPointer<ADNNucleotide> p = static_cast<ADNNucleotide*>(getPreviousNucleicAcid());
 
@@ -111,7 +111,12 @@ ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev(bool checkCircular)
   return p;
 }
 
-ADNPointer<ADNNucleotide> ADNNucleotide::GetNext(bool checkCircular)
+SBNode * ADNNucleotide::getPrev() const
+{
+  return GetPrev(true)();
+}
+
+ADNPointer<ADNNucleotide> ADNNucleotide::GetNext(bool checkCircular) const
 {
   ADNPointer<ADNNucleotide> p = static_cast<ADNNucleotide*>(getNextNucleicAcid());
   
@@ -125,7 +130,12 @@ ADNPointer<ADNNucleotide> ADNNucleotide::GetNext(bool checkCircular)
   return p;
 }
 
-ADNPointer<ADNSingleStrand> ADNNucleotide::GetStrand()
+SBNode * ADNNucleotide::getNext() const
+{
+  return GetNext(true)();
+}
+
+ADNPointer<ADNSingleStrand> ADNNucleotide::GetStrand() const
 {
   auto p = static_cast<ADNSingleStrand*>(getParent());
   return ADNPointer<ADNSingleStrand>(p);
