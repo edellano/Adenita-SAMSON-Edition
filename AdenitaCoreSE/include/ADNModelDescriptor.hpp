@@ -90,6 +90,8 @@ SB_CLASS_BEGIN(ADNNucleotide);
     SB_ATTRIBUTE_READ_ONLY(DNABlocks, ADNNucleotide, NucleotideType, "Type", "Properties");
     SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, SingleStrand, "Single Strand", "Properties");
     SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, BaseSegment, "Base segment", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Next, "Next nucleotide", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Prev, "Previous nucleotide", "Properties");
     SB_ATTRIBUTE_READ_ONLY(std::string, ADNNucleotide, BaseSegmentType, "Base segment type", "Properties");
 
   SB_INTERFACE_END;
@@ -241,6 +243,7 @@ SB_CLASS_BEGIN(ADNBaseSegment);
 
   SB_INTERFACE_BEGIN;
 
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNBaseSegment, DoubleStrand, "Double Strand", "Properties");
     SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNBaseSegment, Name, "Name", "Properties");
     SB_ATTRIBUTE_READ_ONLY(int, ADNBaseSegment, Number, "Number", "Properties");
     SB_ATTRIBUTE_READ_ONLY(std::string, ADNBaseSegment, CellType, "Contains", "Properties");

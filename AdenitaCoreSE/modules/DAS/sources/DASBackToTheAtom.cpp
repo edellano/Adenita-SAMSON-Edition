@@ -130,7 +130,7 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
   if (nt_r != nullptr) {
     // right nt has a slightly different basis
     ublas::matrix<double> local_basis = ublas::identity_matrix<double>(3);
-    local_basis.at_element(0, 0) = -1;
+    local_basis.at_element(0, 0) = 1;
     local_basis.at_element(1, 1) = -1;
     local_basis.at_element(2, 2) = -1;
     auto basis_r = ublas::prod(new_basis, local_basis);
@@ -443,6 +443,7 @@ void DASBackToTheAtom::PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosit
 void DASBackToTheAtom::CreateBonds(ADNPointer<ADNPart> origami)
 {
   auto nts = origami->GetNucleotides();
+
   SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
     auto atoms = nt->GetAtoms();
     auto bb = nt->GetBackbone();
@@ -468,6 +469,15 @@ void DASBackToTheAtom::CreateBonds(ADNPointer<ADNPart> origami)
           }
         }
       }
+    }
+
+    // create connection with previous nucleotide
+    if (nt->GetEnd() != FivePrime && nt->GetEnd() != FiveAndThreePrime) {
+      auto prevNt = nt->GetPrev(true);
+      ADNPointer<ADNAtom> atO5p = *nt->GetAtomsByName("O5'").begin();
+      ADNPointer<ADNAtom> atO3p = *prevNt->GetAtomsByName("O3'").begin();
+      SBPointer<SBBond> bond = new SBBond(atO5p(), atO3p());
+      bb->addChild(bond());
     }
   }
 }

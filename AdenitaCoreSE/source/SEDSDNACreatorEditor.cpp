@@ -126,7 +126,7 @@ QString SEDSDNACreatorEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("SEDSDNACreatorEditor"); 
+	return QObject::tr("DNA Creator"); 
 
 }
 
@@ -151,7 +151,7 @@ QString SEDSDNACreatorEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("SAMSON Element generator pro tip: modify me"); 
+	return QObject::tr("Add ssDNA and dsDNA to your design"); 
 
 }
 

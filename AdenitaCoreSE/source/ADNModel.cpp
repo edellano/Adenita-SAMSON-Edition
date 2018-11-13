@@ -97,7 +97,7 @@ ADNPointer<ADNNucleotide> ADNNucleotide::GetPair()
   return pair_;
 }
 
-ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev(bool checkCircular)
+ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev(bool checkCircular) const
 {
   ADNPointer<ADNNucleotide> p = static_cast<ADNNucleotide*>(getPreviousNucleicAcid());
 
@@ -111,7 +111,12 @@ ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev(bool checkCircular)
   return p;
 }
 
-ADNPointer<ADNNucleotide> ADNNucleotide::GetNext(bool checkCircular)
+SBNode * ADNNucleotide::getPrev() const
+{
+  return GetPrev(true)();
+}
+
+ADNPointer<ADNNucleotide> ADNNucleotide::GetNext(bool checkCircular) const
 {
   ADNPointer<ADNNucleotide> p = static_cast<ADNNucleotide*>(getNextNucleicAcid());
   
@@ -125,7 +130,12 @@ ADNPointer<ADNNucleotide> ADNNucleotide::GetNext(bool checkCircular)
   return p;
 }
 
-ADNPointer<ADNSingleStrand> ADNNucleotide::GetStrand()
+SBNode * ADNNucleotide::getNext() const
+{
+  return GetNext(true)();
+}
+
+ADNPointer<ADNSingleStrand> ADNNucleotide::GetStrand() const
 {
   auto p = static_cast<ADNSingleStrand*>(getParent());
   return ADNPointer<ADNSingleStrand>(p);
@@ -330,6 +340,16 @@ bool ADNNucleotide::GlobalBaseIsSet() {
   if (!ADNVectorMath::IsNearlyZero(ADNVectorMath::Determinant(mat))) set = true;
 
   return set;
+}
+
+bool ADNNucleotide::IsLeft()
+{
+  return bs_->IsLeft(this);
+}
+
+bool ADNNucleotide::IsRight()
+{
+  return bs_->IsRight(this);
 }
 
 ADNSingleStrand::ADNSingleStrand(const ADNSingleStrand & other)
@@ -927,6 +947,11 @@ ADNPointer<ADNDoubleStrand> ADNBaseSegment::GetDoubleStrand() const
   return ADNPointer<ADNDoubleStrand>(p);
 }
 
+SBNode * ADNBaseSegment::getDoubleStrand() const
+{
+  return GetDoubleStrand()();
+}
+
 CollectionMap<ADNNucleotide> ADNBaseSegment::GetNucleotides()
 {
   return cell_->GetNucleotides();
@@ -958,6 +983,16 @@ std::string ADNBaseSegment::getCellType() const
 void ADNBaseSegment::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   ADNPointer<ADNCell> cell = GetCell();
   cell->RemoveNucleotide(nt);
+}
+
+bool ADNBaseSegment::IsLeft(ADNPointer<ADNNucleotide> nt)
+{
+  return cell_->IsLeft(nt);
+}
+
+bool ADNBaseSegment::IsRight(ADNPointer<ADNNucleotide> nt)
+{
+  return cell_->IsRight(nt);
 }
 
 ADNDoubleStrand::ADNDoubleStrand(const ADNDoubleStrand & other) : SBStructuralGroup(other)
@@ -1134,6 +1169,17 @@ void ADNBasePair::SetRightNucleotide(ADNPointer<ADNNucleotide> nt) {
   addChild(right_());
 }
 
+void ADNBasePair::SetRemainingNucleotide(ADNPointer<ADNNucleotide> nt)
+{
+  if (left_ != nullptr && right_ == nullptr) {
+    SetRightNucleotide(nt);
+  }
+  else if (left_ == nullptr && right_ != nullptr) {
+    SetLeftNucleotide(nt);
+  }
+  PairNucleotides();
+}
+
 void ADNBasePair::AddPair(ADNPointer<ADNNucleotide> left, ADNPointer<ADNNucleotide> right)
 {
   SetLeftNucleotide(left);
@@ -1167,6 +1213,22 @@ CollectionMap<ADNNucleotide> ADNBasePair::GetNucleotides()
   return nts;
 }
 
+bool ADNBasePair::IsLeft(ADNPointer<ADNNucleotide> nt)
+{
+  bool s = false;
+  if (left_ == nt) s = true;
+
+  return s;
+}
+
+bool ADNBasePair::IsRight(ADNPointer<ADNNucleotide> nt)
+{
+  bool s = false;
+  if (right_ == nt) s = true;
+
+  return s;
+}
+
 void ADNSkipPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
 }
 
@@ -1177,6 +1239,34 @@ void ADNLoopPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
   if (right_ != nullptr) {
     right_->RemoveNucleotide(nt);
   }
+}
+
+bool ADNLoopPair::IsRight(ADNPointer<ADNNucleotide> nt)
+{
+  bool s = false;
+  auto nts = right_->GetNucleotides();
+  SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
+    if (c == nt) {
+      s = true;
+      break;
+    }
+  }
+
+  return s;
+}
+
+bool ADNLoopPair::IsLeft(ADNPointer<ADNNucleotide> nt)
+{
+  bool s = false;
+  auto nts = left_->GetNucleotides();
+  SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
+    if (c == nt) {
+      s = true;
+      break;
+    }
+  }
+
+  return s;
 }
 
 CollectionMap<ADNNucleotide> ADNLoopPair::GetNucleotides()
