@@ -120,6 +120,7 @@ private:
   ublas::matrix<double> CreatePositionsMatrix(NtPair pair);
   //! Select the ideal NtPair corresponding to a pair
   NtPair GetIdealBasePairNucleotides(ADNPointer<ADNNucleotide> nt_l, ADNPointer<ADNNucleotide> nt_r);
+  NtPair GetIdealBasePairNucleotides(DNABlocks nt_l, DNABlocks nt_r);
   //! If not defined, set a local basis for the base segment and return it as a matrix
   ublas::matrix<double> CalculateBaseSegmentBasis(ADNPointer<ADNBaseSegment> bs);
   /*!
