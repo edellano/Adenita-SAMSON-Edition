@@ -372,7 +372,7 @@ void SEAdenitaCoreSEApp::TestNeighbors()
   auto neighbors = ADNNeighbors();
   neighbors.SetMaxCutOff(SBQuantity::nanometer(config.debugOptions.maxCutOff));
   neighbors.SetMinCutOff(SBQuantity::nanometer(config.debugOptions.minCutOff));
-  neighbors.SetIncludePairs(true);
+  //neighbors.SetIncludePairs(true);
   neighbors.InitializeNeighbors(part);
 
   // highlight neighbors of selected nucleotide
