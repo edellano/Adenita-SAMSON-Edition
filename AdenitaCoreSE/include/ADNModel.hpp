@@ -165,7 +165,8 @@ public:
   DNABlocks getNucleotideType() const;
 
   void SetPair(ADNPointer<ADNNucleotide> nt);
-  ADNPointer<ADNNucleotide> GetPair();
+  ADNPointer<ADNNucleotide> GetPair() const;
+  SBNode* getPair() const;
 
   ADNPointer<ADNNucleotide> GetPrev(bool checkCircular = false) const;
   SBNode* getPrev() const;
