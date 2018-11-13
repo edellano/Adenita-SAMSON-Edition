@@ -403,13 +403,28 @@ void SEAdenitaCoreSEApp::FromDatagraph()
 
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
-  ADNLogger& logger = ADNLogger::GetLogger();
-  logger.LogDebug(QString("document has been changed"));
+  //ADNLogger& logger = ADNLogger::GetLogger();
+  //logger.LogDebug(QString("document has been changed"));
 }
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
 {
+  if (documentEvent->getType() == SBStructuralEvent::ChainRemoved) {
+    auto node = documentEvent->getAuxiliaryNode();
+    ADNPointer<ADNSingleStrand> ss = dynamic_cast<ADNSingleStrand*>(node);
+    if (ss != nullptr) {
+      auto part = static_cast<ADNPart*>(documentEvent->getSender()->getParent());
+      part->DeregisterSingleStrand(ss, false);
+    }
+  }
 
+  //if (documentEvent->getType() == SBStructuralEvent::ResidueRemoved) {
+  //  auto node = documentEvent->getAuxiliaryNode();
+  //  ADNPointer<ADNSingleStrand> ss = static_cast<ADNSingleStrand*>(documentEvent->getSender());
+  //  ADNPointer<ADNNucleotide> nt = dynamic_cast<ADNNucleotide*>(node);
+  //  auto part = GetNanorobot()->GetPart(ss);
+  //  part->DeregisterNucleotide(nt, false, true, true);
+  //}
 }
 
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
