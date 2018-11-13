@@ -350,7 +350,8 @@ void SEAdenitaCoreSEApp::TwistDoubleHelix()
   SEConfig& config = SEConfig::GetInstance();
 
   SB_FOR(ADNPointer<ADNDoubleStrand> ds, dss) {
-    ADNBasicOperations::TwistDoubleHelix(ds, deg);
+    double newDeg = ds->GetInitialTwistAngle() + deg;
+    ADNBasicOperations::TwistDoubleHelix(ds, newDeg);
     // recalculate positions
     btta.SetDoubleStrandPositions(ds);
     if (config.use_atomic_details) {

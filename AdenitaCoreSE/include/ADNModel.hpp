@@ -167,9 +167,11 @@ public:
   void SetPair(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetPair();
 
-  ADNPointer<ADNNucleotide> GetPrev(bool checkCircular = false);
-  ADNPointer<ADNNucleotide> GetNext(bool checkCircular = false);
-  ADNPointer<ADNSingleStrand> GetStrand();
+  ADNPointer<ADNNucleotide> GetPrev(bool checkCircular = false) const;
+  SBNode* getPrev() const;
+  ADNPointer<ADNNucleotide> GetNext(bool checkCircular = false) const;
+  SBNode* getNext() const;
+  ADNPointer<ADNSingleStrand> GetStrand() const;
   SBNode* getSingleStrand() const;
 
   void SetBaseSegment(ADNPointer<ADNBaseSegment> bs);
@@ -206,6 +208,9 @@ public:
   ublas::matrix<double> GetGlobalBasisTransformation();
   bool GlobalBaseIsSet();
 
+  //! check where in the base segment is the nucleotide located
+  bool IsLeft();
+  bool IsRight();
 private:
   ADNWeakPointer<ADNNucleotide> pair_;
   ADNWeakPointer<ADNBaseSegment> bs_;  // base segment to which the nucleotide belongs to
@@ -296,6 +301,8 @@ public:
   virtual CellType GetType() { return CellType::Undefined; };
   virtual void RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {};
   virtual CollectionMap<ADNNucleotide> GetNucleotides() { return CollectionMap<ADNNucleotide>(); };
+  virtual bool IsLeft(ADNPointer<ADNNucleotide> nt) { return false; };  // samson doesn't like abstract classes
+  virtual bool IsRight(ADNPointer<ADNNucleotide> nt) { return false; };
 };
 
 SB_REGISTER_TARGET_TYPE(ADNCell, "ADNCell", "E6BFD315-2734-B4A6-5808-E784AA4102EF");
@@ -315,10 +322,13 @@ public:
   ADNPointer<ADNNucleotide> GetRightNucleotide();
   SBNode* getRight() const;
   void SetRightNucleotide(ADNPointer<ADNNucleotide> nt);
+  void SetRemainingNucleotide(ADNPointer<ADNNucleotide> nt);
   void AddPair(ADNPointer<ADNNucleotide> left, ADNPointer<ADNNucleotide> right);
   void PairNucleotides();
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
   CollectionMap<ADNNucleotide> GetNucleotides();
+  bool IsLeft(ADNPointer<ADNNucleotide> nt);
+  bool IsRight(ADNPointer<ADNNucleotide> nt);
 private:
   ADNPointer<ADNNucleotide> left_ = nullptr;
   ADNPointer<ADNNucleotide> right_ = nullptr;
@@ -336,6 +346,9 @@ public:
   CellType GetType() { return CellType::SkipPair; };
 
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
+
+  bool IsLeft(ADNPointer<ADNNucleotide> nt) { return false; };
+  bool IsRight(ADNPointer<ADNNucleotide> nt) { return false; };
 private:
 };
 
@@ -394,6 +407,9 @@ public:
 
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
   CollectionMap<ADNNucleotide> GetNucleotides();
+
+  bool IsLeft(ADNPointer<ADNNucleotide> nt);
+  bool IsRight(ADNPointer<ADNNucleotide> nt);
 private:
   ADNPointer<ADNLoop> left_ = nullptr;
   ADNPointer<ADNLoop> right_ = nullptr;
@@ -430,6 +446,7 @@ public:
   bool IsLast();
 
   ADNPointer<ADNDoubleStrand> GetDoubleStrand() const;
+  SBNode* getDoubleStrand() const;
   CollectionMap<ADNNucleotide> GetNucleotides();
 
   void SetCell(ADNCell* c);  // we use raw pointers so subclassing will work
@@ -437,6 +454,10 @@ public:
   CellType GetCellType() const;
   std::string getCellType() const;
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
+
+  //! check if left or right in the base segment
+  bool IsLeft(ADNPointer<ADNNucleotide> nt);
+  bool IsRight(ADNPointer<ADNNucleotide> nt);
 
 private:
   ADNPointer<ADNCell> cell_ = nullptr;

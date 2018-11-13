@@ -12,7 +12,7 @@
 SB_CLASS_BEGIN(SEDSDNACreatorEditor);
 
 	SB_CLASS_TYPE(SBCClass::Editor);
-        SB_CLASS_DESCRIPTION("SEDSDNACreatorEditor : SAMSON Element generator pro tip: modify me");
+        SB_CLASS_DESCRIPTION("DNA Creator : Add ssDNA and dsDNA");
 
 	SB_FACTORY_BEGIN;
 
