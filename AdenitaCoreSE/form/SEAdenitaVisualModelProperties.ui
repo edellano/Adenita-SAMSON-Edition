@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>161</height>
+    <height>378</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -32,7 +32,7 @@
      <item row="0" column="1">
       <widget class="QLabel" name="lblScale">
        <property name="text">
-        <string>6</string>
+        <string>7</string>
        </property>
       </widget>
      </item>
@@ -42,7 +42,7 @@
         <number>12</number>
        </property>
        <property name="value">
-        <number>6</number>
+        <number>7</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -61,43 +61,16 @@
         <number>10</number>
        </property>
        <property name="value">
-        <number>60</number>
+        <number>70</number>
        </property>
        <property name="sliderPosition">
-        <number>60</number>
+        <number>70</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="tickInterval">
         <number>1</number>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Visibility</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QDoubleSpinBox" name="spbVisibility">
-       <property name="singleStep">
-        <double>0.050000000000000</double>
-       </property>
-       <property name="value">
-        <double>99.989999999999995</double>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0" colspan="2">
-      <widget class="QSlider" name="hslVisibility">
-       <property name="value">
-        <number>99</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -128,6 +101,59 @@
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Visibility</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QDoubleSpinBox" name="spbVisibility">
+       <property name="singleStep">
+        <double>0.050000000000000</double>
+       </property>
+       <property name="value">
+        <double>99.989999999999995</double>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0" colspan="2">
+      <widget class="QSlider" name="hslVisibility">
+       <property name="value">
+        <number>99</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QComboBox" name="cbbPropertyColors">
+       <item>
+        <property name="text">
+         <string>Standard</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Melting Temperature</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Gibbs Free Energy</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Property Color</string>
        </property>
       </widget>
      </item>
@@ -217,6 +243,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbbPropertyColors</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onPropertyColorsChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>194</x>
+     <y>205</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSliderScaleChanged(int)</slot>
@@ -224,5 +266,6 @@
   <slot>onSpinboxVisibilityChanged(double)</slot>
   <slot>onDiscreteSliderScaleChanged(int)</slot>
   <slot>onSliderDimensionChanged(int)</slot>
+  <slot>onPropertyColorsChanged(int)</slot>
  </slots>
 </ui>
