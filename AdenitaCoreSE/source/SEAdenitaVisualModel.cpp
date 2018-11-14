@@ -1651,9 +1651,20 @@ void SEAdenitaVisualModel::displayBaseBairConnections(bool onlySelected)
     ADNPointer<ADNNucleotide> pair = nt->GetPair();
     unsigned int index = p.second;
     
-    positions(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
-    positions(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
-    positions(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
+    SBPosition3 pos;
+    if (scale_ == 3 || scale_ == 7) {
+      pos = nt->GetBackbonePosition();
+    }
+    else if (scale_ == 4 || scale_ == 5 || scale_ == 6) {
+      pos = nt->GetSidechainPosition();
+    }
+    else if (scale_ < 3 || scale_ > 7) {
+      pos = nt->GetPosition();
+    }
+
+    positions(index, 0) = pos[0].getValue();
+    positions(index, 1) = pos[1].getValue();
+    positions(index, 2) = pos[2].getValue();
 
     radii(index) = config.nucleotide_E_radius;
     colors.SetRow(index, baseColors->GetColor(nt));
@@ -1692,7 +1703,7 @@ void SEAdenitaVisualModel::displayForDebugging()
   SEConfig& config = SEConfig::GetInstance();
   auto parts = nanorobot_->GetParts();
 
-  if (config.display_nucleotide_basis) {
+  if (config.debugOptions.display_nucleotide_basis) {
 
     SB_FOR(auto part, parts) {
       auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -1700,13 +1711,13 @@ void SEAdenitaVisualModel::displayForDebugging()
         auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
         SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
           if (nt->isSelected()) {
-            ADNDisplayHelper::displayBaseVectors(nt);
+            ADNDisplayHelper::displayBaseVectors(nt, scale_);
           }
         }
       }
     }
   }
-  if (config.display_base_pairing) {
+  if (config.debugOptions.display_base_pairing) {
     displayBaseBairConnections(true);
   }
 

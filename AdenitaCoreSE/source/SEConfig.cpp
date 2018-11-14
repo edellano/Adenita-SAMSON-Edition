@@ -21,6 +21,14 @@ void SEConfig::updateDebugConfig()
     if (setting_.FindMember("max_cutoff") != setting_.MemberEnd()) {
       debugOptions.maxCutOff = setting_["max_cutoff"].GetDouble();
     }
+
+    if (setting_.FindMember("display_nucleotide_basis") != setting_.MemberEnd()) {
+      debugOptions.display_nucleotide_basis = setting_["display_nucleotide_basis"].GetBool();
+    }
+
+    if (setting_.FindMember("display_base_pairing") != setting_.MemberEnd()) {
+      debugOptions.display_base_pairing = setting_["display_base_pairing"].GetBool();
+    }
   }
 }
 
@@ -110,12 +118,6 @@ void SEConfig::loadConfig() {
     writer.Key("display_possible_crossovers");
     writer.Bool(display_possible_crossovers);
 
-    writer.Key("display_nucleotide_basis");
-    writer.Bool(display_nucleotide_basis);
-
-    writer.Key("display_base_pairing");
-    writer.Bool(display_base_pairing);
-
     writer.Key("show_overlay");
     writer.Bool(show_overlay);
 
@@ -151,6 +153,12 @@ void SEConfig::loadDebugConfig()
 
     writer.Key("max_cutoff");
     writer.Double(debugOptions.maxCutOff);
+
+    writer.Key("display_nucleotide_basis");
+    writer.Bool(debugOptions.display_nucleotide_basis);
+
+    writer.Key("display_base_pairing");
+    writer.Bool(debugOptions.display_base_pairing);
 
     writer.EndObject();
 
@@ -189,11 +197,9 @@ void SEConfig::updateConfig() {
     crossover_distance_threshold = setting_["crossover_distance_threshold"].GetDouble();
     crossover_angle_threshold = setting_["crossover_angle_threshold"].GetDouble();
     display_possible_crossovers = setting_["display_possible_crossovers"].GetBool();
-    display_nucleotide_basis = setting_["display_nucleotide_basis"].GetBool();
     use_twist = setting_["use_twist"].GetBool();
     detect_possible_crossovers = setting_["detect_possible_crossovers"].GetBool();
     dh_dist = setting_["dh_dist"].GetDouble();
-    display_base_pairing = setting_["display_base_pairing"].GetBool();
 
     Value& double_helix_V_colorVal = setting_["double_helix_V_color"];
     readDoubleArray(double_helix_V_colorVal, double_helix_V_color, 4);
