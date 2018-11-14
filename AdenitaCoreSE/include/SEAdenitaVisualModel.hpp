@@ -15,6 +15,7 @@
 #include "ADNNanorobot.hpp"
 #include "SEConfig.hpp"
 #include "MSVColors.hpp"
+#include "PIPrimer3.hpp"
 #include <QOpenGLFunctions_4_3_Core>
 
 
@@ -74,7 +75,8 @@ public :
   virtual void												changeScale(double scale, bool createIndex = true);																///< Displays the visual model
   virtual void												changeDimension(int dimension);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
-	
+  void                                changePropertyColors(int index);
+
   virtual void												display();																///< Displays the visual model
   virtual void												displayAtomsLines();
   virtual void												displayAtomsSticks();
@@ -95,6 +97,7 @@ public :
 	virtual void												collectAmbientOcclusion(const SBPosition3& boxOrigin, const SBPosition3& boxSize, unsigned int nCellsX, unsigned int nCellsY, unsigned int nCellsZ, float* ambientOcclusionData);		///< To collect ambient occlusion data
 
 	//@}
+
 
 	/// \name Events
 	//@{
@@ -123,22 +126,13 @@ private:
   void												prepareScale9(bool forSelection = false); //scale 9: display polyhedron 
   void												highlightFlagChanged(); //scale 9: display polyhedron 
   SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
-  ADNArray<float>             getBaseColor(SBResidue::ResidueType baseSymbol);
   void                        orderVisibility();
 
   // general display properties 
   ADNArray<float> nucleotideEColor_;
-  ADNArray<float> stapleColors_;
-  ADNArray<float> adenineColor_;
-  ADNArray<float>	thymineColor_;
-  ADNArray<float>	cytosineColor_;
-  ADNArray<float>	guanineColor_;
-  ADNArray<float> undefinedNucleotideColor_;
-  ADNArray<float>	doubleHelixVColor_;
-  ADNArray<float>	doubleHelixEColor_;
-  ADNArray<float>	basePairingEColor_;
+  
 
-  double scale_;
+  double scale_ = 7;
   int dim_ = 3;
 
   ADNNanorobot * nanorobot_;
@@ -164,10 +158,13 @@ private:
   // new color implementation
   enum ColorType {
     REGULAR = 0,  // default color map
-    GIBBS = 1,  // gibbs free energy color map
-    MELTTEMP = 2  // melting temperatures color map
+    MELTTEMP = 1,  // melting temperatures color map
+    GIBBS = 2  // gibbs free energy color map
   };
-  std::map<ColorType, std::shared_ptr<MSVColors>> colors_;
+
+  ColorType curColorType_ = REGULAR;
+
+  std::map<ColorType, MSVColors*> colors_;
 };
 
 
