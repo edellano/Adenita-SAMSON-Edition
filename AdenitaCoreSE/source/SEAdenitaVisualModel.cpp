@@ -1729,7 +1729,7 @@ ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(float min, float max, fl
 
   if (val == FLT_MAX) { //if region is unbound
     color(0) = 1.0f;
-    color(1) = 1.0f;
+    color(1) = 0.0f;
     color(2) = 0.0f;
     color(3) = 1.0f;
 
