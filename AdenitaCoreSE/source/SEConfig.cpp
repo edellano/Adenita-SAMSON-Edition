@@ -126,6 +126,12 @@ void SEConfig::loadConfig() {
 
     writer.Key("mode");
     writer.Int(mode);
+
+    writer.Key("auto_set_scaffold_sequence");
+    writer.Bool(auto_set_scaffold_sequence);
+
+    writer.Key("auto_calculate_binding_regions");
+    writer.Bool(auto_calculate_binding_regions);
     
     writer.EndObject();
 
@@ -233,6 +239,9 @@ void SEConfig::updateConfig() {
     nucleotide_E_radius = setting_["nucleotide_E_radius"].GetDouble();
     base_pair_radius = setting_["base_pair_radius"].GetDouble();
     num_staple_colors = setting_["num_staple_colors"].GetDouble();
+
+    auto_set_scaffold_sequence = setting_["auto_set_scaffold_sequence"].GetBool();
+    auto_calculate_binding_regions = setting_["auto_calculate_binding_regions"].GetBool();
   }
 }
 

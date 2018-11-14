@@ -111,6 +111,24 @@ void SEAdenitaCoreSEAppGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+std::string SEAdenitaCoreSEAppGUI::GetScaffoldFilename()
+{
+  std::string filename = "";
+  ADNAuxiliary::ScaffoldSeq type = ADNAuxiliary::ScaffoldSeq(ui.cmbScaffold->currentIndex());
+  if (type == ADNAuxiliary::m13mp18) {
+    filename = SB_ELEMENT_PATH + "/Data/m13mp18.fasta";
+  }
+  else if (type == ADNAuxiliary::p7249) {
+    filename = SB_ELEMENT_PATH + "/Data/p7249.fasta";
+  }
+  else if (type == ADNAuxiliary::Custom) {
+    QString fname = ui.lineCustomScaffold->displayText();
+    if (!fname.isEmpty()) filename = fname.toStdString();
+  }
+
+  return filename;
+}
+
 void SEAdenitaCoreSEAppGUI::onCreate()
 {
   SBProxy* weClassProxy = SAMSON::getProxy("SEWireframeEditor");
@@ -299,32 +317,9 @@ void SEAdenitaCoreSEAppGUI::onExport()
 
 void SEAdenitaCoreSEAppGUI::onSetScaffold()
 {
-  std::string filename = "";
-  ADNAuxiliary::ScaffoldSeq type = ADNAuxiliary::ScaffoldSeq(ui.cmbScaffold->currentIndex());
-  if (type == ADNAuxiliary::m13mp18) {
-    filename = SB_ELEMENT_PATH + "/Data/m13mp18.fasta";
-  }
-  else if (type == ADNAuxiliary::p7249) {
-    filename = SB_ELEMENT_PATH + "/Data/p7249.fasta";
-  }
-  else if (type == ADNAuxiliary::Custom) {
-    QString fname = ui.lineCustomScaffold->displayText();
-    if (!fname.isEmpty()) filename = fname.toStdString();
-  }
-
-  if (filename.size() > 0) {
-    SEAdenitaCoreSEApp *t = getApp();
-    std::string s = "";
-    std::vector<std::string> lines;
-    SBIFileReader::getFileLines(filename, lines);
-    for (unsigned int i = 1; i < lines.size(); i++) {
-      std::string line = lines[i];
-      if (line[0] != '>') {
-        s.append(line);
-      }
-    }
-    t->SetScaffoldSequence(s);
-  }
+  std::string filename = GetScaffoldFilename();
+  SEAdenitaCoreSEApp *t = getApp();
+  t->SetScaffoldSequence(filename);
 }
 
 void SEAdenitaCoreSEAppGUI::onCenterPart()

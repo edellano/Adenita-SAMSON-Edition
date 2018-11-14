@@ -67,8 +67,9 @@ public :
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
 
+  // Helper functions
   ADNNanorobot* GetNanorobot();
-
+  std::string ReadScaffoldFilename(std::string filename);
   QStringList GetPartsNameList();
 
   // Exposed for editors
