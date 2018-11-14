@@ -129,19 +129,23 @@ int ADNPart::getNumberOfSingleStrands() const
   return GetNumberOfSingleStrands();
 }
 
-void ADNPart::DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss) 
+void ADNPart::DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss, bool removeFromParent, bool removeFromIndex) 
 {
-  auto root = getStructuralRoot();
-  root->removeChild(ss());
+  if (removeFromParent) {
+    auto root = getStructuralRoot();
+    root->removeChild(ss());
+  }
 
-  singleStrandsIndex_.removeReferenceTarget(ss());
+  if (removeFromIndex) singleStrandsIndex_.removeReferenceTarget(ss());
 }
 
-void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFromSs, bool removeFromIndex)
+void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFromSs, bool removeFromBs, bool removeFromIndex)
 {
   if (removeFromSs) {
     ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
     ss->removeChild(nt());
+  }
+  if (removeFromBs) {
     auto bs = nt->GetBaseSegment();
     bs->RemoveNucleotide(nt);
   }

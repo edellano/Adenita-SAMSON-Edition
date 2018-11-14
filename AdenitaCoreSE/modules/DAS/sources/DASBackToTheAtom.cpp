@@ -496,10 +496,16 @@ void DASBackToTheAtom::FindAtomsPositions(ADNPointer<ADNNucleotide> nt)
     ublas::row(positions, i) = ac_blas;
     ++i;
   }
+
+  // to calculate the translation we need to take into account the base pair
+  // even if pair is not defined, thus we use the ideal base pairs
+  NtPair pair = GetIdealBasePairNucleotides(nt->GetType(), ADNModel::GetComplementaryBase(nt->GetType()));
+  ublas::matrix<double> bpPositions = CreatePositionsMatrix(pair);
+
   // Calculate translation vector
   // because atoms are fetched from bp, local coordinates refer to base pair c.o.m.
   ublas::vector<double> sys_cm = ADNAuxiliary::SBPositionToUblas(bs->GetPosition());
-  ublas::vector<double> t_vec = sys_cm - ADNVectorMath::CalculateCM(positions);
+  ublas::vector<double> t_vec = sys_cm - ADNVectorMath::CalculateCM(bpPositions);
   ublas::matrix<double> input = positions;
   // Apply global basis
   auto transf = nt->GetGlobalBasisTransformation();
@@ -570,15 +576,14 @@ void DASBackToTheAtom::PopulateNucleotideWithAllAtoms(ADNPointer<ADNPart> origam
 
 void DASBackToTheAtom::GenerateAllAtomModel(ADNPointer<ADNPart> origami)
 {
-  // delete previous atoms if they have been created
-  auto atoms = origami->GetAtoms();
-  SB_FOR(ADNPointer<ADNAtom> a, atoms) {
-    // todo: check that the node is only deleted from datagraph but reference is not destroyed
-    origami->DeregisterAtom(a);
-  }
-
   auto nts = origami->GetNucleotides();
   SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+    auto atoms = nt->GetAtoms();
+    // delete previous atoms if they have been created
+    SB_FOR(ADNPointer<ADNAtom> a, atoms) {
+      // todo: check that the node is only deleted from datagraph but reference is not destroyed
+      origami->DeregisterAtom(a);
+    }
     // populate nucleotides with the correct atoms
     PopulateNucleotideWithAllAtoms(origami, nt);
     // find atomic positions
@@ -1083,6 +1088,14 @@ NtPair DASBackToTheAtom::GetIdealBasePairNucleotides(ADNPointer<ADNNucleotide> n
   else {
     pair_type = std::make_pair(nt_l->GetType(), nt_r->GetType());
   }
+
+  return GetIdealBasePairNucleotides(pair_type.first, pair_type.second);
+}
+
+NtPair DASBackToTheAtom::GetIdealBasePairNucleotides(DNABlocks nt_l, DNABlocks nt_r)
+{
+  // scaffold nucleotide is always on the left
+  std::pair<DNABlocks, DNABlocks> pair_type = std::make_pair(nt_l, nt_r);
 
   NtPair pair = da_dt_;
 

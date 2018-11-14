@@ -1,5 +1,7 @@
 #pragma once 
 
+#include <cmath>
+
 #include "SBGEditor.hpp"
 #include "SEDSDNACreatorEditorGUI.hpp"
 

@@ -29,6 +29,7 @@ public:
   double getTemp() const;
 
   void SetLastNt(ADNPointer<ADNNucleotide> nt);
+  void SetFirstNt(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNPart> GetPart();
   void SetPart(ADNPointer<ADNPart> part);
   void SetThermParam(ThermParam res);
@@ -39,6 +40,7 @@ public:
 
 private:
   ThermParam thermParam_;
+  ADNPointer<ADNNucleotide> firstNt_;
   ADNPointer<ADNNucleotide> lastNt_;
   ADNPointer<ADNPart> part_;
 };

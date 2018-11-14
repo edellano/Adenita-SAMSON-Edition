@@ -108,6 +108,7 @@ void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
   auto singleStrands = p->GetSingleStrands();
 
   std::vector<ADNPointer<ADNNucleotide>> added_nt;
+  ADNPointer<ADNNucleotide> firstNt;
   unsigned int numRegions = 0;
 
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
@@ -138,6 +139,8 @@ void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
 
         nodeIndexer.addNode(nt());
         added_nt.push_back(nt);
+        if (regionSize == 0) firstNt = nt;
+
         auto pair = nt->GetPair();
         if (pair != nullptr) {
           nodeIndexer.addNode(pair());
@@ -154,6 +157,7 @@ void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
           region->RegisterBindingRegion();
           regionsMap_[p()].addReferenceTarget(region());
           region->SetLastNt(nt);
+          region->SetFirstNt(firstNt);
           ++numRegions;
           nodeIndexer.clear();
         }

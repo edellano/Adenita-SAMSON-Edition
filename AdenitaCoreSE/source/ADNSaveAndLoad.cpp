@@ -1192,6 +1192,7 @@ void ADNLoader::BuildTopScales(ADNPointer<ADNPart> part)
         bp->SetRightNucleotide(pair);
         pair->SetBaseSegment(bs);
         bsPos = (posNt + pair->GetPosition())*0.5;
+        bp->PairNucleotides();
       }
 
       bs->SetPosition(bsPos);
