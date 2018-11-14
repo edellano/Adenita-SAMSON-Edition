@@ -178,7 +178,7 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
     int bs_number = tube.initPos_;
     // fix crossovers for square lattice
     double initAng = 0.0;
-    if (json_.lType_ == LatticeType::Square) initAng = 8*ADNConstants::BP_ROT;
+    if (json_.lType_ == LatticeType::Square) initAng = 7*ADNConstants::BP_ROT;
 
     // every tube is a double strand
     ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
