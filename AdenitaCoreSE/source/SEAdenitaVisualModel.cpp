@@ -24,8 +24,10 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
 
   MSVColors * regularColors = new MSVColors();
   MSVColors * meltTempColors = new MSVColors();
+  MSVColors * gibbsColors = new MSVColors();
   colors_[ColorType::REGULAR] = regularColors;
   colors_[ColorType::MELTTEMP] = meltTempColors;
+  colors_[ColorType::MELTTEMP] = gibbsColors;
 
   //setup the display properties
   nucleotideEColor_ = ADNArray<float>(4);
@@ -1048,6 +1050,8 @@ void SEAdenitaVisualModel::changePropertyColors(int index)
           ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
           color = calcPropertyColor(config.min_melting_temp, config.max_melting_temp, mt);
           meltingTempColors->SetColor(color, nt);
+          auto baseSegment = nt->GetBaseSegment();
+          meltingTempColors->SetColor(color, baseSegment);
         }
       }
     }
