@@ -151,6 +151,7 @@ void SEAdenitaVisualModelProperties::onSliderDimensionChanged(int val)
 void SEAdenitaVisualModelProperties::onPropertyColorsChanged(int index)
 {
   visualModel->changePropertyColors(index);
+  SAMSON::requestViewportUpdate();
 }
 
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
