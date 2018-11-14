@@ -163,10 +163,6 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
 {
   auto tubes = vGrid_.vDoubleStrands_;
   for (auto &tube : tubes) {
-    // every tube is a double strand
-    ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
-    nanorobot->RegisterDoubleStrand(ds);
-    bool firstBs = true;
 
     Vstrand* vs = &json_.vstrands_[tube.vStrandId_];
     SBPosition3 initPos = vGrid_.GetGridCellPos3D(tube.initPos_, vs->row_, vs->col_);
@@ -178,12 +174,17 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
     if (cellBsMap_.find(vs) != cellBsMap_.end()) positions = cellBsMap_.at(vs);
 
     SEConfig& config = SEConfig::GetInstance();
-    //int magic_number = config.magic_number;  //  this is a magic number to fix crossovers
 
-    int bs_number = tube.initPos_;  // +magic_number;
-    /*if ((vs->row_ + vs->col_) % 2 != 0) {
-      bs_number += 6;
-    }*/
+    int bs_number = tube.initPos_;
+    // fix crossovers for square lattice
+    double initAng = 0.0;
+    if (json_.lType_ == LatticeType::Square) initAng = 8*ADNConstants::BP_ROT;
+
+    // every tube is a double strand
+    ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
+    nanorobot->RegisterDoubleStrand(ds);
+    bool firstBs = true;
+    ds->SetInitialTwistAngle(initAng);
 
     SBPosition3 fp = initPos;
     for (int i = 0; i < length; ++i) {

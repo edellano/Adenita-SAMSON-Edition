@@ -9,8 +9,8 @@ void DASLattice::CreateSquareLattice(int maxRows, int maxCols)
     for (unsigned column = 0; column < mat_.size2(); ++column) {
       //todo
       LatticeCell lc;
-      lc.x_ = row * edgeDistance_;
-      lc.y_ = column * edgeDistance_;
+      lc.x_ = column * edgeDistance_;
+      lc.y_ = row * edgeDistance_;
       mat_(row, column) = lc;
     }
   }
