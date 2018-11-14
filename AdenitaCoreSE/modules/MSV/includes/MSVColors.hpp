@@ -23,7 +23,7 @@ public:
 private:
 
   template<typename T>
-  std::pair<bool, ADNArray<float>> GetColor(T el, std::map<T, ADNArray<float>> searchMap) {
+  std::pair<bool, ADNArray<float>> GetColor(T el, std::map<T, ADNArray<float>> & searchMap) {
     ADNArray<float> color = ADNArray<float>(4);
     /*bool found = false;
     if (searchMap.find(el) != searchMap.end()) {
