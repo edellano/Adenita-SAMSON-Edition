@@ -92,9 +92,14 @@ void ADNNucleotide::SetPair(ADNPointer<ADNNucleotide> nt)
   pair_ = ADNWeakPointer<ADNNucleotide>(nt);
 }
 
-ADNPointer<ADNNucleotide> ADNNucleotide::GetPair()
+ADNPointer<ADNNucleotide> ADNNucleotide::GetPair() const
 {
   return pair_;
+}
+
+SBNode * ADNNucleotide::getPair() const
+{
+  return GetPair()();
 }
 
 ADNPointer<ADNNucleotide> ADNNucleotide::GetPrev(bool checkCircular) const

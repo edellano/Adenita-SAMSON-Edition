@@ -92,6 +92,7 @@ SB_CLASS_BEGIN(ADNNucleotide);
     SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, BaseSegment, "Base segment", "Properties");
     SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Next, "Next nucleotide", "Properties");
     SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Prev, "Previous nucleotide", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Pair, "Pair nucleotide", "Properties");
     SB_ATTRIBUTE_READ_ONLY(std::string, ADNNucleotide, BaseSegmentType, "Base segment type", "Properties");
 
   SB_INTERFACE_END;
