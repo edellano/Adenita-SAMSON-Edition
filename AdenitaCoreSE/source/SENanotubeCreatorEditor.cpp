@@ -34,20 +34,22 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
 
   auto radius = (positions_.Third - positions_.Second).norm();
   auto roundHeight = (positions_.Second - positions_.First).norm();
-  auto numNucleotides = roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE);
+  auto numNucleotides = round((roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
   SBVector3 dir = (positions_.Second - positions_.First).normalizedVersion();
 
-  if (mock) {
-    if (positions_.cnt == 1) {
-      part = DASCreator::CreateMockNanotube(SBQuantity::picometer(1), positions_.First, dir, numNucleotides.getValue());
-    }
-    else if (positions_.cnt == 2) {
-      part = DASCreator::CreateMockNanotube(radius, positions_.First, dir, numNucleotides.getValue());
+  if (numNucleotides > 0) {
+    if (mock) {
+      if (positions_.cnt == 1) {
+        part = DASCreator::CreateMockNanotube(SBQuantity::picometer(1), positions_.First, dir, numNucleotides);
+      }
+      else if (positions_.cnt == 2) {
+        part = DASCreator::CreateMockNanotube(radius, positions_.First, dir, numNucleotides);
 
+      }
     }
-  }
-  else {
-    part = DASCreator::CreateNanotube(radius, positions_.First, dir, numNucleotides.getValue());
+    else {
+      part = DASCreator::CreateNanotube(radius, positions_.First, dir, numNucleotides);
+    }
   }
 
   return part;
@@ -60,9 +62,11 @@ void SENanotubeCreatorEditor::displayNanotube()
 
 void SENanotubeCreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
 {
-  SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-  adenita->AddPartToActiveLayer(nanotube);
-  adenita->ResetVisualModel();
+  if (nanotube != nullptr) {
+    SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+    adenita->AddPartToActiveLayer(nanotube);
+    adenita->ResetVisualModel();
+  }
 }
 
 SBCContainerUUID SENanotubeCreatorEditor::getUUID() const { return SBCContainerUUID("F9068FA3-69DE-B6FA-2B42-C80DA5302A0D"); }

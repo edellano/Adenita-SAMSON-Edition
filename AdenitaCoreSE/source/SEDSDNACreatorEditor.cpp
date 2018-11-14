@@ -42,17 +42,21 @@ void SEDSDNACreatorEditor::SetBoxSize(double height, double width, double depth)
 
 ADNPointer<ADNPart> SEDSDNACreatorEditor::generateStrand(bool mock)
 {
-  ADNPointer<ADNPart> part = new ADNPart();
-
   auto roundHeight = (positions_.Second - positions_.First).norm();
-  auto numNucleotides = roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE);
-  SBVector3 dir = (positions_.Second - positions_.First).normalizedVersion();
+  auto numNucleotides = round( (roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue() );
+  ADNPointer<ADNPart> part = nullptr;
 
-  if (dsMode_) {
-    DASCreator::CreateDoubleStrand(part, numNucleotides.getValue(), positions_.First, dir, mock);
-  }
-  else {
-    DASCreator::CreateSingleStrand(part, numNucleotides.getValue(), positions_.First, dir, mock);
+  if (numNucleotides > 0) {
+    part = new ADNPart();
+
+    SBVector3 dir = (positions_.Second - positions_.First).normalizedVersion();
+
+    if (dsMode_) {
+      DASCreator::CreateDoubleStrand(part, numNucleotides, positions_.First, dir, mock);
+    }
+    else {
+      DASCreator::CreateSingleStrand(part, numNucleotides, positions_.First, dir, mock);
+    }
   }
 
   return part;
@@ -102,9 +106,11 @@ void SEDSDNACreatorEditor::displayBox()
 
 void SEDSDNACreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
 {
-  SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-  adenita->AddPartToActiveLayer(nanotube);
-  adenita->ResetVisualModel();
+  if (nanotube != nullptr) {
+    SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+    adenita->AddPartToActiveLayer(nanotube);
+    adenita->ResetVisualModel();
+  }
 }
 
 void SEDSDNACreatorEditor::displayStrand()
