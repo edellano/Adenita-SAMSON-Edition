@@ -49,6 +49,8 @@ private:
 
   ADNArray<float> defaultbssColor_;
 
+
+
   std::map<ADNNucleotide*, ADNArray<float>> ntsColors_;
   std::map<ADNSingleStrand*, ADNArray<float>> sssColors_;
   std::map<ADNBaseSegment*, ADNArray<float>> bssColors_;
