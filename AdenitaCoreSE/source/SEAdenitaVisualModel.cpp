@@ -22,8 +22,10 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
 
   SEConfig& config = SEConfig::GetInstance();
 
-  std::shared_ptr<MSVColors> colors = std::make_shared<MSVColors>();
-  colors_[ColorType::REGULAR] = colors;
+  MSVColors * regularColors = new MSVColors();
+  MSVColors * meltTempColors = new MSVColors();
+  colors_[ColorType::REGULAR] = regularColors;
+  colors_[ColorType::MELTTEMP] = meltTempColors;
 
   //setup the display properties
   nucleotideEColor_ = ADNArray<float>(4);
@@ -31,31 +33,6 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   nucleotideEColor_(1) = config.nucleotide_E_Color[1];
   nucleotideEColor_(2) = config.nucleotide_E_Color[2];
   nucleotideEColor_(3) = config.nucleotide_E_Color[3];
-
-  adenineColor_ = ADNArray<float>(4);
-  adenineColor_(0) = config.adenine_color[0];
-  adenineColor_(1) = config.adenine_color[1];
-  adenineColor_(2) = config.adenine_color[2];
-  adenineColor_(3) = config.adenine_color[3];
-
-  thymineColor_ = ADNArray<float>(4);
-  thymineColor_(0) = config.thymine_color[0];
-  thymineColor_(1) = config.thymine_color[1];
-  thymineColor_(2) = config.thymine_color[2];
-  thymineColor_(3) = config.thymine_color[3];
-
-  cytosineColor_ = ADNArray<float>(4);
-  cytosineColor_(0) = config.cytosine_color[0];
-  cytosineColor_(1) = config.cytosine_color[1];
-  cytosineColor_(2) = config.cytosine_color[2];
-  cytosineColor_(3) = config.cytosine_color[3];
-
-  guanineColor_ = ADNArray<float>(4);
-  guanineColor_(0) = config.guanine_color[0];
-  guanineColor_(1) = config.guanine_color[1];
-  guanineColor_(2) = config.guanine_color[2];
-  guanineColor_(3) = config.guanine_color[3];
-  ADNLogger& logger = ADNLogger::GetLogger();
 
   auto parts = nanorobot_->GetParts();
 
@@ -75,10 +52,9 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
     this, 
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
   
-  changeScale(7);
+  changeScale(4);
 
   //orderVisibility();
-  
 
 }
 
@@ -904,35 +880,6 @@ SEAdenitaCoreSEApp* SEAdenitaVisualModel::getAdenitaApp() const
   return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 }
 
-ADNArray<float> SEAdenitaVisualModel::getBaseColor(SBResidue::ResidueType baseSymbol)
-{
-  ADNArray<float> color;
-
-  if (baseSymbol == SBResidue::ResidueType::DA) {
-    //adenine
-    color = adenineColor_;
-  }
-  else if (baseSymbol == SBResidue::ResidueType::DT) {
-    //thymine
-    color = thymineColor_;
-  }
-  else if (baseSymbol == SBResidue::ResidueType::DG) {
-    //guanine
-    color = guanineColor_;
-  }
-  else if (baseSymbol == SBResidue::ResidueType::DC) {
-    //cytosine
-    color = cytosineColor_;
-  }
-  else {
-    color = nucleotideEColor_;
-  }
-
-  return color;
-}
-
-
-
 void SEAdenitaVisualModel::orderVisibility()
 {
 
@@ -1048,6 +995,43 @@ void SEAdenitaVisualModel::orderVisibility()
   for (int i = 0; i < singleStrandsSorted.size(); i++) {
     sortedSingleStrandsByDist_.insert(make_pair(singleStrandsSorted[i].first, singleStrandsSorted[i].second / max));
     //logger.Log(singleStrandsSorted[i].second);
+  }
+}
+
+void SEAdenitaVisualModel::changePropertyColors(int index)
+{
+  curColorType_ = static_cast<ColorType>(index);
+
+  if (index == MELTTEMP) {
+    auto meltingTempColors = colors_.at(MELTTEMP);
+
+    SEConfig& config = SEConfig::GetInstance();
+
+    auto p = PIPrimer3::GetInstance();
+
+    auto parts = nanorobot_->GetParts();
+    ADNLogger& logger = ADNLogger::GetLogger();
+
+    ADNArray<float> color = ADNArray<float>(4);
+    color(0) = 1.0f;
+    color(1) = 0.0f;
+    color(2) = 0.0f;
+    color(3) = 1.0f;
+
+    SB_FOR(auto part, parts) {
+      auto regions = p.GetBindingRegions(part);
+
+      SB_FOR(auto region, regions) {
+        auto gibbs = region->getGibbs();
+        auto groupNodes = region->getGroupNodes();
+
+        for (unsigned i = 0; i < groupNodes->size(); i++) {
+          auto node = groupNodes->getReferenceTarget(i);
+          ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
+          meltingTempColors->SetColor(color, nt);
+        }
+      }
+    }
   }
 }
 
@@ -1221,7 +1205,7 @@ void SEAdenitaVisualModel::displayNucleotideSideChain()
 
   auto parts = nanorobot_->GetParts();
 
-  auto colors = colors_[ColorType::REGULAR];
+  MSVColors * colors = colors_[curColorType_];;
 
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
@@ -1361,7 +1345,9 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
 
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
-  
+
+  auto colors = colors_.at(REGULAR);
+
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
@@ -1399,12 +1385,9 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
         }
         else
         {
-          int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
+          auto color = colors->GetColor(ss);
+          colorsV_.SetRow(index, color);
 
-          colorsV_(index, 0) = config.staple_colors[stapleColorNum * 4 + 0];
-          colorsV_(index, 1) = config.staple_colors[stapleColorNum * 4 + 1];
-          colorsV_(index, 2) = config.staple_colors[stapleColorNum * 4 + 2];
-          colorsV_(index, 3) = config.staple_colors[stapleColorNum * 4 + 3];
         }
 
         colorsE_(index, 0) = colorsV_(index, 0);
@@ -1444,6 +1427,8 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
 
+  auto colors = colors_.at(MELTTEMP);
+
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
@@ -1478,12 +1463,8 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
         }
         else
         {
-          int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
-
-          colorsV_(index, 0) = config.staple_colors[stapleColorNum * 4 + 0];
-          colorsV_(index, 1) = config.staple_colors[stapleColorNum * 4 + 1];
-          colorsV_(index, 2) = config.staple_colors[stapleColorNum * 4 + 2];
-          colorsV_(index, 3) = config.staple_colors[stapleColorNum * 4 + 3];
+          auto color = colors->GetColor(ss);
+          colorsV_.SetRow(index, color);
         }
 
         colorsE_(index, 0) = colorsV_(index, 0);
@@ -1522,6 +1503,7 @@ void SEAdenitaVisualModel::displayDoubleStrands()
   ADNLogger& logger = ADNLogger::GetLogger();
 
   auto parts = nanorobot_->GetParts();
+  auto colors = colors_.at(REGULAR);
 
   positions_ = ADNArray<float>(3, nPositions_);
   radiiV_ = ADNArray<float>(nPositions_);
@@ -1548,10 +1530,8 @@ void SEAdenitaVisualModel::displayDoubleStrands()
           positions_(index, 2) = (float)pos.v[2].getValue();
         }
 
-        colorsV_(index, 0) = config.double_strand_color[0];
-        colorsV_(index, 1) = config.double_strand_color[1];
-        colorsV_(index, 2) = config.double_strand_color[2];
-        colorsV_(index, 3) = config.double_strand_color[3];
+        auto color = colors->GetColor(baseSegment);
+        colorsV_.SetRow(index, color);
 
         radiiV_(index) = config.base_pair_radius;
 

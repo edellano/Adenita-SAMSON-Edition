@@ -148,6 +148,11 @@ void SEAdenitaVisualModelProperties::onSliderDimensionChanged(int val)
   ui.lblDimension->setText(QString::number(val));
 }
 
+void SEAdenitaVisualModelProperties::onPropertyColorsChanged(int index)
+{
+  visualModel->changePropertyColors(index);
+}
+
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
 SEAdenitaVisualModelProperties::Observer::~Observer() {}
 
