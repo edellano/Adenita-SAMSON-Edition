@@ -54,6 +54,8 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   
   changeScale(4);
 
+  setupPropertyColors();
+
   //orderVisibility();
 
 }
@@ -998,6 +1000,26 @@ void SEAdenitaVisualModel::orderVisibility()
   }
 }
 
+void SEAdenitaVisualModel::setupPropertyColors()
+{
+  numPropertyColors_ = 3;
+  propertyColors_ = ADNArray<float>(4, numPropertyColors_);
+  propertyColors_(0, 0) = 252.0f / 255.0f;
+  propertyColors_(0, 1) = 141.0f / 255.0f;
+  propertyColors_(0, 2) = 89.0f / 255.0f;
+  propertyColors_(0, 3) = 1.0f;
+
+  propertyColors_(1, 0) = 255.0f / 255.0f;
+  propertyColors_(1, 1) = 255.0f / 255.0f;
+  propertyColors_(1, 2) = 191.0f / 255.0f;
+  propertyColors_(1, 3) = 1.0f;
+
+  propertyColors_(2, 0) = 145.0f / 255.0f;
+  propertyColors_(2, 1) = 207.0f / 255.0f;
+  propertyColors_(2, 2) = 96.0f / 255.0f;
+  propertyColors_(2, 3) = 1.0f;
+}
+
 void SEAdenitaVisualModel::changePropertyColors(int index)
 {
   curColorType_ = static_cast<ColorType>(index);
@@ -1013,21 +1035,18 @@ void SEAdenitaVisualModel::changePropertyColors(int index)
     ADNLogger& logger = ADNLogger::GetLogger();
 
     ADNArray<float> color = ADNArray<float>(4);
-    color(0) = 1.0f;
-    color(1) = 0.0f;
-    color(2) = 0.0f;
-    color(3) = 1.0f;
-
+    
     SB_FOR(auto part, parts) {
       auto regions = p.GetBindingRegions(part);
 
       SB_FOR(auto region, regions) {
-        auto gibbs = region->getGibbs();
+        auto mt = region->getTemp();
         auto groupNodes = region->getGroupNodes();
 
         for (unsigned i = 0; i < groupNodes->size(); i++) {
           auto node = groupNodes->getReferenceTarget(i);
           ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
+          color = calcPropertyColor(config.min_melting_temp, config.max_melting_temp, mt);
           meltingTempColors->SetColor(color, nt);
         }
       }
@@ -1702,6 +1721,51 @@ void SEAdenitaVisualModel::displayForDebugging()
     displayBaseBairConnections(true);
   }
 
+}
+
+ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(float min, float max, float val) {
+
+  ADNArray<float> color = ADNArray<float>(4);
+
+  if (val == FLT_MAX) { //if region is unbound
+    color(0) = 1.0f;
+    color(1) = 1.0f;
+    color(2) = 0.0f;
+    color(3) = 1.0f;
+
+    return color;
+  }
+
+  unsigned int numColors = numPropertyColors_;
+  auto colors = propertyColors_;
+
+  int idx1;
+  int idx2;
+  float fractBetween = 0;
+
+  //Y = (X - A) / (B - A) * (D - C) + C
+  double mappedVal = ADNAuxiliary::mapRange(val, min, max, 0, 1);
+
+  if (mappedVal <= 0) {
+    idx1 = idx2 = 0;
+  }
+  else if (mappedVal >= 1) {
+    idx1 = idx2 = numColors - 1;
+  }
+  else {
+
+    mappedVal = mappedVal * (numColors - 1);
+    idx1 = int(mappedVal);
+    idx2 = idx1 + 1;
+    fractBetween = mappedVal - float(idx1);
+  }
+
+  color(0) = (colors(idx2, 0) - colors(idx1, 0)) * fractBetween + colors(idx1, 0);
+  color(1) = (colors(idx2, 1) - colors(idx1, 1)) * fractBetween + colors(idx1, 1);
+  color(2) = (colors(idx2, 2) - colors(idx1, 2)) * fractBetween + colors(idx1, 2);
+  color(3) = 1.0f;
+
+  return color;
 }
 
 void SEAdenitaVisualModel::expandBounds(SBIAPosition3& bounds) const {
