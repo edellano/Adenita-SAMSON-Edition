@@ -127,6 +127,8 @@ private:
   void												highlightFlagChanged(); //scale 9: display polyhedron 
   SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
   void                        orderVisibility();
+  void                        setupPropertyColors();
+  ADNArray<float>             calcPropertyColor(float min, float max, float val);
 
   // general display properties 
   ADNArray<float> nucleotideEColor_;
@@ -156,6 +158,9 @@ private:
   std::map<ADNNucleotide*, unsigned int> ntMap_;
 
   // new color implementation
+  unsigned int numPropertyColors_;
+  ADNArray<float> propertyColors_;
+  
   enum ColorType {
     REGULAR = 0,  // default color map
     MELTTEMP = 1,  // melting temperatures color map
