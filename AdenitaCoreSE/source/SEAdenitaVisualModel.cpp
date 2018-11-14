@@ -27,7 +27,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   MSVColors * gibbsColors = new MSVColors();
   colors_[ColorType::REGULAR] = regularColors;
   colors_[ColorType::MELTTEMP] = meltTempColors;
-  colors_[ColorType::MELTTEMP] = gibbsColors;
+  colors_[ColorType::GIBBS] = gibbsColors;
 
   //setup the display properties
   nucleotideEColor_ = ADNArray<float>(4);
@@ -1026,8 +1026,9 @@ void SEAdenitaVisualModel::changePropertyColors(int index)
 {
   curColorType_ = static_cast<ColorType>(index);
 
-  if (index == MELTTEMP) {
+  if (index == MELTTEMP || index == GIBBS) {
     auto meltingTempColors = colors_.at(MELTTEMP);
+    auto gibbsColors = colors_.at(GIBBS);
 
     SEConfig& config = SEConfig::GetInstance();
 
@@ -1036,22 +1037,29 @@ void SEAdenitaVisualModel::changePropertyColors(int index)
     auto parts = nanorobot_->GetParts();
     ADNLogger& logger = ADNLogger::GetLogger();
 
-    ADNArray<float> color = ADNArray<float>(4);
     
     SB_FOR(auto part, parts) {
       auto regions = p.GetBindingRegions(part);
 
       SB_FOR(auto region, regions) {
         auto mt = region->getTemp();
+        auto gibbs = region->getGibbs();
         auto groupNodes = region->getGroupNodes();
 
         for (unsigned i = 0; i < groupNodes->size(); i++) {
           auto node = groupNodes->getReferenceTarget(i);
           ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
-          color = calcPropertyColor(config.min_melting_temp, config.max_melting_temp, mt);
-          meltingTempColors->SetColor(color, nt);
           auto baseSegment = nt->GetBaseSegment();
-          meltingTempColors->SetColor(color, baseSegment);
+
+          ADNArray<float> meltTempColor = calcPropertyColor(config.min_melting_temp, config.max_melting_temp, mt);
+          meltingTempColors->SetColor(meltTempColor, nt);
+          meltingTempColors->SetColor(meltTempColor, baseSegment);
+
+          ADNArray<float> gibbsColor = calcPropertyColor(config.min_gibbs_free_energy, config.max_gibbs_free_energy, gibbs);
+          gibbsColors->SetColor(gibbsColor, nt);
+          gibbsColors->SetColor(gibbsColor, baseSegment);
+
+
         }
       }
     }
@@ -1343,7 +1351,7 @@ void SEAdenitaVisualModel::displayNucleotideScaffoldPlaiting()
             radiiE_(index) = config.nucleotide_E_radius;
           }
         }
-        else if (curColorType_ == MELTTEMP) {
+        else if (curColorType_ == MELTTEMP || curColorType_ == GIBBS) {
           auto color = curColors->GetColor(nt);
           colorsV_.SetRow(index, color);
           if (ss->IsScaffold()) {
@@ -1429,7 +1437,7 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
             colorsV_.SetRow(index, color);
           }
         }
-        else if (curColorType_ == MELTTEMP) {
+        else if (curColorType_ == MELTTEMP || curColorType_ == GIBBS) {
           auto color = curColors->GetColor(nt);
           colorsV_.SetRow(index, color);
         }
@@ -1512,7 +1520,7 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
             colorsV_.SetRow(index, color);
           }
         }
-        else if (curColorType_ == MELTTEMP) {
+        else if (curColorType_ == MELTTEMP || curColorType_ == GIBBS) {
           auto color = curColors->GetColor(nt);
           colorsV_.SetRow(index, color);
         }
