@@ -24,6 +24,8 @@ enum SEConfigMode {
 struct DebugOptions {
   double minCutOff = 0.0;  // nm
   double maxCutOff = 0.345;  // nm
+  bool display_nucleotide_basis = false;
+  bool display_base_pairing = false;
 };
 
 class SEConfig : public QObject {
@@ -102,13 +104,10 @@ public:
   int test_type = 2;  // 2 for short
   // toggle overlays and display options
   bool display_possible_crossovers = true;
-  bool display_nucleotide_basis = false;
-  bool display_base_pairing = false;
   bool show_overlay = false;
   // group general
   SEConfigMode mode = DEBUG_NO_LOG; //which mode of the software active. debug_log, debug_no_log, haichao, elisa
-  // detecting crossovers
-  
+
   // debug
   DebugOptions debugOptions;
 

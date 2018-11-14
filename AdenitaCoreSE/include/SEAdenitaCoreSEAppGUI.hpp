@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "SBGApp.hpp" 
+#include "SBGApp.hpp"
 #include "ui_SEAdenitaCoreSEAppGUI.h"
 #include <QMessageBox>
 #include <QComboBox>
