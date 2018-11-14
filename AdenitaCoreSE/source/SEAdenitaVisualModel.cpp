@@ -456,7 +456,7 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
   
   auto parts = nanorobot_->GetParts();
 
-  auto colors = colors_.at(REGULAR);
+  auto curColors = colors_.at(REGULAR);
 
   SB_FOR(auto part, parts) {
 
@@ -487,7 +487,7 @@ void SEAdenitaVisualModel::prepareScale3to4(double iv, bool forSelection /*= fal
         nodeIndices_(index) = nt->getNodeIndex();
         flags_(index) = nt->getInheritedFlags();
         //auto baseColor = getBaseColor(nt->getResidueType());
-        auto baseColor = colors->GetColor(nt);
+        auto baseColor = curColors->GetColor(nt);
         colorsV_.SetRow(index, baseColor);
 
         colorsE_.SetRow(index, nucleotideEColor_);
@@ -524,7 +524,7 @@ void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= fal
   float intervalERadius = maxERadius - minERadius;
   float iERadius = minERadius + iv * intervalERadius;
 
-  auto colors = colors_[ColorType::REGULAR];
+  auto curColors = colors_[ColorType::REGULAR];
 
   SB_FOR(auto part, parts) {
 
@@ -550,7 +550,7 @@ void SEAdenitaVisualModel::prepareScale4to5(double iv, bool forSelection /*= fal
         flags_(index) = nt->getInheritedFlags();
 
         //auto baseColor = getBaseColor(nt->getResidueType());
-        auto baseColor = colors->GetColor(nt);
+        auto baseColor = curColors->GetColor(nt);
 
         if (ss->IsScaffold()) {
           float maxVColorR;
@@ -611,7 +611,7 @@ void SEAdenitaVisualModel::prepareScale5to6(double iv, bool forSelection /*= fal
   float intervalERadius = maxERadius - minERadius;
   float iERadius = minERadius + iv * intervalERadius;
   
-  auto colors = colors_[ColorType::REGULAR];
+  auto curColors = colors_[ColorType::REGULAR];
 
   SB_FOR(auto part, parts) {
 
@@ -670,7 +670,7 @@ void SEAdenitaVisualModel::prepareScale5to6(double iv, bool forSelection /*= fal
         else
         {
           //auto baseColor = getBaseColor(nt->getResidueType());
-          auto baseColor = colors->GetColor(nt);
+          auto baseColor = curColors->GetColor(nt);
 
           minVColorR = baseColor(0);
           minVColorG = baseColor(1);
@@ -1156,7 +1156,7 @@ void SEAdenitaVisualModel::displayNucleotideBackbone()
 
   auto parts = nanorobot_->GetParts();
 
-  auto colors = colors_[ColorType::REGULAR];
+  MSVColors * curColors = colors_[curColorType_];
 
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
@@ -1188,7 +1188,7 @@ void SEAdenitaVisualModel::displayNucleotideBackbone()
         nodeIndices_(index) = nt->getNodeIndex();
         flags_(index) = nt->getInheritedFlags();
 
-        auto baseColor = colors->GetColor(nt);
+        auto baseColor = curColors->GetColor(nt);
         colorsV_.SetRow(index, baseColor);
         
         radiiV_(index) = config.nucleotide_V_radius;
@@ -1224,7 +1224,7 @@ void SEAdenitaVisualModel::displayNucleotideSideChain()
 
   auto parts = nanorobot_->GetParts();
 
-  MSVColors * colors = colors_[curColorType_];;
+  MSVColors * curColors = colors_[curColorType_];
 
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
@@ -1256,7 +1256,7 @@ void SEAdenitaVisualModel::displayNucleotideSideChain()
         nodeIndices_(index) = nt->getNodeIndex();
         flags_(index) = nt->getInheritedFlags();
 
-        auto baseColor = colors->GetColor(nt);
+        auto baseColor = curColors->GetColor(nt);
         colorsV_.SetRow(index, baseColor);
 
         radiiV_(index) = config.nucleotide_V_radius;
@@ -1290,7 +1290,7 @@ void SEAdenitaVisualModel::displayNucleotideScaffoldPlaiting()
 
   auto parts = nanorobot_->GetParts();
 
-  auto colors = colors_[ColorType::REGULAR];
+  MSVColors * curColors = colors_[curColorType_];
 
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
@@ -1318,24 +1318,41 @@ void SEAdenitaVisualModel::displayNucleotideScaffoldPlaiting()
         }
 
         capData_(index) = 0;
-        colorsE_.SetRow(index, nucleotideEColor_);
         nodeIndices_(index) = nt->getNodeIndex();
         flags_(index) = nt->getInheritedFlags();
         radiiV_(index) = config.nucleotide_V_radius;
 
-        if (ss->IsScaffold()) {
-          colorsV_(index, 0) = config.nucleotide_E_Color[0];
-          colorsV_(index, 1) = config.nucleotide_E_Color[1];
-          colorsV_(index, 2) = config.nucleotide_E_Color[2];
-          colorsV_(index, 3) = config.nucleotide_E_Color[3];
 
-          radiiE_(index) = config.nucleotide_V_radius;
+        if (curColorType_ == REGULAR) {
+          if (ss->IsScaffold()) {
+            radiiE_(index) = config.nucleotide_V_radius;
+            colorsV_(index, 0) = config.nucleotide_E_Color[0];
+            colorsV_(index, 1) = config.nucleotide_E_Color[1];
+            colorsV_(index, 2) = config.nucleotide_E_Color[2];
+            colorsV_(index, 3) = config.nucleotide_E_Color[3];
+
+            colorsE_.SetRow(index, nucleotideEColor_);
+          }
+          else {
+            auto color = curColors->GetColor(nt);
+            colorsV_.SetRow(index, color);
+            radiiE_(index) = config.nucleotide_E_radius;
+          }
         }
-        else {
-          auto baseColor = colors->GetColor(nt);
-          colorsV_.SetRow(index, baseColor);
-          radiiE_(index) = config.nucleotide_E_radius;
+        else if (curColorType_ == MELTTEMP) {
+          auto color = curColors->GetColor(nt);
+          colorsV_.SetRow(index, color);
+          if (ss->IsScaffold()) {
+            colorsE_.SetRow(index, color);
+            radiiE_(index) = config.nucleotide_V_radius;
+          }
+          else {
+            colorsE_.SetRow(index, nucleotideEColor_);
+            radiiE_(index) = config.nucleotide_E_radius;
+          }
         }
+          
+            
         //strand direction
         if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
           radiiE_(index) = config.nucleotide_E_radius;
@@ -1365,7 +1382,7 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
 
-  auto colors = colors_.at(REGULAR);
+  MSVColors * curColors = colors_[curColorType_];
 
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -1394,19 +1411,23 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
         }
 
         
-       
-        if (nanorobot_->IsScaffold(ss))
-        {
-          colorsV_(index, 0) = config.nucleotide_E_Color[0];
-          colorsV_(index, 1) = config.nucleotide_E_Color[1];
-          colorsV_(index, 2) = config.nucleotide_E_Color[2];
-          colorsV_(index, 3) = config.nucleotide_E_Color[3];
+        if (curColorType_ == REGULAR) {
+          if (nanorobot_->IsScaffold(ss))
+          {
+            colorsV_(index, 0) = config.nucleotide_E_Color[0];
+            colorsV_(index, 1) = config.nucleotide_E_Color[1];
+            colorsV_(index, 2) = config.nucleotide_E_Color[2];
+            colorsV_(index, 3) = config.nucleotide_E_Color[3];
+          }
+          else
+          {
+            auto color = curColors->GetColor(ss);
+            colorsV_.SetRow(index, color);
+          }
         }
-        else
-        {
-          auto color = colors->GetColor(ss);
+        else if (curColorType_ == MELTTEMP) {
+          auto color = curColors->GetColor(nt);
           colorsV_.SetRow(index, color);
-
         }
 
         colorsE_(index, 0) = colorsV_(index, 0);
@@ -1446,7 +1467,7 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
   auto conformations = nanorobot_->GetConformations();
   auto conformation = conformations[dim_ - 1];
 
-  auto colors = colors_.at(MELTTEMP);
+  MSVColors * curColors = colors_[curColorType_];
 
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -1473,16 +1494,22 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
           positions_(index, 2) = pos[2].getValue();
         }
 
-        if (nanorobot_->IsScaffold(ss))
-        {
-          colorsV_(index, 0) = config.nucleotide_E_Color[0];
-          colorsV_(index, 1) = config.nucleotide_E_Color[1];
-          colorsV_(index, 2) = config.nucleotide_E_Color[2];
-          colorsV_(index, 3) = config.nucleotide_E_Color[3];
+        if (curColorType_ == REGULAR) {
+          if (nanorobot_->IsScaffold(ss))
+          {
+            colorsV_(index, 0) = config.nucleotide_E_Color[0];
+            colorsV_(index, 1) = config.nucleotide_E_Color[1];
+            colorsV_(index, 2) = config.nucleotide_E_Color[2];
+            colorsV_(index, 3) = config.nucleotide_E_Color[3];
+          }
+          else
+          {
+            auto color = curColors->GetColor(ss);
+            colorsV_.SetRow(index, color);
+          }
         }
-        else
-        {
-          auto color = colors->GetColor(ss);
+        else if (curColorType_ == MELTTEMP) {
+          auto color = curColors->GetColor(nt);
           colorsV_.SetRow(index, color);
         }
 
@@ -1522,7 +1549,8 @@ void SEAdenitaVisualModel::displayDoubleStrands()
   ADNLogger& logger = ADNLogger::GetLogger();
 
   auto parts = nanorobot_->GetParts();
-  auto colors = colors_.at(REGULAR);
+
+  MSVColors * curColors = colors_[curColorType_];
 
   positions_ = ADNArray<float>(3, nPositions_);
   radiiV_ = ADNArray<float>(nPositions_);
@@ -1549,7 +1577,7 @@ void SEAdenitaVisualModel::displayDoubleStrands()
           positions_(index, 2) = (float)pos.v[2].getValue();
         }
 
-        auto color = colors->GetColor(baseSegment);
+        auto color = curColors->GetColor(baseSegment);
         colorsV_.SetRow(index, color);
 
         radiiV_(index) = config.base_pair_radius;
@@ -1729,7 +1757,7 @@ ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(float min, float max, fl
 
   if (val == FLT_MAX) { //if region is unbound
     color(0) = 1.0f;
-    color(1) = 1.0f;
+    color(1) = 0.0f;
     color(2) = 0.0f;
     color(3) = 1.0f;
 
