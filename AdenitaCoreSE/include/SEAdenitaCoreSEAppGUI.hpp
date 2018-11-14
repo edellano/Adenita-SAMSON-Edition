@@ -54,6 +54,9 @@ public:
 
 	//@}
 
+  // get selected scaffold
+  std::string GetScaffoldFilename();
+
 public slots:
 
   void onCreate();
