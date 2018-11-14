@@ -91,20 +91,14 @@ void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, ADNPointer<ADNPa
   ADNLoader::OutputToCSV(parts, file.fileName().toStdString(), file.path().toStdString());
 }
 
-void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string seq)
+void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string filename)
 {
-  std::string s = seq;
-  if (s.empty()) {
-    std::string filename = SB_ELEMENT_PATH + "/Data/m13mp18.fasta";
-    std::vector<std::string> lines;
-    SBIFileReader::getFileLines(filename, lines);
-    for (unsigned int i = 1; i < lines.size(); i++) {
-      std::string line = lines[i];
-      if (line[0] != '>') {
-        s.append(line);
-      }
-    }
+
+  if (filename.empty()) {
+    filename = SB_ELEMENT_PATH + "/Data/m13mp18.fasta";
   }
+
+  std::string s = ReadScaffoldFilename(filename);
 
   // get selected part
   SBDocument* doc = SAMSON::getActiveDocument();
@@ -444,6 +438,23 @@ ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
   return nanorobot;
 }
 
+std::string SEAdenitaCoreSEApp::ReadScaffoldFilename(std::string filename)
+{
+  std::string seq = "";
+  if (filename.size() > 0) {
+    std::vector<std::string> lines;
+    SBIFileReader::getFileLines(filename, lines);
+    for (unsigned int i = 1; i < lines.size(); i++) {
+      std::string line = lines[i];
+      if (line[0] != '>') {
+        seq.append(line);
+      }
+    }
+  }
+
+  return seq;
+}
+
 QStringList SEAdenitaCoreSEApp::GetPartsNameList()
 {
   QStringList names;
@@ -472,6 +483,17 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool cal
 
   GetNanorobot()->RegisterPart(part);
 
+  SEConfig& c = SEConfig::GetInstance();
+  if (c.auto_set_scaffold_sequence) {
+    SEAdenitaCoreSEAppGUI* gui = getGUI();
+    std::string fname = gui->GetScaffoldFilename();
+    std::string seq = ReadScaffoldFilename(fname);
+    auto scafs = part->GetScaffolds();
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, scafs) {
+      ADNBasicOperations::SetSingleStrandSequence(ss, seq);
+    }
+  }
+
   //events
   ConnectStructuralSignalSlots(part);
 
@@ -479,6 +501,11 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool cal
   part->create();
   SAMSON::getActiveLayer()->addChild(part());
   SAMSON::endHolding();
+
+  if (c.auto_calculate_binding_regions) {
+    PIPrimer3& p = PIPrimer3::GetInstance();
+    p.Calculate(part, 100, 5, 16);
+  }
 }
 
 void SEAdenitaCoreSEApp::AddConformationToActiveLayer(ADNPointer<ADNConformation> conf)
