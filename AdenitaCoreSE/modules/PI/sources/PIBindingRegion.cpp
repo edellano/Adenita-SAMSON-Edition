@@ -31,6 +31,11 @@ void PIBindingRegion::SetLastNt(ADNPointer<ADNNucleotide> nt)
   lastNt_ = nt;
 }
 
+void PIBindingRegion::SetFirstNt(ADNPointer<ADNNucleotide> nt)
+{
+  firstNt_ = nt;
+}
+
 ADNPointer<ADNPart> PIBindingRegion::GetPart()
 {
   return part_;
@@ -64,7 +69,7 @@ std::pair<std::string, std::string> PIBindingRegion::GetSequences()
   std::string rightSeq;
 
   auto ntLeft = lastNt_;
-  while (ntLeft != nullptr) {
+  while (ntLeft != firstNt_) {
     char left = ADNModel::GetResidueName(ntLeft->GetType());
     leftSeq.insert(0, std::string(1, left));
     auto pair = ntLeft->GetPair();
