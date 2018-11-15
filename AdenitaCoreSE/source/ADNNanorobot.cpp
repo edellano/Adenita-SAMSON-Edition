@@ -231,6 +231,25 @@ CollectionMap<ADNDoubleStrand> ADNNanorobot::GetSelectedDoubleStrands()
   return doubleStrands;
 }
 
+CollectionMap<ADNDoubleStrand> ADNNanorobot::GetHighlightedDoubleStrands()
+{
+  CollectionMap<ADNDoubleStrand> doubleStrands;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNDoubleStrand")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isHighlighted()) {
+      ADNPointer<ADNDoubleStrand> ds = static_cast<ADNDoubleStrand*>(node);
+      doubleStrands.addReferenceTarget(ds());
+    }
+  }
+
+  return doubleStrands;
+}
+
 CollectionMap<ADNSingleStrand> ADNNanorobot::GetSingleStrands(ADNPointer<ADNPart> p)
 {
   return p->GetSingleStrands();
@@ -261,6 +280,12 @@ CollectionMap<ADNSingleStrand> ADNNanorobot::GetScaffolds(ADNPointer<ADNPart> p)
 CollectionMap<ADNDoubleStrand> ADNNanorobot::GetDoubleStrands(ADNPointer<ADNPart> p)
 {
   return p->GetDoubleStrands();
+}
+
+ADNPointer<ADNDoubleStrand> ADNNanorobot::GetDoubleStrand(ADNPointer<ADNNucleotide> nt)
+{
+  auto bs = nt->GetBaseSegment();
+  return bs->GetDoubleStrand();
 }
 
 CollectionMap<ADNNucleotide> ADNNanorobot::GetSingleStrandNucleotides(ADNPointer<ADNSingleStrand> ss)

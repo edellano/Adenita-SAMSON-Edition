@@ -14,6 +14,7 @@
 #include "SENanotubeCreatorEditorDescriptor.hpp"
 #include "PIBindingRegionDescriptor.hpp"
 #include "SEDNATwisterEditorDescriptor.hpp"
+#include "SETwistHelixEditorDescriptor.hpp"
 
 
 
@@ -54,6 +55,7 @@ SB_ELEMENT_CLASSES_BEGIN;
   SB_ELEMENT_CLASS(SEDSDNACreatorEditor);
   SB_ELEMENT_CLASS(SENanotubeCreatorEditor);
   SB_ELEMENT_CLASS(SEDNATwisterEditor);
+  SB_ELEMENT_CLASS(SETwistHelixEditor);
 
 SB_ELEMENT_CLASSES_END;
 
