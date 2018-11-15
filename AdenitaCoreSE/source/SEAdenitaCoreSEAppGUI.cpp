@@ -6,6 +6,7 @@
 #include "SEWireframeEditor.hpp"
 #include "SEBreakEditor.hpp"
 #include "SEDeleteEditor.hpp"
+#include "SETwistHelixEditor.hpp"
 #include <QPixmap>
 
 SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( t ) {
@@ -54,6 +55,14 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   QIcon mutateIcon;
   mutateIcon.addFile(string(iconsPath + "mutate.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnMutate->setIcon(mutateIcon);
+
+  QIcon twistHelixMinus;
+  twistHelixMinus.addFile(string(iconsPath + "minus1BP.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnTwistDoubleHelixMinus->setIcon(twistHelixMinus);
+
+  QIcon twistHelixPlus;
+  twistHelixPlus.addFile(string(iconsPath + "plus1BP.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnTwistDoubleHelixPlus->setIcon(twistHelixPlus);
 
   QIcon insertIcon;
   insertIcon.addFile(string(iconsPath + "insert.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
@@ -368,6 +377,43 @@ void SEAdenitaCoreSEAppGUI::onDelete()
   }
 }
 
+void SEAdenitaCoreSEAppGUI::onTwistDoubleHelixMinus(bool toggled)
+{
+  if (toggled) {
+    SBProxy* p = SAMSON::getProxy("SETwistHelixEditor");
+    SETwistHelixEditor* e = static_cast<SETwistHelixEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
+    SAMSON::setActiveEditor(e);
+    string iconPath = SB_ELEMENT_PATH + "/Resource/icons/minus1BP.png";
+
+    SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
+
+    // check in the editor GUI th ecorresponding option
+    e->SetMode(false);
+  }
+  else {
+    SAMSON::setActiveEditor(nullptr);
+    SAMSON::unsetViewportCursor();
+  }
+}
+
+void SEAdenitaCoreSEAppGUI::onTwistDoubleHelixPlus(bool toggled)
+{
+  if (toggled) {
+    SBProxy* p = SAMSON::getProxy("SETwistHelixEditor");
+    SETwistHelixEditor* e = static_cast<SETwistHelixEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
+    SAMSON::setActiveEditor(e);
+    string iconPath = SB_ELEMENT_PATH + "/Resource/icons/minus1BP.png";
+
+    SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
+
+    e->SetMode(true);
+  }
+  else {
+    SAMSON::setActiveEditor(nullptr);
+    SAMSON::unsetViewportCursor();
+  }
+}
+
 void SEAdenitaCoreSEAppGUI::onChangeScaffold(int idx)
 {
   if (idx == 2) {
@@ -515,12 +561,6 @@ void SEAdenitaCoreSEAppGUI::onCalculateBindingRegions()
 {
   SEAdenitaCoreSEApp* t = getApp();
   t->CalculateBindingRegions();
-}
-
-void SEAdenitaCoreSEAppGUI::onTwistDoubleHelix()
-{
-  SEAdenitaCoreSEApp* t = getApp();
-  t->TwistDoubleHelix();
 }
 
 void SEAdenitaCoreSEAppGUI::onSetStart()

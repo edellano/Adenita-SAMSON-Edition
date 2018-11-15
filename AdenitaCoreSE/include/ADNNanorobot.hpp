@@ -68,6 +68,8 @@ public:
   CollectionMap<ADNSingleStrand> GetSelectedSingleStrands();
   //! Returns all currently selected ADNDoubleStrand
   CollectionMap<ADNDoubleStrand> GetSelectedDoubleStrands();
+  //! Returns all currently highlighted ADNDoubleStrand
+  CollectionMap<ADNDoubleStrand> GetHighlightedDoubleStrands();
   //! Return the single strands of an ADNPart
   /*!
     \param a ADNPointer to a ADNPart
@@ -102,6 +104,12 @@ public:
     \return a CollectionMap of ADNSingleStrand
   */
   CollectionMap<ADNDoubleStrand> GetDoubleStrands(ADNPointer<ADNPart> p);
+  //! Return the double strands to which a nucleotide belongs
+  /*!
+    \param a ADNPointer to a ADNNucleotide
+    \return the ADNDoubleStrand to which it belongs
+  */
+  ADNPointer<ADNDoubleStrand> GetDoubleStrand(ADNPointer<ADNNucleotide> nt);
 
   //! Return the nucleotides of a single strand
   /*!

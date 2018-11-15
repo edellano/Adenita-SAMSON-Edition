@@ -257,6 +257,27 @@ void SEAdenitaCoreSEApp::DeleteNucleotide()
   }
 }
 
+void SEAdenitaCoreSEApp::TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle)
+{
+  DASBackToTheAtom btta = DASBackToTheAtom();
+  SEConfig& config = SEConfig::GetInstance();
+
+  SB_FOR(ADNPointer<ADNDoubleStrand> ds, dss) {
+    double newDeg = ds->GetInitialTwistAngle() + angle;
+    ADNBasicOperations::TwistDoubleHelix(ds, newDeg);
+    // recalculate positions
+    btta.SetDoubleStrandPositions(ds);
+    if (config.use_atomic_details) {
+      // todo: calculate all atoms just for a double strand
+      //btta.GenerateAllAtomModel(ds);
+    }
+  }
+
+  if (dss.size() > 0) {
+    ResetVisualModel();
+  }
+}
+
 void SEAdenitaCoreSEApp::CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal)
 {
   auto part = DASCreator::CreateDSRing(radius, center, normal);
