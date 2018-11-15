@@ -55,6 +55,9 @@ void SEConfig::loadConfig() {
     writer.Key("min_gibbs_free_energy");
     writer.Double(min_gibbs_free_energy);
 
+    writer.Key("max_gibbs_free_energy");
+    writer.Double(max_gibbs_free_energy);
+
     writer.Key("interpolate_dimensions");
     writer.Bool(interpolate_dimensions);
 
@@ -191,6 +194,7 @@ void SEConfig::updateConfig() {
     min_melting_temp = setting_["min_melting_temp"].GetDouble();
     max_melting_temp = setting_["max_melting_temp"].GetDouble();
     min_gibbs_free_energy = setting_["min_gibbs_free_energy"].GetDouble();
+    max_gibbs_free_energy = setting_["max_gibbs_free_energy"].GetDouble();
     interpolate_dimensions = setting_["interpolate_dimensions"].GetBool();
     animation_step_size = setting_["animation_step_size"].GetDouble();
     mode = static_cast<SEConfigMode>(setting_["mode"].GetInt());
