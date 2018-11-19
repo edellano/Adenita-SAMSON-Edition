@@ -29,6 +29,18 @@ void SEConfig::updateDebugConfig()
     if (setting_.FindMember("display_base_pairing") != setting_.MemberEnd()) {
       debugOptions.display_base_pairing = setting_["display_base_pairing"].GetBool();
     }
+
+    if (setting_.FindMember("custom_bool") != setting_.MemberEnd()) {
+      debugOptions.customBool = setting_["custom_bool"].GetBool();
+    }
+
+    if (setting_.FindMember("custom_double") != setting_.MemberEnd()) {
+      debugOptions.customDouble = setting_["custom_double"].GetDouble();
+    }
+
+    if (setting_.FindMember("custom_int") != setting_.MemberEnd()) {
+      debugOptions.customInt = setting_["custom_int"].GetInt();
+    }
   }
 }
 
@@ -168,6 +180,15 @@ void SEConfig::loadDebugConfig()
 
     writer.Key("display_base_pairing");
     writer.Bool(debugOptions.display_base_pairing);
+
+    writer.Key("custom_bool");
+    writer.Bool(debugOptions.customBool);
+
+    writer.Key("custom_double");
+    writer.Double(debugOptions.customDouble);
+
+    writer.Key("custom_int");
+    writer.Int(debugOptions.customInt);
 
     writer.EndObject();
 
