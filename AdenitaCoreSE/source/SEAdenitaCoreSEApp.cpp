@@ -389,13 +389,25 @@ void SEAdenitaCoreSEApp::TestNeighbors()
   auto neighbors = ADNNeighbors();
   neighbors.SetMaxCutOff(SBQuantity::nanometer(config.debugOptions.maxCutOff));
   neighbors.SetMinCutOff(SBQuantity::nanometer(config.debugOptions.minCutOff));
-  //neighbors.SetIncludePairs(true);
+  neighbors.SetIncludePairs(true);
   neighbors.InitializeNeighbors(part);
 
   // highlight neighbors of selected nucleotide
   auto ntNeighbors = neighbors.GetNeighbors(nt);
   SB_FOR(ADNPointer<ADNNucleotide> ntN, ntNeighbors) {
-    ntN->setSelectionFlag(true);
+    //SBPosition3 posBor = ntN->GetPosition();
+    //SBPosition3 dif = posBor - nt->GetPosition();
+    //auto e2Bor = ntN->GetE2();
+    //// check right directionality and co-planarity
+    //double t = ublas::inner_prod(nt->GetE2(), e2Bor);
+    //// check that they are "in front" of each other
+    //ublas::vector<double> df = ADNAuxiliary::SBPositionToUblas(dif);
+    //double n = ublas::inner_prod(nt->GetE2(), df);
+    //double angle_threshold = config.debugOptions.customDouble;
+    //double th = cos(ADNVectorMath::DegToRad(angle_threshold));
+    //if (n > 0 && t < 0.0 && abs(t) > th) {
+      ntN->setSelectionFlag(true);
+    //}
   }
 
   ResetVisualModel();
