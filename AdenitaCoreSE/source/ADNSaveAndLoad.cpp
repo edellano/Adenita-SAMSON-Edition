@@ -870,7 +870,10 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph()
       ublas::vector<double> e1 = ADNVectorMath::CrossProduct(fPrime->GetE2(), e3);
       fPrime->SetE1(e1);
     }
-
+    else if (ss->getNumberOfNucleotides() == 0) {
+      // delete single strands since it's empty
+      part->DeregisterSingleStrand(ss);
+    }
   }
 
   BuildTopScales(part);
