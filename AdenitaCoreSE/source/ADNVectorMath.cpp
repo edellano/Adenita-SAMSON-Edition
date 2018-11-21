@@ -325,6 +325,39 @@ namespace ADNVectorMath {
     return res.getValue();
   }
 
+  SBQuantity::length LengthQuadraticBezier(SBPosition3 P0, SBPosition3 P1, SBPosition3 P2)
+  {
+    // starting from derivative of Bezier curve
+    // B'(t) = 2(1-t)(P1-P0)+2t(P2-P1) 
+    // we rewrite as B'(t) = At + B 
+    // so length L = int_0^1 |At + B| = int_0^1 sqrt(Dt^2 + Et + F)
+    // where A and B are vectors, but D, E and F are scalars
+    SBPosition3 A = 2 * (P2 - 2 * P1 + P0);
+    SBPosition3 B = 2 * (P1 - P0);
+    SBQuantity::length An = A.norm();
+    SBQuantity::length Bn = B.norm();
+    SBQuantity::area D = An*An;
+    SBQuantity::area E = 2 * (A|B);
+    SBQuantity::area F = Bn*Bn;
+    SBQuantity::dimensionless b = E / (2*D);
+    SBQuantity::dimensionless c = F / D;
+    SBQuantity::dimensionless k = c - b*b;
+
+    SBQuantity::length length = An * 0.5 *( (1 + b) * sqrt(1 + 2 * b + c) + 0.5*k*k*log(1 + b + sqrt(1+2*b+c)) - 0.5*b*sqrt(c) - 0.5*k*k*log(b+sqrt(c)) );
+
+    return length;
+  }
+
+  SBPosition3 QuadraticBezierPoint(SBPosition3 P0, SBPosition3 P1, SBPosition3 P2, double t)
+  {
+    return (1-t)*( (1-t)*P0 + t*P1 ) + t*( (1-t)*P1 + t*P2 );
+  }
+
+  SBVector3 DerivativeQuadraticBezier(SBPosition3 P0, SBPosition3 P1, SBPosition3 P2, double t)
+  {
+    return (2*(1-t)*(P1-P0)+2*t*(P2-P1)).normalizedVersion();
+  }
+
   ublas::matrix<double> FindOrthogonalSubspace(ublas::vector<double> z) {
     z /= ublas::norm_2(z);
     ublas::vector<double> x(3, 0.0);

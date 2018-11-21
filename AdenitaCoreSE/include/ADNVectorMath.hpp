@@ -49,4 +49,10 @@ namespace ADNVectorMath {
   // SAMSON types operations
   SBVector3 SBCrossProduct(SBVector3 v, SBVector3 w);
   double SBInnerProduct(SBVector3 v, SBVector3 w);
+
+  //! Bezier curves
+  //! Calculates the length of a quadratic Bezier curve
+  SBQuantity::length LengthQuadraticBezier(SBPosition3 P0, SBPosition3 P1, SBPosition3 P2);
+  SBPosition3 QuadraticBezierPoint(SBPosition3 P0, SBPosition3 P1, SBPosition3 P2, double t);
+  SBVector3 DerivativeQuadraticBezier(SBPosition3 P0, SBPosition3 P1, SBPosition3 P2, double t);
 };

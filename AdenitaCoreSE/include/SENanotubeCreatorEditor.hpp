@@ -107,7 +107,7 @@ private:
   void displayNanotube();
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
 
-  DASCreatorEditors::Positions positions_;
+  DASCreatorEditors::UIData positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
   RoutingType routing_ = RoutingType::None;

@@ -44,6 +44,24 @@ void SEDSDNACreatorEditorGUI::onSetSSDNA(bool b)
   t->SetMode(!b);
 }
 
+void SEDSDNACreatorEditorGUI::onSetCircular(bool c)
+{
+  SEDSDNACreatorEditor* t = getEditor();
+  t->SetCircular(c);
+}
+
+void SEDSDNACreatorEditorGUI::onSetManual(bool b)
+{
+  SEDSDNACreatorEditor* t = getEditor();
+  t->SetManual(b);
+}
+
+void SEDSDNACreatorEditorGUI::onSetNumNucleotides(int n)
+{
+  SEDSDNACreatorEditor* t = getEditor();
+  t->SetNumberNucleotides(n);
+}
+
 void SEDSDNACreatorEditorGUI::onShowBox(bool s)
 {
   SEDSDNACreatorEditor* t = getEditor();

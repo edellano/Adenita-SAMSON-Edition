@@ -104,17 +104,24 @@ public :
   void SetMode(bool m);
   void SetShowBox(bool s);
   void SetBoxSize(double height, double width, double depth);
+  void SetCircular(bool c);
+  void SetManual(bool m);
+  void SetNumberNucleotides(int n);
 
 private:
   ADNPointer<ADNPart> generateStrand(bool mock = false);
+  ADNPointer<ADNPart> generateCircularStrand(bool mock = false);
   void displayStrand();
   void displayBox();
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
   void ShowBox();
 
   bool dsMode_ = true;  // true for dsDNA, false for ssDNA
+  bool circular_ = false;  // if we are creating circular strands
+  bool manual_ = false;
+  int numNts_ = 12;
 
-  DASCreatorEditors::Positions positions_;
+  DASCreatorEditors::UIData positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
   bool showBox_ = false;

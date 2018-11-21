@@ -55,6 +55,9 @@ public slots:
 
   void onSetDSDNA(bool b);
   void onSetSSDNA(bool b);
+  void onSetCircular(bool c);
+  void onSetManual(bool b);
+  void onSetNumNucleotides(int n);
   void onShowBox(bool s);
   void onChangeBoxSize();
 
