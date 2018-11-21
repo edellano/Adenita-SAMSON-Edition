@@ -67,6 +67,15 @@ namespace DASCreator {
   */
   ADNPointer<ADNPart> CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock = false);
 
+  //! Creates a ADNPart containing a single stranded DNA Ring
+  /*!
+    \param the radius of the ring
+    \param position of the center of the ring
+    \param normal to the ring
+    \param whether to create a mock part containing only the high-level details
+  */
+  ADNPointer<ADNPart> CreateSSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock = false);
+
   //! Creates a ADNPart containing two interlocked double stranded DNA Rings
   /*!
     \param the radius of the ring
@@ -97,7 +106,7 @@ namespace DASCreator {
     \param position of the center of the ring
     \param normal direction of the ring
   */
-  ADNPointer<ADNDoubleStrand> AddDSRingToADNPart(ADNPointer<ADNPart> part, SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock = false);
+  ADNPointer<ADNDoubleStrand> AddRingToADNPart(ADNPointer<ADNPart> part, SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool ssDNA, bool mock = false);
 
   //! Helper function that creates a double strand in a ADNPart
   /*!
@@ -129,17 +138,16 @@ namespace DASCreator {
 
 namespace DASCreatorEditors {
   
-  //! Store positions
-  struct Positions {
-    SBPosition3 First;
-    SBPosition3 Second;
-    SBPosition3 Third;
-    SBPosition3 Fourth;
-    SBPosition3 Fifth;
-    SBPosition3 Sixth;
-    int cnt = 0;
+  //! Store user interaction data
+  struct UIData {
+    SBPosition3 FirstPosition;
+    SBPosition3 SecondPosition;
+    SBPosition3 ThirdPosition;
+    SBVector3 FirstVector;
+    int positionsCounter = 0;
+    int vectorsCounter = 0;
   };
 
-  void resetPositions(Positions& pos);
+  void resetPositions(UIData& pos);
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
 };

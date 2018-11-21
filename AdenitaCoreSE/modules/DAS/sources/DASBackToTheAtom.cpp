@@ -199,6 +199,10 @@ void DASBackToTheAtom::SetPositionLoopNucleotides(ADNPointer<ADNBaseSegment> bs)
     SBPosition3 posPrevRight;
     SBPosition3 posNextLeft;
     SBPosition3 posNextRight;
+    SBVector3 prevE2Left;
+    SBVector3 prevE2Right;
+    SBVector3 nextE2Left;
+    SBVector3 nextE2Right;
 
     if (left != nullptr) {
       ADNPointer<ADNNucleotide> ntPrevLeft = left->GetStart()->GetPrev();
@@ -206,25 +210,32 @@ void DASBackToTheAtom::SetPositionLoopNucleotides(ADNPointer<ADNBaseSegment> bs)
 
       if (ntPrevLeft != nullptr) {
         posPrevLeft = ntPrevLeft->GetPosition();
+        prevE2Left = ADNAuxiliary::UblasVectorToSBVector(ntPrevLeft->GetE1());
       }
       else if (bs->GetPrev() != nullptr) {
         posPrevLeft = bs->GetPrev()->GetPosition();
+        prevE2Left = ADNAuxiliary::UblasVectorToSBVector(bs->GetPrev()->GetE1());
       }
       else {
         posPrevLeft = bs->GetPosition() - SBQuantity::nanometer(ADNConstants::BP_RISE) * ADNAuxiliary::UblasVectorToSBVector(bs->GetE3());
+        prevE2Left = ADNAuxiliary::UblasVectorToSBVector(bs->GetE1());
       }
 
       if (ntNextLeft != nullptr) {
         posNextLeft = ntNextLeft->GetPosition();
+        nextE2Left = ADNAuxiliary::UblasVectorToSBVector(ntNextLeft->GetE1());
       }
       else if (bs->GetNext() != nullptr) {
         posNextLeft = bs->GetNext()->GetPosition();
+        nextE2Left = ADNAuxiliary::UblasVectorToSBVector(bs->GetNext()->GetE1());
       }
       else {
         posNextLeft = bs->GetPosition() + SBQuantity::nanometer(ADNConstants::BP_RISE) * ADNAuxiliary::UblasVectorToSBVector(bs->GetE3());
+        nextE2Left = ADNAuxiliary::UblasVectorToSBVector(bs->GetE1());
       }
 
       PositionLoopNucleotides(left, posPrevLeft, posNextLeft);
+      //PositionLoopNucleotidesQBezier(left, posPrevLeft, posNextLeft, prevE2Left, nextE2Left);
     }
 
     if (right != nullptr) {
@@ -233,25 +244,32 @@ void DASBackToTheAtom::SetPositionLoopNucleotides(ADNPointer<ADNBaseSegment> bs)
 
       if (ntPrevRight != nullptr) {
         posPrevRight = ntPrevRight->GetPosition();
+        prevE2Right = ADNAuxiliary::UblasVectorToSBVector(ntPrevRight->GetE1());
       }
       else if (bs->GetPrev() != nullptr) {
         posPrevRight = bs->GetPrev()->GetPosition();
+        prevE2Right = ADNAuxiliary::UblasVectorToSBVector(bs->GetPrev()->GetE1());
       }
       else {
         posPrevRight = bs->GetPosition() - SBQuantity::nanometer(ADNConstants::BP_RISE) * ADNAuxiliary::UblasVectorToSBVector(bs->GetE3());
+        prevE2Right = ADNAuxiliary::UblasVectorToSBVector(bs->GetE1());
       }
 
       if (ntNextRight != nullptr) {
         posNextRight = ntNextRight->GetPosition();
+        nextE2Right = ADNAuxiliary::UblasVectorToSBVector(ntNextRight->GetE2());
       }
       else if (bs->GetNext() != nullptr) {
         posNextRight = bs->GetNext()->GetPosition();
+        nextE2Right = ADNAuxiliary::UblasVectorToSBVector(bs->GetNext()->GetE2());
       }
       else {
         posNextRight = bs->GetPosition() + SBQuantity::nanometer(ADNConstants::BP_RISE) * ADNAuxiliary::UblasVectorToSBVector(bs->GetE3());
+        nextE2Right = ADNAuxiliary::UblasVectorToSBVector(bs->GetE2());
       }
 
       PositionLoopNucleotides(right, posPrevRight, posNextRight);
+      //PositionLoopNucleotidesQBezier(right, posPrevRight, posNextRight, prevE2Right, nextE2Right);
     }
   }
 }
@@ -437,6 +455,63 @@ void DASBackToTheAtom::PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosit
   }
   else {
     //if loop is at the beginning
+  }
+}
+
+void DASBackToTheAtom::PositionLoopNucleotidesQBezier(ADNPointer<ADNLoop> loop, SBPosition3 bsPositionPrev, SBPosition3 bsPositionNext, SBVector3 bsPrevE3, SBVector3 bsNextE3)
+{
+  auto numNts = loop->getNumberOfNucleotides();
+  // height of the curve depends on the number of nucleotides
+  // just try and error
+  SBPosition3 P0 = bsPositionPrev;
+  SBPosition3 P2 = bsPositionNext;
+  SBVector3 nDir = (bsPrevE3 + bsNextE3).normalizedVersion();
+  SBQuantity::length step = SBQuantity::nanometer(ADNConstants::BP_RISE);
+  SBPosition3 P1 = (P0 + P2)*0.5 + step*nDir;
+
+  SBQuantity::length estLength = numNts*step;
+  SBQuantity::length length = ADNVectorMath::LengthQuadraticBezier(P0, P1, P2);
+
+  P1 += 3*step*nDir;
+  //while (length < estLength) {
+  //  P1 += step*nDir;
+  //  length = ADNVectorMath::LengthQuadraticBezier(P0, P1, P2);
+  //}
+
+  // calculate step of the bezier curve
+  double deltaT = 1.0 / (numNts - 1);
+
+  ADNPointer<ADNNucleotide> startNt = loop->GetStart();
+  ADNPointer<ADNNucleotide> endNt = loop->GetEnd();
+
+  auto order = ADNBasicOperations::OrderNucleotides(startNt, endNt);
+  startNt = order.first;
+  endNt = order.second;
+
+  if (startNt != nullptr && endNt != nullptr) {
+    auto t = 0.5*deltaT;
+    ADNPointer<ADNNucleotide> nt = startNt;
+
+    ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(ADNVectorMath::DerivativeQuadraticBezier(P0, P1, P2, t));
+    auto subspace = ADNVectorMath::FindOrthogonalSubspace(e3);
+    ublas::vector<double> e1 = ublas::row(subspace, 0);
+    ublas::vector<double> e2 = ublas::row(subspace, 1);
+
+    while (nt != endNt->GetNext()) {
+      //float frac = float(i) / (nucleotides.size() + 1);
+      SBPosition3 shift = ADNVectorMath::QuadraticBezierPoint(P0, P1, P2, t);
+
+      nt->SetPosition(shift);
+      nt->SetSidechainPosition(shift);
+      nt->SetBackbonePosition(shift);
+
+      nt->SetE1(e1);
+      nt->SetE2(e2);
+      nt->SetE3(e3);
+
+      nt = nt->GetNext();
+      t +=  deltaT;
+    }
   }
 }
 
