@@ -549,9 +549,9 @@ void DASBackToTheAtom::CreateBonds(ADNPointer<ADNPart> origami)
     // create connection with previous nucleotide
     if (nt->GetEnd() != FivePrime && nt->GetEnd() != FiveAndThreePrime) {
       auto prevNt = nt->GetPrev(true);
-      ADNPointer<ADNAtom> atO5p = *nt->GetAtomsByName("O5'").begin();
+      ADNPointer<ADNAtom> atP = *nt->GetAtomsByName("P").begin();
       ADNPointer<ADNAtom> atO3p = *prevNt->GetAtomsByName("O3'").begin();
-      SBPointer<SBBond> bond = new SBBond(atO5p(), atO3p());
+      SBPointer<SBBond> bond = new SBBond(atP(), atO3p());
       bb->addChild(bond());
     }
   }
