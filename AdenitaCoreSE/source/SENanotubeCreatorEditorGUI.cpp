@@ -32,6 +32,17 @@ void SENanotubeCreatorEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+void SENanotubeCreatorEditorGUI::updateInfo(double radius, int numBp, bool clear)
+{
+  if (!clear) {
+    ui.txtInfo->setText("Radius (nm): " + QString::number(radius));
+    ui.txtInfo->append("Length (base pairs): " + QString::number(numBp));
+  }
+  else {
+    ui.txtInfo->clear();
+  }
+}
+
 void SENanotubeCreatorEditorGUI::onPredefinedNanotube(bool predefined)
 {
   double radius = ui.spnRadius->value();
