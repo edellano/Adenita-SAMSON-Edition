@@ -537,7 +537,7 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool cal
 
   if (c.auto_calculate_binding_regions) {
     PIPrimer3& p = PIPrimer3::GetInstance();
-    p.Calculate(part, 100, 5, 16);
+    //p.Calculate(part, 100, 5, 16);
   }
 }
 

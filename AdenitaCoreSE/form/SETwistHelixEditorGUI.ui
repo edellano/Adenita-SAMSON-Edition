@@ -120,7 +120,7 @@
    <sender>rdoPlus</sender>
    <signal>toggled(bool)</signal>
    <receiver>SETwistHelixEditorGUIClass</receiver>
-   <slot>onMinus()</slot>
+   <slot>onPlus(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>220</x>
@@ -136,7 +136,7 @@
    <sender>rdoMinus</sender>
    <signal>toggled(bool)</signal>
    <receiver>SETwistHelixEditorGUIClass</receiver>
-   <slot>onPlus()</slot>
+   <slot>onMinus(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>79</x>
@@ -152,7 +152,7 @@
    <sender>rdoTwistAngle</sender>
    <signal>toggled(bool)</signal>
    <receiver>SETwistHelixEditorGUIClass</receiver>
-   <slot>onTwistAngle()</slot>
+   <slot>onTwistAngle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>220</x>
@@ -168,7 +168,7 @@
    <sender>rdoTwistTurns</sender>
    <signal>toggled(bool)</signal>
    <receiver>SETwistHelixEditorGUIClass</receiver>
-   <slot>onTwistTurn()</slot>
+   <slot>onTwistTurn(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>220</x>
@@ -182,10 +182,10 @@
   </connection>
  </connections>
  <slots>
-  <slot>onMinus()</slot>
-  <slot>onPlus()</slot>
-  <slot>onTwistAngle()</slot>
-  <slot>onTwistTurn()</slot>
+  <slot>onMinus(bool)</slot>
+  <slot>onPlus(bool)</slot>
+  <slot>onTwistAngle(bool)</slot>
+  <slot>onTwistTurn(bool)</slot>
   <slot>onTwistAngleChanged(double)</slot>
   <slot>onTwistTurnsChanged(int)</slot>
  </slots>
