@@ -45,11 +45,11 @@ void SETwistHelixEditorGUI::CheckPlusOrMinus(bool plus)
 {
   if (plus) {
     ui.rdoPlus->setChecked(true);
-    onPlus(true);
+    //onPlus(true);
   }
   else {
     ui.rdoMinus->setChecked(true);
-    onMinus(true);
+    //onMinus(true);
   }
 }
 
