@@ -51,6 +51,8 @@ public:
 
 	//@}
 
+  void updateInfo(double radius, int numBp, bool clear = false);
+
 public slots:
   void onChangeRouting();
   void onPredefinedNanotube(bool predefined);

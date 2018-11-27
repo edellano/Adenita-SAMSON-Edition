@@ -73,6 +73,8 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
     else {
       part = DASCreator::CreateNanotube(radius, positions_.FirstPosition, dir, numNucleotides);
     }
+    SENanotubeCreatorEditorGUI* gui = static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget);
+    gui->updateInfo(radius.getValue() / 1000, numNucleotides);
   }
 
   return part;
@@ -217,7 +219,12 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
+
   if (positions_.positionsCounter == 0) {
+
+    SENanotubeCreatorEditorGUI* gui = static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget);
+    gui->updateInfo(0.0, 0, true);
+
     positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
   }
