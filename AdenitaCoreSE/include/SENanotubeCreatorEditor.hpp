@@ -101,6 +101,10 @@ public :
 	//@}
 
   void SetRouting(RoutingType t);
+  void SetPredefined(bool predefined, double radius, int numBp);
+  void SetRadius(double radius);
+  void SetBp(int bp);
+
 private:
 
   ADNPointer<ADNPart> generateNanotube(bool mock = false);
@@ -111,6 +115,10 @@ private:
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
   RoutingType routing_ = RoutingType::None;
+  //! for manual setting of base pairs and double strands
+  bool predefined_ = false;
+  int numBp_ = 0;
+  double radius_ = 0.0;
 };
 
 

@@ -28,6 +28,26 @@ void SENanotubeCreatorEditor::SetRouting(RoutingType t)
   routing_ = t;
 }
 
+void SENanotubeCreatorEditor::SetPredefined(bool predefined, double radius, int numBp)
+{
+  predefined_ = false;
+  if (radius > 0.0 && numBp > 0) {
+    predefined_ = predefined;
+    numBp_ = numBp;
+    radius_ = radius;
+  }
+}
+
+void SENanotubeCreatorEditor::SetRadius(double radius)
+{
+  radius_ = radius;
+}
+
+void SENanotubeCreatorEditor::SetBp(int bp)
+{
+  numBp_ = bp;
+}
+
 ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
 {
   ADNPointer<ADNPart> part = nullptr;
@@ -36,15 +56,18 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
   auto roundHeight = (positions_.SecondPosition - positions_.FirstPosition).norm();
   auto numNucleotides = round((roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
   SBVector3 dir = (positions_.SecondPosition - positions_.FirstPosition).normalizedVersion();
+  if (predefined_) {
+    numNucleotides = numBp_;
+    radius = SBQuantity::nanometer(radius_);
+  }
 
   if (numNucleotides > 0) {
     if (mock) {
-      if (positions_.positionsCounter == 1) {
+      if (positions_.positionsCounter == 1 && !predefined_) {
         part = DASCreator::CreateMockNanotube(SBQuantity::picometer(1), positions_.FirstPosition, dir, numNucleotides);
       }
-      else if (positions_.positionsCounter == 2) {
+      else if (positions_.positionsCounter == 2 || predefined_) {
         part = DASCreator::CreateMockNanotube(radius, positions_.FirstPosition, dir, numNucleotides);
-
       }
     }
     else {
@@ -194,7 +217,6 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
-
   if (positions_.positionsCounter == 0) {
     positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
@@ -220,12 +242,10 @@ void SENanotubeCreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
-
   if (positions_.positionsCounter == 1) {
     positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
   }
-
 }
 
 void SENanotubeCreatorEditor::mouseMoveEvent(QMouseEvent* event) {
@@ -235,10 +255,9 @@ void SENanotubeCreatorEditor::mouseMoveEvent(QMouseEvent* event) {
 
   if (event->buttons() == Qt::LeftButton) {
     display_ = true;
-    SAMSON::requestViewportUpdate();
+    //SAMSON::requestViewportUpdate();
   }
   SAMSON::requestViewportUpdate();
-
 }
 
 void SENanotubeCreatorEditor::mouseDoubleClickEvent(QMouseEvent* event) {
