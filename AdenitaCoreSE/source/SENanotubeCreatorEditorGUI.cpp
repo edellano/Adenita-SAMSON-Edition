@@ -32,6 +32,28 @@ void SENanotubeCreatorEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+void SENanotubeCreatorEditorGUI::onPredefinedNanotube(bool predefined)
+{
+  double radius = ui.spnRadius->value();
+  int numBp = ui.spnNumBp->value();
+  SENanotubeCreatorEditor* editor = getEditor();
+  editor->SetPredefined(predefined, radius, numBp);
+}
+
+void SENanotubeCreatorEditorGUI::onRadiusChanged()
+{
+  double r = ui.spnRadius->value();
+  SENanotubeCreatorEditor* editor = getEditor();
+  editor->SetRadius(r);
+}
+
+void SENanotubeCreatorEditorGUI::onBpChanged()
+{
+  int bp = ui.spnNumBp->value();
+  SENanotubeCreatorEditor* editor = getEditor();
+  editor->SetBp(bp);
+}
+
 void SENanotubeCreatorEditorGUI::onChangeRouting()
 {
   RoutingType t = RoutingType::None;

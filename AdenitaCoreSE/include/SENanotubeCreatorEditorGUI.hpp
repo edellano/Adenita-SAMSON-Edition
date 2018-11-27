@@ -53,6 +53,9 @@ public:
 
 public slots:
   void onChangeRouting();
+  void onPredefinedNanotube(bool predefined);
+  void onRadiusChanged();
+  void onBpChanged();
 
 private:
 
