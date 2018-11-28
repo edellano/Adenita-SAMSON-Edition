@@ -54,12 +54,20 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNSingleStrand> ss)
   if (res.first == false) {
     SEConfig& config = SEConfig::GetInstance();
 
-    int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
-    color(0) = config.staple_colors[stapleColorNum * 4 + 0];
-    color(1) = config.staple_colors[stapleColorNum * 4 + 1];
-    color(2) = config.staple_colors[stapleColorNum * 4 + 2];
-    color(3) = config.staple_colors[stapleColorNum * 4 + 3];
-
+    if (ss->IsScaffold())
+    {
+      color(0) = config.nucleotide_E_Color[0];
+      color(1) = config.nucleotide_E_Color[1];
+      color(2) = config.nucleotide_E_Color[2];
+      color(3) = config.nucleotide_E_Color[3];
+    }
+    else {
+      int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
+      color(0) = config.staple_colors[stapleColorNum * 4 + 0];
+      color(1) = config.staple_colors[stapleColorNum * 4 + 1];
+      color(2) = config.staple_colors[stapleColorNum * 4 + 2];
+      color(3) = config.staple_colors[stapleColorNum * 4 + 3];
+    }
     SBNodeMaterial* material = ss()->getMaterial();
     if (material) color = GetMaterialColor(ss());
   }
