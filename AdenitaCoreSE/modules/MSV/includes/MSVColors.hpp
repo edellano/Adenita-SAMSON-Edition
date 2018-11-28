@@ -47,6 +47,9 @@ private:
 
   ADNArray<float> GenerateRandomColor();
 
+  ADNArray<float> GetMaterialColor(SBNode* node);
+
+
   ADNArray<float> defaultbssColor_;
 
 
