@@ -31,14 +31,12 @@ void SEAdenitaCoreSEApp::LoadPart(QString filename)
   AddPartToActiveLayer(part);
 }
 
-void SEAdenitaCoreSEApp::SaveFile(QString filename, bool all)
+void SEAdenitaCoreSEApp::SaveFile(QString filename, ADNPointer<ADNPart> part)
 {
-  if (all) {
+  if (part == nullptr) {
     ADNLoader::SaveNanorobotToJson(GetNanorobot(), filename.toStdString());
   }
   else {
-    auto parts = GetNanorobot()->GetSelectedParts();
-    auto part = parts[0];  // save first
     ADNLoader::SavePartToJson(part, filename.toStdString());
   }
 }

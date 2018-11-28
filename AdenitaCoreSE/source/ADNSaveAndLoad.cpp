@@ -516,6 +516,9 @@ ADNNanorobot * ADNLoader::LoadNanorobotFromJson(std::string filename)
     versionValue = version->GetDouble();
   }
 
+  if (versionValue > 0.3) {
+    // new format
+  }
 
   return nr;
 }
@@ -768,7 +771,7 @@ void ADNLoader::SaveNanorobotToJson(ADNNanorobot * nr, std::string filename)
   writer.Double(ADNConstants::JSON_FORMAT_VERSION);
 
   auto parts = nr->GetParts();
-  writer.Key("doubleStrands");
+  writer.Key("parts");
   writer.StartObject();
   SB_FOR(ADNPointer<ADNPart> p, parts) {
     SavePartToJson(p, writer);

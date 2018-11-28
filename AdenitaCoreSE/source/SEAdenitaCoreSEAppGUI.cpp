@@ -211,30 +211,70 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
 
 void SEAdenitaCoreSEAppGUI::onSaveFile()
 {
-  bool nanorobot = true;
-  QStringList items;
-  items << "Selected Part" << "Workspace";
+  SEAdenitaCoreSEApp* t = getApp();
+  bool nanorobot = false;
 
-  bool ok;
-  QString item = QInputDialog::getItem(this, "Saving...", "Choose what you want to save:", items, 0, false, &ok);
+  QDialog* dialog = new QDialog();
 
-  if (ok && !item.isEmpty()) {
-    if (item == "Selected Part") {
-      nanorobot = false;
+  QComboBox* typeSelection = new QComboBox();
+
+  auto nr = t->GetNanorobot();
+  auto parts = nr->GetParts();
+  int i = 0;
+  std::map<int, ADNPointer<ADNPart>> indexParts;
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    std::string n = p->GetName();
+    typeSelection->insertItem(i, QString::fromStdString(n));
+    indexParts.insert(std::make_pair(i, p));
+    ++i;
+  }
+  typeSelection->insertItem(i, QString::fromStdString("SelectedPart"));
+  int sel_idx = i;
+  typeSelection->insertItem(i + 1, QString::fromStdString("Workspace"));
+  int all_idx = i + 1;
+
+  QPushButton* acceptButton = new QPushButton(tr("Save"));
+  acceptButton->setDefault(true);
+  QPushButton* cancelButton = new QPushButton(tr("Cancel"));
+
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal);
+  buttonBox->addButton(acceptButton, QDialogButtonBox::ActionRole);
+  buttonBox->addButton(cancelButton, QDialogButtonBox::ActionRole);
+
+  QObject::connect(cancelButton, SIGNAL(released()), dialog, SLOT(close()));
+  QObject::connect(acceptButton, SIGNAL(released()), dialog, SLOT(accept()));
+
+  QGridLayout *mainLayout = new QGridLayout;
+  mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+  mainLayout->addWidget(typeSelection, 0, 0);
+  mainLayout->addWidget(buttonBox, 1, 0);
+
+  dialog->setLayout(mainLayout);
+  dialog->setWindowTitle(tr("Export design"));
+
+  int dialogCode = dialog->exec();
+
+  if (dialogCode == QDialog::Accepted) {
+    auto val = typeSelection->currentIndex();
+    ADNPointer<ADNPart> part = nullptr;
+    if (val == sel_idx) {
+      part = nr->GetSelectedParts()[0];
     }
-  }
+    else if (val != all_idx) {
+      part = indexParts.at(val);
+    }
 
-  QString filename;
-  if (nanorobot) {
-    filename = QFileDialog::getSaveFileName(this, tr("Save the workspace"), QDir::currentPath(), tr("Adenita workspace (*.adn)"));
-  }
-  else {
-    filename = QFileDialog::getSaveFileName(this, tr("Save a part"), QDir::currentPath(), tr("Adenita part (*.adnpart)"));
-  }
+    QString filename;
+    if (part == nullptr) {
+      filename = QFileDialog::getSaveFileName(this, tr("Save the workspace"), QDir::currentPath(), tr("Adenita workspace (*.adn)"));
+    }
+    else {
+      filename = QFileDialog::getSaveFileName(this, tr("Save a part"), QDir::currentPath(), tr("Adenita part (*.adnpart)"));
+    }
 
-  if (!filename.isEmpty()) {
-    SEAdenitaCoreSEApp* t = getApp();
-    t->SaveFile(filename, nanorobot);
+    if (!filename.isEmpty()) {
+      t->SaveFile(filename, part);
+    }
   }
 }
 
@@ -243,11 +283,6 @@ void SEAdenitaCoreSEAppGUI::onExport()
   SEAdenitaCoreSEApp* t = getApp();
 
   QDialog* dialog = new QDialog();
-
-  //QStringList itemsSelection;
-  //QStringList itemsSelection = t->GetPartsNameList();
-  //itemsSelection << "Selected Part" << "Workspace";
-  //itemsSelection << "Selected Part" << "Workspace";
 
   QComboBox* typeSelection = new QComboBox();
   
