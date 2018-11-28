@@ -1322,21 +1322,19 @@ void SEAdenitaVisualModel::displayNucleotideScaffoldPlaiting()
         flags_(index) = nt->getInheritedFlags();
         radiiV_(index) = config.nucleotide_V_radius;
 
-
         if (curColorType_ == REGULAR) {
-          if (ss->IsScaffold()) {
-            radiiE_(index) = config.nucleotide_V_radius;
-            colorsV_(index, 0) = config.nucleotide_E_Color[0];
-            colorsV_(index, 1) = config.nucleotide_E_Color[1];
-            colorsV_(index, 2) = config.nucleotide_E_Color[2];
-            colorsV_(index, 3) = config.nucleotide_E_Color[3];
 
-            colorsE_.SetRow(index, nucleotideEColor_);
+          if (ss->IsScaffold()) {
+            auto color = curColors->GetColor(nt->GetStrand());
+            radiiE_(index) = config.nucleotide_V_radius;
+            colorsV_.SetRow(index, color);
+            colorsE_.SetRow(index, color);
           }
           else {
+            radiiE_(index) = config.nucleotide_E_radius;
             auto color = curColors->GetColor(nt);
             colorsV_.SetRow(index, color);
-            radiiE_(index) = config.nucleotide_E_radius;
+            colorsE_.SetRow(index, nucleotideEColor_);
           }
         }
         else if (curColorType_ == MELTTEMP || curColorType_ == GIBBS) {
@@ -1412,18 +1410,8 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
 
         
         if (curColorType_ == REGULAR) {
-          if (nanorobot_->IsScaffold(ss))
-          {
-            colorsV_(index, 0) = config.nucleotide_E_Color[0];
-            colorsV_(index, 1) = config.nucleotide_E_Color[1];
-            colorsV_(index, 2) = config.nucleotide_E_Color[2];
-            colorsV_(index, 3) = config.nucleotide_E_Color[3];
-          }
-          else
-          {
-            auto color = curColors->GetColor(ss);
-            colorsV_.SetRow(index, color);
-          }
+          auto color = curColors->GetColor(ss);
+          colorsV_.SetRow(index, color);
         }
         else if (curColorType_ == MELTTEMP || curColorType_ == GIBBS) {
           auto color = curColors->GetColor(nt);
@@ -1495,18 +1483,8 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
         }
 
         if (curColorType_ == REGULAR) {
-          if (nanorobot_->IsScaffold(ss))
-          {
-            colorsV_(index, 0) = config.nucleotide_E_Color[0];
-            colorsV_(index, 1) = config.nucleotide_E_Color[1];
-            colorsV_(index, 2) = config.nucleotide_E_Color[2];
-            colorsV_(index, 3) = config.nucleotide_E_Color[3];
-          }
-          else
-          {
-            auto color = curColors->GetColor(ss);
-            colorsV_.SetRow(index, color);
-          }
+          auto color = curColors->GetColor(ss);
+          colorsV_.SetRow(index, color);
         }
         else if (curColorType_ == MELTTEMP || curColorType_ == GIBBS) {
           auto color = curColors->GetColor(nt);
