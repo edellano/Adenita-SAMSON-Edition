@@ -54,7 +54,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
     this, 
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
   
-  changeScale(8);
+  changeScale(7);
 
   setupPropertyColors();
 
