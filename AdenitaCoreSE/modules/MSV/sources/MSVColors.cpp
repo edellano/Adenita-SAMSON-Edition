@@ -38,7 +38,10 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNNucleotide> nt)
       color(1) = config.nucleotide_E_Color[1];
       color(2) = config.nucleotide_E_Color[2];
       color(3) = config.nucleotide_E_Color[3];
-    }    
+    }
+
+    SBNodeMaterial* material = nt()->getMaterial();
+    if (material) color = GetMaterialColor(nt());
   }
 
   return color;
@@ -51,12 +54,25 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNSingleStrand> ss)
   if (res.first == false) {
     SEConfig& config = SEConfig::GetInstance();
 
-    int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
-    color(0) = config.staple_colors[stapleColorNum * 4 + 0];
-    color(1) = config.staple_colors[stapleColorNum * 4 + 1];
-    color(2) = config.staple_colors[stapleColorNum * 4 + 2];
-    color(3) = config.staple_colors[stapleColorNum * 4 + 3];
+    if (ss->IsScaffold())
+    {
+      color(0) = config.nucleotide_E_Color[0];
+      color(1) = config.nucleotide_E_Color[1];
+      color(2) = config.nucleotide_E_Color[2];
+      color(3) = config.nucleotide_E_Color[3];
+    }
+    else {
+      int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
+      color(0) = config.staple_colors[stapleColorNum * 4 + 0];
+      color(1) = config.staple_colors[stapleColorNum * 4 + 1];
+      color(2) = config.staple_colors[stapleColorNum * 4 + 2];
+      color(3) = config.staple_colors[stapleColorNum * 4 + 3];
+    }
+    SBNodeMaterial* material = ss()->getMaterial();
+    if (material) color = GetMaterialColor(ss());
   }
+
+  
 
   return color;
 }
@@ -73,6 +89,8 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNBaseSegment> bs)
     color(2) = config.double_strand_color[2];
     color(3) = config.double_strand_color[3];
 
+    SBNodeMaterial* material = bs()->getMaterial();
+    if (material) color = GetMaterialColor(bs());
   }
 
   return color;
@@ -107,5 +125,22 @@ void MSVColors::SetColor(ADNArray<float> color, ADNPointer<ADNBaseSegment> bs)
 void MSVColors::SetColor(ADNArray<float> color, ADNPointer<ADNDoubleStrand> ds)
 {
   SetColor(color, ds(), dssColors_);
+}
+
+ADNArray<float> MSVColors::GetMaterialColor(SBNode* node)
+{
+  ADNArray<float> color = ADNArray<float>(4);
+
+  SBNodeMaterial* material = node->getMaterial();
+  if (material) {
+    float *matColor = new float[4];
+    material->getColorScheme()->getColor(matColor, node);
+    color(0) = matColor[0];
+    color(1) = matColor[1];
+    color(2) = matColor[2];
+    color(3) = matColor[3];
+  }
+
+  return color;
 }
 
