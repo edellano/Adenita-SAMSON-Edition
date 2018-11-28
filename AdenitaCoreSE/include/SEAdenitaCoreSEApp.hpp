@@ -40,7 +40,7 @@ public :
 	//@}
 
   void LoadPart(QString filename);
-  void SaveFile(QString filename, bool all);
+  void SaveFile(QString filename, ADNPointer<ADNPart> part = nullptr);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename);
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part = nullptr);
