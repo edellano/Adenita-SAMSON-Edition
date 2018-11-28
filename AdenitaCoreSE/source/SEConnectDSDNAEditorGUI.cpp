@@ -39,7 +39,7 @@ QPixmap SEConnectSSDNAEditorGUI::getLogo() const {
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
 	// Modify it to better reflect the purpose of your editor.
 
-	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/icons/connectSS.png"));
+	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/icons/connectDS.png"));
 
 }
 
@@ -48,7 +48,7 @@ QString SEConnectSSDNAEditorGUI::getName() const {
 	// SAMSON Element generator pro tip: this string will be the GUI title. 
 	// Modify this function to have a user-friendly description of your editor inside SAMSON
 
-	return "SEConnectSSDNAEditor"; 
+	return "SEConnectDSDNAEditor"; 
 
 }
 

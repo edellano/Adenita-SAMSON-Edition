@@ -1,23 +1,19 @@
 #pragma once 
 
 #include "SBGEditor.hpp"
-#include "SENanotubeCreatorEditorGUI.hpp"
+#include "SETwistHelixEditorGUI.hpp"
 
 #include "SBBaseEvent.hpp"
 #include "SBDocumentEvent.hpp"
 #include "SBDynamicalEvent.hpp"
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
-#include "ADNPart.hpp"
 #include "SEAdenitaCoreSEApp.hpp"
-#include "ADNDisplayHelper.hpp"
-#include "DASCreator.hpp"
-#include "DASRouter.hpp"
 
 
 /// This class implements an editor
 
-class SENanotubeCreatorEditor : public SBGEditor {
+class SETwistHelixEditor : public SBGEditor {
 
 	SB_CLASS
 	Q_OBJECT
@@ -27,8 +23,8 @@ public :
 	/// \name Constructors and destructors
 	//@{
 
-	SENanotubeCreatorEditor();																													///< Builds an editor					
-	virtual ~SENanotubeCreatorEditor();																											///< Destructs the editor
+  SETwistHelixEditor();																													///< Builds an editor					
+	virtual ~SETwistHelixEditor();																											///< Destructs the editor
 
 	//@}
 
@@ -96,31 +92,20 @@ public :
 	/// \name GUI
 	//@{
 
-	SENanotubeCreatorEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
+  SETwistHelixEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
 
-  void SetRouting(RoutingType t);
-  void SetPredefined(bool predefined, double radius, int numBp);
-  void SetRadius(double radius);
-  void SetBp(int bp);
+  void SetTwistAngle(double angle);
+  //! For use from Adenita App, to keep coherence in the GUIs
+  void SetMode(bool t);
 
 private:
+  SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
 
-  ADNPointer<ADNPart> generateNanotube(bool mock = false);
-  void displayNanotube();
-  void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
-
-  DASCreatorEditors::UIData positions_;
-  bool display_ = false;
-  ADNPointer<ADNPart> tempPart_ = nullptr;
-  RoutingType routing_ = RoutingType::None;
-  //! for manual setting of base pairs and double strands
-  bool predefined_ = false;
-  int numBp_ = 0;
-  double radius_ = 0.0;
+  double twistAngle_ = 0.0;
 };
 
 
-SB_REGISTER_TYPE(SENanotubeCreatorEditor, "SENanotubeCreatorEditor", "4B6A0B18-48B5-233A-28A4-BA3EF3D56AB8");
-SB_DECLARE_BASE_TYPE(SENanotubeCreatorEditor, SBGEditor);
+SB_REGISTER_TYPE(SETwistHelixEditor, "SETwistHelixEditor", "4B60FECA-2A79-680F-F289-B4908A924409");
+SB_DECLARE_BASE_TYPE(SETwistHelixEditor, SBGEditor);

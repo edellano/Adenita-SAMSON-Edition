@@ -26,6 +26,10 @@ struct DebugOptions {
   double maxCutOff = 0.345;  // nm
   bool display_nucleotide_basis = false;
   bool display_base_pairing = false;
+  //! custom values to use while developing
+  bool customBool = false;
+  double customDouble = 0.0;
+  int customInt = 0;
 };
 
 class SEConfig : public QObject {

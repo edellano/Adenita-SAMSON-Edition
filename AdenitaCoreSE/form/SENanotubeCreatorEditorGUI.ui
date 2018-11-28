@@ -6,14 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>396</width>
+    <width>403</width>
     <height>177</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>300</width>
-    <height>100</height>
+    <width>403</width>
+    <height>177</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>403</width>
+    <height>177</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -23,30 +29,23 @@
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0" rowspan="2">
-      <widget class="QPushButton" name="btnCreateNanotube">
+      <widget class="QCheckBox" name="chkPredefined">
        <property name="text">
-        <string>Create DNA Nanotube</string>
+        <string>Predefined size</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0" rowspan="4">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Select a routing</string>
+     <item row="0" column="2">
+      <widget class="QDoubleSpinBox" name="spnRadius">
+       <property name="maximum">
+        <double>1000.000000000000000</double>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="label_2">
+     <item row="3" column="1" colspan="2">
+      <widget class="QRadioButton" name="chkRoutingSeamless">
        <property name="text">
-        <string>Number of double helices</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Length (bp)</string>
+        <string>Seamless</string>
        </property>
       </widget>
      </item>
@@ -60,17 +59,24 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1" colspan="2">
-      <widget class="QRadioButton" name="chkRoutingSeamless">
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Seamless</string>
+        <string>Length (bp)</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="1" colspan="2">
-      <widget class="QRadioButton" name="chkRoutingNonSeamless">
+     <item row="2" column="0" rowspan="4">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Non-seamless</string>
+        <string>Select a routing</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Radius (nm)</string>
        </property>
       </widget>
      </item>
@@ -94,13 +100,17 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QSpinBox" name="spnNumDs">
-       <property name="minimum">
-        <number>3</number>
+     <item row="4" column="1" colspan="2">
+      <widget class="QRadioButton" name="chkRoutingNonSeamless">
+       <property name="text">
+        <string>Non-seamless</string>
        </property>
-       <property name="maximum">
-        <number>9999</number>
+      </widget>
+     </item>
+     <item row="0" column="3" rowspan="6">
+      <widget class="QTextEdit" name="txtInfo">
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -174,8 +184,59 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>chkPredefined</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SENanotubeCreatorEditorGUIClass</receiver>
+   <slot>onPredefinedNanotube(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>36</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spnNumBp</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>SENanotubeCreatorEditorGUIClass</receiver>
+   <slot>onBpChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>325</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spnRadius</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>SENanotubeCreatorEditorGUIClass</receiver>
+   <slot>onRadiusChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>325</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onChangeRouting()</slot>
+  <slot>onPredefinedNanotube(bool)</slot>
+  <slot>onRadiusChanged()</slot>
+  <slot>onBpChanged()</slot>
  </slots>
 </ui>

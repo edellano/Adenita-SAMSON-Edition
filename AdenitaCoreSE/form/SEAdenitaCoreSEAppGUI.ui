@@ -25,7 +25,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -36,7 +36,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1293</width>
+           <width>1508</width>
            <height>51</height>
           </rect>
          </property>
@@ -229,6 +229,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="btnMutate">
+            <property name="focusPolicy">
+             <enum>Qt::TabFocus</enum>
+            </property>
             <property name="text">
              <string>Mutate</string>
             </property>
@@ -246,6 +249,26 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnTwistDoubleHelixMinus">
+            <property name="text">
+             <string>Twist -1BP</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnTwistDoubleHelixPlus">
+            <property name="text">
+             <string>Twist +1BP</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -462,7 +485,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1311</width>
+           <width>1342</width>
            <height>65</height>
           </rect>
          </property>
@@ -495,10 +518,10 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="5">
-           <widget class="QPushButton" name="btnMergeComponents">
+          <item row="0" column="2">
+           <widget class="QPushButton" name="btnTestNeighbors">
             <property name="text">
-             <string>Merge Components</string>
+             <string>Test Neighbors</string>
             </property>
            </widget>
           </item>
@@ -516,17 +539,10 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="7">
-           <widget class="QPushButton" name="btnTwistDoubleHelix">
+          <item row="0" column="5">
+           <widget class="QPushButton" name="btnMergeComponents">
             <property name="text">
-             <string>Twist Double Helix</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="btnTestNeighbors">
-            <property name="text">
-             <string>Test Neighbors</string>
+             <string>Merge Components</string>
             </property>
            </widget>
           </item>
@@ -780,22 +796,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>btnTwistDoubleHelix</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onTwistDoubleHelix()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>476</x>
-     <y>56</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>675</x>
-     <y>71</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>btnMergeComponents</sender>
    <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
@@ -875,6 +875,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnTwistDoubleHelixMinus</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onTwistDoubleHelixMinus(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>809</x>
+     <y>61</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnTwistDoubleHelixPlus</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onTwistDoubleHelixPlus(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>899</x>
+     <y>61</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -893,11 +925,12 @@
   <slot>onCatenanes()</slot>
   <slot>onKinetoplast()</slot>
   <slot>onCalculateBindingRegions()</slot>
-  <slot>onTwistDoubleHelix()</slot>
   <slot>onSetStart()</slot>
   <slot>onMergeComponents()</slot>
   <slot>onTestNeighbors()</slot>
   <slot>onOxDNAImport()</slot>
   <slot>onFromDatagraph()</slot>
+  <slot>onTwistDoubleHelixMinus(bool)</slot>
+  <slot>onTwistDoubleHelixPlus(bool)</slot>
  </slots>
 </ui>

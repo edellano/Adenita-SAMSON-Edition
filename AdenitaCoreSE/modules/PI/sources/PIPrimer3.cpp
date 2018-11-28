@@ -22,6 +22,10 @@ PIPrimer3 & PIPrimer3::GetInstance()
 
 CollectionMap<PIBindingRegion> PIPrimer3::GetBindingRegions(ADNPointer<ADNPart> p)
 {
+  if (regionsMap_.find(p()) == regionsMap_.end()) {
+    CreateBindingRegions(p);
+  }
+
   return regionsMap_.at(p());
 }
 
@@ -84,9 +88,6 @@ ThermParam PIPrimer3::ExecuteNtthal(std::string leftSequence, std::string rightS
 
 void PIPrimer3::Calculate(ADNPointer<ADNPart> p, int oligo_conc, int mv, int dv)
 {
-  if (regionsMap_.find(p()) == regionsMap_.end()) {
-    CreateBindingRegions(p);
-  }
   auto regions = GetBindingRegions(p);
 
   SB_FOR(ADNPointer<PIBindingRegion> r, regions) {
@@ -94,7 +95,7 @@ void PIPrimer3::Calculate(ADNPointer<ADNPart> p, int oligo_conc, int mv, int dv)
     ThermParam res = ExecuteNtthal(seqs.first, seqs.second, oligo_conc, mv, dv);
     r->SetThermParam(res);
   }
-}
+}          
 
 void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
 {

@@ -844,7 +844,7 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph()
       scPos /= scCount;
 
       // Calculate local axis
-      SBVector3 e3SB = (prevPos - pos).normalizedVersion();
+      SBVector3 e3SB = (pos - prevPos).normalizedVersion();
       SBVector3 e2SB = (scPos - bbPos).normalizedVersion();
 
       ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(e3SB);
@@ -867,8 +867,13 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph()
       SBVector3 newE3 = (fPrime->GetNext()->GetPosition() - fPrime->GetPosition()).normalizedVersion();
       ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(newE3);
       fPrime->SetE3(e3);
+      ublas::vector<double> e1 = ADNVectorMath::CrossProduct(fPrime->GetE2(), e3);
+      fPrime->SetE1(e1);
     }
-
+    else if (ss->getNumberOfNucleotides() == 0) {
+      // delete single strands since it's empty
+      part->DeregisterSingleStrand(ss);
+    }
   }
 
   BuildTopScales(part);
@@ -1131,7 +1136,7 @@ void ADNLoader::BuildTopScales(ADNPointer<ADNPart> part)
 {
   auto dh_radius = SBQuantity::nanometer(ADNConstants::DH_DIAMETER)*0.5;
   SBQuantity::length maxCutOff = dh_radius + SBQuantity::nanometer(0.2);
-  SBQuantity::length minCutOff = dh_radius - SBQuantity::nanometer(0.2);
+  SBQuantity::length minCutOff = dh_radius - SBQuantity::nanometer(0.1);
   auto neighbors = ADNNeighbors();
   neighbors.SetMaxCutOff(maxCutOff);
   neighbors.SetMinCutOff(minCutOff);
@@ -1156,6 +1161,7 @@ void ADNLoader::BuildTopScales(ADNPointer<ADNPart> part)
 
       auto ntBors = neighbors.GetNeighbors(nt);
       double maxCos = 0.0;
+      SBQuantity::length minDist = SBQuantity::nanometer(ADNConstants::DH_DIAMETER);
 
       ADNPointer<ADNNucleotide> pair = nullptr;
       // check possible base pairing against the neighbors
@@ -1168,12 +1174,14 @@ void ADNLoader::BuildTopScales(ADNPointer<ADNPart> part)
         // check that they are "in front" of each other
         ublas::vector<double> df = ADNAuxiliary::SBPositionToUblas(dif);
         double n = ublas::inner_prod(e2Nt, df);
-        double angle_threshold = 10.0;
-        if (n > 0 && t < 0.0 && abs(t) > cos(ADNVectorMath::DegToRad(angle_threshold))) {
-          // possible paired, take most coplanar
-          if (abs(t) > maxCos) {
+        double angle_threshold = 49.0;
+        // check they are complementary
+        bool comp = ADNModel::GetComplementaryBase(nt->GetType()) == bor->GetType();
+        if (n > 0 && t < 0.0 && abs(t) > cos(ADNVectorMath::DegToRad(angle_threshold)) && comp) {
+          // possible paired, take closest
+          if (dif.norm() < minDist) {
             pair = bor;
-            maxCos = abs(t);
+            minDist = dif.norm();
           }
         }
       }
@@ -1210,8 +1218,8 @@ void ADNLoader::BuildTopScales(ADNPointer<ADNPart> part)
 
       bool breakDs = false;
       double turningThreshold = 0.0;
-      if (pair == nullptr && nt->GetEnd() != NotEnd) breakDs = true;
-      else if (pair != nullptr && nt->GetEnd() != NotEnd && pair->GetEnd() != NotEnd) breakDs = true;
+      //if (pair == nullptr && nt->GetEnd() != NotEnd) breakDs = true;
+      //else if (pair != nullptr && nt->GetEnd() == ThreePrime && pair->GetEnd() == FivePrime) breakDs = true;
       if (nt->GetEnd() != ThreePrime) {
         // if huge change in directionality, make new strand
         ADNPointer<ADNNucleotide> ntNext = nt->GetNext();

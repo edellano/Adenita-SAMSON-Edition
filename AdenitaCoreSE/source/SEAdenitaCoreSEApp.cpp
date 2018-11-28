@@ -257,6 +257,27 @@ void SEAdenitaCoreSEApp::DeleteNucleotide()
   }
 }
 
+void SEAdenitaCoreSEApp::TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle)
+{
+  DASBackToTheAtom btta = DASBackToTheAtom();
+  SEConfig& config = SEConfig::GetInstance();
+
+  SB_FOR(ADNPointer<ADNDoubleStrand> ds, dss) {
+    double newDeg = ds->GetInitialTwistAngle() + angle;
+    ADNBasicOperations::TwistDoubleHelix(ds, newDeg);
+    // recalculate positions
+    btta.SetDoubleStrandPositions(ds);
+    if (config.use_atomic_details) {
+      // todo: calculate all atoms just for a double strand
+      //btta.GenerateAllAtomModel(ds);
+    }
+  }
+
+  if (dss.size() > 0) {
+    ResetVisualModel();
+  }
+}
+
 void SEAdenitaCoreSEApp::CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal)
 {
   auto part = DASCreator::CreateDSRing(radius, center, normal);
@@ -368,13 +389,25 @@ void SEAdenitaCoreSEApp::TestNeighbors()
   auto neighbors = ADNNeighbors();
   neighbors.SetMaxCutOff(SBQuantity::nanometer(config.debugOptions.maxCutOff));
   neighbors.SetMinCutOff(SBQuantity::nanometer(config.debugOptions.minCutOff));
-  //neighbors.SetIncludePairs(true);
+  neighbors.SetIncludePairs(true);
   neighbors.InitializeNeighbors(part);
 
   // highlight neighbors of selected nucleotide
   auto ntNeighbors = neighbors.GetNeighbors(nt);
   SB_FOR(ADNPointer<ADNNucleotide> ntN, ntNeighbors) {
-    ntN->setSelectionFlag(true);
+    //SBPosition3 posBor = ntN->GetPosition();
+    //SBPosition3 dif = posBor - nt->GetPosition();
+    //auto e2Bor = ntN->GetE2();
+    //// check right directionality and co-planarity
+    //double t = ublas::inner_prod(nt->GetE2(), e2Bor);
+    //// check that they are "in front" of each other
+    //ublas::vector<double> df = ADNAuxiliary::SBPositionToUblas(dif);
+    //double n = ublas::inner_prod(nt->GetE2(), df);
+    //double angle_threshold = config.debugOptions.customDouble;
+    //double th = cos(ADNVectorMath::DegToRad(angle_threshold));
+    //if (n > 0 && t < 0.0 && abs(t) > th) {
+      ntN->setSelectionFlag(true);
+    //}
   }
 
   ResetVisualModel();
@@ -504,7 +537,7 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool cal
 
   if (c.auto_calculate_binding_regions) {
     PIPrimer3& p = PIPrimer3::GetInstance();
-    p.Calculate(part, 100, 5, 16);
+    //p.Calculate(part, 100, 5, 16);
   }
 }
 
