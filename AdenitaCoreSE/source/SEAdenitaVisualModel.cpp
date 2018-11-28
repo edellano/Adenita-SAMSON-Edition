@@ -54,7 +54,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
     this, 
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
   
-  changeScale(4);
+  changeScale(7);
 
   setupPropertyColors();
 
@@ -266,7 +266,7 @@ void SEAdenitaVisualModel::initBaseSegmentArraysForDisplay(bool createIndex /*= 
   //unsigned int nCylinders = boost::numeric_cast<unsigned int>(nPositions - singleStrands.size());
 
   nPositions_ = nPositions;
-  //nCylinders_ = nCylinders;
+  nCylinders_ = 0;
   positions_ = ADNArray<float>(3, nPositions);
   radiiV_ = ADNArray<float>(nPositions);
   radiiE_ = ADNArray<float>(nPositions);
@@ -276,9 +276,6 @@ void SEAdenitaVisualModel::initBaseSegmentArraysForDisplay(bool createIndex /*= 
   flags_ = ADNArray<unsigned int>(nPositions);
   nodeIndices_ = ADNArray<unsigned int>(nPositions);
 
-  if (createIndex) {
-    indices_ = getBaseSegmentIndices();
-  }
 
 }
 
@@ -365,15 +362,6 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 
 }
 
-ADNArray<unsigned int> SEAdenitaVisualModel::getBaseSegmentIndices()
-{
-  unsigned int nCylinders = 0;
-
-  ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
-
-  return indices;
-
-}
 
 void SEAdenitaVisualModel::prepareArraysForDisplay()
 {
@@ -1563,38 +1551,32 @@ void SEAdenitaVisualModel::displayDoubleStrands()
   auto parts = nanorobot_->GetParts();
 
   MSVColors * curColors = colors_[curColorType_];
-
   positions_ = ADNArray<float>(3, nPositions_);
   radiiV_ = ADNArray<float>(nPositions_);
   flags_ = ADNArray<unsigned int>(nPositions_);
   colorsV_ = ADNArray<float>(4, nPositions_);
   nodeIndices_ = ADNArray<unsigned int>(nPositions_);
-  capData_ = ADNArray<unsigned int>(nPositions_);
 
   unsigned int index = 0; //fix this with map
 
   SB_FOR(auto part, parts) {
     auto doubleStrands = part->GetDoubleStrands();
-
+    //for now also the base segments that have loops and skips are displayed as sphere
     SB_FOR(auto doubleStrand, doubleStrands) {
       auto baseSegments = doubleStrand->GetBaseSegments();
 
       SB_FOR(auto baseSegment, baseSegments) {
         auto cell = baseSegment->GetCell();
 
-        if (cell->GetType() == BasePair) {
-          SBPosition3 pos = baseSegment->GetPosition();
-          positions_(index, 0) = (float)pos.v[0].getValue();
-          positions_(index, 1) = (float)pos.v[1].getValue();
-          positions_(index, 2) = (float)pos.v[2].getValue();
-        }
+        SBPosition3 pos = baseSegment->GetPosition();
+        positions_(index, 0) = (float)pos.v[0].getValue();
+        positions_(index, 1) = (float)pos.v[1].getValue();
+        positions_(index, 2) = (float)pos.v[2].getValue();
 
         auto color = curColors->GetColor(baseSegment);
         colorsV_.SetRow(index, color);
 
         radiiV_(index) = config.base_pair_radius;
-
-        capData_(index) = 1;
 
         flags_(index) = baseSegment->getInheritedFlags();
 
@@ -1607,6 +1589,8 @@ void SEAdenitaVisualModel::displayDoubleStrands()
         }
 
         ++index;
+
+        
 
       }
     }

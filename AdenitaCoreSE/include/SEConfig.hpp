@@ -46,8 +46,8 @@ public:
   // visual_model settin
   float min_melting_temp = 25.0f;
   float max_melting_temp = 80.0f;
-  float min_gibbs_free_energy = -10000.0f;
-  float max_gibbs_free_energy = 0.0f;
+  float min_gibbs_free_energy = 0.0f;
+  float max_gibbs_free_energy = -10000.0f;
   bool interpolate_dimensions = true;
   float animation_step_size = 0.0f;
   double double_helix_V_color[4] = { 0.0f, 0.43f, 0.86f, 1.0f };
