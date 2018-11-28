@@ -40,23 +40,64 @@ void SEDSDNACreatorEditor::SetBoxSize(double height, double width, double depth)
   boxDepth_ = SBQuantity::nanometer(depth);
 }
 
+void SEDSDNACreatorEditor::SetCircular(bool c)
+{
+  circular_ = c;
+}
+
+void SEDSDNACreatorEditor::SetManual(bool m)
+{
+  manual_ = m;
+}
+
+void SEDSDNACreatorEditor::SetNumberNucleotides(int n)
+{
+  numNts_ = n;
+}
+
 ADNPointer<ADNPart> SEDSDNACreatorEditor::generateStrand(bool mock)
 {
-  auto roundHeight = (positions_.Second - positions_.First).norm();
-  auto numNucleotides = round( (roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue() );
+  auto length = (positions_.SecondPosition - positions_.FirstPosition).norm();
+  auto numNucleotides = numNts_;
+  if (!manual_ || numNucleotides == 0) {
+    numNucleotides = round((length / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
+  }
+  // if (manual_) we already have the number of nucleotides, we just need a direction
+
   ADNPointer<ADNPart> part = nullptr;
 
   if (numNucleotides > 0) {
     part = new ADNPart();
 
-    SBVector3 dir = (positions_.Second - positions_.First).normalizedVersion();
+    SBVector3 dir = (positions_.SecondPosition - positions_.FirstPosition).normalizedVersion();
 
     if (dsMode_) {
-      DASCreator::CreateDoubleStrand(part, numNucleotides, positions_.First, dir, mock);
+      DASCreator::CreateDoubleStrand(part, numNucleotides, positions_.FirstPosition, dir, mock);
     }
     else {
-      DASCreator::CreateSingleStrand(part, numNucleotides, positions_.First, dir, mock);
+      DASCreator::CreateSingleStrand(part, numNucleotides, positions_.FirstPosition, dir, mock);
     }
+  }
+
+  return part;
+}
+
+ADNPointer<ADNPart> SEDSDNACreatorEditor::generateCircularStrand(bool mock)
+{
+  ADNPointer<ADNPart> part = nullptr;
+
+  //auto radius = (positions_.SecondPosition - positions_.FirstPosition).norm();
+  double pi = atan(1) * 4;
+  auto numNucleotides = numNts_;
+  auto radius = numNucleotides * SBQuantity::nanometer(ADNConstants::BP_RISE) * 0.5 / pi;
+  if (!manual_ || numNucleotides == 0) {
+    radius = (positions_.SecondPosition - positions_.FirstPosition).norm();
+    numNucleotides = round((2 * pi * radius / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
+  }
+
+  if (numNucleotides > 0) {
+    if (dsMode_) part = DASCreator::CreateDSRing(radius, positions_.FirstPosition, positions_.FirstVector, mock);
+    else part = DASCreator::CreateSSRing(radius, positions_.FirstPosition, positions_.FirstVector, mock);
   }
 
   return part;
@@ -194,12 +235,15 @@ void SEDSDNACreatorEditor::display() {
   if (display_) {
     SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
 
-    if (positions_.cnt == 1) {
-      ADNDisplayHelper::displayLine(positions_.First, currentPosition);
-      positions_.Second = currentPosition;
+    if (positions_.positionsCounter == 1) {
+      ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
+      positions_.SecondPosition = currentPosition;
     }
 
-    if (config.preview_editor) tempPart_ = generateStrand(true);
+    if (config.preview_editor) {
+      if (!circular_) tempPart_ = generateStrand(true);
+      else tempPart_ = generateCircularStrand(true);
+    }
 
     if (tempPart_ != nullptr) {
       glEnable(GL_DEPTH_TEST);
@@ -236,9 +280,12 @@ void SEDSDNACreatorEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
-  if (positions_.cnt == 0) {
-    positions_.First = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
-    positions_.cnt++;
+  if (positions_.positionsCounter == 0) {
+    positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    positions_.positionsCounter++;
+
+    positions_.FirstVector = SAMSON::getActiveCamera()->getBasisZ().normalizedVersion();
+    positions_.vectorsCounter++;
   }
 }
 
@@ -247,11 +294,14 @@ void SEDSDNACreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
-  if (positions_.cnt == 1) {
-    positions_.Second = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
-    positions_.cnt++;
+  if (positions_.positionsCounter == 1) {
+    positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    positions_.positionsCounter++;
 
-    ADNPointer<ADNPart> part = generateStrand();
+    ADNPointer<ADNPart> part = nullptr;
+    if (!circular_) part = generateStrand();
+    else part = generateCircularStrand();
+
     sendPartToAdenita(part);
     DASCreatorEditors::resetPositions(positions_);
     display_ = false;
@@ -265,8 +315,9 @@ void SEDSDNACreatorEditor::mouseMoveEvent(QMouseEvent* event) {
 	// Implement this function to handle this event with your editor.
   if (event->buttons() == Qt::LeftButton) {
     display_ = true;
-    SAMSON::requestViewportUpdate();
+    //SAMSON::requestViewportUpdate();
   }
+
   SAMSON::requestViewportUpdate();
 }
 

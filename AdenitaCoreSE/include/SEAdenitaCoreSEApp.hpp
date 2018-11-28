@@ -51,6 +51,7 @@ public :
   void ConnectSingleStrands();
   void BreakSingleStrand();
   void DeleteNucleotide();
+  void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
   // Debug
   void CenterPart();
   void CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);

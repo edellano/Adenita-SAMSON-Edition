@@ -1,18 +1,18 @@
-#include "SEConnectDSDNAEditor.hpp"
+#include "SETwistHelixEditor.hpp"
 #include "SAMSON.hpp"
 
 
-SEConnectDSDNAEditor::SEConnectDSDNAEditor() {
+SETwistHelixEditor::SETwistHelixEditor() {
 
 	// SAMSON Element generator pro tip: this default constructor is called when unserializing the node, so it should perform all default initializations.
 
-	propertyWidget = new SEConnectDSDNAEditorGUI(this);
+	propertyWidget = new SETwistHelixEditorGUI(this);
 	propertyWidget->loadDefaultSettings();
 	SAMSON::addWidget(propertyWidget);
 
 }
 
-SEConnectDSDNAEditor::~SEConnectDSDNAEditor() {
+SETwistHelixEditor::~SETwistHelixEditor() {
 
 	// SAMSON Element generator pro tip: disconnect from signals you might have connected to.
 
@@ -21,41 +21,52 @@ SEConnectDSDNAEditor::~SEConnectDSDNAEditor() {
 
 }
 
-SEConnectDSDNAEditorGUI* SEConnectDSDNAEditor::getPropertyWidget() const { return static_cast<SEConnectDSDNAEditorGUI*>(propertyWidget); }
+SETwistHelixEditorGUI* SETwistHelixEditor::getPropertyWidget() const { return static_cast<SETwistHelixEditorGUI*>(propertyWidget); }
 
-SEAdenitaCoreSEApp* SEConnectDSDNAEditor::getAdenitaApp() const
+void SETwistHelixEditor::SetTwistAngle(double angle)
+{
+  twistAngle_ = angle;
+}
+
+void SETwistHelixEditor::SetMode(bool t)
+{
+  SETwistHelixEditorGUI* gui = getPropertyWidget();
+  gui->CheckPlusOrMinus(t);
+}
+
+SEAdenitaCoreSEApp* SETwistHelixEditor::getAdenitaApp() const
 {
   return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 }
 
-SBCContainerUUID SEConnectDSDNAEditor::getUUID() const { return SBCContainerUUID("C39F7E83-85A0-63D8-E213-96D73780DF78"); }
+SBCContainerUUID SETwistHelixEditor::getUUID() const { return SBCContainerUUID("4B60FECA-2A79-680F-F289-B4908A924409"); }
 
-QString SEConnectDSDNAEditor::getName() const { 
+QString SETwistHelixEditor::getName() const {
 
 	// SAMSON Element generator pro tip: this name should not be changed
 
-  return "SEConnectDSDNAEditor";
+	return "SETwistHelixEditor"; 
 
 }
 
-QString SEConnectDSDNAEditor::getText() const { 
+QString SETwistHelixEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("Connect dsDNA strands"); 
+	return QObject::tr("Twist dsDNA"); 
 
 }
 
-QPixmap SEConnectDSDNAEditor::getLogo() const {
+QPixmap SETwistHelixEditor::getLogo() const {
 
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
 	// Modify it to better reflect the purpose of your editor.
 
-	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/connectDS.png"));
+	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/twistDS.png"));
 
 }
 
-QKeySequence SEConnectDSDNAEditor::getShortcut() const { 
+QKeySequence SETwistHelixEditor::getShortcut() const {
 	
 	// SAMSON Element generator pro tip: modify this function to associate a tentative shortcut to your editor
 
@@ -63,29 +74,29 @@ QKeySequence SEConnectDSDNAEditor::getShortcut() const {
 
 }
 
-QString SEConnectDSDNAEditor::getToolTip() const { 
+QString SETwistHelixEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("Connect dsDNA strands"); 
+	return QObject::tr("Twist dsDNA"); 
 
 }
 
-void SEConnectDSDNAEditor::beginEditing() {
+void SETwistHelixEditor::beginEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 
 	// Implement this function if you need to prepare some data structures in order to be able to handle GUI or SAMSON events.
 
 }
 
-void SEConnectDSDNAEditor::endEditing() {
+void SETwistHelixEditor::endEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function immediately before your editor becomes inactive (for example when another editor becomes active). 
 	// Implement this function if you need to clean some data structures.
 
 }
 
-void SEConnectDSDNAEditor::getActions(SBVector<SBAction*>& actionVector) {
+void SETwistHelixEditor::getActions(SBVector<SBAction*>& actionVector) {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function to show the user actions associated to your editor in context menus.
 	// Append actions to the actionVector if necessary.
@@ -93,29 +104,15 @@ void SEConnectDSDNAEditor::getActions(SBVector<SBAction*>& actionVector) {
 
 }
 
-void SEConnectDSDNAEditor::display() {
+void SETwistHelixEditor::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
 
-  if (display_) {
-    SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
-    
-    //check if a base segment got selected
-    auto app = getAdenitaApp();
-    auto nanorobot = app->GetNanorobot();
-    auto highlightedBaseSegments = nanorobot->GetHighlightedBaseSegments();
-    
-    if (highlightedBaseSegments.size() == 1) {
-      currentPosition = highlightedBaseSegments[0]->GetPosition();
-    }
-    
-    ADNDisplayHelper::displayCylinder(start_->GetPosition(), currentPosition);
-  }
 
 }
 
-void SEConnectDSDNAEditor::displayForShadow() {
+void SETwistHelixEditor::displayForShadow() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to compute shadows. 
 	// Implement this function if your editor displays things in viewports, so that your editor can cast shadows
@@ -124,7 +121,7 @@ void SEConnectDSDNAEditor::displayForShadow() {
 
 }
 
-void SEConnectDSDNAEditor::displayInterface() {
+void SETwistHelixEditor::displayInterface() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to display the editor 2D interface in viewports. 
 	// Implement this function if your editor displays a 2D user interface. For example, a rectangle selection editor would display a 2D rectangle in the active viewport. 
@@ -132,121 +129,87 @@ void SEConnectDSDNAEditor::displayInterface() {
 
 }
 
-void SEConnectDSDNAEditor::mousePressEvent(QMouseEvent* event) {
+void SETwistHelixEditor::mousePressEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
-  if (event->buttons() == Qt::LeftButton && !display_) {
-    //check if a base segment got selected
+  if (event->buttons() == Qt::LeftButton) {
     auto app = getAdenitaApp();
     auto nanorobot = app->GetNanorobot();
 
-    auto selectedBaseSegments = nanorobot->GetSelectedBaseSegments();
-    auto highlightedBaseSegments = nanorobot->GetHighlightedBaseSegments();
+    auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
 
-    SB_FOR(auto node, selectedBaseSegments) {
-      node->setSelectionFlag(false);
+    CollectionMap<ADNDoubleStrand> highlightedDoubleStrands;
+    SB_FOR(ADNPointer<ADNNucleotide> nt, highlightedNucleotides) {
+      ADNPointer<ADNDoubleStrand> ds = nanorobot->GetDoubleStrand(nt);
+      highlightedDoubleStrands.addReferenceTarget(ds());
     }
 
-    if (highlightedBaseSegments.size() == 1) {
-      auto bs = highlightedBaseSegments[0];
-      bs->setSelectionFlag(true);
-      start_ = bs;
-      display_ = true;
-    }
+    app->TwistDoubleHelix(highlightedDoubleStrands, twistAngle_);
   }
 }
 
-void SEConnectDSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
+void SETwistHelixEditor::mouseReleaseEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
   
-  if (display_) {
-    display_ = false;
-
-    auto app = getAdenitaApp();
-    auto nanorobot = app->GetNanorobot();
-
-    auto highlightedBaseSegments = nanorobot->GetHighlightedBaseSegments();
-    
-    if (highlightedBaseSegments.size() == 1) {
-      auto start = start_;
-      ADNPointer<ADNBaseSegment> end = highlightedBaseSegments[0];
-      if (!end->IsEnd()) end = end->GetNext();
-      ADNPointer<ADNPart> part = nanorobot->GetPart(end->GetDoubleStrand());
-      if (start->IsFirst()) {
-        auto store = start;
-        start = end;
-        end = store;
-      }
-      auto dsLeftOvers = DASOperations::CreateDsCrossover(part, start, end);
-      if (dsLeftOvers.first != nullptr) nanorobot->RemoveDoubleStrand(dsLeftOvers.first);
-      if (dsLeftOvers.second != nullptr) nanorobot->RemoveDoubleStrand(dsLeftOvers.second);
-      if (dsLeftOvers.third != nullptr) nanorobot->RemoveDoubleStrand(dsLeftOvers.third);
-      if (dsLeftOvers.fourth != nullptr) nanorobot->RemoveDoubleStrand(dsLeftOvers.fourth);
-      app->ResetVisualModel();
-    }
-  }
-
 }
 
-void SEConnectDSDNAEditor::mouseMoveEvent(QMouseEvent* event) {
-
-	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
-	// Implement this function to handle this event with your editor.
-  if (display_) {
-    SAMSON::requestViewportUpdate();
-  }
-}
-
-void SEConnectDSDNAEditor::mouseDoubleClickEvent(QMouseEvent* event) {
+void SETwistHelixEditor::mouseMoveEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SEConnectDSDNAEditor::wheelEvent(QWheelEvent* event) {
+void SETwistHelixEditor::mouseDoubleClickEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SEConnectDSDNAEditor::keyPressEvent(QKeyEvent* event) {
+void SETwistHelixEditor::wheelEvent(QWheelEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SEConnectDSDNAEditor::keyReleaseEvent(QKeyEvent* event) {
+void SETwistHelixEditor::keyPressEvent(QKeyEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SEConnectDSDNAEditor::onBaseEvent(SBBaseEvent* baseEvent) {
+void SETwistHelixEditor::keyReleaseEvent(QKeyEvent* event) {
+
+	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
+	// Implement this function to handle this event with your editor.
+
+}
+
+void SETwistHelixEditor::onBaseEvent(SBBaseEvent* baseEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle base events
 
 }
 
-void SEConnectDSDNAEditor::onDocumentEvent(SBDocumentEvent* documentEvent) {
+void SETwistHelixEditor::onDocumentEvent(SBDocumentEvent* documentEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle document events 
 
 }
 
-void SEConnectDSDNAEditor::onDynamicalEvent(SBDynamicalEvent* dynamicalEvent) {
+void SETwistHelixEditor::onDynamicalEvent(SBDynamicalEvent* dynamicalEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle dynamical events 
 
 }
 
-void SEConnectDSDNAEditor::onStructuralEvent(SBStructuralEvent* documentEvent) {
+void SETwistHelixEditor::onStructuralEvent(SBStructuralEvent* documentEvent) {
 	
 	// SAMSON Element generator pro tip: implement this function if you need to handle structural events
 

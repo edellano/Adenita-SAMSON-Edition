@@ -2,16 +2,16 @@
 
 
 #include "SBGWindowWidget.hpp" 
-#include "ui_SEDSDNACreatorEditorGUI.h"
+#include "ui_SETwistHelixEditorGUI.h"
 
-class SEDSDNACreatorEditor;
+class SETwistHelixEditor;
 
 /// This class implements the GUI of the editor
 
 // SAMSON Element generator pro tip: add GUI functionality in this class. 
-// The non-GUI functionality (and the mouse and keyboard event handling methods that are specific to the editor) should go in the SEDSDNACreatorEditor class
+// The non-GUI functionality (and the mouse and keyboard event handling methods that are specific to the editor) should go in the SEConnectSSDNAEditor class
 
-class SEDSDNACreatorEditorGUI : public SBGWindowWidget {
+class SETwistHelixEditorGUI : public SBGWindowWidget {
 
 	Q_OBJECT
 
@@ -20,15 +20,15 @@ public:
 	/// \name Constructors and destructors
 	//@{
 
-	SEDSDNACreatorEditorGUI(SEDSDNACreatorEditor* editor);																		///< Constructs a GUI for the editor
-	virtual ~SEDSDNACreatorEditorGUI();																										///< Destructs the GUI of the editor
+  SETwistHelixEditorGUI(SETwistHelixEditor* editor);																		///< Constructs a GUI for the editor
+	virtual ~SETwistHelixEditorGUI();																										///< Destructs the GUI of the editor
 
 	//@}
 
 	/// \name Editor
 	//@{
 
-	SEDSDNACreatorEditor*												getEditor() const;														///< Returns a pointer to the editor
+  SETwistHelixEditor*												getEditor() const;														///< Returns a pointer to the editor
 
 	//@}
 
@@ -51,20 +51,21 @@ public:
 
 	//@}
 
-public slots:
+  //! Sets the mode to plus or minus, for use with Adenita App menu
+  void CheckPlusOrMinus(bool plus);
 
-  void onSetDSDNA(bool b);
-  void onSetSSDNA(bool b);
-  void onSetCircular(bool c);
-  void onSetManual(bool b);
-  void onSetNumNucleotides(int n);
-  void onShowBox(bool s);
-  void onChangeBoxSize();
+public slots:
+  void onMinus(bool checked);
+  void onPlus(bool checked);
+  void onTwistAngle(bool checked);
+  void onTwistTurns(bool checked);
+  void onTwistAngleChanged(double angle);
+  void onTwistTurnsChanged(int turns);
 
 private:
 
-	Ui::SEDSDNACreatorEditorGUIClass									ui;
-	SEDSDNACreatorEditor*												editor;
+	Ui::SETwistHelixEditorGUIClass									ui;
+  SETwistHelixEditor*												editor;
 
 };
 

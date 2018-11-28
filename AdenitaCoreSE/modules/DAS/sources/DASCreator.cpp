@@ -201,7 +201,14 @@ ADNPointer<ADNPart> DASCreator::CreateMockNanotube(SBQuantity::length radius, SB
 ADNPointer<ADNPart> DASCreator::CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock)
 {
   ADNPointer<ADNPart> part = new ADNPart();
-  DASCreator::AddDSRingToADNPart(part, radius, center, normal);
+  DASCreator::AddRingToADNPart(part, radius, center, normal, false, mock);
+  return part;
+}
+
+ADNPointer<ADNPart> DASCreator::CreateSSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock)
+{
+  ADNPointer<ADNPart> part = new ADNPart();
+  DASCreator::AddRingToADNPart(part, radius, center, normal, true, mock);
   return part;
 }
 
@@ -220,7 +227,7 @@ ADNPointer<ADNPart> DASCreator::CreateLinearCatenanes(SBQuantity::length radius,
   double theta = pi*0.5*0.95;
   for (int i = 0; i < number; i++) {
     auto n = normal+cos(theta)*w;
-    DASCreator::AddDSRingToADNPart(part, radius, start, n.normalizedVersion());
+    DASCreator::AddRingToADNPart(part, radius, start, n.normalizedVersion(), false);
     // calculate next center and normal
     start = start + (2 * radius - dist)*v;
     w *= -1.0;
@@ -254,14 +261,14 @@ ADNPointer<ADNPart> DASCreator::CreateHexagonalCatenanes(SBQuantity::length radi
       normal[1] = theta;
       normal[2] = pi * 0.5 + sigW * pi * 0.5;
       SBVector3 n = ADNAuxiliary::UblasVectorToSBVector(ADNVectorMath::Spherical2Cartesian(normal));
-      DASCreator::AddDSRingToADNPart(part, radius, c, n.normalizedVersion());
+      DASCreator::AddRingToADNPart(part, radius, c, n.normalizedVersion(), false);
     }
   }
 
   return part;
 }
 
-ADNPointer<ADNDoubleStrand> DASCreator::AddDSRingToADNPart(ADNPointer<ADNPart> part, SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool mock)
+ADNPointer<ADNDoubleStrand> DASCreator::AddRingToADNPart(ADNPointer<ADNPart> part, SBQuantity::length radius, SBPosition3 center, SBVector3 normal, bool ssDNA, bool mock)
 {
   ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
   ADNPointer<ADNSingleStrand> ssLeft = new ADNSingleStrand();
@@ -269,7 +276,7 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddDSRingToADNPart(ADNPointer<ADNPart> p
   part->RegisterDoubleStrand(ds);
   if (!mock) {
     part->RegisterSingleStrand(ssLeft);
-    part->RegisterSingleStrand(ssRight);
+    if (!ssDNA) part->RegisterSingleStrand(ssRight);
   }
 
   double pi = atan(1.0) * 4.0;
@@ -322,17 +329,19 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddDSRingToADNPart(ADNPointer<ADNPart> p
       ntLeft->SetBaseSegment(bs);
       ntLeft->SetType(DNABlocks::DI);
 
-      ADNPointer<ADNNucleotide> ntRight = new ADNNucleotide();
-      part->RegisterNucleotideFivePrime(ssRight, ntRight);
-      cell->SetRightNucleotide(ntRight);
-      ntRight->SetPosition(bs->GetPosition());
-      ntRight->SetBackbonePosition(bs->GetPosition());
-      ntRight->SetSidechainPosition(bs->GetPosition());
-      ntRight->SetBaseSegment(bs);
-      ntRight->SetType(DNABlocks::DI);
+      if (!ssDNA) {
+        ADNPointer<ADNNucleotide> ntRight = new ADNNucleotide();
+        part->RegisterNucleotideFivePrime(ssRight, ntRight);
+        cell->SetRightNucleotide(ntRight);
+        ntRight->SetPosition(bs->GetPosition());
+        ntRight->SetBackbonePosition(bs->GetPosition());
+        ntRight->SetSidechainPosition(bs->GetPosition());
+        ntRight->SetBaseSegment(bs);
+        ntRight->SetType(DNABlocks::DI);
 
-      ntLeft->SetPair(ntRight);
-      ntRight->SetPair(ntLeft);
+        ntLeft->SetPair(ntRight);
+        ntRight->SetPair(ntLeft);
+      }
     }
 
     bs->SetCell(cell());
@@ -450,13 +459,12 @@ ADNPointer<ADNSingleStrand> DASCreator::AddSingleStrandToADNPart(ADNPointer<ADNP
   return ss;
 }
 
-void DASCreatorEditors::resetPositions(Positions& pos)
+void DASCreatorEditors::resetPositions(UIData& pos)
 {
-  pos.First = SBPosition3();
-  pos.Second = SBPosition3();
-  pos.Third = SBPosition3();
-  pos.Fourth = SBPosition3();
-  pos.Fifth = SBPosition3();
-  pos.Sixth = SBPosition3();
-  pos.cnt = 0;
+  pos.FirstPosition = SBPosition3();
+  pos.SecondPosition = SBPosition3();
+  pos.ThirdPosition = SBPosition3();
+  pos.FirstVector = SBVector3();
+  pos.positionsCounter = 0;
+  pos.vectorsCounter = 0;
 }

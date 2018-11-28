@@ -67,6 +67,9 @@ public slots:
   void onConnectSingleStrands();
   void onBreak();
   void onDelete();
+  void onTwistDoubleHelixMinus(bool toggled);
+  void onTwistDoubleHelixPlus(bool toggled);
+  // Options
   void onChangeScaffold(int idx);
   // Debug
   void onCenterPart();
@@ -74,7 +77,6 @@ public slots:
   void onCatenanes();
   void onKinetoplast();
   void onCalculateBindingRegions();
-  void onTwistDoubleHelix();
   void onSetStart();
   void onMergeComponents();
   void onTestNeighbors();

@@ -104,6 +104,7 @@ private:
   NtPair ParseBasePairPDB(std::string source);
 
   void PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosition3 bsPositionPrev, SBPosition3 bsPositionNext);
+  void PositionLoopNucleotidesQBezier(ADNPointer<ADNLoop> loop, SBPosition3 bsPositionPrev, SBPosition3 bsPositionNext, SBVector3 bsPrevE3, SBVector3 bsNextE3);
 
   void PopulateNucleotideWithAllAtoms(ADNPointer<ADNPart> origami, ADNPointer<ADNNucleotide> nt);
   void CreateBonds(ADNPointer<ADNPart> origami);
