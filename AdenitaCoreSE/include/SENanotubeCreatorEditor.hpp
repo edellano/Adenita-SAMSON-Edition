@@ -110,6 +110,7 @@ private:
   ADNPointer<ADNPart> generateNanotube(bool mock = false);
   void displayNanotube();
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
+  void updateGUI(SBQuantity::length radius, int numBp, bool clear = false);
 
   DASCreatorEditors::UIData positions_;
   bool display_ = false;

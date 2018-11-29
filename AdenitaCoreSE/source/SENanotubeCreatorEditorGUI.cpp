@@ -32,10 +32,11 @@ void SENanotubeCreatorEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
-void SENanotubeCreatorEditorGUI::updateInfo(double radius, int numBp, bool clear)
+void SENanotubeCreatorEditorGUI::updateInfo(SBQuantity::length radius, int numDs, int numBp, bool clear)
 {
   if (!clear) {
-    ui.txtInfo->setText("Radius (nm): " + QString::number(radius));
+    ui.txtInfo->setText("Radius (nm): " + QString::number(radius.getValue() / 1000));
+    ui.txtInfo->append("Number of double strands: " + QString::number(numDs));
     ui.txtInfo->append("Length (base pairs): " + QString::number(numBp));
   }
   else {
