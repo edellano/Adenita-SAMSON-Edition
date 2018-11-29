@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>403</width>
-    <height>177</height>
+    <width>460</width>
+    <height>206</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>403</width>
+    <width>460</width>
     <height>177</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>403</width>
-    <height>177</height>
+    <width>460</width>
+    <height>212</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -28,28 +28,14 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0" rowspan="2">
-      <widget class="QCheckBox" name="chkPredefined">
-       <property name="text">
-        <string>Predefined size</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QDoubleSpinBox" name="spnRadius">
-       <property name="maximum">
-        <double>1000.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1" colspan="2">
+     <item row="4" column="1" colspan="2">
       <widget class="QRadioButton" name="chkRoutingSeamless">
        <property name="text">
         <string>Seamless</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1" colspan="2">
+     <item row="3" column="1" colspan="2">
       <widget class="QRadioButton" name="chkRoutingNone">
        <property name="text">
         <string>None</string>
@@ -59,35 +45,42 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="2">
+      <widget class="QDoubleSpinBox" name="spnRadius">
+       <property name="maximum">
+        <double>1000.000000000000000</double>
+       </property>
+      </widget>
+     </item>
      <item row="1" column="1">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Length (bp)</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" rowspan="4">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Select a routing</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Radius (nm)</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1" colspan="2">
+     <item row="6" column="1" colspan="2">
       <widget class="QRadioButton" name="chkRoutingTiles">
        <property name="text">
         <string>Tiles</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="2" column="1">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Length (bp)</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" rowspan="4">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Select a routing</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
       <widget class="QSpinBox" name="spnNumBp">
        <property name="minimum">
         <number>1</number>
@@ -100,17 +93,38 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1" colspan="2">
+     <item row="5" column="1" colspan="2">
       <widget class="QRadioButton" name="chkRoutingNonSeamless">
        <property name="text">
         <string>Non-seamless</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="3" rowspan="6">
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Num. DsDNA</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" rowspan="3">
+      <widget class="QCheckBox" name="chkPredefined">
+       <property name="text">
+        <string>Predefined size</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3" rowspan="7">
       <widget class="QTextEdit" name="txtInfo">
        <property name="readOnly">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QSpinBox" name="spnNumDs">
+       <property name="maximum">
+        <number>9999</number>
        </property>
       </widget>
      </item>
@@ -232,11 +246,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>spnNumDs</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>SENanotubeCreatorEditorGUIClass</receiver>
+   <slot>onNumDsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>247</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>229</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onChangeRouting()</slot>
   <slot>onPredefinedNanotube(bool)</slot>
   <slot>onRadiusChanged()</slot>
   <slot>onBpChanged()</slot>
+  <slot>onNumDsChanged()</slot>
  </slots>
 </ui>
