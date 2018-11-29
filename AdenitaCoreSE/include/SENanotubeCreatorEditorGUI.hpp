@@ -59,6 +59,7 @@ public slots:
   void onPredefinedNanotube(bool predefined);
   void onRadiusChanged();
   void onBpChanged();
+  void onNumDsChanged();
 
 private:
 

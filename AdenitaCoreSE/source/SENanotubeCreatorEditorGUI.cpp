@@ -55,6 +55,8 @@ void SENanotubeCreatorEditorGUI::onPredefinedNanotube(bool predefined)
 void SENanotubeCreatorEditorGUI::onRadiusChanged()
 {
   double r = ui.spnRadius->value();
+  int numDs = ADNVectorMath::CalculateNanotubeDoubleStrands(SBQuantity::nanometer(r));
+  ui.spnNumDs->setValue(numDs);
   SENanotubeCreatorEditor* editor = getEditor();
   editor->SetRadius(r);
 }
@@ -64,6 +66,13 @@ void SENanotubeCreatorEditorGUI::onBpChanged()
   int bp = ui.spnNumBp->value();
   SENanotubeCreatorEditor* editor = getEditor();
   editor->SetBp(bp);
+}
+
+void SENanotubeCreatorEditorGUI::onNumDsChanged()
+{
+  int numDs = ui.spnNumDs->value();
+  auto r = ADNVectorMath::CalculateNanotubeRadius(numDs);
+  ui.spnRadius->setValue(r.getValue() / 1000.0);
 }
 
 void SENanotubeCreatorEditorGUI::onChangeRouting()
