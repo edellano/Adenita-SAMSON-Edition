@@ -7,6 +7,8 @@
 #include <boost/numeric/ublas/lu.hpp>
 #include <cmath>
 #include "SAMSON.hpp"
+#include "ADNConstants.hpp"
+
 
 namespace ublas = boost::numeric::ublas;
 
@@ -49,6 +51,10 @@ namespace ADNVectorMath {
   // SAMSON types operations
   SBVector3 SBCrossProduct(SBVector3 v, SBVector3 w);
   double SBInnerProduct(SBVector3 v, SBVector3 w);
+
+  //! Calculation of parameters of dna nanotubes
+  SBQuantity::length CalculateNanotubeRadius(int numDs);
+  int CalculateNanotubeDoubleStrands(SBQuantity::length radius);
 
   //! Bezier curves
   //! Calculates the length of a quadratic Bezier curve

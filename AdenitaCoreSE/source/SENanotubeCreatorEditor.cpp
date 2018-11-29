@@ -64,7 +64,8 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
   if (numNucleotides > 0) {
     if (mock) {
       if (positions_.positionsCounter == 1 && !predefined_) {
-        part = DASCreator::CreateMockNanotube(SBQuantity::picometer(1), positions_.FirstPosition, dir, numNucleotides);
+        radius = SBQuantity::picometer(1);
+        part = DASCreator::CreateMockNanotube(radius, positions_.FirstPosition, dir, numNucleotides);
       }
       else if (positions_.positionsCounter == 2 || predefined_) {
         part = DASCreator::CreateMockNanotube(radius, positions_.FirstPosition, dir, numNucleotides);
@@ -73,8 +74,7 @@ ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
     else {
       part = DASCreator::CreateNanotube(radius, positions_.FirstPosition, dir, numNucleotides);
     }
-    SENanotubeCreatorEditorGUI* gui = static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget);
-    gui->updateInfo(radius.getValue() / 1000, numNucleotides);
+    updateGUI(radius, numNucleotides);
   }
 
   return part;
@@ -92,6 +92,23 @@ void SENanotubeCreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
     adenita->AddPartToActiveLayer(nanotube);
     adenita->ResetVisualModel();
   }
+}
+
+void SENanotubeCreatorEditor::updateGUI(SBQuantity::length radius, int numBp, bool clear)
+{
+  if (numBp < 1) numBp = 0;
+
+  int minNumDs = 3;
+  SBQuantity::length minRadius = ADNVectorMath::CalculateNanotubeRadius(minNumDs);
+
+  int numDs = ADNVectorMath::CalculateNanotubeDoubleStrands(radius);
+  if (numDs < minNumDs || radius < minRadius) {
+    numDs = minNumDs;
+    radius = minRadius;
+  }
+
+  SENanotubeCreatorEditorGUI* gui = static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget);
+  gui->updateInfo(radius, numDs, numBp, clear);
 }
 
 SBCContainerUUID SENanotubeCreatorEditor::getUUID() const { return SBCContainerUUID("F9068FA3-69DE-B6FA-2B42-C80DA5302A0D"); }
@@ -221,9 +238,7 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
 	// Implement this function to handle this event with your editor.
 
   if (positions_.positionsCounter == 0) {
-
-    SENanotubeCreatorEditorGUI* gui = static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget);
-    gui->updateInfo(0.0, 0, true);
+    updateGUI(SBQuantity::nanometer(0.0), 0, true);
 
     positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;

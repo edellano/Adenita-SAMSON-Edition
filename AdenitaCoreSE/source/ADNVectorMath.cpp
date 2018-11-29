@@ -325,6 +325,31 @@ namespace ADNVectorMath {
     return res.getValue();
   }
 
+  SBQuantity::length CalculateNanotubeRadius(int numDs)
+  {
+    double pi = atan(1.0) * 4.0;
+    double theta = 2 * pi / numDs;
+
+    double r = ADNConstants::DH_DIAMETER * 0.5;
+
+    double R = r / (2 * sin(theta *0.25));
+
+    return SBQuantity::nanometer(R);
+  }
+
+  int CalculateNanotubeDoubleStrands(SBQuantity::length radius)
+  {
+    double r = ADNConstants::DH_DIAMETER * 0.5;
+    double R = radius.getValue() / 1000;
+    double pi = atan(1.0) * 4.0;
+
+    double theta = 4 * asin(r * 0.5 / R);
+
+    int num = ceil(2 * pi / theta);
+
+    return num;
+  }
+
   SBQuantity::length LengthQuadraticBezier(SBPosition3 P0, SBPosition3 P1, SBPosition3 P2)
   {
     // starting from derivative of Bezier curve
