@@ -19,6 +19,16 @@ ADNPart & ADNPart::operator=(const ADNPart& other)
   return *this;
 }
 
+void ADNPart::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
+{
+  SBStructuralModel::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+}
+
+void ADNPart::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
+{
+  SBStructuralModel::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+}
+
 std::string const & ADNPart::GetName() const
 {
   return getName();
