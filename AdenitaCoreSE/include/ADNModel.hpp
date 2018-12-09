@@ -73,6 +73,10 @@ public:
 
   ADNAtom& operator=(const ADNAtom& other);
 
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;				///< Serializes the atom
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the atom
+
+
   std::string const & GetName() const;
   void SetName(const std::string &name);
   Position3D const & GetPosition() const;
@@ -116,6 +120,9 @@ public:
 
   ADNBackbone& operator=(const ADNBackbone& other);
 
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
+
   bool AddAtom(ADNPointer<ADNAtom> atom);
   bool DeleteAtom(ADNPointer<ADNAtom> atom);
   CollectionMap<ADNAtom> GetAtoms() const;
@@ -138,6 +145,9 @@ public:
 
   ADNSidechain& operator=(const ADNSidechain& other);
 
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
+
   bool AddAtom(ADNPointer<ADNAtom> atom);
   bool DeleteAtom(ADNPointer<ADNAtom> atom);
   CollectionMap<ADNAtom> GetAtoms() const;
@@ -159,6 +169,9 @@ public:
   ~ADNNucleotide() = default;
 
   ADNNucleotide& operator=(const ADNNucleotide& other);
+
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
 
   void SetType(DNABlocks t);
   DNABlocks GetType();
@@ -233,6 +246,9 @@ public:
 
   ADNSingleStrand& operator=(const ADNSingleStrand& other);
 
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
+
   std::string const & GetName() const;
   void SetName(const std::string &name);
 
@@ -304,6 +320,8 @@ public:
   virtual CollectionMap<ADNNucleotide> GetNucleotides() { return CollectionMap<ADNNucleotide>(); };
   virtual bool IsLeft(ADNPointer<ADNNucleotide> nt) { return false; };  // samson doesn't like abstract classes
   virtual bool IsRight(ADNPointer<ADNNucleotide> nt) { return false; };
+  virtual void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  virtual void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
 };
 
 SB_REGISTER_TARGET_TYPE(ADNCell, "ADNCell", "E6BFD315-2734-B4A6-5808-E784AA4102EF");
@@ -316,6 +334,9 @@ public:
   ~ADNBasePair() = default;
 
   CellType GetType() { return CellType::BasePair; };
+
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
 
   ADNPointer<ADNNucleotide> GetLeftNucleotide();
   SBNode* getLeft() const;
@@ -346,6 +367,9 @@ public:
 
   CellType GetType() { return CellType::SkipPair; };
 
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
+
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
 
   bool IsLeft(ADNPointer<ADNNucleotide> nt) { return false; };
@@ -365,6 +389,9 @@ public:
   * Deletes references in other ANTLoop, but not on the ANTSingleStrand.
   */
   ~ADNLoop() = default;
+
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
 
   void SetStart(ADNPointer<ADNNucleotide> nt);
   ADNPointer<ADNNucleotide> GetStart();
@@ -399,6 +426,9 @@ public:
 
   CellType GetType() { return CellType::LoopPair; };
 
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
+
   ADNPointer<ADNLoop> GetLeftLoop();
   SBNode* getLeft() const;
   void SetLeftLoop(ADNPointer<ADNLoop> lp);
@@ -430,6 +460,9 @@ public:
   ~ADNBaseSegment() = default;
 
   ADNBaseSegment& operator=(const ADNBaseSegment& other);
+
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
 
   void SetNumber(int n);
   int GetNumber() const;
@@ -476,6 +509,9 @@ public:
   ADNDoubleStrand(const ADNDoubleStrand& other);
 
   ADNDoubleStrand& operator=(const ADNDoubleStrand& other);
+
+  void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
+  void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
 
   void SetInitialTwistAngle(double angle);
   double GetInitialTwistAngle() const;

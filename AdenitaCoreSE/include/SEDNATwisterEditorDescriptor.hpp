@@ -12,7 +12,7 @@
 SB_CLASS_BEGIN(SEDNATwisterEditor);
 
 	SB_CLASS_TYPE(SBCClass::Editor);
-        SB_CLASS_DESCRIPTION("SEDNATwisterEditor : SAMSON Element generator pro tip: modify me");
+        SB_CLASS_DESCRIPTION("aDeNitA Twister Editor : Twist double helices");
 
 	SB_FACTORY_BEGIN;
 
