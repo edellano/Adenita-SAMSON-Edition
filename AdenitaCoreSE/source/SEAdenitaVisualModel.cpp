@@ -1033,7 +1033,7 @@ void SEAdenitaVisualModel::setupPropertyColors()
 
   propertyColorSchemes_.push_back(divergingPurpleOrange);
 
-  //this is a color scheme that is especially hard for red-green blind people to distinguish. 
+  //this is a color scheme that is especially hard for red-green blind people to distinguish differences
   //our PI is red-green blind
   ADNArray<float> magicColors = ADNArray<float>(4, 4);
   magicColors(0, 0) = 0 / 255.0f;
