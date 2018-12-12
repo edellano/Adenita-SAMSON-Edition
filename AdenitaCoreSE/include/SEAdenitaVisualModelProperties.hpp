@@ -78,7 +78,7 @@ void                              onSpinboxVisibilityChanged(double val);
 void                              onSliderDimensionChanged(int val);
 void                              onPropertyColorsChanged(int propertyIdx);
 void                              onPropertyColorSchemeChanged(int colorSchemeIdx);
-
+void                              onStapleColorSchemeChanged(int index);
 private:
 
 	friend class SEAdenitaVisualModel;

@@ -160,6 +160,12 @@ void SEAdenitaVisualModelProperties::onPropertyColorSchemeChanged(int colorSchem
   SAMSON::requestViewportUpdate();
 }
 
+void SEAdenitaVisualModelProperties::onStapleColorSchemeChanged(int index)
+{
+  visualModel->setupStapleColors(index);
+  SAMSON::requestViewportUpdate();
+}
+
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
 SEAdenitaVisualModelProperties::Observer::~Observer() {}
 
