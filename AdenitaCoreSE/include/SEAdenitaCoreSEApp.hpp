@@ -47,6 +47,7 @@ public :
   void ExportToSequenceList(QString filename, ADNPointer<ADNPart> part = nullptr);
   void SetScaffoldSequence(std::string seq);
   void ResetVisualModel();
+  //SEAdenitaVisualModel* GetVisualModel();
   // Modifications
   void ConnectSingleStrands();
   void BreakSingleStrand();
@@ -57,7 +58,7 @@ public :
   void CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);
   void LinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int num);
   void Kinetoplast(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols);
-  void CalculateBindingRegions();
+  void CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
   void SetStart();
   void MergeComponents();
   void TwistDoubleHelix();

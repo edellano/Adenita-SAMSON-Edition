@@ -580,7 +580,7 @@ void SEAdenitaCoreSEAppGUI::onCalculateBindingProperties()
   QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
 
   if (dialog.exec() == QDialog::Accepted) {
-    
+
     bool oligoConcOk = false;
     int oligoConc = oligoConcText->text().toInt(&oligoConcOk);
 
@@ -593,6 +593,19 @@ void SEAdenitaCoreSEAppGUI::onCalculateBindingProperties()
     if (oligoConcOk && monovalentConcOk && divalentConcOk) {
       SEAdenitaCoreSEApp* t = getApp();
 
+      t->CalculateBindingRegions(oligoConc, monovalentConc, divalentConc);
+
+      /*auto vm = t->GetVisualModel();
+      if (vm != nullptr) {
+        vm->changePropertyColors(1);
+        SAMSON::requestViewportUpdate();
+      }*/
+      
+    }
+    else {
+      QMessageBox messageBox;
+      messageBox.critical(0, "Error", "Concentration values entered are not numeric!");
+      messageBox.setFixedSize(500, 200);
     }
 
 

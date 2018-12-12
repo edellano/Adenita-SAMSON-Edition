@@ -189,6 +189,32 @@ void SEAdenitaCoreSEApp::ResetVisualModel() {
 
   logger.LogDebugPassedMilliseconds(start, "ResetVisualModel");
 }
+//
+//SEAdenitaVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
+//{
+//  SBNodeIndexer allNodes;
+//  SAMSON::getActiveDocument()->getNodes(allNodes);
+//
+//  bool vmAlreadyExist = false;
+//  SBVisualModel * vm;
+//  SB_FOR(SBNode* node, allNodes) {
+//    if (node->getType() == SBNode::VisualModel) {
+//      vm = static_cast<SBVisualModel*>(node);
+//      if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
+//        vmAlreadyExist = true;
+//        break;
+//      }
+//    }
+//  }
+//
+//  SEAdenitaVisualModel* adenitaVm = nullptr;
+//  if (vmAlreadyExist) {
+//    adenitaVm = static_cast<SEAdenitaVisualModel*>(vm);
+//  }
+//
+//  return adenitaVm;
+//
+//}
 
 void SEAdenitaCoreSEApp::ConnectSingleStrands()
 {
@@ -333,7 +359,7 @@ void SEAdenitaCoreSEApp::MergeComponents()
   
 }
 
-void SEAdenitaCoreSEApp::CalculateBindingRegions()
+void SEAdenitaCoreSEApp::CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc)
 {
   // get selected part
   SBDocument* doc = SAMSON::getActiveDocument();
@@ -350,7 +376,7 @@ void SEAdenitaCoreSEApp::CalculateBindingRegions()
 
   if (part != nullptr) {
     PIPrimer3& p = PIPrimer3::GetInstance();
-    p.Calculate(part, 100, 5, 16);
+    p.Calculate(part, oligoConc, monovalentConc, divalentConc);
   }
 
 
