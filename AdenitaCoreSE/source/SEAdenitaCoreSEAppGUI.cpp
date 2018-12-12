@@ -597,14 +597,15 @@ void SEAdenitaCoreSEAppGUI::onCalculateBindingProperties()
 
       SEAdenitaVisualModel* adenitaVm = static_cast<SEAdenitaVisualModel*>(t->GetVisualModel());
       if (adenitaVm != nullptr) {
-        adenitaVm->changePropertyColors(1);
+        adenitaVm->changePropertyColors(1, 0);
         SAMSON::requestViewportUpdate();
+        
       }
       
     }
     else {
       QMessageBox messageBox;
-      messageBox.critical(0, "Error", "Check whether entered values are numeric! Check if the Structural Model is selected");
+      messageBox.critical(0, "Error", "Check whether the entered values are numeric! Check if the Structural Model is selected");
       messageBox.setFixedSize(500, 200);
     }
 
