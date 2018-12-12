@@ -1032,6 +1032,31 @@ void SEAdenitaVisualModel::setupPropertyColors()
   divergingPurpleOrange(3, 3) = 1.0f;
 
   propertyColorSchemes_.push_back(divergingPurpleOrange);
+
+  //this is a color scheme that is especially hard for red-green blind people to distinguish. 
+  //our PI is red-green blind
+  ADNArray<float> magicColors = ADNArray<float>(4, 4);
+  magicColors(0, 0) = 0 / 255.0f;
+  magicColors(0, 1) = 255 / 255.0f;
+  magicColors(0, 2) = 0 / 255.0f;
+  magicColors(0, 3) = 1.0f;
+
+  magicColors(1, 0) = 255 / 255.0f;
+  magicColors(1, 1) = 255 / 255.0f;
+  magicColors(1, 2) = 0 / 255.0f;
+  magicColors(1, 3) = 1.0f;
+
+  magicColors(2, 0) = 255 / 255.0f;
+  magicColors(2, 1) = 150 / 255.0f;
+  magicColors(2, 2) = 0 / 255.0f;
+  magicColors(2, 3) = 1.0f;
+
+  magicColors(3, 0) = 255 / 255.0f;
+  magicColors(3, 1) = 0 / 255.0f;
+  magicColors(3, 2) = 0 / 255.0f;
+  magicColors(3, 3) = 1.0f;
+
+  propertyColorSchemes_.push_back(magicColors);
 }
 
 void SEAdenitaVisualModel::changePropertyColors(int propertyIdx, int colorSchemeIdx)
