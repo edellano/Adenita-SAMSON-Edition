@@ -54,7 +54,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
     this, 
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
   
-  changeScale(7);
+  changeScale(4);
 
   setupPropertyColors();
 
@@ -1159,6 +1159,96 @@ void SEAdenitaVisualModel::setupStapleColors(int index)
   }
 
   
+}
+
+void SEAdenitaVisualModel::setupNucleotideColors(int index)
+{
+  auto regularColors = colors_[ColorType::REGULAR];
+
+  if (index == 0) {
+    regularColors->SetStandardNucleotideColorScheme();
+  }
+  else if (index == 1) {
+
+    ADNArray<float> dark4 = ADNArray<float>(4, 4);
+
+    dark4(0, 0) = 27 / 255.0f;  
+    dark4(0, 1) = 158 / 255.0f;
+    dark4(0, 2) = 119 / 255.0f;
+    dark4(0, 3) = 1;
+
+    dark4(1, 0) = 217 / 255.0f;
+    dark4(1, 1) = 95 / 255.0f;
+    dark4(1, 2) = 2 / 255.0f;
+    dark4(1, 3) = 1;
+
+    dark4(2, 0) = 117 / 255.0f;
+    dark4(2, 1) = 112 / 255.0f;
+    dark4(2, 2) = 179 / 255.0f;
+    dark4(2, 3) = 1;
+
+    dark4(3, 0) = 231 / 255.0f;
+    dark4(3, 1) = 41 / 255.0f;
+    dark4(3, 2) = 138 / 255.0f;
+    dark4(3, 3) = 1;
+
+    regularColors->SetNucleotideColorScheme(dark4);
+
+  }
+  else if (index == 2) {
+
+    ADNArray<float> pastel4 = ADNArray<float>(4, 4);
+    
+    pastel4(0, 0) = 166 / 255.0f; 
+    pastel4(0, 1) = 206 / 255.0f;
+    pastel4(0, 2) = 227 / 255.0f;
+    pastel4(0, 3) = 1;
+
+    pastel4(1, 0) = 31 / 255.0f;
+    pastel4(1, 1) = 120 / 255.0f;
+    pastel4(1, 2) = 180 / 255.0f;
+    pastel4(1, 3) = 1;
+
+    pastel4(2, 0) = 178 / 255.0f;
+    pastel4(2, 1) = 223 / 255.0f;
+    pastel4(2, 2) = 138 / 255.0f;
+    pastel4(2, 3) = 1;
+
+    pastel4(3, 0) = 51 / 255.0f;
+    pastel4(3, 1) = 160 / 255.0f;
+    pastel4(3, 2) = 44 / 255.0f;
+    pastel4(3, 3) = 1;
+
+    regularColors->SetNucleotideColorScheme(pastel4);
+
+  }
+  else if (index == 3) {
+
+    ADNArray<float> pastel2 = ADNArray<float>(4, 4);
+
+    pastel2(0, 0) = 127 / 255.0f; 
+    pastel2(0, 1) = 201 / 255.0f; 
+    pastel2(0, 2) = 127 / 255.0f; 
+    pastel2(0, 3) = 1;
+
+    pastel2(1, 0) = 253 / 255.0f;
+    pastel2(1, 1) = 192 / 255.0f;
+    pastel2(1, 2) = 134 / 255.0f;
+    pastel2(1, 3) = 1;
+
+    pastel2(2, 0) = 253 / 255.0f;
+    pastel2(2, 1) = 192 / 255.0f;
+    pastel2(2, 2) = 134 / 255.0f;
+    pastel2(2, 3) = 1;
+
+    pastel2(3, 0) = 127 / 255.0f;
+    pastel2(3, 1) = 201 / 255.0f;
+    pastel2(3, 2) = 127 / 255.0f;
+    pastel2(3, 3) = 1;
+
+    regularColors->SetNucleotideColorScheme(pastel2);
+
+  }
 }
 
 void SEAdenitaVisualModel::setupPropertyColors()

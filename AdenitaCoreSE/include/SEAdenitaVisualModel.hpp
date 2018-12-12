@@ -77,6 +77,7 @@ public :
   virtual void												changeVisibility(double layer);																///< Displays the visual model
   void                                changePropertyColors(int propertyIdx, int colorSchemeIdx);
   void                                setupStapleColors(int index);
+  void                                setupNucleotideColors(int index);
 
   virtual void												display();																///< Displays the visual model
   virtual void												displayAtomsLines();

@@ -166,6 +166,12 @@ void SEAdenitaVisualModelProperties::onStapleColorSchemeChanged(int index)
   SAMSON::requestViewportUpdate();
 }
 
+void SEAdenitaVisualModelProperties::onNucleotideColorSchemeChanged(int index)
+{
+  visualModel->setupNucleotideColors(index);
+  SAMSON::requestViewportUpdate();
+}
+
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
 SEAdenitaVisualModelProperties::Observer::~Observer() {}
 
