@@ -189,32 +189,28 @@ void SEAdenitaCoreSEApp::ResetVisualModel() {
 
   logger.LogDebugPassedMilliseconds(start, "ResetVisualModel");
 }
-//
-//SEAdenitaVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
-//{
-//  SBNodeIndexer allNodes;
-//  SAMSON::getActiveDocument()->getNodes(allNodes);
-//
-//  bool vmAlreadyExist = false;
-//  SBVisualModel * vm;
-//  SB_FOR(SBNode* node, allNodes) {
-//    if (node->getType() == SBNode::VisualModel) {
-//      vm = static_cast<SBVisualModel*>(node);
-//      if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
-//        vmAlreadyExist = true;
-//        break;
-//      }
-//    }
-//  }
-//
-//  SEAdenitaVisualModel* adenitaVm = nullptr;
-//  if (vmAlreadyExist) {
-//    adenitaVm = static_cast<SEAdenitaVisualModel*>(vm);
-//  }
-//
-//  return adenitaVm;
-//
-//}
+
+SBVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
+{
+    SBNodeIndexer allNodes;
+    SAMSON::getActiveDocument()->getNodes(allNodes);
+  
+    bool vmAlreadyExist = false;
+    SBVisualModel * vm = nullptr;
+    SB_FOR(SBNode* node, allNodes) {
+      if (node->getType() == SBNode::VisualModel) {
+        vm = static_cast<SBVisualModel*>(node);
+        if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
+          vmAlreadyExist = true;
+          break;
+        }
+      }
+    }
+    
+    return vm;
+  
+  
+}
 
 void SEAdenitaCoreSEApp::ConnectSingleStrands()
 {

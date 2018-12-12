@@ -595,11 +595,11 @@ void SEAdenitaCoreSEAppGUI::onCalculateBindingProperties()
 
       t->CalculateBindingRegions(oligoConc, monovalentConc, divalentConc);
 
-      /*auto vm = t->GetVisualModel();
-      if (vm != nullptr) {
-        vm->changePropertyColors(1);
+      SEAdenitaVisualModel* adenitaVm = static_cast<SEAdenitaVisualModel*>(t->GetVisualModel());
+      if (adenitaVm != nullptr) {
+        adenitaVm->changePropertyColors(1);
         SAMSON::requestViewportUpdate();
-      }*/
+      }
       
     }
     else {

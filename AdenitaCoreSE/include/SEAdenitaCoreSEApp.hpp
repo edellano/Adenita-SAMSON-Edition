@@ -47,7 +47,7 @@ public :
   void ExportToSequenceList(QString filename, ADNPointer<ADNPart> part = nullptr);
   void SetScaffoldSequence(std::string seq);
   void ResetVisualModel();
-  //SEAdenitaVisualModel* GetVisualModel();
+  SBVisualModel* GetVisualModel();
   // Modifications
   void ConnectSingleStrands();
   void BreakSingleStrand();
