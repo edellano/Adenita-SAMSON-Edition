@@ -176,6 +176,11 @@
          <string>Diverging Autumn</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Magic Colors</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
