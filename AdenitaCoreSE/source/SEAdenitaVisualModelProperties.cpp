@@ -148,9 +148,27 @@ void SEAdenitaVisualModelProperties::onSliderDimensionChanged(int val)
   ui.lblDimension->setText(QString::number(val));
 }
 
-void SEAdenitaVisualModelProperties::onPropertyColorsChanged(int index)
+void SEAdenitaVisualModelProperties::onPropertyColorsChanged(int propertyIdx)
 {
-  visualModel->changePropertyColors(index);
+  visualModel->changePropertyColors(propertyIdx, ui.cbbPropertyColorSchemes->currentIndex());
+  SAMSON::requestViewportUpdate();
+}
+
+void SEAdenitaVisualModelProperties::onPropertyColorSchemeChanged(int colorSchemeIdx)
+{
+  visualModel->changePropertyColors(ui.cbbPropertyColors->currentIndex(), colorSchemeIdx);
+  SAMSON::requestViewportUpdate();
+}
+
+void SEAdenitaVisualModelProperties::onStapleColorSchemeChanged(int index)
+{
+  visualModel->setupStapleColors(index);
+  SAMSON::requestViewportUpdate();
+}
+
+void SEAdenitaVisualModelProperties::onNucleotideColorSchemeChanged(int index)
+{
+  visualModel->setupNucleotideColors(index);
   SAMSON::requestViewportUpdate();
 }
 
