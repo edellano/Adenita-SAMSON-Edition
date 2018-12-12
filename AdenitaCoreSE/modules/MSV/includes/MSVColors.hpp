@@ -7,7 +7,7 @@
 
 class MSVColors {
 public:
-  MSVColors() = default;
+  MSVColors();
   ~MSVColors() = default;
 
   ADNArray<float> GetColor(ADNPointer<ADNNucleotide> nt);
@@ -19,6 +19,12 @@ public:
   void SetColor(ADNArray<float> color, ADNPointer<ADNSingleStrand> ss);
   void SetColor(ADNArray<float> color, ADNPointer<ADNBaseSegment> bs);
   void SetColor(ADNArray<float> color, ADNPointer<ADNDoubleStrand> ds);
+
+  void SetStandardStaplesColorScheme();
+  void SetStandardNucleotideColorScheme();
+
+  void SetStaplesColorScheme(ADNArray<float> colorScheme);
+  void SetNucleotideColorScheme(ADNArray<float> colorScheme);
 
 private:
 
@@ -44,7 +50,7 @@ private:
   void SetColor(ADNArray<float> color, T el, std::map<T, ADNArray<float>> & searchMap) {
     searchMap[el] = color;
   }
-
+  
   ADNArray<float> GenerateRandomColor();
 
   ADNArray<float> GetMaterialColor(SBNode* node);
@@ -52,10 +58,12 @@ private:
 
   ADNArray<float> defaultbssColor_;
 
-
-
   std::map<ADNNucleotide*, ADNArray<float>> ntsColors_;
   std::map<ADNSingleStrand*, ADNArray<float>> sssColors_;
   std::map<ADNBaseSegment*, ADNArray<float>> bssColors_;
   std::map<ADNDoubleStrand*, ADNArray<float>> dssColors_;
+
+  ADNArray<float> nucleotideColorScheme_;
+  ADNArray<float> stapleColorScheme_;
+
 };

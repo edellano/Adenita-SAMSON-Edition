@@ -75,7 +75,9 @@ public :
   virtual void												changeScale(double scale, bool createIndex = true);																///< Displays the visual model
   virtual void												changeDimension(int dimension);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
-  void                                changePropertyColors(int index);
+  void                                changePropertyColors(int propertyIdx, int colorSchemeIdx);
+  void                                setupStapleColors(int index);
+  void                                setupNucleotideColors(int index);
 
   virtual void												display();																///< Displays the visual model
   virtual void												displayAtomsLines();
@@ -127,7 +129,7 @@ private:
   SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
   void                        orderVisibility();
   void                        setupPropertyColors();
-  ADNArray<float>             calcPropertyColor(float min, float max, float val);
+  ADNArray<float>             calcPropertyColor(int colorSchemeIdx, float min, float max, float val);
 
   // general display properties 
   ADNArray<float> nucleotideEColor_;
@@ -157,8 +159,8 @@ private:
   std::map<ADNNucleotide*, unsigned int> ntMap_;
 
   // new color implementation
-  unsigned int numPropertyColors_;
-  ADNArray<float> propertyColors_;
+  
+  vector<ADNArray<float>> propertyColorSchemes_;
   
   enum ColorType {
     REGULAR = 0,  // default color map
