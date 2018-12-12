@@ -150,7 +150,13 @@ void SEAdenitaVisualModelProperties::onSliderDimensionChanged(int val)
 
 void SEAdenitaVisualModelProperties::onPropertyColorsChanged(int propertyIdx)
 {
-  visualModel->changePropertyColors(propertyIdx, 1);
+  visualModel->changePropertyColors(propertyIdx, ui.cbbPropertyColorSchemes->currentIndex());
+  SAMSON::requestViewportUpdate();
+}
+
+void SEAdenitaVisualModelProperties::onPropertyColorSchemeChanged(int colorSchemeIdx)
+{
+  visualModel->changePropertyColors(ui.cbbPropertyColors->currentIndex(), colorSchemeIdx);
   SAMSON::requestViewportUpdate();
 }
 
