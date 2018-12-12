@@ -999,69 +999,163 @@ void SEAdenitaVisualModel::setupStapleColors(int index)
   }
   else if (index == 1) {
 
-    ADNArray<float> stapleColorScheme1 = ADNArray<float>(4, 12);
+    ADNArray<float> pastel12 = ADNArray<float>(4, 12);
 
-    stapleColorScheme1(0, 0) = 141 / 255.0f;
-    stapleColorScheme1(0, 1) = 211 / 255.0f;
-    stapleColorScheme1(0, 2) = 199 / 255.0f;
-    stapleColorScheme1(0, 3) = 1;
+    pastel12(0, 0) = 141 / 255.0f;
+    pastel12(0, 1) = 211 / 255.0f;
+    pastel12(0, 2) = 199 / 255.0f;
+    pastel12(0, 3) = 1;
 
-    stapleColorScheme1(1, 0) = 255 / 255.0f;
-    stapleColorScheme1(1, 1) = 255 / 255.0f;
-    stapleColorScheme1(1, 2) = 179 / 255.0f;
-    stapleColorScheme1(1, 3) = 1;
+    pastel12(1, 0) = 255 / 255.0f;
+    pastel12(1, 1) = 255 / 255.0f;
+    pastel12(1, 2) = 179 / 255.0f;
+    pastel12(1, 3) = 1;
 
-    stapleColorScheme1(2, 0) = 190 / 255.0f;
-    stapleColorScheme1(2, 1) = 186 / 255.0f;
-    stapleColorScheme1(2, 2) = 218 / 255.0f;
-    stapleColorScheme1(2, 3) = 1;
+    pastel12(2, 0) = 190 / 255.0f;
+    pastel12(2, 1) = 186 / 255.0f;
+    pastel12(2, 2) = 218 / 255.0f;
+    pastel12(2, 3) = 1;
 
-    stapleColorScheme1(3, 0) = 251 / 255.0f;
-    stapleColorScheme1(3, 1) = 128 / 255.0f;
-    stapleColorScheme1(3, 2) = 114 / 255.0f;
-    stapleColorScheme1(3, 3) = 1;
+    pastel12(3, 0) = 251 / 255.0f;
+    pastel12(3, 1) = 128 / 255.0f;
+    pastel12(3, 2) = 114 / 255.0f;
+    pastel12(3, 3) = 1;
 
-    stapleColorScheme1(4, 0) = 128 / 255.0f;
-    stapleColorScheme1(4, 1) = 177 / 255.0f;
-    stapleColorScheme1(4, 2) = 211 / 255.0f;
-    stapleColorScheme1(4, 3) = 1;
+    pastel12(4, 0) = 128 / 255.0f;
+    pastel12(4, 1) = 177 / 255.0f;
+    pastel12(4, 2) = 211 / 255.0f;
+    pastel12(4, 3) = 1;
 
-    stapleColorScheme1(5, 0) = 253 / 255.0f;
-    stapleColorScheme1(5, 1) = 180 / 255.0f;
-    stapleColorScheme1(5, 2) = 98 / 255.0f;
-    stapleColorScheme1(5, 3) = 1;
+    pastel12(5, 0) = 253 / 255.0f;
+    pastel12(5, 1) = 180 / 255.0f;
+    pastel12(5, 2) = 98 / 255.0f;
+    pastel12(5, 3) = 1;
 
-    stapleColorScheme1(6, 0) = 179 / 255.0f;
-    stapleColorScheme1(6, 1) = 222 / 255.0f;
-    stapleColorScheme1(6, 2) = 105 / 255.0f;
-    stapleColorScheme1(6, 3) = 1;
+    pastel12(6, 0) = 179 / 255.0f;
+    pastel12(6, 1) = 222 / 255.0f;
+    pastel12(6, 2) = 105 / 255.0f;
+    pastel12(6, 3) = 1;
 
-    stapleColorScheme1(7, 0) = 252 / 255.0f;
-    stapleColorScheme1(7, 1) = 205 / 255.0f;
-    stapleColorScheme1(7, 2) = 229 / 255.0f;
-    stapleColorScheme1(7, 3) = 1;
+    pastel12(7, 0) = 252 / 255.0f;
+    pastel12(7, 1) = 205 / 255.0f;
+    pastel12(7, 2) = 229 / 255.0f;
+    pastel12(7, 3) = 1;
 
-    stapleColorScheme1(8, 0) = 217 / 255.0f;
-    stapleColorScheme1(8, 1) = 217 / 255.0f;
-    stapleColorScheme1(8, 2) = 217 / 255.0f;
-    stapleColorScheme1(8, 3) = 1;
+    pastel12(8, 0) = 217 / 255.0f;
+    pastel12(8, 1) = 217 / 255.0f;
+    pastel12(8, 2) = 217 / 255.0f;
+    pastel12(8, 3) = 1;
 
-    stapleColorScheme1(9, 0) = 188 / 255.0f;
-    stapleColorScheme1(9, 1) = 128 / 255.0f;
-    stapleColorScheme1(9, 2) = 189 / 255.0f;
-    stapleColorScheme1(9, 3) = 1;
+    pastel12(9, 0) = 188 / 255.0f;
+    pastel12(9, 1) = 128 / 255.0f;
+    pastel12(9, 2) = 189 / 255.0f;
+    pastel12(9, 3) = 1;
 
-    stapleColorScheme1(10, 0) = 204 / 255.0f;
-    stapleColorScheme1(10, 1) = 235 / 255.0f;
-    stapleColorScheme1(10, 2) = 197 / 255.0f;
-    stapleColorScheme1(10, 3) = 1;
+    pastel12(10, 0) = 204 / 255.0f;
+    pastel12(10, 1) = 235 / 255.0f;
+    pastel12(10, 2) = 197 / 255.0f;
+    pastel12(10, 3) = 1;
 
-    stapleColorScheme1(11, 0) = 255 / 255.0f;
-    stapleColorScheme1(11, 1) = 237 / 255.0f;
-    stapleColorScheme1(11, 2) = 111 / 255.0f;
-    stapleColorScheme1(11, 3) = 1;
+    pastel12(11, 0) = 255 / 255.0f;
+    pastel12(11, 1) = 237 / 255.0f;
+    pastel12(11, 2) = 111 / 255.0f;
+    pastel12(11, 3) = 1;
 
-    regularColors->SetStaplesColorScheme(stapleColorScheme1);
+    regularColors->SetStaplesColorScheme(pastel12);
+  }
+  else if (index == 2) {
+
+    ADNArray<float> dark8 = ADNArray<float>(4, 8);
+
+    dark8(0, 0) = 102 / 255.0f;
+    dark8(0, 1) = 102 / 255.0f;
+    dark8(0, 2) = 102 / 255.0f;
+    dark8(0, 3) = 1;
+
+    dark8(1, 0) = 27  / 255.0f;
+    dark8(1, 1) = 158 / 255.0f;
+    dark8(1, 2) = 119 / 255.0f;
+    dark8(1, 3) = 1;
+
+    dark8(2, 0) = 217 / 255.0f;
+    dark8(2, 1) = 95 / 255.0f;
+    dark8(2, 2) = 2 / 255.0f;
+    dark8(2, 3) = 1;
+
+    dark8(3, 0) = 117 / 255.0f;
+    dark8(3, 1) = 112 / 255.0f;
+    dark8(3, 2) = 179 / 255.0f;
+    dark8(3, 3) = 1;
+
+    dark8(4, 0) = 231 / 255.0f;
+    dark8(4, 1) = 41 / 255.0f;
+    dark8(4, 2) = 138 / 255.0f;
+    dark8(4, 3) = 1;
+
+    dark8(5, 0) = 102 / 255.0f;
+    dark8(5, 1) = 166 / 255.0f;
+    dark8(5, 2) = 30 / 255.0f;
+    dark8(5, 3) = 1;
+
+    dark8(6, 0) = 230 / 255.0f;
+    dark8(6, 1) = 171 / 255.0f;
+    dark8(6, 2) = 2 / 255.0f;
+    dark8(6, 3) = 1;
+
+    dark8(7, 0) = 166 / 255.0f;
+    dark8(7, 1) = 118 / 255.0f;
+    dark8(7, 2) = 29 / 255.0f;
+    dark8(7, 3) = 1;
+    
+    regularColors->SetStaplesColorScheme(dark8);
+
+  }
+  else if (index == 3) {
+
+    ADNArray<float> pastel8 = ADNArray<float>(4, 8);
+
+    pastel8(0, 0) = 179 / 255.0f;
+    pastel8(0, 1) = 226 / 255.0f;
+    pastel8(0, 2) = 205 / 255.0f;
+    pastel8(0, 3) = 1;
+
+    pastel8(1, 0) = 253 / 255.0f;
+    pastel8(1, 1) = 205 / 255.0f;
+    pastel8(1, 2) = 172 / 255.0f;
+    pastel8(1, 3) = 1;
+
+    pastel8(2, 0) = 203 / 255.0f;
+    pastel8(2, 1) = 213 / 255.0f;
+    pastel8(2, 2) = 232 / 255.0f;
+    pastel8(2, 3) = 1;
+
+    pastel8(3, 0) = 244 / 255.0f;
+    pastel8(3, 1) = 202 / 255.0f;
+    pastel8(3, 2) = 228 / 255.0f;
+    pastel8(3, 3) = 1;
+
+    pastel8(4, 0) = 230 / 255.0f;
+    pastel8(4, 1) = 245 / 255.0f;
+    pastel8(4, 2) = 201 / 255.0f;
+    pastel8(4, 3) = 1;
+
+    pastel8(5, 0) = 255 / 255.0f;
+    pastel8(5, 1) = 242 / 255.0f;
+    pastel8(5, 2) = 174 / 255.0f;
+    pastel8(5, 3) = 1;
+
+    pastel8(6, 0) = 241 / 255.0f;
+    pastel8(6, 1) = 226 / 255.0f;
+    pastel8(6, 2) = 204 / 255.0f;
+    pastel8(6, 3) = 1;
+
+    pastel8(7, 0) = 204 / 255.0f; 
+    pastel8(7, 1) = 204 / 255.0f; 
+    pastel8(7, 2) = 204 / 255.0f; 
+    pastel8(7, 3) = 1;
+
+    regularColors->SetStaplesColorScheme(pastel8);
+
   }
 
   

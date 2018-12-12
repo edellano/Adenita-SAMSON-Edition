@@ -194,12 +194,22 @@
       <widget class="QComboBox" name="cbbStapleColorScheme">
        <item>
         <property name="text">
-         <string>Qualitatitve 12 Standard (Customizable)</string>
+         <string>12 Colors Standard (Customizable)</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Qualitative 12 Pastel (Fixed)</string>
+         <string>12 Colors Pastel</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>8 Colors Dark</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>8 Colors Pastel</string>
         </property>
        </item>
       </widget>
