@@ -157,6 +157,27 @@
        </property>
       </widget>
      </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Property Color Scheme</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QComboBox" name="cbbPropertyColorSchemes">
+       <item>
+        <property name="text">
+         <string>Sequential Plasma</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Diverging Autumn</string>
+        </property>
+       </item>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -259,6 +280,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbbPropertyColorSchemes</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onPropertyColorSchemeChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>219</x>
+     <y>242</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>188</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSliderScaleChanged(int)</slot>
@@ -267,5 +304,6 @@
   <slot>onDiscreteSliderScaleChanged(int)</slot>
   <slot>onSliderDimensionChanged(int)</slot>
   <slot>onPropertyColorsChanged(int)</slot>
+  <slot>onPropertyColorSchemeChanged(int)</slot>
  </slots>
 </ui>

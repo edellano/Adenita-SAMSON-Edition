@@ -77,6 +77,7 @@ void                              onSliderVisibilityChanged(int val);
 void                              onSpinboxVisibilityChanged(double val);
 void                              onSliderDimensionChanged(int val);
 void                              onPropertyColorsChanged(int propertyIdx);
+void                              onPropertyColorSchemeChanged(int colorSchemeIdx);
 
 private:
 
