@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>378</height>
+    <width>433</width>
+    <height>428</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -214,6 +214,37 @@
        </item>
       </widget>
      </item>
+     <item row="10" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Nucleotide Color Scheme</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1">
+      <widget class="QComboBox" name="cbbNucleotideColorScheme">
+       <item>
+        <property name="text">
+         <string>4 Colors Standard</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>4 Colors Dark</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>4 Colors Paired</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2 Colors Pastel (Pyrimidine, Purine)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -243,8 +274,8 @@
    <slot>onSliderVisibilityChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>218</x>
-     <y>148</y>
+     <x>230</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -259,8 +290,8 @@
    <slot>onSpinboxVisibilityChanged(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>287</x>
-     <y>123</y>
+     <x>420</x>
+     <y>166</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -291,8 +322,8 @@
    <slot>onSliderDimensionChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>149</x>
-     <y>100</y>
+     <x>161</x>
+     <y>137</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -348,6 +379,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbbNucleotideColorScheme</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onNucleotideColorSchemeChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>302</x>
+     <y>307</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>430</x>
+     <y>399</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSliderScaleChanged(int)</slot>
@@ -358,5 +405,6 @@
   <slot>onPropertyColorsChanged(int)</slot>
   <slot>onPropertyColorSchemeChanged(int)</slot>
   <slot>onStapleColorSchemeChanged(int)</slot>
+  <slot>onNucleotideColorSchemeChanged(int)</slot>
  </slots>
 </ui>
