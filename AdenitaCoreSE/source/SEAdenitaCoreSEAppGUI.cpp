@@ -604,7 +604,7 @@ void SEAdenitaCoreSEAppGUI::onCalculateBindingProperties()
     }
     else {
       QMessageBox messageBox;
-      messageBox.critical(0, "Error", "Concentration values entered are not numeric!");
+      messageBox.critical(0, "Error", "Check whether entered values are numeric! Check if the Structural Model is selected");
       messageBox.setFixedSize(500, 200);
     }
 
