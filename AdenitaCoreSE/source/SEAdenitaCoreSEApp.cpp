@@ -158,33 +158,24 @@ void SEAdenitaCoreSEApp::CenterPart()
 void SEAdenitaCoreSEApp::ResetVisualModel() {
   //create visual model per nanorobot
   SBNodeIndexer allNodes;
-  SAMSON::getActiveDocument()->getNodes(allNodes);
   ADNLogger& logger = ADNLogger::GetLogger();
 
-
   clock_t start = clock();
-
   bool vmAlreadyExist = false;
-  SBPointer<SBVisualModel> vm;
-  SB_FOR(SBNode* node, allNodes) {
-    if (node->getType() == SBNode::VisualModel) {
-      vm = static_cast<SBVisualModel*>(node);
-      if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
-        vmAlreadyExist = true;
-        break;
-      }
-    }
+
+  SEAdenitaVisualModel* adenitaVm = static_cast<SEAdenitaVisualModel*>(GetVisualModel());
+  if (adenitaVm != nullptr) {
+    vmAlreadyExist = true;
   }
-  
+
   if (vmAlreadyExist) {
-    SBPointer<SEAdenitaVisualModel> adenitaVm = static_cast<SEAdenitaVisualModel*>(vm());
     adenitaVm->changeScale(adenitaVm->getScale());
   }
   else {
     SBProxy* vmProxy = SAMSON::getProxy("SEAdenitaVisualModel");
-    SEAdenitaVisualModel* adenitaVm = vmProxy->createInstance(allNodes);
-    adenitaVm->create();
-    SAMSON::getActiveLayer()->addChild(adenitaVm);
+    SEAdenitaVisualModel* newVm = vmProxy->createInstance(allNodes);
+    newVm->create();
+    SAMSON::getActiveLayer()->addChild(newVm);
   }
 
   logger.LogDebugPassedMilliseconds(start, "ResetVisualModel");
@@ -197,17 +188,19 @@ SBVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
   
     bool vmAlreadyExist = false;
     SBVisualModel * vm = nullptr;
+    SEAdenitaVisualModel * adenitaVm = nullptr; 
     SB_FOR(SBNode* node, allNodes) {
       if (node->getType() == SBNode::VisualModel) {
         vm = static_cast<SBVisualModel*>(node);
         if (vm->getProxy()->getName() == "SEAdenitaVisualModel") {
           vmAlreadyExist = true;
+          adenitaVm = static_cast<SEAdenitaVisualModel*>(vm);
           break;
         }
       }
     }
     
-    return vm;
+    return adenitaVm;
   
   
 }
