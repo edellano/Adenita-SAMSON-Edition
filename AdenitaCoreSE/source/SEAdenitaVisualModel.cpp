@@ -992,29 +992,53 @@ void SEAdenitaVisualModel::orderVisibility()
 
 void SEAdenitaVisualModel::setupPropertyColors()
 {
-  numPropertyColors_ = 3;
-  propertyColors_ = ADNArray<float>(4, numPropertyColors_);
-  propertyColors_(0, 0) = 252.0f / 255.0f;
-  propertyColors_(0, 1) = 141.0f / 255.0f;
-  propertyColors_(0, 2) = 89.0f / 255.0f;
-  propertyColors_(0, 3) = 1.0f;
+  ADNArray<float> purpleBlueYellow = ADNArray<float>(4, 3);
+  purpleBlueYellow(0, 0) = 68.0f / 255.0f;
+  purpleBlueYellow(0, 1) = 3.0f / 255.0f;
+  purpleBlueYellow(0, 2) = 84.0f / 255.0f;
+  purpleBlueYellow(0, 3) = 1.0f;
 
-  propertyColors_(1, 0) = 255.0f / 255.0f;
-  propertyColors_(1, 1) = 255.0f / 255.0f;
-  propertyColors_(1, 2) = 191.0f / 255.0f;
-  propertyColors_(1, 3) = 1.0f;
+  purpleBlueYellow(1, 0) = 38.0f / 255.0f;
+  purpleBlueYellow(1, 1) = 148.0f / 255.0f;
+  purpleBlueYellow(1, 2) = 139.0f / 255.0f;
+  purpleBlueYellow(1, 3) = 1.0f;
 
-  propertyColors_(2, 0) = 145.0f / 255.0f;
-  propertyColors_(2, 1) = 207.0f / 255.0f;
-  propertyColors_(2, 2) = 96.0f / 255.0f;
-  propertyColors_(2, 3) = 1.0f;
+  purpleBlueYellow(2, 0) = 252.0f / 255.0f;
+  purpleBlueYellow(2, 1) = 230.0f / 255.0f;
+  purpleBlueYellow(2, 2) = 59.0f / 255.0f;
+  purpleBlueYellow(2, 3) = 1.0f;
+
+  propertyColorSchemes_.push_back(purpleBlueYellow);
+
+  ADNArray<float> divergingPurpleOrange = ADNArray<float>(4, 4);
+  divergingPurpleOrange(0, 0) = 94 / 255.0f;
+  divergingPurpleOrange(0, 1) = 60 / 255.0f;
+  divergingPurpleOrange(0, 2) = 153 / 255.0f;
+  divergingPurpleOrange(0, 3) = 1.0f;
+
+  divergingPurpleOrange(1, 0) = 178 / 255.0f;
+  divergingPurpleOrange(1, 1) = 171 / 255.0f;
+  divergingPurpleOrange(1, 2) = 210 / 255.0f;
+  divergingPurpleOrange(1, 3) = 1.0f;
+
+  divergingPurpleOrange(2, 0) = 253 / 255.0f;
+  divergingPurpleOrange(2, 1) = 184 / 255.0f;
+  divergingPurpleOrange(2, 2) = 99 / 255.0f;
+  divergingPurpleOrange(2, 3) = 1.0f;
+
+  divergingPurpleOrange(3, 0) = 230 / 255.0f;
+  divergingPurpleOrange(3, 1) = 97 / 255.0f;
+  divergingPurpleOrange(3, 2) = 1 / 255.0f;
+  divergingPurpleOrange(3, 3) = 1.0f;
+
+  propertyColorSchemes_.push_back(divergingPurpleOrange);
 }
 
-void SEAdenitaVisualModel::changePropertyColors(int index)
+void SEAdenitaVisualModel::changePropertyColors(int propertyIdx, int colorSchemeIdx)
 {
-  curColorType_ = static_cast<ColorType>(index);
+  curColorType_ = static_cast<ColorType>(propertyIdx);
 
-  if (index == MELTTEMP || index == GIBBS) {
+  if (propertyIdx == MELTTEMP || propertyIdx == GIBBS) {
     auto meltingTempColors = colors_.at(MELTTEMP);
     auto gibbsColors = colors_.at(GIBBS);
 
@@ -1039,11 +1063,11 @@ void SEAdenitaVisualModel::changePropertyColors(int index)
           ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
           auto baseSegment = nt->GetBaseSegment();
 
-          ADNArray<float> meltTempColor = calcPropertyColor(config.min_melting_temp, config.max_melting_temp, mt);
+          ADNArray<float> meltTempColor = calcPropertyColor(colorSchemeIdx, config.min_melting_temp, config.max_melting_temp, mt);
           meltingTempColors->SetColor(meltTempColor, nt);
           meltingTempColors->SetColor(meltTempColor, baseSegment);
 
-          ADNArray<float> gibbsColor = calcPropertyColor(config.min_gibbs_free_energy, config.max_gibbs_free_energy, gibbs);
+          ADNArray<float> gibbsColor = calcPropertyColor(colorSchemeIdx, config.min_gibbs_free_energy, config.max_gibbs_free_energy, gibbs);
           gibbsColors->SetColor(gibbsColor, nt);
           gibbsColors->SetColor(gibbsColor, baseSegment);
 
@@ -1725,21 +1749,22 @@ void SEAdenitaVisualModel::displayForDebugging()
 
 }
 
-ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(float min, float max, float val) {
+ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(int colorSchemeIdx, float min, float max, float val) {
 
   ADNArray<float> color = ADNArray<float>(4);
 
+  auto colorScheme = propertyColorSchemes_[colorSchemeIdx];
+
   if (val == FLT_MAX) { //if region is unbound
-    color(0) = 1.0f;
-    color(1) = 0.0f;
-    color(2) = 0.0f;
-    color(3) = 1.0f;
+    color(0) = colorScheme(0, 0);
+    color(1) = colorScheme(0, 1);
+    color(2) = colorScheme(0, 2);
+    color(3) = colorScheme(0, 3);
 
     return color;
   }
 
-  unsigned int numColors = numPropertyColors_;
-  auto colors = propertyColors_;
+  unsigned int numColors = colorScheme.GetNumElements();
 
   int idx1;
   int idx2;
@@ -1762,9 +1787,9 @@ ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(float min, float max, fl
     fractBetween = mappedVal - float(idx1);
   }
 
-  color(0) = (colors(idx2, 0) - colors(idx1, 0)) * fractBetween + colors(idx1, 0);
-  color(1) = (colors(idx2, 1) - colors(idx1, 1)) * fractBetween + colors(idx1, 1);
-  color(2) = (colors(idx2, 2) - colors(idx1, 2)) * fractBetween + colors(idx1, 2);
+  color(0) = (colorScheme(idx2, 0) - colorScheme(idx1, 0)) * fractBetween + colorScheme(idx1, 0);
+  color(1) = (colorScheme(idx2, 1) - colorScheme(idx1, 1)) * fractBetween + colorScheme(idx1, 1);
+  color(2) = (colorScheme(idx2, 2) - colorScheme(idx1, 2)) * fractBetween + colorScheme(idx1, 2);
   color(3) = 1.0f;
 
   return color;

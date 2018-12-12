@@ -148,9 +148,9 @@ void SEAdenitaVisualModelProperties::onSliderDimensionChanged(int val)
   ui.lblDimension->setText(QString::number(val));
 }
 
-void SEAdenitaVisualModelProperties::onPropertyColorsChanged(int index)
+void SEAdenitaVisualModelProperties::onPropertyColorsChanged(int propertyIdx)
 {
-  visualModel->changePropertyColors(index);
+  visualModel->changePropertyColors(propertyIdx, 1);
   SAMSON::requestViewportUpdate();
 }
 
