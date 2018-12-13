@@ -88,10 +88,6 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   editAtomsIcon.addFile(string(iconsPath + "editAtoms.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnEditAtoms->setIcon(editAtomsIcon);
 
-  QIcon paintIcon;
-  paintIcon.addFile(string(iconsPath + "paint.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnPaint->setIcon(paintIcon);
-
   // disable debug menu if compiling in release mode
   #if NDEBUG
   ui.tabWidget->removeTab(2);
@@ -592,10 +588,64 @@ void SEAdenitaCoreSEAppGUI::onKinetoplast()
   }
 }
 
-void SEAdenitaCoreSEAppGUI::onCalculateBindingRegions()
+void SEAdenitaCoreSEAppGUI::onCalculateBindingProperties()
 {
-  SEAdenitaCoreSEApp* t = getApp();
-  t->CalculateBindingRegions();
+
+  QDialog dialog(this);
+  QFormLayout form(&dialog);
+
+  form.addRow(new QLabel("Parameters for Calculating the Binding Region Properties"));
+
+  //oligo conc
+  QLineEdit *oligoConcText = new QLineEdit(&dialog);
+  oligoConcText->setText("100");
+  form.addRow(new QLabel("Oligo Conc"), oligoConcText);
+
+  QLineEdit *monovalentConcText = new QLineEdit(&dialog);
+  monovalentConcText->setText("5");
+  form.addRow(new QLabel("Concentration of monovalent cations"), monovalentConcText);
+
+  QLineEdit *divalentConcText = new QLineEdit(&dialog);
+  divalentConcText->setText("16");
+  form.addRow(new QLabel("Concentration of divalent cations"), divalentConcText);
+
+  QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+  form.addRow(&buttonBox);
+  QObject::connect(&buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+  QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
+  if (dialog.exec() == QDialog::Accepted) {
+
+    bool oligoConcOk = false;
+    int oligoConc = oligoConcText->text().toInt(&oligoConcOk);
+
+    bool monovalentConcOk = false;
+    int monovalentConc = monovalentConcText->text().toInt(&monovalentConcOk);
+
+    bool divalentConcOk = false;
+    int divalentConc = divalentConcText->text().toInt(&divalentConcOk);
+
+    if (oligoConcOk && monovalentConcOk && divalentConcOk) {
+      SEAdenitaCoreSEApp* t = getApp();
+
+      t->CalculateBindingRegions(oligoConc, monovalentConc, divalentConc);
+
+      SEAdenitaVisualModel* adenitaVm = static_cast<SEAdenitaVisualModel*>(t->GetVisualModel());
+      if (adenitaVm != nullptr) {
+        adenitaVm->changePropertyColors(1, 0);
+        SAMSON::requestViewportUpdate();
+        
+      }
+      
+    }
+    else {
+      QMessageBox messageBox;
+      messageBox.critical(0, "Error", "Check whether the entered values are numeric! Check if the Structural Model is selected");
+      messageBox.setFixedSize(500, 200);
+    }
+
+
+  }
 }
 
 void SEAdenitaCoreSEAppGUI::onSetStart()

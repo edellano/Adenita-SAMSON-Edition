@@ -50,7 +50,7 @@ public:
   float max_gibbs_free_energy = -10000.0f;
   bool interpolate_dimensions = true;
   float animation_step_size = 0.0f;
-  double double_helix_V_color[4] = { 0.0f, 0.43f, 0.86f, 1.0f };
+  double double_helix_V_color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
   double nucleotide_E_Color[4] = { 0.59f, 0.63f, 0.8f, 1.0f };
   double double_strand_color[4] = { 1.0f, 1.0f, 1.0f, 1.0f};
   

@@ -76,7 +76,11 @@ void                              onSliderScaleChanged(int val);
 void                              onSliderVisibilityChanged(int val);
 void                              onSpinboxVisibilityChanged(double val);
 void                              onSliderDimensionChanged(int val);
-void                              onPropertyColorsChanged(int index);
+void                              onPropertyColorsChanged(int propertyIdx);
+void                              onPropertyColorSchemeChanged(int colorSchemeIdx);
+void                              onSingleStrandColorSchemeChanged(int index);
+void                              onNucleotideColorSchemeChanged(int index);
+void                              onDoubleStrandColorSchemeChanged(int index);
 
 private:
 
