@@ -153,7 +153,7 @@
      <item row="7" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Property Colors</string>
+        <string>Color Mode</string>
        </property>
       </widget>
      </item>
@@ -186,15 +186,15 @@
      <item row="9" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Staple Colors</string>
+        <string>Single Strand Colors</string>
        </property>
       </widget>
      </item>
      <item row="9" column="1">
-      <widget class="QComboBox" name="cbbStapleColorScheme">
+      <widget class="QComboBox" name="cbbSingleStrandColorScheme">
        <item>
         <property name="text">
-         <string>12 Colors Standard (Customizable)</string>
+         <string>13 Colors Standard (Customizable)</string>
         </property>
        </item>
        <item>
@@ -272,6 +272,11 @@
        <item>
         <property name="text">
          <string>6 Colors Pastel</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>12 Colors Pastel</string>
         </property>
        </item>
       </widget>
@@ -395,10 +400,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>cbbStapleColorScheme</sender>
+   <sender>cbbSingleStrandColorScheme</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
-   <slot>onStapleColorSchemeChanged(int)</slot>
+   <slot>onSingleStrandColorSchemeChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>219</x>
@@ -451,7 +456,7 @@
   <slot>onSliderDimensionChanged(int)</slot>
   <slot>onPropertyColorsChanged(int)</slot>
   <slot>onPropertyColorSchemeChanged(int)</slot>
-  <slot>onStapleColorSchemeChanged(int)</slot>
+  <slot>onSingleStrandColorSchemeChanged(int)</slot>
   <slot>onNucleotideColorSchemeChanged(int)</slot>
   <slot>onDoubleStrandColorSchemeChanged(int)</slot>
  </slots>

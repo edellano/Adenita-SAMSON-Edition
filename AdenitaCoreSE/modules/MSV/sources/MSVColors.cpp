@@ -4,7 +4,7 @@
 MSVColors::MSVColors()
 {
   SetStandardNucleotideColorScheme();
-  SetStandardStaplesColorScheme();
+  SetStandardSingleStrandColorScheme();
   SetStandardDoubleStrandColorScheme();
 
 }
@@ -64,17 +64,18 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNSingleStrand> ss)
 
     if (ss->IsScaffold())
     {
-      color(0) = config.nucleotide_E_Color[0];
-      color(1) = config.nucleotide_E_Color[1];
-      color(2) = config.nucleotide_E_Color[2];
-      color(3) = config.nucleotide_E_Color[3];
+      int scaffoldColorNum = singleStrandColorScheme_.GetNumElements() - 1;
+      color(0) = singleStrandColorScheme_(scaffoldColorNum, 0);
+      color(1) = singleStrandColorScheme_(scaffoldColorNum, 1);
+      color(2) = singleStrandColorScheme_(scaffoldColorNum, 2);
+      color(3) = singleStrandColorScheme_(scaffoldColorNum, 3);
     }
     else {
-      int stapleColorNum = ss->getNodeIndex() % stapleColorScheme_.GetNumElements();
-      color(0) = stapleColorScheme_(stapleColorNum, 0);
-      color(1) = stapleColorScheme_(stapleColorNum, 1);
-      color(2) = stapleColorScheme_(stapleColorNum, 2);
-      color(3) = stapleColorScheme_(stapleColorNum, 3);
+      int stapleColorNum = ss->getNodeIndex() % (singleStrandColorScheme_.GetNumElements() - 1);
+      color(0) = singleStrandColorScheme_(stapleColorNum, 0);
+      color(1) = singleStrandColorScheme_(stapleColorNum, 1);
+      color(2) = singleStrandColorScheme_(stapleColorNum, 2);
+      color(3) = singleStrandColorScheme_(stapleColorNum, 3);
     }
     SBNodeMaterial* material = ss()->getMaterial();
     if (material) color = GetMaterialColor(ss());
@@ -148,18 +149,25 @@ void MSVColors::SetStandardDoubleStrandColorScheme()
 
 }
 
-void MSVColors::SetStandardStaplesColorScheme()
+void MSVColors::SetStandardSingleStrandColorScheme()
 {
   SEConfig& config = SEConfig::GetInstance();
 
-  stapleColorScheme_ = ADNArray<float>(4, config.num_staple_colors);
+  singleStrandColorScheme_ = ADNArray<float>(4, config.num_staple_colors + 1);
 
   for (int num = 0; num < config.num_staple_colors; num++) {
-    stapleColorScheme_(num, 0) = config.staple_colors[num * 4 + 0];
-    stapleColorScheme_(num, 1) = config.staple_colors[num * 4 + 1];
-    stapleColorScheme_(num, 2) = config.staple_colors[num * 4 + 2];
-    stapleColorScheme_(num, 3) = config.staple_colors[num * 4 + 3];
+    singleStrandColorScheme_(num, 0) = config.staple_colors[num * 4 + 0];
+    singleStrandColorScheme_(num, 1) = config.staple_colors[num * 4 + 1];
+    singleStrandColorScheme_(num, 2) = config.staple_colors[num * 4 + 2];
+    singleStrandColorScheme_(num, 3) = config.staple_colors[num * 4 + 3];
   }
+
+  //scaffold strand color
+  int scaffoldColorNum = config.num_staple_colors;
+  singleStrandColorScheme_(scaffoldColorNum, 0) = config.nucleotide_E_Color[0];
+  singleStrandColorScheme_(scaffoldColorNum, 1) = config.nucleotide_E_Color[1];
+  singleStrandColorScheme_(scaffoldColorNum, 2) = config.nucleotide_E_Color[2];
+  singleStrandColorScheme_(scaffoldColorNum, 3) = config.nucleotide_E_Color[3];
 }
 
 void MSVColors::SetStandardNucleotideColorScheme()
@@ -193,9 +201,9 @@ void MSVColors::SetStandardNucleotideColorScheme()
 
 }
 
-void MSVColors::SetStaplesColorScheme(ADNArray<float> colorScheme)
+void MSVColors::SetSingleStrandColorScheme(ADNArray<float> colorScheme)
 {
-  stapleColorScheme_ = colorScheme;
+  singleStrandColorScheme_ = colorScheme;
 }
 
 void MSVColors::SetDoubleStrandColorScheme(ADNArray<float> colorScheme)

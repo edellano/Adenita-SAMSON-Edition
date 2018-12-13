@@ -21,11 +21,11 @@ public:
   void SetColor(ADNArray<float> color, ADNPointer<ADNDoubleStrand> ds);
 
   void SetStandardNucleotideColorScheme();
-  void SetStandardStaplesColorScheme();
+  void SetStandardSingleStrandColorScheme();
   void SetStandardDoubleStrandColorScheme();
 
   void SetNucleotideColorScheme(ADNArray<float> colorScheme);
-  void SetStaplesColorScheme(ADNArray<float> colorScheme);
+  void SetSingleStrandColorScheme(ADNArray<float> colorScheme);
   void SetDoubleStrandColorScheme(ADNArray<float> colorScheme);
 
 private:
@@ -66,7 +66,7 @@ private:
   std::map<ADNDoubleStrand*, ADNArray<float>> dssColors_;
 
   ADNArray<float> nucleotideColorScheme_;
-  ADNArray<float> stapleColorScheme_;
+  ADNArray<float> singleStrandColorScheme_;
   ADNArray<float> doubleStrandColorScheme_;
 
 };

@@ -160,9 +160,9 @@ void SEAdenitaVisualModelProperties::onPropertyColorSchemeChanged(int colorSchem
   SAMSON::requestViewportUpdate();
 }
 
-void SEAdenitaVisualModelProperties::onStapleColorSchemeChanged(int index)
+void SEAdenitaVisualModelProperties::onSingleStrandColorSchemeChanged(int index)
 {
-  visualModel->setupStapleColors(index);
+  visualModel->setupSingleStrandColors(index);
   SAMSON::requestViewportUpdate();
 }
 
