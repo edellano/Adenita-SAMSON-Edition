@@ -60,7 +60,6 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNSingleStrand> ss)
   auto res = GetColor(ss(), sssColors_);
   auto color = res.second;
   if (res.first == false) {
-    SEConfig& config = SEConfig::GetInstance();
 
     if (ss->IsScaffold())
     {
@@ -91,7 +90,6 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNBaseSegment> bs)
   auto res = GetColor(bs(), bssColors_);
   auto color = res.second;
   if (res.first == false) {
-    SEConfig& config = SEConfig::GetInstance();
     int doubleStrandColorNum = bs->GetDoubleStrand()->getNodeIndex() % doubleStrandColorScheme_.GetNumElements();
 
     color(0) = doubleStrandColorScheme_(doubleStrandColorNum, 0);
