@@ -5,6 +5,7 @@ MSVColors::MSVColors()
 {
   SetStandardNucleotideColorScheme();
   SetStandardStaplesColorScheme();
+  SetStandardDoubleStrandColorScheme();
 
 }
 
@@ -90,11 +91,12 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNBaseSegment> bs)
   auto color = res.second;
   if (res.first == false) {
     SEConfig& config = SEConfig::GetInstance();
+    int doubleStrandColorNum = bs->getNodeIndex() % doubleStrandColorScheme_.GetNumElements();
 
-    color(0) = config.double_strand_color[0];
-    color(1) = config.double_strand_color[1];
-    color(2) = config.double_strand_color[2];
-    color(3) = config.double_strand_color[3];
+    color(0) = doubleStrandColorScheme_(doubleStrandColorNum, 0);
+    color(1) = doubleStrandColorScheme_(doubleStrandColorNum, 1);
+    color(2) = doubleStrandColorScheme_(doubleStrandColorNum, 2);
+    color(3) = doubleStrandColorScheme_(doubleStrandColorNum, 3);
 
     SBNodeMaterial* material = bs()->getMaterial();
     if (material) color = GetMaterialColor(bs());
@@ -132,6 +134,18 @@ void MSVColors::SetColor(ADNArray<float> color, ADNPointer<ADNBaseSegment> bs)
 void MSVColors::SetColor(ADNArray<float> color, ADNPointer<ADNDoubleStrand> ds)
 {
   SetColor(color, ds(), dssColors_);
+}
+
+void MSVColors::SetStandardDoubleStrandColorScheme()
+{
+  SEConfig& config = SEConfig::GetInstance();
+
+  doubleStrandColorScheme_ = ADNArray<float>(4, 1);
+  doubleStrandColorScheme_(0, 0) = config.double_helix_V_color[0];
+  doubleStrandColorScheme_(0, 1) = config.double_helix_V_color[1];
+  doubleStrandColorScheme_(0, 2) = config.double_helix_V_color[2];
+  doubleStrandColorScheme_(0, 3) = config.double_helix_V_color[3];
+
 }
 
 void MSVColors::SetStandardStaplesColorScheme()
