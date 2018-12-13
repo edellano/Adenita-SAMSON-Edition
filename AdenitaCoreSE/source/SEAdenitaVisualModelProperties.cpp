@@ -160,15 +160,21 @@ void SEAdenitaVisualModelProperties::onPropertyColorSchemeChanged(int colorSchem
   SAMSON::requestViewportUpdate();
 }
 
-void SEAdenitaVisualModelProperties::onStapleColorSchemeChanged(int index)
+void SEAdenitaVisualModelProperties::onSingleStrandColorSchemeChanged(int index)
 {
-  visualModel->setupStapleColors(index);
+  visualModel->setupSingleStrandColors(index);
   SAMSON::requestViewportUpdate();
 }
 
 void SEAdenitaVisualModelProperties::onNucleotideColorSchemeChanged(int index)
 {
   visualModel->setupNucleotideColors(index);
+  SAMSON::requestViewportUpdate();
+}
+
+void SEAdenitaVisualModelProperties::onDoubleStrandColorSchemeChanged(int index)
+{
+  visualModel->setupDoubleStrandColors(index);
   SAMSON::requestViewportUpdate();
 }
 
