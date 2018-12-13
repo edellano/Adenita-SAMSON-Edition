@@ -76,8 +76,9 @@ public :
   virtual void												changeDimension(int dimension);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
   void                                changePropertyColors(int propertyIdx, int colorSchemeIdx);
-  void                                setupStapleColors(int index);
+  void                                setupSingleStrandColors(int index);
   void                                setupNucleotideColors(int index);
+  void                                setupDoubleStrandColors(int index);
 
   virtual void												display();																///< Displays the visual model
   virtual void												displayAtomsLines();
