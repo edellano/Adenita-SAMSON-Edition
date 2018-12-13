@@ -153,14 +153,14 @@
      <item row="7" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Property Color</string>
+        <string>Property Colors</string>
        </property>
       </widget>
      </item>
      <item row="8" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Property Color Scheme</string>
+        <string>Property Colors</string>
        </property>
       </widget>
      </item>
@@ -186,7 +186,7 @@
      <item row="9" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Staple Color Scheme</string>
+        <string>Staple Colors</string>
        </property>
       </widget>
      </item>
@@ -217,7 +217,7 @@
      <item row="10" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Nucleotide Color Scheme</string>
+        <string>Nucleotide Colors</string>
        </property>
       </widget>
      </item>
@@ -241,6 +241,37 @@
        <item>
         <property name="text">
          <string>2 Colors Pastel (Pyrimidine, Purine)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="11" column="0">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Double Strand Colors</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="1">
+      <widget class="QComboBox" name="cbbDoulbeStrandColorScheme">
+       <item>
+        <property name="text">
+         <string>1 Color Standard</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2 Colors Pastel</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>4 Colors Dark</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>6 Colors Pastel</string>
         </property>
        </item>
       </widget>
@@ -395,6 +426,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbbDoulbeStrandColorScheme</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onDoubleStrandColorSchemeChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>349</x>
+     <y>329</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>432</x>
+     <y>387</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSliderScaleChanged(int)</slot>
@@ -406,5 +453,6 @@
   <slot>onPropertyColorSchemeChanged(int)</slot>
   <slot>onStapleColorSchemeChanged(int)</slot>
   <slot>onNucleotideColorSchemeChanged(int)</slot>
+  <slot>onDoubleStrandColorSchemeChanged(int)</slot>
  </slots>
 </ui>
