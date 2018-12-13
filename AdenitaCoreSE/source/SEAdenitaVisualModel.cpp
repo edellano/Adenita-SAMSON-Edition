@@ -990,31 +990,495 @@ void SEAdenitaVisualModel::orderVisibility()
   }
 }
 
-void SEAdenitaVisualModel::setupPropertyColors()
+void SEAdenitaVisualModel::setupSingleStrandColors(int index)
 {
-  numPropertyColors_ = 3;
-  propertyColors_ = ADNArray<float>(4, numPropertyColors_);
-  propertyColors_(0, 0) = 252.0f / 255.0f;
-  propertyColors_(0, 1) = 141.0f / 255.0f;
-  propertyColors_(0, 2) = 89.0f / 255.0f;
-  propertyColors_(0, 3) = 1.0f;
+  auto regularColors = colors_[ColorType::REGULAR];
 
-  propertyColors_(1, 0) = 255.0f / 255.0f;
-  propertyColors_(1, 1) = 255.0f / 255.0f;
-  propertyColors_(1, 2) = 191.0f / 255.0f;
-  propertyColors_(1, 3) = 1.0f;
+  if (index == 0) {
+    regularColors->SetStandardSingleStrandColorScheme();
+  }
+  else if (index == 1) {
 
-  propertyColors_(2, 0) = 145.0f / 255.0f;
-  propertyColors_(2, 1) = 207.0f / 255.0f;
-  propertyColors_(2, 2) = 96.0f / 255.0f;
-  propertyColors_(2, 3) = 1.0f;
+    ADNArray<float> pastel12 = ADNArray<float>(4, 12);
+
+    pastel12(0, 0) = 141 / 255.0f;
+    pastel12(0, 1) = 211 / 255.0f;
+    pastel12(0, 2) = 199 / 255.0f;
+    pastel12(0, 3) = 1;
+
+    pastel12(1, 0) = 255 / 255.0f;
+    pastel12(1, 1) = 255 / 255.0f;
+    pastel12(1, 2) = 179 / 255.0f;
+    pastel12(1, 3) = 1;
+
+    pastel12(2, 0) = 190 / 255.0f;
+    pastel12(2, 1) = 186 / 255.0f;
+    pastel12(2, 2) = 218 / 255.0f;
+    pastel12(2, 3) = 1;
+
+    pastel12(3, 0) = 251 / 255.0f;
+    pastel12(3, 1) = 128 / 255.0f;
+    pastel12(3, 2) = 114 / 255.0f;
+    pastel12(3, 3) = 1;
+
+    pastel12(4, 0) = 128 / 255.0f;
+    pastel12(4, 1) = 177 / 255.0f;
+    pastel12(4, 2) = 211 / 255.0f;
+    pastel12(4, 3) = 1;
+
+    pastel12(5, 0) = 253 / 255.0f;
+    pastel12(5, 1) = 180 / 255.0f;
+    pastel12(5, 2) = 98 / 255.0f;
+    pastel12(5, 3) = 1;
+
+    pastel12(6, 0) = 179 / 255.0f;
+    pastel12(6, 1) = 222 / 255.0f;
+    pastel12(6, 2) = 105 / 255.0f;
+    pastel12(6, 3) = 1;
+
+    pastel12(7, 0) = 252 / 255.0f;
+    pastel12(7, 1) = 205 / 255.0f;
+    pastel12(7, 2) = 229 / 255.0f;
+    pastel12(7, 3) = 1;
+
+    pastel12(8, 0) = 217 / 255.0f;
+    pastel12(8, 1) = 217 / 255.0f;
+    pastel12(8, 2) = 217 / 255.0f;
+    pastel12(8, 3) = 1;
+
+    pastel12(9, 0) = 188 / 255.0f;
+    pastel12(9, 1) = 128 / 255.0f;
+    pastel12(9, 2) = 189 / 255.0f;
+    pastel12(9, 3) = 1;
+
+    pastel12(10, 0) = 204 / 255.0f;
+    pastel12(10, 1) = 235 / 255.0f;
+    pastel12(10, 2) = 197 / 255.0f;
+    pastel12(10, 3) = 1;
+
+    pastel12(11, 0) = 255 / 255.0f;
+    pastel12(11, 1) = 237 / 255.0f;
+    pastel12(11, 2) = 111 / 255.0f;
+    pastel12(11, 3) = 1;
+
+    regularColors->SetSingleStrandColorScheme(pastel12);
+  }
+  else if (index == 2) {
+
+    ADNArray<float> dark8 = ADNArray<float>(4, 8);
+
+    dark8(0, 0) = 102 / 255.0f;
+    dark8(0, 1) = 102 / 255.0f;
+    dark8(0, 2) = 102 / 255.0f;
+    dark8(0, 3) = 1;
+
+    dark8(1, 0) = 27  / 255.0f;
+    dark8(1, 1) = 158 / 255.0f;
+    dark8(1, 2) = 119 / 255.0f;
+    dark8(1, 3) = 1;
+
+    dark8(2, 0) = 217 / 255.0f;
+    dark8(2, 1) = 95 / 255.0f;
+    dark8(2, 2) = 2 / 255.0f;
+    dark8(2, 3) = 1;
+
+    dark8(3, 0) = 117 / 255.0f;
+    dark8(3, 1) = 112 / 255.0f;
+    dark8(3, 2) = 179 / 255.0f;
+    dark8(3, 3) = 1;
+
+    dark8(4, 0) = 231 / 255.0f;
+    dark8(4, 1) = 41 / 255.0f;
+    dark8(4, 2) = 138 / 255.0f;
+    dark8(4, 3) = 1;
+
+    dark8(5, 0) = 102 / 255.0f;
+    dark8(5, 1) = 166 / 255.0f;
+    dark8(5, 2) = 30 / 255.0f;
+    dark8(5, 3) = 1;
+
+    dark8(6, 0) = 230 / 255.0f;
+    dark8(6, 1) = 171 / 255.0f;
+    dark8(6, 2) = 2 / 255.0f;
+    dark8(6, 3) = 1;
+
+    dark8(7, 0) = 166 / 255.0f;
+    dark8(7, 1) = 118 / 255.0f;
+    dark8(7, 2) = 29 / 255.0f;
+    dark8(7, 3) = 1;
+    
+    regularColors->SetSingleStrandColorScheme(dark8);
+
+  }
+  else if (index == 3) {
+
+    ADNArray<float> pastel8 = ADNArray<float>(4, 8);
+
+    pastel8(0, 0) = 179 / 255.0f;
+    pastel8(0, 1) = 226 / 255.0f;
+    pastel8(0, 2) = 205 / 255.0f;
+    pastel8(0, 3) = 1;
+
+    pastel8(1, 0) = 253 / 255.0f;
+    pastel8(1, 1) = 205 / 255.0f;
+    pastel8(1, 2) = 172 / 255.0f;
+    pastel8(1, 3) = 1;
+
+    pastel8(2, 0) = 203 / 255.0f;
+    pastel8(2, 1) = 213 / 255.0f;
+    pastel8(2, 2) = 232 / 255.0f;
+    pastel8(2, 3) = 1;
+
+    pastel8(3, 0) = 244 / 255.0f;
+    pastel8(3, 1) = 202 / 255.0f;
+    pastel8(3, 2) = 228 / 255.0f;
+    pastel8(3, 3) = 1;
+
+    pastel8(4, 0) = 230 / 255.0f;
+    pastel8(4, 1) = 245 / 255.0f;
+    pastel8(4, 2) = 201 / 255.0f;
+    pastel8(4, 3) = 1;
+
+    pastel8(5, 0) = 255 / 255.0f;
+    pastel8(5, 1) = 242 / 255.0f;
+    pastel8(5, 2) = 174 / 255.0f;
+    pastel8(5, 3) = 1;
+
+    pastel8(6, 0) = 241 / 255.0f;
+    pastel8(6, 1) = 226 / 255.0f;
+    pastel8(6, 2) = 204 / 255.0f;
+    pastel8(6, 3) = 1;
+
+    pastel8(7, 0) = 204 / 255.0f; 
+    pastel8(7, 1) = 204 / 255.0f; 
+    pastel8(7, 2) = 204 / 255.0f; 
+    pastel8(7, 3) = 1;
+
+    regularColors->SetSingleStrandColorScheme(pastel8);
+
+  }
+
+  
 }
 
-void SEAdenitaVisualModel::changePropertyColors(int index)
+void SEAdenitaVisualModel::setupNucleotideColors(int index)
 {
-  curColorType_ = static_cast<ColorType>(index);
+  auto regularColors = colors_[ColorType::REGULAR];
 
-  if (index == MELTTEMP || index == GIBBS) {
+  if (index == 0) {
+    regularColors->SetStandardNucleotideColorScheme();
+  }
+  else if (index == 1) {
+
+    ADNArray<float> dark4 = ADNArray<float>(4, 4);
+
+    dark4(0, 0) = 27 / 255.0f;  
+    dark4(0, 1) = 158 / 255.0f;
+    dark4(0, 2) = 119 / 255.0f;
+    dark4(0, 3) = 1;
+
+    dark4(1, 0) = 217 / 255.0f;
+    dark4(1, 1) = 95 / 255.0f;
+    dark4(1, 2) = 2 / 255.0f;
+    dark4(1, 3) = 1;
+
+    dark4(2, 0) = 117 / 255.0f;
+    dark4(2, 1) = 112 / 255.0f;
+    dark4(2, 2) = 179 / 255.0f;
+    dark4(2, 3) = 1;
+
+    dark4(3, 0) = 231 / 255.0f;
+    dark4(3, 1) = 41 / 255.0f;
+    dark4(3, 2) = 138 / 255.0f;
+    dark4(3, 3) = 1;
+
+    regularColors->SetNucleotideColorScheme(dark4);
+
+  }
+  else if (index == 2) {
+
+    ADNArray<float> pastel4 = ADNArray<float>(4, 4);
+    
+    pastel4(0, 0) = 166 / 255.0f; 
+    pastel4(0, 1) = 206 / 255.0f;
+    pastel4(0, 2) = 227 / 255.0f;
+    pastel4(0, 3) = 1;
+
+    pastel4(1, 0) = 31 / 255.0f;
+    pastel4(1, 1) = 120 / 255.0f;
+    pastel4(1, 2) = 180 / 255.0f;
+    pastel4(1, 3) = 1;
+
+    pastel4(2, 0) = 178 / 255.0f;
+    pastel4(2, 1) = 223 / 255.0f;
+    pastel4(2, 2) = 138 / 255.0f;
+    pastel4(2, 3) = 1;
+
+    pastel4(3, 0) = 51 / 255.0f;
+    pastel4(3, 1) = 160 / 255.0f;
+    pastel4(3, 2) = 44 / 255.0f;
+    pastel4(3, 3) = 1;
+
+    regularColors->SetNucleotideColorScheme(pastel4);
+
+  }
+  else if (index == 3) {
+
+    ADNArray<float> pastel2 = ADNArray<float>(4, 4);
+
+    pastel2(0, 0) = 127 / 255.0f; 
+    pastel2(0, 1) = 201 / 255.0f; 
+    pastel2(0, 2) = 127 / 255.0f; 
+    pastel2(0, 3) = 1;
+
+    pastel2(1, 0) = 253 / 255.0f;
+    pastel2(1, 1) = 192 / 255.0f;
+    pastel2(1, 2) = 134 / 255.0f;
+    pastel2(1, 3) = 1;
+
+    pastel2(2, 0) = 253 / 255.0f;
+    pastel2(2, 1) = 192 / 255.0f;
+    pastel2(2, 2) = 134 / 255.0f;
+    pastel2(2, 3) = 1;
+
+    pastel2(3, 0) = 127 / 255.0f;
+    pastel2(3, 1) = 201 / 255.0f;
+    pastel2(3, 2) = 127 / 255.0f;
+    pastel2(3, 3) = 1;
+
+    regularColors->SetNucleotideColorScheme(pastel2);
+
+  }
+}
+
+void SEAdenitaVisualModel::setupDoubleStrandColors(int index)
+{
+  auto regularColors = colors_[ColorType::REGULAR];
+
+  if (index == 0) {
+    regularColors->SetStandardDoubleStrandColorScheme();
+  }
+  else if (index == 1) {
+    ADNArray<float> pastel2 = ADNArray<float>(4, 2);
+
+    pastel2(0, 0) = 179 / 255.0f;
+    pastel2(0, 1) = 226 / 255.0f;
+    pastel2(0, 2) = 205 / 255.0f;
+    pastel2(0, 3) = 1.0f;
+
+    pastel2(1, 0) = 253 / 255.0f;
+    pastel2(1, 1) = 205 / 255.0f;
+    pastel2(1, 2) = 172 / 255.0f;
+    pastel2(1, 3) = 1.0f;
+
+    regularColors->SetDoubleStrandColorScheme(pastel2);
+
+  }
+  else if (index == 2) {
+    ADNArray<float> pastel4 = ADNArray<float>(4, 4);
+
+    pastel4(0, 0) = 141 / 255.0f;
+    pastel4(0, 1) = 211 / 255.0f;
+    pastel4(0, 2) = 199 / 255.0f;
+    pastel4(0, 3) = 1.0f;
+
+    pastel4(1, 0) = 255 / 255.0f;
+    pastel4(1, 1) = 255 / 255.0f;
+    pastel4(1, 2) = 179 / 255.0f;
+    pastel4(1, 3) = 1.0f;
+
+    pastel4(2, 0) = 190 / 255.0f;
+    pastel4(2, 1) = 186 / 255.0f;
+    pastel4(2, 2) = 218 / 255.0f;
+    pastel4(2, 3) = 1.0f;
+
+    pastel4(3, 0) = 251 / 255.0f;
+    pastel4(3, 1) = 128 / 255.0f;
+    pastel4(3, 2) = 114 / 255.0f;
+    pastel4(3, 3) = 1.0f;
+
+    regularColors->SetDoubleStrandColorScheme(pastel4);
+
+  }
+  else if (index == 3) {
+    ADNArray<float> pastel6 = ADNArray<float>(4, 6);
+
+    pastel6(0, 0) = 251 / 255.0f; 
+    pastel6(0, 1) = 180 / 255.0f; 
+    pastel6(0, 2) = 174 / 255.0f; 
+    pastel6(0, 3) = 1.0f;
+
+    pastel6(1, 0) = 179 / 255.0f; 
+    pastel6(1, 1) = 205 / 255.0f; 
+    pastel6(1, 2) = 227 / 255.0f; 
+    pastel6(1, 3) = 1.0f;
+
+    pastel6(2, 0) = 204 / 255.0f;
+    pastel6(2, 1) = 235 / 255.0f;
+    pastel6(2, 2) = 197 / 255.0f;
+    pastel6(2, 3) = 1.0f;
+
+    pastel6(3, 0) = 222 / 255.0f;
+    pastel6(3, 1) = 203 / 255.0f;
+    pastel6(3, 2) = 228 / 255.0f;
+    pastel6(3, 3) = 1.0f;
+
+    pastel6(4, 0) = 254 / 255.0f; 
+    pastel6(4, 1) = 217 / 255.0f; 
+    pastel6(4, 2) = 166 / 255.0f; 
+    pastel6(4, 3) = 1.0f;
+
+    pastel6(5, 0) = 255 / 255.0f; 
+    pastel6(5, 1) = 255 / 255.0f; 
+    pastel6(5, 2) = 204 / 255.0f; 
+    pastel6(5, 3) = 1.0f;
+
+    regularColors->SetDoubleStrandColorScheme(pastel6);
+
+  }
+  else if (index == 4) {
+    ADNArray<float> pastel12 = ADNArray<float>(4, 12);
+
+    pastel12(0, 0) = 141 / 255.0f;
+    pastel12(0, 1) = 211 / 255.0f;
+    pastel12(0, 2) = 199 / 255.0f;
+    pastel12(0, 3) = 1;
+
+    pastel12(1, 0) = 255 / 255.0f;
+    pastel12(1, 1) = 255 / 255.0f;
+    pastel12(1, 2) = 179 / 255.0f;
+    pastel12(1, 3) = 1;
+
+    pastel12(2, 0) = 190 / 255.0f;
+    pastel12(2, 1) = 186 / 255.0f;
+    pastel12(2, 2) = 218 / 255.0f;
+    pastel12(2, 3) = 1;
+
+    pastel12(3, 0) = 251 / 255.0f;
+    pastel12(3, 1) = 128 / 255.0f;
+    pastel12(3, 2) = 114 / 255.0f;
+    pastel12(3, 3) = 1;
+
+    pastel12(4, 0) = 128 / 255.0f;
+    pastel12(4, 1) = 177 / 255.0f;
+    pastel12(4, 2) = 211 / 255.0f;
+    pastel12(4, 3) = 1;
+
+    pastel12(5, 0) = 253 / 255.0f;
+    pastel12(5, 1) = 180 / 255.0f;
+    pastel12(5, 2) = 98 / 255.0f;
+    pastel12(5, 3) = 1;
+
+    pastel12(6, 0) = 179 / 255.0f;
+    pastel12(6, 1) = 222 / 255.0f;
+    pastel12(6, 2) = 105 / 255.0f;
+    pastel12(6, 3) = 1;
+
+    pastel12(7, 0) = 252 / 255.0f;
+    pastel12(7, 1) = 205 / 255.0f;
+    pastel12(7, 2) = 229 / 255.0f;
+    pastel12(7, 3) = 1;
+
+    pastel12(8, 0) = 217 / 255.0f;
+    pastel12(8, 1) = 217 / 255.0f;
+    pastel12(8, 2) = 217 / 255.0f;
+    pastel12(8, 3) = 1;
+
+    pastel12(9, 0) = 188 / 255.0f;
+    pastel12(9, 1) = 128 / 255.0f;
+    pastel12(9, 2) = 189 / 255.0f;
+    pastel12(9, 3) = 1;
+
+    pastel12(10, 0) = 204 / 255.0f;
+    pastel12(10, 1) = 235 / 255.0f;
+    pastel12(10, 2) = 197 / 255.0f;
+    pastel12(10, 3) = 1;
+
+    pastel12(11, 0) = 255 / 255.0f;
+    pastel12(11, 1) = 237 / 255.0f;
+    pastel12(11, 2) = 111 / 255.0f;
+    pastel12(11, 3) = 1;
+
+    regularColors->SetDoubleStrandColorScheme(pastel12);
+
+  }
+
+}
+
+void SEAdenitaVisualModel::setupPropertyColors()
+{
+  ADNArray<float> purpleBlueYellow = ADNArray<float>(4, 3);
+  purpleBlueYellow(0, 0) = 68.0f / 255.0f;
+  purpleBlueYellow(0, 1) = 3.0f / 255.0f;
+  purpleBlueYellow(0, 2) = 84.0f / 255.0f;
+  purpleBlueYellow(0, 3) = 1.0f;
+
+  purpleBlueYellow(1, 0) = 38.0f / 255.0f;
+  purpleBlueYellow(1, 1) = 148.0f / 255.0f;
+  purpleBlueYellow(1, 2) = 139.0f / 255.0f;
+  purpleBlueYellow(1, 3) = 1.0f;
+
+  purpleBlueYellow(2, 0) = 252.0f / 255.0f;
+  purpleBlueYellow(2, 1) = 230.0f / 255.0f;
+  purpleBlueYellow(2, 2) = 59.0f / 255.0f;
+  purpleBlueYellow(2, 3) = 1.0f;
+
+  propertyColorSchemes_.push_back(purpleBlueYellow);
+
+  ADNArray<float> divergingPurpleOrange = ADNArray<float>(4, 4);
+  divergingPurpleOrange(0, 0) = 94 / 255.0f;
+  divergingPurpleOrange(0, 1) = 60 / 255.0f;
+  divergingPurpleOrange(0, 2) = 153 / 255.0f;
+  divergingPurpleOrange(0, 3) = 1.0f;
+
+  divergingPurpleOrange(1, 0) = 178 / 255.0f;
+  divergingPurpleOrange(1, 1) = 171 / 255.0f;
+  divergingPurpleOrange(1, 2) = 210 / 255.0f;
+  divergingPurpleOrange(1, 3) = 1.0f;
+
+  divergingPurpleOrange(2, 0) = 253 / 255.0f;
+  divergingPurpleOrange(2, 1) = 184 / 255.0f;
+  divergingPurpleOrange(2, 2) = 99 / 255.0f;
+  divergingPurpleOrange(2, 3) = 1.0f;
+
+  divergingPurpleOrange(3, 0) = 230 / 255.0f;
+  divergingPurpleOrange(3, 1) = 97 / 255.0f;
+  divergingPurpleOrange(3, 2) = 1 / 255.0f;
+  divergingPurpleOrange(3, 3) = 1.0f;
+
+  propertyColorSchemes_.push_back(divergingPurpleOrange);
+
+  //this is a color scheme that is especially hard for red-green blind people to distinguish differences
+  //our PI is red-green blind
+  ADNArray<float> magicColors = ADNArray<float>(4, 4);
+  magicColors(0, 0) = 0 / 255.0f;
+  magicColors(0, 1) = 255 / 255.0f;
+  magicColors(0, 2) = 0 / 255.0f;
+  magicColors(0, 3) = 1.0f;
+
+  magicColors(1, 0) = 255 / 255.0f;
+  magicColors(1, 1) = 255 / 255.0f;
+  magicColors(1, 2) = 0 / 255.0f;
+  magicColors(1, 3) = 1.0f;
+
+  magicColors(2, 0) = 255 / 255.0f;
+  magicColors(2, 1) = 150 / 255.0f;
+  magicColors(2, 2) = 0 / 255.0f;
+  magicColors(2, 3) = 1.0f;
+
+  magicColors(3, 0) = 255 / 255.0f;
+  magicColors(3, 1) = 0 / 255.0f;
+  magicColors(3, 2) = 0 / 255.0f;
+  magicColors(3, 3) = 1.0f;
+
+  propertyColorSchemes_.push_back(magicColors);
+}
+
+void SEAdenitaVisualModel::changePropertyColors(int propertyIdx, int colorSchemeIdx)
+{
+  curColorType_ = static_cast<ColorType>(propertyIdx);
+
+  if (propertyIdx == MELTTEMP || propertyIdx == GIBBS) {
     auto meltingTempColors = colors_.at(MELTTEMP);
     auto gibbsColors = colors_.at(GIBBS);
 
@@ -1039,11 +1503,11 @@ void SEAdenitaVisualModel::changePropertyColors(int index)
           ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
           auto baseSegment = nt->GetBaseSegment();
 
-          ADNArray<float> meltTempColor = calcPropertyColor(config.min_melting_temp, config.max_melting_temp, mt);
+          ADNArray<float> meltTempColor = calcPropertyColor(colorSchemeIdx, config.min_melting_temp, config.max_melting_temp, mt);
           meltingTempColors->SetColor(meltTempColor, nt);
           meltingTempColors->SetColor(meltTempColor, baseSegment);
 
-          ADNArray<float> gibbsColor = calcPropertyColor(config.min_gibbs_free_energy, config.max_gibbs_free_energy, gibbs);
+          ADNArray<float> gibbsColor = calcPropertyColor(colorSchemeIdx, config.min_gibbs_free_energy, config.max_gibbs_free_energy, gibbs);
           gibbsColors->SetColor(gibbsColor, nt);
           gibbsColors->SetColor(gibbsColor, baseSegment);
 
@@ -1725,21 +2189,22 @@ void SEAdenitaVisualModel::displayForDebugging()
 
 }
 
-ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(float min, float max, float val) {
+ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(int colorSchemeIdx, float min, float max, float val) {
 
   ADNArray<float> color = ADNArray<float>(4);
 
+  auto colorScheme = propertyColorSchemes_[colorSchemeIdx];
+
   if (val == FLT_MAX) { //if region is unbound
-    color(0) = 1.0f;
-    color(1) = 0.0f;
-    color(2) = 0.0f;
-    color(3) = 1.0f;
+    color(0) = colorScheme(0, 0);
+    color(1) = colorScheme(0, 1);
+    color(2) = colorScheme(0, 2);
+    color(3) = colorScheme(0, 3);
 
     return color;
   }
 
-  unsigned int numColors = numPropertyColors_;
-  auto colors = propertyColors_;
+  unsigned int numColors = colorScheme.GetNumElements();
 
   int idx1;
   int idx2;
@@ -1762,9 +2227,9 @@ ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(float min, float max, fl
     fractBetween = mappedVal - float(idx1);
   }
 
-  color(0) = (colors(idx2, 0) - colors(idx1, 0)) * fractBetween + colors(idx1, 0);
-  color(1) = (colors(idx2, 1) - colors(idx1, 1)) * fractBetween + colors(idx1, 1);
-  color(2) = (colors(idx2, 2) - colors(idx1, 2)) * fractBetween + colors(idx1, 2);
+  color(0) = (colorScheme(idx2, 0) - colorScheme(idx1, 0)) * fractBetween + colorScheme(idx1, 0);
+  color(1) = (colorScheme(idx2, 1) - colorScheme(idx1, 1)) * fractBetween + colorScheme(idx1, 1);
+  color(2) = (colorScheme(idx2, 2) - colorScheme(idx1, 2)) * fractBetween + colorScheme(idx1, 2);
   color(3) = 1.0f;
 
   return color;

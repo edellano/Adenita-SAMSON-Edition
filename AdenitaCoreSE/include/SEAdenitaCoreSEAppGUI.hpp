@@ -76,7 +76,7 @@ public slots:
   void onDSRing();
   void onCatenanes();
   void onKinetoplast();
-  void onCalculateBindingRegions();
+  void onCalculateBindingProperties();
   void onSetStart();
   void onMergeComponents();
   void onTestNeighbors();
