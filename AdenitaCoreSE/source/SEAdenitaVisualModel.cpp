@@ -54,7 +54,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
     this, 
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
   
-  changeScale(4);
+  changeScale(7);
 
   setupPropertyColors();
 
@@ -990,12 +990,12 @@ void SEAdenitaVisualModel::orderVisibility()
   }
 }
 
-void SEAdenitaVisualModel::setupStapleColors(int index)
+void SEAdenitaVisualModel::setupSingleStrandColors(int index)
 {
   auto regularColors = colors_[ColorType::REGULAR];
 
   if (index == 0) {
-    regularColors->SetStandardStaplesColorScheme();
+    regularColors->SetStandardSingleStrandColorScheme();
   }
   else if (index == 1) {
 
@@ -1061,7 +1061,7 @@ void SEAdenitaVisualModel::setupStapleColors(int index)
     pastel12(11, 2) = 111 / 255.0f;
     pastel12(11, 3) = 1;
 
-    regularColors->SetStaplesColorScheme(pastel12);
+    regularColors->SetSingleStrandColorScheme(pastel12);
   }
   else if (index == 2) {
 
@@ -1107,7 +1107,7 @@ void SEAdenitaVisualModel::setupStapleColors(int index)
     dark8(7, 2) = 29 / 255.0f;
     dark8(7, 3) = 1;
     
-    regularColors->SetStaplesColorScheme(dark8);
+    regularColors->SetSingleStrandColorScheme(dark8);
 
   }
   else if (index == 3) {
@@ -1154,7 +1154,7 @@ void SEAdenitaVisualModel::setupStapleColors(int index)
     pastel8(7, 2) = 204 / 255.0f; 
     pastel8(7, 3) = 1;
 
-    regularColors->SetStaplesColorScheme(pastel8);
+    regularColors->SetSingleStrandColorScheme(pastel8);
 
   }
 
@@ -1275,29 +1275,29 @@ void SEAdenitaVisualModel::setupDoubleStrandColors(int index)
 
   }
   else if (index == 2) {
-    ADNArray<float> dark4 = ADNArray<float>(4, 4);
+    ADNArray<float> pastel4 = ADNArray<float>(4, 4);
 
-    dark4(0, 0) = 141 / 255.0f;
-    dark4(0, 1) = 211 / 255.0f;
-    dark4(0, 2) = 199 / 255.0f;
-    dark4(0, 3) = 1.0f;
+    pastel4(0, 0) = 141 / 255.0f;
+    pastel4(0, 1) = 211 / 255.0f;
+    pastel4(0, 2) = 199 / 255.0f;
+    pastel4(0, 3) = 1.0f;
 
-    dark4(1, 0) = 255 / 255.0f;
-    dark4(1, 1) = 255 / 255.0f;
-    dark4(1, 2) = 179 / 255.0f;
-    dark4(1, 3) = 1.0f;
+    pastel4(1, 0) = 255 / 255.0f;
+    pastel4(1, 1) = 255 / 255.0f;
+    pastel4(1, 2) = 179 / 255.0f;
+    pastel4(1, 3) = 1.0f;
 
-    dark4(2, 0) = 190 / 255.0f;
-    dark4(2, 1) = 186 / 255.0f;
-    dark4(2, 2) = 218 / 255.0f;
-    dark4(2, 3) = 1.0f;
+    pastel4(2, 0) = 190 / 255.0f;
+    pastel4(2, 1) = 186 / 255.0f;
+    pastel4(2, 2) = 218 / 255.0f;
+    pastel4(2, 3) = 1.0f;
 
-    dark4(3, 0) = 251 / 255.0f;
-    dark4(3, 1) = 128 / 255.0f;
-    dark4(3, 2) = 114 / 255.0f;
-    dark4(3, 3) = 1.0f;
+    pastel4(3, 0) = 251 / 255.0f;
+    pastel4(3, 1) = 128 / 255.0f;
+    pastel4(3, 2) = 114 / 255.0f;
+    pastel4(3, 3) = 1.0f;
 
-    regularColors->SetDoubleStrandColorScheme(dark4);
+    regularColors->SetDoubleStrandColorScheme(pastel4);
 
   }
   else if (index == 3) {
@@ -1334,6 +1334,72 @@ void SEAdenitaVisualModel::setupDoubleStrandColors(int index)
     pastel6(5, 3) = 1.0f;
 
     regularColors->SetDoubleStrandColorScheme(pastel6);
+
+  }
+  else if (index == 4) {
+    ADNArray<float> pastel12 = ADNArray<float>(4, 12);
+
+    pastel12(0, 0) = 141 / 255.0f;
+    pastel12(0, 1) = 211 / 255.0f;
+    pastel12(0, 2) = 199 / 255.0f;
+    pastel12(0, 3) = 1;
+
+    pastel12(1, 0) = 255 / 255.0f;
+    pastel12(1, 1) = 255 / 255.0f;
+    pastel12(1, 2) = 179 / 255.0f;
+    pastel12(1, 3) = 1;
+
+    pastel12(2, 0) = 190 / 255.0f;
+    pastel12(2, 1) = 186 / 255.0f;
+    pastel12(2, 2) = 218 / 255.0f;
+    pastel12(2, 3) = 1;
+
+    pastel12(3, 0) = 251 / 255.0f;
+    pastel12(3, 1) = 128 / 255.0f;
+    pastel12(3, 2) = 114 / 255.0f;
+    pastel12(3, 3) = 1;
+
+    pastel12(4, 0) = 128 / 255.0f;
+    pastel12(4, 1) = 177 / 255.0f;
+    pastel12(4, 2) = 211 / 255.0f;
+    pastel12(4, 3) = 1;
+
+    pastel12(5, 0) = 253 / 255.0f;
+    pastel12(5, 1) = 180 / 255.0f;
+    pastel12(5, 2) = 98 / 255.0f;
+    pastel12(5, 3) = 1;
+
+    pastel12(6, 0) = 179 / 255.0f;
+    pastel12(6, 1) = 222 / 255.0f;
+    pastel12(6, 2) = 105 / 255.0f;
+    pastel12(6, 3) = 1;
+
+    pastel12(7, 0) = 252 / 255.0f;
+    pastel12(7, 1) = 205 / 255.0f;
+    pastel12(7, 2) = 229 / 255.0f;
+    pastel12(7, 3) = 1;
+
+    pastel12(8, 0) = 217 / 255.0f;
+    pastel12(8, 1) = 217 / 255.0f;
+    pastel12(8, 2) = 217 / 255.0f;
+    pastel12(8, 3) = 1;
+
+    pastel12(9, 0) = 188 / 255.0f;
+    pastel12(9, 1) = 128 / 255.0f;
+    pastel12(9, 2) = 189 / 255.0f;
+    pastel12(9, 3) = 1;
+
+    pastel12(10, 0) = 204 / 255.0f;
+    pastel12(10, 1) = 235 / 255.0f;
+    pastel12(10, 2) = 197 / 255.0f;
+    pastel12(10, 3) = 1;
+
+    pastel12(11, 0) = 255 / 255.0f;
+    pastel12(11, 1) = 237 / 255.0f;
+    pastel12(11, 2) = 111 / 255.0f;
+    pastel12(11, 3) = 1;
+
+    regularColors->SetDoubleStrandColorScheme(pastel12);
 
   }
 
