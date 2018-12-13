@@ -20,12 +20,13 @@ public:
   void SetColor(ADNArray<float> color, ADNPointer<ADNBaseSegment> bs);
   void SetColor(ADNArray<float> color, ADNPointer<ADNDoubleStrand> ds);
 
-  void SetStandardDoubleStrandColorScheme();
-  void SetStandardStaplesColorScheme();
   void SetStandardNucleotideColorScheme();
+  void SetStandardStaplesColorScheme();
+  void SetStandardDoubleStrandColorScheme();
 
-  void SetStaplesColorScheme(ADNArray<float> colorScheme);
   void SetNucleotideColorScheme(ADNArray<float> colorScheme);
+  void SetStaplesColorScheme(ADNArray<float> colorScheme);
+  void SetDoubleStrandColorScheme(ADNArray<float> colorScheme);
 
 private:
 

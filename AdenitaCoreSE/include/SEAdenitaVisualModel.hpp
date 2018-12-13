@@ -78,6 +78,7 @@ public :
   void                                changePropertyColors(int propertyIdx, int colorSchemeIdx);
   void                                setupStapleColors(int index);
   void                                setupNucleotideColors(int index);
+  void                                setupDoubleStrandColors(int index);
 
   virtual void												display();																///< Displays the visual model
   virtual void												displayAtomsLines();

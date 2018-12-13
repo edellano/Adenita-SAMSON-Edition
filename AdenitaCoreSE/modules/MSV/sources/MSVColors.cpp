@@ -91,7 +91,7 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNBaseSegment> bs)
   auto color = res.second;
   if (res.first == false) {
     SEConfig& config = SEConfig::GetInstance();
-    int doubleStrandColorNum = bs->getNodeIndex() % doubleStrandColorScheme_.GetNumElements();
+    int doubleStrandColorNum = bs->GetDoubleStrand()->getNodeIndex() % doubleStrandColorScheme_.GetNumElements();
 
     color(0) = doubleStrandColorScheme_(doubleStrandColorNum, 0);
     color(1) = doubleStrandColorScheme_(doubleStrandColorNum, 1);
@@ -196,6 +196,12 @@ void MSVColors::SetStandardNucleotideColorScheme()
 void MSVColors::SetStaplesColorScheme(ADNArray<float> colorScheme)
 {
   stapleColorScheme_ = colorScheme;
+}
+
+void MSVColors::SetDoubleStrandColorScheme(ADNArray<float> colorScheme)
+{
+  doubleStrandColorScheme_ = colorScheme;
+
 }
 
 void MSVColors::SetNucleotideColorScheme(ADNArray<float> colorScheme)

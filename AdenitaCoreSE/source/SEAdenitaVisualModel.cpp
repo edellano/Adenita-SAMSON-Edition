@@ -1251,6 +1251,94 @@ void SEAdenitaVisualModel::setupNucleotideColors(int index)
   }
 }
 
+void SEAdenitaVisualModel::setupDoubleStrandColors(int index)
+{
+  auto regularColors = colors_[ColorType::REGULAR];
+
+  if (index == 0) {
+    regularColors->SetStandardDoubleStrandColorScheme();
+  }
+  else if (index == 1) {
+    ADNArray<float> pastel2 = ADNArray<float>(4, 2);
+
+    pastel2(0, 0) = 179 / 255.0f;
+    pastel2(0, 1) = 226 / 255.0f;
+    pastel2(0, 2) = 205 / 255.0f;
+    pastel2(0, 3) = 1.0f;
+
+    pastel2(1, 0) = 253 / 255.0f;
+    pastel2(1, 1) = 205 / 255.0f;
+    pastel2(1, 2) = 172 / 255.0f;
+    pastel2(1, 3) = 1.0f;
+
+    regularColors->SetDoubleStrandColorScheme(pastel2);
+
+  }
+  else if (index == 2) {
+    ADNArray<float> dark4 = ADNArray<float>(4, 4);
+
+    dark4(0, 0) = 141 / 255.0f;
+    dark4(0, 1) = 211 / 255.0f;
+    dark4(0, 2) = 199 / 255.0f;
+    dark4(0, 3) = 1.0f;
+
+    dark4(1, 0) = 255 / 255.0f;
+    dark4(1, 1) = 255 / 255.0f;
+    dark4(1, 2) = 179 / 255.0f;
+    dark4(1, 3) = 1.0f;
+
+    dark4(2, 0) = 190 / 255.0f;
+    dark4(2, 1) = 186 / 255.0f;
+    dark4(2, 2) = 218 / 255.0f;
+    dark4(2, 3) = 1.0f;
+
+    dark4(3, 0) = 251 / 255.0f;
+    dark4(3, 1) = 128 / 255.0f;
+    dark4(3, 2) = 114 / 255.0f;
+    dark4(3, 3) = 1.0f;
+
+    regularColors->SetDoubleStrandColorScheme(dark4);
+
+  }
+  else if (index == 3) {
+    ADNArray<float> pastel6 = ADNArray<float>(4, 6);
+
+    pastel6(0, 0) = 251 / 255.0f; 
+    pastel6(0, 1) = 180 / 255.0f; 
+    pastel6(0, 2) = 174 / 255.0f; 
+    pastel6(0, 3) = 1.0f;
+
+    pastel6(1, 0) = 179 / 255.0f; 
+    pastel6(1, 1) = 205 / 255.0f; 
+    pastel6(1, 2) = 227 / 255.0f; 
+    pastel6(1, 3) = 1.0f;
+
+    pastel6(2, 0) = 204 / 255.0f;
+    pastel6(2, 1) = 235 / 255.0f;
+    pastel6(2, 2) = 197 / 255.0f;
+    pastel6(2, 3) = 1.0f;
+
+    pastel6(3, 0) = 222 / 255.0f;
+    pastel6(3, 1) = 203 / 255.0f;
+    pastel6(3, 2) = 228 / 255.0f;
+    pastel6(3, 3) = 1.0f;
+
+    pastel6(4, 0) = 254 / 255.0f; 
+    pastel6(4, 1) = 217 / 255.0f; 
+    pastel6(4, 2) = 166 / 255.0f; 
+    pastel6(4, 3) = 1.0f;
+
+    pastel6(5, 0) = 255 / 255.0f; 
+    pastel6(5, 1) = 255 / 255.0f; 
+    pastel6(5, 2) = 204 / 255.0f; 
+    pastel6(5, 3) = 1.0f;
+
+    regularColors->SetDoubleStrandColorScheme(pastel6);
+
+  }
+
+}
+
 void SEAdenitaVisualModel::setupPropertyColors()
 {
   ADNArray<float> purpleBlueYellow = ADNArray<float>(4, 3);
