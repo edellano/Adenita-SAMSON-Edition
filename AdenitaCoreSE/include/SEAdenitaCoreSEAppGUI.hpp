@@ -83,6 +83,7 @@ public slots:
   void onOxDNAImport();
   void onFromDatagraph();
 
+
 private:
   std::string IsJsonCadnano(QString filename);
 
