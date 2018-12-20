@@ -65,8 +65,6 @@ public slots:
   void onExport();
   void onSetScaffold();
   void onConnectSingleStrands();
-  void onBreak();
-  void onDelete();
   void onTwistDoubleHelixMinus(bool toggled);
   void onTwistDoubleHelixPlus(bool toggled);
   // Options

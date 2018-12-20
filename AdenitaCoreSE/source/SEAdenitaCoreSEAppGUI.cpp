@@ -293,39 +293,6 @@ void SEAdenitaCoreSEAppGUI::onConnectSingleStrands()
   t->ConnectSingleStrands();
 }
 
-void SEAdenitaCoreSEAppGUI::onBreak()
-{
-  //bool active = ui.btnBreak->isChecked();
-  //if (active) {
-  //  SBProxy* p = SAMSON::getProxy("SEBreakEditor");
-  //  SEBreakEditor* e = static_cast<SEBreakEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
-  //  SAMSON::setActiveEditor(e);
-  //  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/break.png";
-
-  //  SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
-  //} else {
-  //  SAMSON::setActiveEditor(nullptr);
-  //  SAMSON::unsetViewportCursor();
-  //}
-}
-
-void SEAdenitaCoreSEAppGUI::onDelete()
-{
-  //bool active = ui.btnDelete->isChecked();
-  //if (active) {
-  //  SBProxy* p = SAMSON::getProxy("SEDeleteEditor");
-  //  SEDeleteEditor* e = static_cast<SEDeleteEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
-  //  SAMSON::setActiveEditor(e);
-  //  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/delete.png";
-
-  //  SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
-  //}
-  //else {
-  //  SAMSON::setActiveEditor(nullptr);
-  //  SAMSON::unsetViewportCursor();
-  //}
-}
-
 void SEAdenitaCoreSEAppGUI::onTwistDoubleHelixMinus(bool toggled)
 {
   if (toggled) {
