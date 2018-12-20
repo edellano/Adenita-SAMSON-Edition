@@ -87,16 +87,6 @@ std::string SEAdenitaCoreSEAppGUI::GetScaffoldFilename()
   return filename;
 }
 
-void SEAdenitaCoreSEAppGUI::onCreate()
-{
-  SBProxy* weClassProxy = SAMSON::getProxy("SEWireframeEditor");
-  SEWireframeEditor* we = static_cast<SEWireframeEditor*>(SAMSON::getEditor(weClassProxy->getUUID(), weClassProxy->getElementUUID()));
-  
-  SAMSON::setActiveEditor(we);
-  SAMSON::setActiveEditor(we); //has to be set active twice in order for ther popertyDialog to show up
-  
-}
-
 void SEAdenitaCoreSEAppGUI::onLoadFile()
 {
   SEConfig& config = SEConfig::GetInstance();
@@ -285,49 +275,6 @@ void SEAdenitaCoreSEAppGUI::onCenterPart()
   SEAdenitaCoreSEApp *t = getApp();
   t->CenterPart();
   SAMSON::getActiveCamera()->center();
-}
-
-void SEAdenitaCoreSEAppGUI::onConnectSingleStrands()
-{
-  SEAdenitaCoreSEApp* t = getApp();
-  t->ConnectSingleStrands();
-}
-
-void SEAdenitaCoreSEAppGUI::onTwistDoubleHelixMinus(bool toggled)
-{
-  if (toggled) {
-    SBProxy* p = SAMSON::getProxy("SETwistHelixEditor");
-    SETwistHelixEditor* e = static_cast<SETwistHelixEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
-    SAMSON::setActiveEditor(e);
-    string iconPath = SB_ELEMENT_PATH + "/Resource/icons/minus1BP.png";
-
-    SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
-
-    // check in the editor GUI th ecorresponding option
-    e->SetMode(false);
-  }
-  else {
-    SAMSON::setActiveEditor(nullptr);
-    SAMSON::unsetViewportCursor();
-  }
-}
-
-void SEAdenitaCoreSEAppGUI::onTwistDoubleHelixPlus(bool toggled)
-{
-  if (toggled) {
-    SBProxy* p = SAMSON::getProxy("SETwistHelixEditor");
-    SETwistHelixEditor* e = static_cast<SETwistHelixEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
-    SAMSON::setActiveEditor(e);
-    string iconPath = SB_ELEMENT_PATH + "/Resource/icons/minus1BP.png";
-
-    SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
-
-    e->SetMode(true);
-  }
-  else {
-    SAMSON::setActiveEditor(nullptr);
-    SAMSON::unsetViewportCursor();
-  }
 }
 
 void SEAdenitaCoreSEAppGUI::onChangeScaffold(int idx)

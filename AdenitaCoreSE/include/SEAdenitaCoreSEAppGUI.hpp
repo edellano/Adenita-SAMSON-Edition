@@ -59,14 +59,10 @@ public:
 
 public slots:
 
-  void onCreate();
   void onLoadFile();
   void onSaveFile();
   void onExport();
   void onSetScaffold();
-  void onConnectSingleStrands();
-  void onTwistDoubleHelixMinus(bool toggled);
-  void onTwistDoubleHelixPlus(bool toggled);
   // Options
   void onChangeScaffold(int idx);
   // Debug
