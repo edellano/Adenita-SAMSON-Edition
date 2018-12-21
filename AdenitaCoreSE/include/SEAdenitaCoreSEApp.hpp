@@ -20,7 +20,7 @@
 
 class SEAdenitaCoreSEApp : public SBDApp {
 
-	SB_CLASS
+  SB_CLASS
 
 public :
 
@@ -78,10 +78,12 @@ public :
   void AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions = true, bool positionsFromNucleotides = false);
   void AddConformationToActiveLayer(ADNPointer<ADNConformation> conf);
 
+  virtual void keyPressEvent(QKeyEvent* event);
+
 private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);
 
-  virtual void keyPressEvent(QKeyEvent* event);
+  
 
 
   std::map<SBDocument*, ADNNanorobot*> nanorobots_;

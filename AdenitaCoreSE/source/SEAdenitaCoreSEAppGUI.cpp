@@ -539,10 +539,23 @@ std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 
 void SEAdenitaCoreSEAppGUI::keyPressEvent(QKeyEvent* event)
 {
-  if (event->key() == Qt::Key_0) {
-    SAMSON::requestViewportUpdate();
-  }
+  if (event->modifiers() == Qt::ControlModifier) {
+    if (event->key() == Qt::Key_D) {
+      SBProxy* deProxy = SAMSON::getProxy("SEDeleteEditor");
+      SEDeleteEditor* de = static_cast<SEDeleteEditor*>(SAMSON::getEditor(deProxy->getUUID(), deProxy->getElementUUID()));
+
+      SAMSON::setActiveEditor(de);
+    }
+
+    if (event->key() == Qt::Key_B) {
+      SBProxy* beProxy = SAMSON::getProxy("SEBreakEditor");
+      SEDeleteEditor* be = static_cast<SEBreakEditor*>(SAMSON::getEditor(beProxy->getUUID(), beProxy->getElementUUID()));
+
+      SAMSON::setActiveEditor(be);
+    }
 }
+}
+
 
 SBCContainerUUID SEAdenitaCoreSEAppGUI::getUUID() const { return SBCContainerUUID( "386506A7-DD8B-69DD-4599-F136C1B91610" );}
 
