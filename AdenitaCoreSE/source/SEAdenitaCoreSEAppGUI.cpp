@@ -35,12 +35,7 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   QIcon setScaffIcon;
   setScaffIcon.addFile(string(iconsPath + "setScaffold.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnSetScaff->setIcon(setScaffIcon);
-
-
-
-
-
-
+  
   // disable debug menu if compiling in release mode
   #if NDEBUG
   ui.tabWidget->removeTab(2);
@@ -91,13 +86,15 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
 {
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
-
+    
   if (config.mode == SEConfigMode::HAICHAO) {
+    
     SEAdenitaCoreSEApp* t = getApp();
     t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/hextube/hextube.json");
 
     t->ResetVisualModel();
     SAMSON::getActiveCamera()->center();
+
   }
   else {
     QString filename = QFileDialog::getOpenFileName(this, tr("Open document: caDNAno, mesh (ply), Adenita document (adn, adnpart)"), QDir::currentPath(), tr("(Documents *.json *.ply *.adn *.adnpart)"));
@@ -140,11 +137,18 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
       }
 
       //add the visual model
-      if (loadVM) t->ResetVisualModel();
+      if (loadVM) { 
+        t->ResetVisualModel(); 
+        
+      }
+
+
     }
 
     SAMSON::getActiveCamera()->center();
   }
+  
+  SAMSON::hideProgressBar();
 
 }
 
@@ -531,6 +535,13 @@ std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
   }
 
   return format;
+}
+
+void SEAdenitaCoreSEAppGUI::keyPressEvent(QKeyEvent* event)
+{
+  if (event->key() == Qt::Key_0) {
+    SAMSON::requestViewportUpdate();
+  }
 }
 
 SBCContainerUUID SEAdenitaCoreSEAppGUI::getUUID() const { return SBCContainerUUID( "386506A7-DD8B-69DD-4599-F136C1B91610" );}

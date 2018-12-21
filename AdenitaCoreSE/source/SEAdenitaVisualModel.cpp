@@ -57,7 +57,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   changeScale(7);
 
   setupPropertyColors();
-
+  
   //orderVisibility();
 
 }
