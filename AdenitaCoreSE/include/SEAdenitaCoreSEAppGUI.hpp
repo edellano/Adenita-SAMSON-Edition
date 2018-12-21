@@ -81,6 +81,9 @@ public slots:
 private:
   std::string IsJsonCadnano(QString filename);
 
+  virtual void keyPressEvent(QKeyEvent* event);
+
+
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
 };
 

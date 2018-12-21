@@ -1,5 +1,6 @@
 #include "SEAdenitaCoreSEApp.hpp"
 #include "SEAdenitaCoreSEAppGUI.hpp"
+#include "SEAdenitaVisualModelProperties.hpp"
 
 SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
 
@@ -176,6 +177,7 @@ void SEAdenitaCoreSEApp::ResetVisualModel() {
     SEAdenitaVisualModel* newVm = vmProxy->createInstance(allNodes);
     newVm->create();
     SAMSON::getActiveLayer()->addChild(newVm);
+
   }
 
   logger.LogDebugPassedMilliseconds(start, "ResetVisualModel");
@@ -573,4 +575,11 @@ void SEAdenitaCoreSEApp::ConnectStructuralSignalSlots(ADNPointer<ADNPart> part)
     this,
     SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)
     );
+}
+
+void SEAdenitaCoreSEApp::keyPressEvent(QKeyEvent* event)
+{
+  if (event->key() == Qt::Key_0) {
+    SAMSON::requestViewportUpdate();
+  }
 }

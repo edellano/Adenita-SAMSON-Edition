@@ -81,6 +81,9 @@ public :
 private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);
 
+  virtual void keyPressEvent(QKeyEvent* event);
+
+
   std::map<SBDocument*, ADNNanorobot*> nanorobots_;
 };
 
