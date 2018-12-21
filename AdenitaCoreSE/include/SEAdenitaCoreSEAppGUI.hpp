@@ -46,6 +46,8 @@ public:
 
 	//@}
 
+  virtual void keyPressEvent(QKeyEvent *event);
+
 	///\name Settings
 	//@{
 
@@ -53,6 +55,8 @@ public:
 	void														saveSettings(SBGSettings* settings);										///< Save GUI settings
 
 	//@}
+
+
 
   // get selected scaffold
   std::string GetScaffoldFilename();
@@ -81,7 +85,6 @@ public slots:
 private:
   std::string IsJsonCadnano(QString filename);
 
-  virtual void keyPressEvent(QKeyEvent* event);
 
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;

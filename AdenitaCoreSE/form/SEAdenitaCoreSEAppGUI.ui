@@ -16,6 +16,9 @@
     <height>100</height>
    </size>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::ClickFocus</enum>
+  </property>
   <property name="windowTitle">
    <string/>
   </property>
