@@ -68,15 +68,17 @@ public :
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
+  void ConnectToDocument();
 
   // Helper functions
   ADNNanorobot* GetNanorobot();
   std::string ReadScaffoldFilename(std::string filename);
   QStringList GetPartsNameList();
 
-  // Exposed for editors
+  // Adding things to data graph
   void AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions = true, bool positionsFromNucleotides = false);
   void AddConformationToActiveLayer(ADNPointer<ADNConformation> conf);
+  void AddLoadedPartToNanorobot(ADNPointer<ADNPart> part);
 
 private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);

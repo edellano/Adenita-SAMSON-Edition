@@ -57,6 +57,9 @@ public:
   void DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs, bool removeFromDs = true, bool removeFromIndex = true);
   void DeregisterAtom(ADNPointer<ADNAtom> atom, bool removeFromAtom = true);
 
+  bool loadedViaSAMSON();
+  void loadedViaSAMSON(bool l);
+
 protected:
 private:
   // inside these pointers ids are unique
@@ -65,6 +68,8 @@ private:
   CollectionMap<ADNSingleStrand> singleStrandsIndex_;
   CollectionMap<ADNBaseSegment> baseSegmentsIndex_;
   CollectionMap<ADNDoubleStrand> doubleStrandsIndex_;
+
+  bool loadedViaSAMSON_ = false;
 };
 
 SB_REGISTER_TARGET_TYPE(ADNPart, "ADNPart", "D3809709-A2EA-DDC1-9753-A40B2B9DE57E");

@@ -112,13 +112,18 @@ std::string ADNAuxiliary::SBVector3ToString(SBVector3 vec) {
 
 std::string ADNAuxiliary::UblasVectorToString(ublas::vector<double> vec) {
   std::string st_pos = "";
-  bool start = true;
-  for (auto &v : vec) {
-    if (!start) {
-      st_pos += ",";
+  if (vec.size() == 3) {
+    st_pos = std::to_string(vec[0]) + "," + std::to_string(vec[1]) + "," + std::to_string(vec[2]);
+  }
+  else {
+    bool start = true;
+    for (auto &v : vec) {
+      if (!start) {
+        st_pos += ",";
+      }
+      st_pos += std::to_string(v);
+      start = false;
     }
-    st_pos += std::to_string(v);
-    start = false;
   }
 
   return st_pos;
