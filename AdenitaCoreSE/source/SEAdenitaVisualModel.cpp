@@ -2204,7 +2204,7 @@ ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(int colorSchemeIdx, floa
     return color;
   }
 
-  unsigned int numColors = colorScheme.GetNumElements();
+  auto numColors = colorScheme.GetNumElements();
 
   int idx1;
   int idx2;
