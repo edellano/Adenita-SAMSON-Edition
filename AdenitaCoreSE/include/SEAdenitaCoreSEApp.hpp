@@ -40,7 +40,7 @@ public :
 	//@}
 
   void LoadPart(QString filename);
-  void SaveFile(QString filename, bool all);
+  void SaveFile(QString filename, ADNPointer<ADNPart> part = nullptr);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename);
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part = nullptr);
@@ -68,15 +68,17 @@ public :
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
+  void ConnectToDocument();
 
   // Helper functions
   ADNNanorobot* GetNanorobot();
   std::string ReadScaffoldFilename(std::string filename);
   QStringList GetPartsNameList();
 
-  // Exposed for editors
+  // Adding things to data graph
   void AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions = true, bool positionsFromNucleotides = false);
   void AddConformationToActiveLayer(ADNPointer<ADNConformation> conf);
+  void AddLoadedPartToNanorobot(ADNPointer<ADNPart> part);
 
   virtual void keyPressEvent(QKeyEvent* event);
 
