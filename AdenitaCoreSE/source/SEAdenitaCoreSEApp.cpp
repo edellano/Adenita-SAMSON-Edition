@@ -405,16 +405,20 @@ void SEAdenitaCoreSEApp::FromDatagraph()
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   auto t = documentEvent->getType();
-  if (t != SBDocumentEvent::CameraChanged) {
-    int here = 1;
-  }
+  //if (t != SBDocumentEvent::CameraChanged) {
+  //  int here = 1;
+  //}
 
-  if (documentEvent->getType() == SBDocumentEvent::ActiveLayerChanged) {
-    ConnectToDocument();
-  }
-  if (documentEvent->getType() == SBDocumentEvent::ActiveDocumentChanged) {
-    ConnectToDocument();
-  }
+  //if (documentEvent->getType() == SBDocumentEvent::ActiveLayerChanged) {
+  //  ConnectToDocument();
+  //}
+  //if (documentEvent->getType() == SBDocumentEvent::ActiveDocumentChanged) {
+  //  ConnectToDocument();
+  //}
+  //if (documentEvent->getType() == SBDocumentEvent::DocumentAdded) {
+  //  int i = 0;
+  //}
+
   if (documentEvent->getType() == SBDocumentEvent::StructuralModelAdded) {
     // on load a non-registered ADNPart
     auto node = documentEvent->getAuxiliaryNode();
@@ -445,10 +449,18 @@ void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
   //}
 }
 
+void SEAdenitaCoreSEApp::ConnectToDocument(SBDocument* doc)
+{
+  doc->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent));
+}
+
 void SEAdenitaCoreSEApp::ConnectToDocument()
 {
+
   SAMSON::getActiveLayer()->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent));
   SAMSON::getActiveDocument()->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent));
+  //SAMSON::getActiveLayer()->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent));
+  //SAMSON::getActiveDocument()->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent));
 
 }
 
