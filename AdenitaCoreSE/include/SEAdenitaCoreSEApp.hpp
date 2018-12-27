@@ -69,6 +69,7 @@ public :
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
   void ConnectToDocument();
+  void ConnectToDocument(SBDocument* doc);
 
   // Helper functions
   ADNNanorobot* GetNanorobot();
