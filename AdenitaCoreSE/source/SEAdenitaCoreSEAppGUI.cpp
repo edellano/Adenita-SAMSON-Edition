@@ -32,62 +32,10 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   searchIcon.addFile(string(iconsPath + "search.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnSearch->setIcon(searchIcon);
 
-  QIcon createIcon;
-  createIcon.addFile(string(iconsPath + "create.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnCreate->setIcon(createIcon);
-
   QIcon setScaffIcon;
   setScaffIcon.addFile(string(iconsPath + "setScaffold.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnSetScaff->setIcon(setScaffIcon);
-
-  QIcon breakIcon;
-  breakIcon.addFile(string(iconsPath + "break.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnBreak->setIcon(breakIcon);
-
-  QIcon connectSSIcon;
-  connectSSIcon.addFile(string(iconsPath + "connectSS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnConnectSS->setIcon(connectSSIcon);
-
-  QIcon connectDSIcon;
-  connectDSIcon.addFile(string(iconsPath + "connectDS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnConnectDS->setIcon(connectDSIcon);
-
-  QIcon mutateIcon;
-  mutateIcon.addFile(string(iconsPath + "mutate.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnMutate->setIcon(mutateIcon);
-
-  QIcon twistHelixMinus;
-  twistHelixMinus.addFile(string(iconsPath + "minus1BP.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnTwistDoubleHelixMinus->setIcon(twistHelixMinus);
-
-  QIcon twistHelixPlus;
-  twistHelixPlus.addFile(string(iconsPath + "plus1BP.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnTwistDoubleHelixPlus->setIcon(twistHelixPlus);
-
-  QIcon insertIcon;
-  insertIcon.addFile(string(iconsPath + "insert.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnInsert->setIcon(insertIcon);
-
-  QIcon deleteIcon;
-  deleteIcon.addFile(string(iconsPath + "delete.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnDelete->setIcon(deleteIcon);
-
-  QIcon addLoopIcon;
-  addLoopIcon.addFile(string(iconsPath + "addLoop.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnAddLoop->setIcon(addLoopIcon);
-
-  QIcon addSkipIcon;
-  addSkipIcon.addFile(string(iconsPath + "addSkip.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnAddSkip->setIcon(addSkipIcon);
-
-  QIcon mapToAminoAcidIcon;
-  mapToAminoAcidIcon.addFile(string(iconsPath + "mapToAminoAcid.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnMapToAminoAcids->setIcon(mapToAminoAcidIcon);
-
-  QIcon editAtomsIcon;
-  editAtomsIcon.addFile(string(iconsPath + "editAtoms.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnEditAtoms->setIcon(editAtomsIcon);
-
+  
   // disable debug menu if compiling in release mode
   #if NDEBUG
   ui.tabWidget->removeTab(2);
@@ -134,27 +82,19 @@ std::string SEAdenitaCoreSEAppGUI::GetScaffoldFilename()
   return filename;
 }
 
-void SEAdenitaCoreSEAppGUI::onCreate()
-{
-  SBProxy* weClassProxy = SAMSON::getProxy("SEWireframeEditor");
-  SEWireframeEditor* we = static_cast<SEWireframeEditor*>(SAMSON::getEditor(weClassProxy->getUUID(), weClassProxy->getElementUUID()));
-  
-  SAMSON::setActiveEditor(we);
-  SAMSON::setActiveEditor(we); //has to be set active twice in order for ther popertyDialog to show up
-  
-}
-
 void SEAdenitaCoreSEAppGUI::onLoadFile()
 {
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
-
+    
   if (config.mode == SEConfigMode::HAICHAO) {
+    
     SEAdenitaCoreSEApp* t = getApp();
     t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/hextube/hextube.json");
 
     t->ResetVisualModel();
     SAMSON::getActiveCamera()->center();
+
   }
   else {
     QString filename = QFileDialog::getOpenFileName(this, tr("Open document: caDNAno, mesh (ply), Adenita document (adn, adnpart)"), QDir::currentPath(), tr("(Documents *.json *.ply *.adn *.adnpart)"));
@@ -197,11 +137,18 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
       }
 
       //add the visual model
-      if (loadVM) t->ResetVisualModel();
+      if (loadVM) { 
+        t->ResetVisualModel(); 
+        
+      }
+
+
     }
 
     SAMSON::getActiveCamera()->center();
   }
+  
+  SAMSON::hideProgressBar();
 
 }
 
@@ -367,82 +314,6 @@ void SEAdenitaCoreSEAppGUI::onCenterPart()
   SEAdenitaCoreSEApp *t = getApp();
   t->CenterPart();
   SAMSON::getActiveCamera()->center();
-}
-
-void SEAdenitaCoreSEAppGUI::onConnectSingleStrands()
-{
-  SEAdenitaCoreSEApp* t = getApp();
-  t->ConnectSingleStrands();
-}
-
-void SEAdenitaCoreSEAppGUI::onBreak()
-{
-  bool active = ui.btnBreak->isChecked();
-  if (active) {
-    SBProxy* p = SAMSON::getProxy("SEBreakEditor");
-    SEBreakEditor* e = static_cast<SEBreakEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
-    SAMSON::setActiveEditor(e);
-    string iconPath = SB_ELEMENT_PATH + "/Resource/icons/break.png";
-
-    SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
-  } else {
-    SAMSON::setActiveEditor(nullptr);
-    SAMSON::unsetViewportCursor();
-  }
-}
-
-void SEAdenitaCoreSEAppGUI::onDelete()
-{
-  bool active = ui.btnDelete->isChecked();
-  if (active) {
-    SBProxy* p = SAMSON::getProxy("SEDeleteEditor");
-    SEDeleteEditor* e = static_cast<SEDeleteEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
-    SAMSON::setActiveEditor(e);
-    string iconPath = SB_ELEMENT_PATH + "/Resource/icons/delete.png";
-
-    SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
-  }
-  else {
-    SAMSON::setActiveEditor(nullptr);
-    SAMSON::unsetViewportCursor();
-  }
-}
-
-void SEAdenitaCoreSEAppGUI::onTwistDoubleHelixMinus(bool toggled)
-{
-  if (toggled) {
-    SBProxy* p = SAMSON::getProxy("SETwistHelixEditor");
-    SETwistHelixEditor* e = static_cast<SETwistHelixEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
-    SAMSON::setActiveEditor(e);
-    string iconPath = SB_ELEMENT_PATH + "/Resource/icons/minus1BP.png";
-
-    SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
-
-    // check in the editor GUI th ecorresponding option
-    e->SetMode(false);
-  }
-  else {
-    SAMSON::setActiveEditor(nullptr);
-    SAMSON::unsetViewportCursor();
-  }
-}
-
-void SEAdenitaCoreSEAppGUI::onTwistDoubleHelixPlus(bool toggled)
-{
-  if (toggled) {
-    SBProxy* p = SAMSON::getProxy("SETwistHelixEditor");
-    SETwistHelixEditor* e = static_cast<SETwistHelixEditor*>(SAMSON::getEditor(p->getUUID(), p->getElementUUID()));
-    SAMSON::setActiveEditor(e);
-    string iconPath = SB_ELEMENT_PATH + "/Resource/icons/minus1BP.png";
-
-    SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
-
-    e->SetMode(true);
-  }
-  else {
-    SAMSON::setActiveEditor(nullptr);
-    SAMSON::unsetViewportCursor();
-  }
 }
 
 void SEAdenitaCoreSEAppGUI::onChangeScaffold(int idx)
@@ -700,6 +571,33 @@ std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 
   return format;
 }
+
+void SEAdenitaCoreSEAppGUI::keyPressEvent(QKeyEvent* event)
+{
+  if (event->modifiers() == Qt::ControlModifier) {
+    {
+      SBProxy* ep = nullptr;
+
+      if (event->key() == Qt::Key_D) {
+        ep = SAMSON::getProxy("SEDeleteEditor");
+      }
+
+      if (event->key() == Qt::Key_B) {
+        ep = SAMSON::getProxy("SEBreakEditor");
+      }
+
+      if (event->key() == Qt::Key_G) {
+        ep = SAMSON::getProxy("SEConnectSSDNAEditor");
+      }
+
+      if (ep) {
+        SBEditor * e = SAMSON::getEditor(ep->getUUID(), ep->getElementUUID());
+        SAMSON::setActiveEditor(e);
+      }
+    }
+  }
+}
+
 
 SBCContainerUUID SEAdenitaCoreSEAppGUI::getUUID() const { return SBCContainerUUID( "386506A7-DD8B-69DD-4599-F136C1B91610" );}
 

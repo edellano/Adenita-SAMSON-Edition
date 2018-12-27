@@ -46,6 +46,8 @@ public:
 
 	//@}
 
+  virtual void keyPressEvent(QKeyEvent *event);
+
 	///\name Settings
 	//@{
 
@@ -54,21 +56,17 @@ public:
 
 	//@}
 
+
+
   // get selected scaffold
   std::string GetScaffoldFilename();
 
 public slots:
 
-  void onCreate();
   void onLoadFile();
   void onSaveFile();
   void onExport();
   void onSetScaffold();
-  void onConnectSingleStrands();
-  void onBreak();
-  void onDelete();
-  void onTwistDoubleHelixMinus(bool toggled);
-  void onTwistDoubleHelixPlus(bool toggled);
   // Options
   void onChangeScaffold(int idx);
   // Debug
@@ -83,8 +81,11 @@ public slots:
   void onOxDNAImport();
   void onFromDatagraph();
 
+
 private:
   std::string IsJsonCadnano(QString filename);
+
+
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
 };
