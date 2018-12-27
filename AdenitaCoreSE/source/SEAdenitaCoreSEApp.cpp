@@ -13,7 +13,7 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
   }
   logger.LogDateTime();
 
-  ConnectToDocument();
+  //ConnectToDocument();
 }
 
 SEAdenitaCoreSEApp::~SEAdenitaCoreSEApp() {
