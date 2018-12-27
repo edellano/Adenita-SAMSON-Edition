@@ -67,7 +67,7 @@ QString SEBreakEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("SAMSON Element generator pro tip: modify me"); 
+	return QObject::tr("Break ssDNA"); 
 
 }
 
@@ -76,6 +76,9 @@ void SEBreakEditor::beginEditing() {
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 
 	// Implement this function if you need to prepare some data structures in order to be able to handle GUI or SAMSON events.
 
+  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/break.png";
+  SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
+
 }
 
 void SEBreakEditor::endEditing() {
@@ -83,6 +86,7 @@ void SEBreakEditor::endEditing() {
 	// SAMSON Element generator pro tip: SAMSON calls this function immediately before your editor becomes inactive (for example when another editor becomes active). 
 	// Implement this function if you need to clean some data structures.
 
+  SAMSON::unsetViewportCursor();
 }
 
 void SEBreakEditor::getActions(SBVector<SBAction*>& actionVector) {
@@ -97,7 +101,7 @@ void SEBreakEditor::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
-
+  
 }
 
 void SEBreakEditor::displayForShadow() {
@@ -114,6 +118,7 @@ void SEBreakEditor::displayInterface() {
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to display the editor 2D interface in viewports. 
 	// Implement this function if your editor displays a 2D user interface. For example, a rectangle selection editor would display a 2D rectangle in the active viewport. 
 	// You may use utility functions provided by SAMSON (e.g. displayLinesOrtho and displayTrianglesOrtho).
+  
 
 }
 
