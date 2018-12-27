@@ -63,7 +63,7 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNSingleStrand> ss)
 
     if (ss->IsScaffold())
     {
-      int scaffoldColorNum = singleStrandColorScheme_.GetNumElements() - 1;
+      auto scaffoldColorNum = singleStrandColorScheme_.GetNumElements() - 1;
       color(0) = singleStrandColorScheme_(scaffoldColorNum, 0);
       color(1) = singleStrandColorScheme_(scaffoldColorNum, 1);
       color(2) = singleStrandColorScheme_(scaffoldColorNum, 2);
@@ -153,7 +153,7 @@ void MSVColors::SetStandardSingleStrandColorScheme()
 
   singleStrandColorScheme_ = ADNArray<float>(4, config.num_staple_colors + 1);
 
-  for (int num = 0; num < config.num_staple_colors; num++) {
+  for (unsigned int num = 0; num < config.num_staple_colors; num++) {
     singleStrandColorScheme_(num, 0) = config.staple_colors[num * 4 + 0];
     singleStrandColorScheme_(num, 1) = config.staple_colors[num * 4 + 1];
     singleStrandColorScheme_(num, 2) = config.staple_colors[num * 4 + 2];

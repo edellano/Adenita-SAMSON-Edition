@@ -2,6 +2,7 @@
 
 #include "SBGWindowWidget.hpp" 
 #include "ui_SENanotubeCreatorEditorGUI.h"
+#include "SAMSON.hpp"
 
 
 class SENanotubeCreatorEditor;
@@ -51,13 +52,14 @@ public:
 
 	//@}
 
-  void updateInfo(double radius, int numBp, bool clear = false);
+  void updateInfo(SBQuantity::length radius, int numDs, int numBp, bool clear = false);
 
 public slots:
   void onChangeRouting();
   void onPredefinedNanotube(bool predefined);
   void onRadiusChanged();
   void onBpChanged();
+  void onNumDsChanged();
 
 private:
 

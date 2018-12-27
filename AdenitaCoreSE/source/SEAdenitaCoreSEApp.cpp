@@ -13,14 +13,14 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
     logger.ClearLog();
   }
   logger.LogDateTime();
-  
+
+  ConnectToDocument();
 }
 
 SEAdenitaCoreSEApp::~SEAdenitaCoreSEApp() {
 
 	getGUI()->saveDefaultSettings();
 	delete getGUI();
-
 }
 
 SEAdenitaCoreSEAppGUI* SEAdenitaCoreSEApp::getGUI() const { return static_cast<SEAdenitaCoreSEAppGUI*>(SBDApp::getGUI()); }
@@ -32,14 +32,12 @@ void SEAdenitaCoreSEApp::LoadPart(QString filename)
   AddPartToActiveLayer(part);
 }
 
-void SEAdenitaCoreSEApp::SaveFile(QString filename, bool all)
+void SEAdenitaCoreSEApp::SaveFile(QString filename, ADNPointer<ADNPart> part)
 {
-  if (all) {
+  if (part == nullptr) {
     ADNLoader::SaveNanorobotToJson(GetNanorobot(), filename.toStdString());
   }
   else {
-    auto parts = GetNanorobot()->GetSelectedParts();
-    auto part = parts[0];  // save first
     ADNLoader::SavePartToJson(part, filename.toStdString());
   }
 }
@@ -102,18 +100,9 @@ void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string filename)
   std::string s = ReadScaffoldFilename(filename);
 
   // get selected part
-  SBDocument* doc = SAMSON::getActiveDocument();
-  SBNodeIndexer nodes;
-  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  auto parts = GetNanorobot()->GetSelectedParts();
 
-  ADNPointer<ADNPart> part = nullptr;
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isSelected()) {
-      part = static_cast<ADNPart*>(node);
-    }
-  }
-
-  if (part != nullptr) {
+  SB_FOR(ADNPointer<ADNPart> part, parts) {
     auto scafs = part->GetScaffolds();
     SB_FOR(ADNPointer<ADNSingleStrand> ss, scafs) {
       ADNBasicOperations::SetSingleStrandSequence(ss, s);
@@ -124,12 +113,6 @@ void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string filename)
 
 void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part)
 {
-  // get selected part
-  SBDocument* doc = SAMSON::getActiveDocument();
-  SBNodeIndexer nodes;
-  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-
-  CollectionMap<ADNPart> parts;
   if (part == nullptr) {
     ADNLoader::OutputToOxDNA(GetNanorobot(), folder.toStdString(), options);
   }
@@ -140,20 +123,8 @@ void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOption
 
 void SEAdenitaCoreSEApp::CenterPart()
 {
-  // get selected part
-  SBDocument* doc = SAMSON::getActiveDocument();
-  SBNodeIndexer nodes;
-  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-
-  // only take one
-  ADNPointer<ADNPart> part = nullptr;
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isSelected()) {
-      part = static_cast<ADNPart*>(node);
-    }
-  }
-
-  if (part != nullptr) ADNBasicOperations::CenterPart(part);
+  auto parts = GetNanorobot()->GetSelectedParts();
+  SB_FOR(ADNPointer<ADNPart> part, parts) ADNBasicOperations::CenterPart(part);
 }
 
 void SEAdenitaCoreSEApp::ResetVisualModel() {
@@ -203,8 +174,6 @@ SBVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
     }
     
     return adenitaVm;
-  
-  
 }
 
 void SEAdenitaCoreSEApp::ConnectSingleStrands()
@@ -369,8 +338,6 @@ void SEAdenitaCoreSEApp::CalculateBindingRegions(int oligoConc, int monovalentCo
     PIPrimer3& p = PIPrimer3::GetInstance();
     p.Calculate(part, oligoConc, monovalentConc, divalentConc);
   }
-
-
 }
 
 void SEAdenitaCoreSEApp::TwistDoubleHelix()
@@ -412,19 +379,7 @@ void SEAdenitaCoreSEApp::TestNeighbors()
   // highlight neighbors of selected nucleotide
   auto ntNeighbors = neighbors.GetNeighbors(nt);
   SB_FOR(ADNPointer<ADNNucleotide> ntN, ntNeighbors) {
-    //SBPosition3 posBor = ntN->GetPosition();
-    //SBPosition3 dif = posBor - nt->GetPosition();
-    //auto e2Bor = ntN->GetE2();
-    //// check right directionality and co-planarity
-    //double t = ublas::inner_prod(nt->GetE2(), e2Bor);
-    //// check that they are "in front" of each other
-    //ublas::vector<double> df = ADNAuxiliary::SBPositionToUblas(dif);
-    //double n = ublas::inner_prod(nt->GetE2(), df);
-    //double angle_threshold = config.debugOptions.customDouble;
-    //double th = cos(ADNVectorMath::DegToRad(angle_threshold));
-    //if (n > 0 && t < 0.0 && abs(t) > th) {
       ntN->setSelectionFlag(true);
-    //}
   }
 
   ResetVisualModel();
@@ -449,8 +404,25 @@ void SEAdenitaCoreSEApp::FromDatagraph()
 
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
-  //ADNLogger& logger = ADNLogger::GetLogger();
-  //logger.LogDebug(QString("document has been changed"));
+  auto t = documentEvent->getType();
+  if (t != SBDocumentEvent::CameraChanged) {
+    int here = 1;
+  }
+
+  if (documentEvent->getType() == SBDocumentEvent::ActiveLayerChanged) {
+    ConnectToDocument();
+  }
+  if (documentEvent->getType() == SBDocumentEvent::ActiveDocumentChanged) {
+    ConnectToDocument();
+  }
+  if (documentEvent->getType() == SBDocumentEvent::StructuralModelAdded) {
+    // on load a non-registered ADNPart
+    auto node = documentEvent->getAuxiliaryNode();
+    ADNPointer<ADNPart> part = dynamic_cast<ADNPart*>(node);
+    if (part != nullptr) {
+      AddLoadedPartToNanorobot(part);
+    }
+  }
 }
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
@@ -471,6 +443,13 @@ void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
   //  auto part = GetNanorobot()->GetPart(ss);
   //  part->DeregisterNucleotide(nt, false, true, true);
   //}
+}
+
+void SEAdenitaCoreSEApp::ConnectToDocument()
+{
+  SAMSON::getActiveLayer()->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent));
+  SAMSON::getActiveDocument()->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent));
+
 }
 
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
@@ -567,9 +546,32 @@ void SEAdenitaCoreSEApp::AddConformationToActiveLayer(ADNPointer<ADNConformation
   SAMSON::getActiveDocument()->addChild(conf());
 }
 
+void SEAdenitaCoreSEApp::AddLoadedPartToNanorobot(ADNPointer<ADNPart> part)
+{
+  if (part->loadedViaSAMSON()) {
+    DASBackToTheAtom btta = DASBackToTheAtom();
+    btta.PopulateWithMockAtoms(part, true);
+    SEConfig& config = SEConfig::GetInstance();
+    if (config.use_atomic_details) {
+      btta.GenerateAllAtomModel(part);
+    }
+
+    GetNanorobot()->RegisterPart(part);
+
+    //events
+    ConnectStructuralSignalSlots(part);
+
+    if (config.auto_calculate_binding_regions) {
+      PIPrimer3& p = PIPrimer3::GetInstance();
+    }
+
+    part->loadedViaSAMSON(false);
+  }
+}
+
 void SEAdenitaCoreSEApp::ConnectStructuralSignalSlots(ADNPointer<ADNPart> part)
 {
-  auto singleStrands = part->GetSingleStrands();
+  //auto singleStrands = part->GetSingleStrands();
 
   part->connectStructuralSignalToSlot(
     this,
