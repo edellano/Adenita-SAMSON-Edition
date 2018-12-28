@@ -1,15 +1,13 @@
 #include "ADNPart.hpp"
 
 
-ADNPart::ADNPart(const ADNPart & n) : Orientable(n), PositionableSB(n), SBStructuralModel(n) 
+ADNPart::ADNPart(const ADNPart & n) : SBStructuralModel(n) 
 {
   *this = n;
 }
 
 ADNPart & ADNPart::operator=(const ADNPart& other) 
 {
-  Orientable::operator =(other);
-  PositionableSB::operator =(other);
   SBStructuralModel::operator =(other);  
 
   if (this != &other) {
