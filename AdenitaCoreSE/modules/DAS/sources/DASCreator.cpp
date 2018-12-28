@@ -117,7 +117,6 @@ ADNPointer<ADNPart> DASCreator::CreateNanotube(SBQuantity::length radius, SBPosi
 
   ADNPointer<ADNPart> nanorobot = nullptr;
   
-  // so far create only a circle
   // transformation to global coordinates
   ublas::vector<double> dir = ublas::vector<double>(3);
   dir[0] = direction[0].getValue();
@@ -178,9 +177,9 @@ ADNPointer<ADNPart> DASCreator::CreateNanotube(SBQuantity::length radius, SBPosi
       t += newTheta;
     }
 
-    nanorobot->SetE1(ADNVectorMath::row(subspace, 0));
-    nanorobot->SetE2(ADNVectorMath::row(subspace, 1));
-    nanorobot->SetE3(ADNVectorMath::row(subspace, 2));
+    //nanorobot->SetE1(ADNVectorMath::row(subspace, 0));
+    //nanorobot->SetE2(ADNVectorMath::row(subspace, 1));
+    //nanorobot->SetE3(ADNVectorMath::row(subspace, 2));
   }
 
   ADNLogger& logger = ADNLogger::GetLogger();
