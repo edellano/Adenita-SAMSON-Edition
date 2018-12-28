@@ -10,7 +10,7 @@ void exposeAdenita(py::module& m) {
   /* You can create bindings for a function from the SEPyBindTutorialApp class without creating bindings for the class itself
   * In this case, you can call it in Python scripting as follows:
   *	import SE_DDA2A078_1AB6_96BA_0D14_EE1717632D7A as adenita
-  *	pybindtutorial.addCustomStructuralModel()
+  *	adenita.createDoubleStrand()
   */
 
   m.def("createDoubleStrand", []() {
