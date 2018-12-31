@@ -21,10 +21,45 @@ SB_CLASS_BEGIN(ADNAtom);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_WRITE(SBElement::Type, ADNAtom, ElementType, "Atom", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, Nt, "Nucleotide", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, NtGroup, "Nucleotide group", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(SBPosition3 const&, ADNAtom, Position, "Position", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, Nt, "Nucleotide", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, NtGroup, "Nucleotide group", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(SBPosition3 const&, ADNAtom, Position, "Position", "Adenita");
+
+    SB_ATTRIBUTE_READ_WRITE(bool const&, ADNAtom, Aromaticity, "Aromaticity", "Chemistry");
+    SB_ATTRIBUTE_READ_ONLY(SBQuantity::dimensionless, ADNAtom, Electronegativity, "Electronegativity", "Chemistry");
+    SB_ATTRIBUTE_READ_WRITE(bool const&, ADNAtom, Resonance, "Resonance", "Chemistry");
+
+    SB_ATTRIBUTE_READ_ONLY(SBQuantity::mass, ADNAtom, AtomicWeight, "Atomic weight", "Element");
+    SB_ATTRIBUTE_READ_ONLY(std::string, ADNAtom, Block, "Block", "Element");
+    SB_ATTRIBUTE_READ_WRITE(SBElement::Type, ADNAtom, ElementType, "Element", "Element");
+    SB_ATTRIBUTE_READ_ONLY(std::string, ADNAtom, ElementName, "Element name", "Element");
+    SB_ATTRIBUTE_READ_ONLY(std::string, ADNAtom, ElementSymbol, "Element symbol", "Element");
+    SB_ATTRIBUTE_READ_ONLY(unsigned int, ADNAtom, Group, "Group", "Element");
+    SB_ATTRIBUTE_READ_WRITE(short const&, ADNAtom, Hybridization, "Hybridization", "Element");
+    SB_ATTRIBUTE_READ_WRITE(int const&, ADNAtom, OxydationState, "Oxydation state", "Element");
+    SB_ATTRIBUTE_READ_ONLY(std::string, ADNAtom, Period, "Period", "Element");
+    SB_ATTRIBUTE_READ_WRITE(bool const&, ADNAtom, WaterFlag, "Water flag", "Element");
+
+    SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, MoleculeName, "Molecule name", "Identity");
+    SB_ATTRIBUTE_READ_WRITE(std::string const&, ADNAtom, Name, "Name", "Identity");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, SubstructureName, "Substructure name", "Identity");
+
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, ThisNode, "Itself", "Node");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNAtom, Parent, "Parent", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNAtom, Selected, "Selected", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNAtom, SelectionFlag, "Selection Flag", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNAtom, VisibilityFlag, "Visibility Flag", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNAtom, Visible, "Visible", "Node");
+
+    SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, Comment, "Comment", "Other");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, StatusBit, "Status bit", "Other");
+
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(int const&, ADNAtom, CustomType, "Custom type", "Typization");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, SYBYLType, "SYBYL type", "Typization");
+
+
+
+
 
   SB_INTERFACE_END;
 

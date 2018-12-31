@@ -5,42 +5,62 @@
 #include "SEAdenitaCoreSEApp.hpp"
 
 
+/*!
+  Bindings for specific functions. To use them:
+  import SE_DDA2A078_1AB6_96BA_0D14_EE1717632D7A as adenita
+  adenita.createDoubleStrand()
+*/
 void exposeAdenita(py::module& m) {
 
-  /* You can create bindings for a function from the SEPyBindTutorialApp class without creating bindings for the class itself
-  * In this case, you can call it in Python scripting as follows:
-  *	import SE_DDA2A078_1AB6_96BA_0D14_EE1717632D7A as adenita
-  *	adenita.createDoubleStrand()
-  */
+  m.def("createComponent", []() {
+    ADNPart* part = new ADNPart();
+    return part;
+  },
+    "Creates an empty component");
 
-  m.def("createDoubleStrand", []() {
-    ADNPointer<ADNPart> part = new ADNPart();
-    int length = 12;
-    SBPosition3 start = SBPosition3();
-    SBVector3 dir = SBVector3(1.0, 0.0, 0.0);
-    DASCreator::CreateDoubleStrand(part, length, start, dir);
+  m.def("refreshVisualModel", []() {
+    SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+    adenita->ResetVisualModel();
+  },
+    "Refreshes the visual model");
+
+  m.def("addComponentToActiveLayer", [](ADNPart* part) {
     SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
     adenita->AddPartToActiveLayer(part);
+    adenita->ResetVisualModel();
   },
-    "Add a component with a double strand");
+    "Adds a component to the active layer and refreshes the visual model");
 
-  /* Or you can create bindings for the class and its functionality
-  * In this case, you can call it in Python scripting as follows:
-  *	import SE_F2078F9E_F2CB_BA72_EE86_1E01A10B63D4 as pybindtutorial
-  *	tutorialApp = pybindtutorial.SEPyBindTutorialApp() # create a class instance
-  *	tutorialApp.addCustomStructuralModel()             # call a function on this instance
-  */
+  m.def("addDoubleStrandToComponent", [](ADNPart* part, int length, std::vector<double> initPos, std::vector<double> v) {
+    SBPosition3 start = ADNAuxiliary::VectorToSBPosition(initPos);
+    SBVector3 dir = ADNAuxiliary::VectorToSBVector(v);
+    DASCreator::CreateDoubleStrand(part, length, start, dir);
+  },
+    "Add a double strand to a component");
 
-  //py::class_<SEAdenitaCoreSEApp> c(m, "SEAdenitaCoreSEApp", "Adenita class");
+  m.def("addCircularStrandToComponent", [](ADNPart* part, double radius, std::vector<double> initPos, std::vector<double> v, bool ssDNA) {
+    SBPosition3 center = ADNAuxiliary::VectorToSBPosition(initPos);
+    SBVector3 n = ADNAuxiliary::VectorToSBVector(v);
+    SBQuantity::length r = SBQuantity::nanometer(radius);
+    DASCreator::AddRingToADNPart(part, r, center, n, ssDNA);
+  },
+    "Add a double or single circular strand to a component");
 
-  // constructor
+  m.def("addSingleStrandToComponent", [](ADNPart* part, int length, std::vector<double> initPos, std::vector<double> v) {
+    SBPosition3 start = ADNAuxiliary::VectorToSBPosition(initPos);
+    SBVector3 dir = ADNAuxiliary::VectorToSBVector(v);
+    DASCreator::CreateSingleStrand(part, length, start, dir);
+  },
+    "Add a single strand to a component");
 
-  //c.def(py::init<>(), "Constructs a custom part");
-
-  // functions
-
-  //c.def("createDoubleStrand", &SEPyBindTutorialApp::addCustomStructuralModel, "Add a custom structural model with a custom group");
-
+  m.def("createNanotube", [](double radius, int length, std::vector<double> initPos, std::vector<double> v) {
+    SBPosition3 start = ADNAuxiliary::VectorToSBPosition(initPos);
+    SBVector3 dir = ADNAuxiliary::VectorToSBVector(v);
+    SBQuantity::length r = SBQuantity::nanometer(radius);
+    auto part = DASCreator::CreateNanotube(r, start, dir, length);
+    return part();
+  },
+    "Create a nanotube component");
 }
 
 #endif // CREATE_PYTHON_BINDINGS

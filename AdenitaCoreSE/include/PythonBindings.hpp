@@ -16,7 +16,7 @@ namespace py = pybind11;
 // To reduce the build time in case of many exposed classes,
 // functions in which the exposure is done are placed in separate .cpp files and listed here
 void exposeAdenita(py::module& m);
-//void exposeDASCreator(py::module& m);
+void exposeADNPart(py::module& m);
 //void exposeCustomStructuralGroup(py::module& m);
 
 /*
@@ -41,7 +41,7 @@ PYBIND11_EMBEDDED_MODULE(SE_DDA2A078_1AB6_96BA_0D14_EE1717632D7A, m) {
 
                                                               // call functions that expose functionality of the SAMSON Element
   exposeAdenita(m);
-  //exposeCustomStructuralModel(m);
+  exposeADNPart(m);
   //exposeCustomStructuralGroup(m);
 
 }

@@ -264,7 +264,25 @@ std::vector<double> ADNAuxiliary::SBPositionToVector(Position3D pos)
   return v;
 }
 
-bool ADNAuxiliary::ValidateSequence(std::string seq) 
+SBPosition3 ADNAuxiliary::VectorToSBPosition(std::vector<double> v)
+{
+  SBPosition3 pos = SBPosition3();
+  if (v.size() == 3) {
+    pos = SBPosition3(SBQuantity::nanometer(v[0]), SBQuantity::nanometer(v[1]), SBQuantity::nanometer(v[2]));
+  }
+  return pos;
+}
+
+SBVector3 ADNAuxiliary::VectorToSBVector(std::vector<double> v)
+{
+  SBVector3 w = SBVector3();
+  if (v.size() == 3) {
+    w = SBVector3(SBQuantity::dimensionless(v[0]), SBQuantity::dimensionless(v[1]), SBQuantity::dimensionless(v[2]));
+  }
+  return w;
+}
+
+bool ADNAuxiliary::ValidateSequence(std::string seq)
 {
   bool val = true;
   for (auto& c: seq) {
