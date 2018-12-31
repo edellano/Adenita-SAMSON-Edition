@@ -111,6 +111,14 @@ namespace ADNAuxiliary {
   ublas::vector<double> SBVectorToUblasVector(SBVector3 v);
   ublas::vector<double> SBPositionToUblas(Position3D pos);
   std::vector<double> SBPositionToVector(Position3D pos);
+
+  /*! Converts a 3D std::vector<double> to SBPosition3
+      (in nanometers)
+  */
+  SBPosition3 VectorToSBPosition(std::vector<double> v);
+  /*! Converts a 3D std::vector<double> to SBVector3
+  */
+  SBVector3 VectorToSBVector(std::vector<double> v);
   
   bool ValidateSequence(std::string seq);
 };

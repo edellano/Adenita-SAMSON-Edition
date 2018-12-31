@@ -98,7 +98,6 @@ public:
   bool preview_editor = true;  // adjusting camera according to dimension
   // structure prediction and algorithms
   bool use_atomic_details = false;
-  int magic_number = 5;  // initial twist in cadnano files
   bool use_twist = true;
   bool detect_possible_crossovers = false;
   float crossover_distance_threshold = 15.0;  // ansgtroms

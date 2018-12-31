@@ -465,11 +465,11 @@ void DASBackToTheAtom::PositionLoopNucleotidesQBezier(ADNPointer<ADNLoop> loop, 
   // just try and error
   SBPosition3 P0 = bsPositionPrev;
   SBPosition3 P2 = bsPositionNext;
-  SBVector3 nDir = (bsPrevE3 + bsNextE3).normalizedVersion();
-  SBQuantity::length step = SBQuantity::nanometer(ADNConstants::BP_RISE);
-  SBPosition3 P1 = (P0 + P2)*0.5 + step*nDir;
-
+  SBVector3 nDir = -(bsPrevE3 + bsNextE3).normalizedVersion();
+  SBQuantity::length step = SBQuantity::nanometer(ADNConstants::BP_RISE)*0.9;
   SBQuantity::length estLength = numNts*step;
+  SBPosition3 P1 = (P0 + P2)*0.5 + estLength*nDir;
+
   SBQuantity::length length = ADNVectorMath::LengthQuadraticBezier(P0, P1, P2);
 
   P1 += 3*step*nDir;
