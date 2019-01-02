@@ -107,6 +107,7 @@ public :
   void SetCircular(bool c);
   void SetManual(bool m);
   void SetNumberNucleotides(int n);
+  void SetSequence(bool s);
 
 private:
   ADNPointer<ADNPart> generateStrand(bool mock = false);
@@ -115,6 +116,7 @@ private:
   void displayBox();
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
   void ShowBox();
+  void SetSequence(ADNPointer<ADNPart> nanotube);
 
   bool dsMode_ = true;  // true for dsDNA, false for ssDNA
   bool circular_ = false;  // if we are creating circular strands
@@ -128,6 +130,7 @@ private:
   SBQuantity::length boxHeight_;
   SBQuantity::length boxWidth_;
   SBQuantity::length boxDepth_;
+  bool setSequence_ = false;
 };
 
 

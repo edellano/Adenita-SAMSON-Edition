@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
-    <height>227</height>
+    <width>452</width>
+    <height>254</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -43,23 +43,6 @@
        </property>
        <property name="value">
         <number>12</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="5">
-      <widget class="QRadioButton" name="rndDSDNA">
-       <property name="text">
-        <string>dsDNA</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="5">
-      <widget class="QRadioButton" name="rdnSSDNA">
-       <property name="text">
-        <string>ssDNA</string>
        </property>
       </widget>
      </item>
@@ -154,6 +137,30 @@
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" colspan="4">
+      <widget class="QRadioButton" name="rdnSSDNA">
+       <property name="text">
+        <string>ssDNA</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="4">
+      <widget class="QRadioButton" name="rndDSDNA">
+       <property name="text">
+        <string>dsDNA</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4" rowspan="2">
+      <widget class="QCheckBox" name="chkSetScaffold">
+       <property name="text">
+        <string>Set Sequence</string>
        </property>
       </widget>
      </item>
@@ -307,6 +314,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>chkSetScaffold</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEDSDNACreatorEditorGUIClass</receiver>
+   <slot>onSetSequence(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>385</x>
+     <y>36</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>225</x>
+     <y>126</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetSSDNA(bool)</slot>
@@ -316,5 +339,6 @@
   <slot>onSetCircular(bool)</slot>
   <slot>onSetManual(bool)</slot>
   <slot>onSetNumNucleotides(int)</slot>
+  <slot>onSetSequence(bool)</slot>
  </slots>
 </ui>
