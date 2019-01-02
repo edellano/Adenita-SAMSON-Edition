@@ -51,6 +51,8 @@ public:
 
 	//@}
 
+  std::string AskUserForSequence(int l);
+
 public slots:
 
   void onSetDSDNA(bool b);
@@ -60,6 +62,7 @@ public slots:
   void onSetNumNucleotides(int n);
   void onShowBox(bool s);
   void onChangeBoxSize();
+  void onSetSequence(bool s);
 
 private:
 

@@ -55,6 +55,11 @@ void SEDSDNACreatorEditor::SetNumberNucleotides(int n)
   numNts_ = n;
 }
 
+void SEDSDNACreatorEditor::SetSequence(bool s)
+{
+  setSequence_ = s;
+}
+
 ADNPointer<ADNPart> SEDSDNACreatorEditor::generateStrand(bool mock)
 {
   auto length = (positions_.SecondPosition - positions_.FirstPosition).norm();
@@ -148,9 +153,34 @@ void SEDSDNACreatorEditor::displayBox()
 void SEDSDNACreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
 {
   if (nanotube != nullptr) {
+    SetSequence(nanotube);
+
     SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
     adenita->AddPartToActiveLayer(nanotube);
     adenita->ResetVisualModel();
+  }
+}
+
+void SEDSDNACreatorEditor::SetSequence(ADNPointer<ADNPart> nanotube)
+{
+  if (setSequence_) {
+    auto singleStrands = nanotube->GetSingleStrands();
+    ADNPointer<ADNSingleStrand> ss = nullptr;
+    SB_FOR(ADNPointer<ADNSingleStrand> strand, singleStrands) {
+      ADNPointer<ADNNucleotide> fPrime = strand->GetFivePrime();
+      ADNPointer<ADNBaseSegment> bs = fPrime->GetBaseSegment();
+      SBPosition3 pos = bs->GetPosition();
+      if (pos == positions_.FirstPosition) {
+        ss = strand;
+        break;
+      }
+    }
+    if (ss != nullptr) {
+      int length = ss->getNumberOfNucleotides();
+      SEDSDNACreatorEditorGUI* editor = getPropertyWidget();
+      std::string seq = editor->AskUserForSequence(length);
+      ss->SetSequence(seq);
+    }
   }
 }
 
