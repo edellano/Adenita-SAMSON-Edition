@@ -24,12 +24,19 @@ SB_CLASS_BEGIN(ADNPart);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_ONLY(int, ADNPart, NumberOfAtoms, "Number of atoms", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(int, ADNPart, NumberOfNucleotides, "Number of nucleotides", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(int, ADNPart, NumberOfSingleStrands, "Number of single strands", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(int, ADNPart, NumberOfBaseSegments, "Number of base segments", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(int, ADNPart, NumberOfDoubleStrands, "Number of double strands", "Properties");
-    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNPart, Name, "Name", "Properties");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNPart, NumberOfAtoms, "Number of atoms", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNPart, NumberOfNucleotides, "Number of nucleotides", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNPart, NumberOfSingleStrands, "Number of single strands", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNPart, NumberOfBaseSegments, "Number of base segments", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNPart, NumberOfDoubleStrands, "Number of double strands", "Adenita");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNPart, Name, "Name", "Adenita");
+
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNPart, ThisNode, "Itself", "Node");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNPart, Parent, "Parent", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNPart, Selected, "Selected", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNPart, SelectionFlag, "Selection Flag", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNPart, VisibilityFlag, "Visibility Flag", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNPart, Visible, "Visible", "Node");
 
   SB_INTERFACE_END;
 
