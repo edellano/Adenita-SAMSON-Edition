@@ -99,8 +99,15 @@ SB_CLASS_BEGIN(ADNBackbone);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNBackbone, Name, "Name", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(int, ADNBackbone, NumberOfAtoms, "Number of atoms", "Properties");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNBackbone, Name, "Name", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNBackbone, NumberOfAtoms, "Number of atoms", "Adenita");
+
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNBackbone, ThisNode, "Itself", "Node");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNBackbone, Parent, "Parent", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNBackbone, Selected, "Selected", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNBackbone, SelectionFlag, "Selection Flag", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNBackbone, VisibilityFlag, "Visibility Flag", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNBackbone, Visible, "Visible", "Node");
 
   SB_INTERFACE_END;
 
@@ -120,8 +127,15 @@ SB_CLASS_BEGIN(ADNSidechain);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNSidechain, Name, "Name", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(int, ADNSidechain, NumberOfAtoms, "Number of atoms", "Properties");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNSidechain, Name, "Name", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNSidechain, NumberOfAtoms, "Number of atoms", "Adenita");
+
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSidechain, ThisNode, "Itself", "Node");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSidechain, Parent, "Parent", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNSidechain, Selected, "Selected", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNSidechain, SelectionFlag, "Selection Flag", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNSidechain, VisibilityFlag, "Visibility Flag", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNSidechain, Visible, "Visible", "Node");
 
   SB_INTERFACE_END;
 
