@@ -54,6 +54,26 @@ SB_CLASS_BEGIN(ADNAtom);
     SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, Comment, "Comment", "Other");
     SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, StatusBit, "Status bit", "Other");
 
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(char const&, ADNAtom, AltLocation, "Alt. location", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, Chain, "Chain", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(int const&, ADNAtom, ChainID, "Chain ID", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(int const&, ADNAtom, FormalCharge, "Formal charge", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(char const&, ADNAtom, InsertionCode, "Insertion code", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(SBQuantity::dimensionless const&, ADNAtom, Occupancy, "Occupancy", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(float const&, ADNAtom, PartialCharge, "Partial charge", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, RecordType, "Record type", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, ResidueName, "Residue name", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(int const&, ADNAtom, ResidueSequenceNumber, "Residue sequence number", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, Segment, "Segment", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(int const&, ADNAtom, SerialNumber, "Serial number", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(int const&, ADNAtom, SubstructureSequenceNumber, "Substructure sequence number", "Protein");
+    SB_ATTRIBUTE_READ_WRITE_CLEAR(double const&, ADNAtom, TemperatureFactor, "Temperature factor", "Protein");
+
+    SB_ATTRIBUTE_READ_ONLY(SBQuantity::length, ADNAtom, CovalentRadius, "Covalent radius", "Structure");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNAtom, MobilityFlag, "Mobile", "Structure");
+    SB_ATTRIBUTE_READ_WRITE(SBPosition3 const&, ADNAtom, Position, "Position", "Structure");
+    SB_ATTRIBUTE_READ_ONLY(SBQuantity::length, ADNAtom, VanDerWaalsRadius, "Van der Waals radius", "Structure");
+
     SB_ATTRIBUTE_READ_WRITE_CLEAR(int const&, ADNAtom, CustomType, "Custom type", "Typization");
     SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, SYBYLType, "SYBYL type", "Typization");
 
