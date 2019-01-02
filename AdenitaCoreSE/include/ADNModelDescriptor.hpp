@@ -189,14 +189,21 @@ SB_CLASS_BEGIN(ADNSingleStrand);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNSingleStrand, Name, "Name", "Properties");
-    SB_ATTRIBUTE_READ_WRITE(bool, ADNSingleStrand, IsScaffold, "Is Scaffold", "Properties");
-    SB_ATTRIBUTE_READ_WRITE(bool, ADNSingleStrand, IsCircular, "Is Circular", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(int, ADNSingleStrand, NumberOfNucleotides, "Nucleotides", "Properties");
-    SB_ATTRIBUTE_READ_WRITE(std::string, ADNSingleStrand, Sequence, "Sequence", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(double, ADNSingleStrand, GCContent, "GC %", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSingleStrand, FivePrime, "5'", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSingleStrand, ThreePrime, "3'", "Properties");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNSingleStrand, Name, "Name", "Adenita");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNSingleStrand, IsScaffold, "Is Scaffold", "Adenita");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNSingleStrand, IsCircular, "Is Circular", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(int, ADNSingleStrand, NumberOfNucleotides, "Nucleotides", "Adenita");
+    SB_ATTRIBUTE_READ_WRITE(std::string, ADNSingleStrand, Sequence, "Sequence", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(double, ADNSingleStrand, GCContent, "GC %", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSingleStrand, FivePrime, "5'", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSingleStrand, ThreePrime, "3'", "Adenita");
+
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSingleStrand, ThisNode, "Itself", "Node");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNSingleStrand, Parent, "Parent", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNSingleStrand, Selected, "Selected", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNSingleStrand, SelectionFlag, "Selection Flag", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNSingleStrand, VisibilityFlag, "Visibility Flag", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNSingleStrand, Visible, "Visible", "Node");
 
   SB_INTERFACE_END;
 
