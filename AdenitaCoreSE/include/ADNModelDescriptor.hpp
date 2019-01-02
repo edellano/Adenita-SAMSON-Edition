@@ -155,14 +155,21 @@ SB_CLASS_BEGIN(ADNNucleotide);
 
   SB_INTERFACE_BEGIN;
 
-    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNNucleotide, Name, "Name", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(DNABlocks, ADNNucleotide, NucleotideType, "Type", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, SingleStrand, "Single Strand", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, BaseSegment, "Base segment", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Next, "Next nucleotide", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Prev, "Previous nucleotide", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Pair, "Pair nucleotide", "Properties");
-    SB_ATTRIBUTE_READ_ONLY(std::string, ADNNucleotide, BaseSegmentType, "Base segment type", "Properties");
+    SB_ATTRIBUTE_READ_WRITE(std::string const &, ADNNucleotide, Name, "Name", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(DNABlocks, ADNNucleotide, NucleotideType, "Type", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, SingleStrand, "Single Strand", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, BaseSegment, "Base segment", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Next, "Next nucleotide", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Prev, "Previous nucleotide", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Pair, "Pair nucleotide", "Adenita");
+    SB_ATTRIBUTE_READ_ONLY(std::string, ADNNucleotide, BaseSegmentType, "Base segment type", "Adenita");
+
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, ThisNode, "Itself", "Node");
+    SB_ATTRIBUTE_READ_ONLY(SBNode*, ADNNucleotide, Parent, "Parent", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNNucleotide, Selected, "Selected", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNNucleotide, SelectionFlag, "Selection Flag", "Node");
+    SB_ATTRIBUTE_READ_WRITE(bool, ADNNucleotide, VisibilityFlag, "Visibility Flag", "Node");
+    SB_ATTRIBUTE_READ_ONLY(bool, ADNNucleotide, Visible, "Visible", "Node");
 
   SB_INTERFACE_END;
 
