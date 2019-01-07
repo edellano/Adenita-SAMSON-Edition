@@ -106,9 +106,6 @@ void SEConfig::loadConfig() {
     writer.Key("use_atomic_details");
     writer.Bool(use_atomic_details);
 
-    writer.Key("magic_number");
-    writer.Int(magic_number);
-
     writer.Key("crossover_distance_threshold");
     writer.Double(crossover_distance_threshold);
 
@@ -211,58 +208,154 @@ void SEConfig::updateConfig() {
     FileReadStream is(fp, readBuffer, sizeof(readBuffer));
     setting_.ParseStream(is);
 
-    show_overlay = setting_["show_overlay"].GetBool();
-    min_melting_temp = setting_["min_melting_temp"].GetDouble();
-    max_melting_temp = setting_["max_melting_temp"].GetDouble();
-    min_gibbs_free_energy = setting_["min_gibbs_free_energy"].GetDouble();
-    max_gibbs_free_energy = setting_["max_gibbs_free_energy"].GetDouble();
-    interpolate_dimensions = setting_["interpolate_dimensions"].GetBool();
-    animation_step_size = setting_["animation_step_size"].GetDouble();
-    mode = static_cast<SEConfigMode>(setting_["mode"].GetInt());
-    use_atomic_details = setting_["use_atomic_details"].GetBool();
-    clear_log_file = setting_["clear_log_file"].GetBool();
-    test_type = setting_["test_type"].GetInt();
-    magic_number = setting_["magic_number"].GetInt();
-    automatic_camera = setting_["automatic_camera"].GetBool();
-    preview_editor = setting_["preview_editor"].GetBool();
-    crossover_distance_threshold = setting_["crossover_distance_threshold"].GetDouble();
-    crossover_angle_threshold = setting_["crossover_angle_threshold"].GetDouble();
-    display_possible_crossovers = setting_["display_possible_crossovers"].GetBool();
-    use_twist = setting_["use_twist"].GetBool();
-    detect_possible_crossovers = setting_["detect_possible_crossovers"].GetBool();
-    dh_dist = setting_["dh_dist"].GetDouble();
+    if (setting_.FindMember("show_overlay") != setting_.MemberEnd()) {
+      show_overlay = setting_["show_overlay"].GetBool();
+    }
 
-    Value& double_helix_V_colorVal = setting_["double_helix_V_color"];
-    readDoubleArray(double_helix_V_colorVal, double_helix_V_color, 4);
+    if (setting_.FindMember("min_melting_temp") != setting_.MemberEnd()) {
+      min_melting_temp = setting_["min_melting_temp"].GetDouble();
+    }
 
-    Value& nucleotide_E_ColorVal = setting_["nucleotide_E_Color"];
-    readDoubleArray(nucleotide_E_ColorVal, nucleotide_E_Color, 4);
+    if (setting_.FindMember("max_melting_temp") != setting_.MemberEnd()) {
+      max_melting_temp = setting_["max_melting_temp"].GetDouble();
+    }
 
-    Value& double_strand_colorVal = setting_["double_strand_color"];
-    readDoubleArray(double_strand_colorVal, double_strand_color, 4);
+    if (setting_.FindMember("min_gibbs_free_energy") != setting_.MemberEnd()) {
+      min_gibbs_free_energy = setting_["min_gibbs_free_energy"].GetDouble();
+    }
 
-    Value& adenine_colorVal = setting_["adenine_color"];
-    readDoubleArray(adenine_colorVal, adenine_color, 4);
+    if (setting_.FindMember("max_gibbs_free_energy") != setting_.MemberEnd()) {
+      max_gibbs_free_energy = setting_["max_gibbs_free_energy"].GetDouble();
+    }
 
-    Value& thymine_colorVal = setting_["thymine_color"];
-    readDoubleArray(thymine_colorVal, thymine_color, 4);
+    // not used currently
+    if (setting_.FindMember("interpolate_dimensions") != setting_.MemberEnd()) {
+      interpolate_dimensions = setting_["interpolate_dimensions"].GetBool();
+    }
 
-    Value& guanine_colorVal = setting_["guanine_color"];
-    readDoubleArray(guanine_colorVal, guanine_color, 4);
+    // not used currently
+    if (setting_.FindMember("animation_step_size") != setting_.MemberEnd()) {
+      animation_step_size = setting_["animation_step_size"].GetDouble();
+    }
 
-    Value& cytosine_colorVal = setting_["cytosine_color"];
-    readDoubleArray(cytosine_colorVal, cytosine_color, 4);
+    if (setting_.FindMember("mode") != setting_.MemberEnd()) {
+      mode = static_cast<SEConfigMode>(setting_["mode"].GetInt());
+    }
 
-    Value& staple_colorsVal = setting_["staple_colors"];
-    readDoubleArray(staple_colorsVal, staple_colors, 48);
+    if (setting_.FindMember("use_atomic_details") != setting_.MemberEnd()) {
+      use_atomic_details = setting_["use_atomic_details"].GetBool();
+    }
 
-    nucleotide_V_radius = setting_["nucleotide_V_radius"].GetDouble();
-    nucleotide_E_radius = setting_["nucleotide_E_radius"].GetDouble();
-    base_pair_radius = setting_["base_pair_radius"].GetDouble();
-    num_staple_colors = setting_["num_staple_colors"].GetDouble();
+    if (setting_.FindMember("clear_log_file") != setting_.MemberEnd()) {
+      clear_log_file = setting_["clear_log_file"].GetBool();
+    }
 
-    auto_set_scaffold_sequence = setting_["auto_set_scaffold_sequence"].GetBool();
-    auto_calculate_binding_regions = setting_["auto_calculate_binding_regions"].GetBool();
+    // not used currently
+    if (setting_.FindMember("test_type") != setting_.MemberEnd()) {
+      test_type = setting_["test_type"].GetInt();
+    }
+
+    // not used currently
+    if (setting_.FindMember("automatic_camera") != setting_.MemberEnd()) {
+      automatic_camera = setting_["automatic_camera"].GetBool();
+    }
+
+    if (setting_.FindMember("preview_editor") != setting_.MemberEnd()) {
+      preview_editor = setting_["preview_editor"].GetBool();
+    }
+
+    // not used currently
+    if (setting_.FindMember("crossover_distance_threshold") != setting_.MemberEnd()) {
+      crossover_distance_threshold = setting_["crossover_distance_threshold"].GetDouble();
+    }
+
+    // not used currently
+    if (setting_.FindMember("crossover_angle_threshold") != setting_.MemberEnd()) {
+      crossover_angle_threshold = setting_["crossover_angle_threshold"].GetDouble();
+    }
+
+    // not used currently
+    if (setting_.FindMember("display_possible_crossovers") != setting_.MemberEnd()) {
+      display_possible_crossovers = setting_["display_possible_crossovers"].GetBool();
+    }
+
+    // not used currently
+    if (setting_.FindMember("use_twist") != setting_.MemberEnd()) {
+      use_twist = setting_["use_twist"].GetBool();
+    }
+
+    // not used currently
+    if (setting_.FindMember("detect_possible_crossovers") != setting_.MemberEnd()) {
+      detect_possible_crossovers = setting_["detect_possible_crossovers"].GetBool();
+    }
+
+    if (setting_.FindMember("dh_dist") != setting_.MemberEnd()) {
+      dh_dist = setting_["dh_dist"].GetDouble();
+    }
+
+    if (setting_.FindMember("double_helix_V_color") != setting_.MemberEnd()) {
+      Value& double_helix_V_colorVal = setting_["double_helix_V_color"];
+      readDoubleArray(double_helix_V_colorVal, double_helix_V_color, 4);
+    }
+
+    if (setting_.FindMember("nucleotide_E_Color") != setting_.MemberEnd()) {
+      Value& nucleotide_E_ColorVal = setting_["nucleotide_E_Color"];
+      readDoubleArray(nucleotide_E_ColorVal, nucleotide_E_Color, 4);
+    }
+
+    if (setting_.FindMember("double_strand_color") != setting_.MemberEnd()) {
+      Value& double_strand_colorVal = setting_["double_strand_color"];
+      readDoubleArray(double_strand_colorVal, double_strand_color, 4);
+    }
+
+    if (setting_.FindMember("adenine_color") != setting_.MemberEnd()) {
+      Value& adenine_colorVal = setting_["adenine_color"];
+      readDoubleArray(adenine_colorVal, adenine_color, 4);
+    }
+
+    if (setting_.FindMember("thymine_color") != setting_.MemberEnd()) {
+      Value& thymine_colorVal = setting_["thymine_color"];
+      readDoubleArray(thymine_colorVal, thymine_color, 4);
+    }
+
+    if (setting_.FindMember("guanine_color") != setting_.MemberEnd()) {
+      Value& guanine_colorVal = setting_["guanine_color"];
+      readDoubleArray(guanine_colorVal, guanine_color, 4);
+    }
+
+    if (setting_.FindMember("cytosine_color") != setting_.MemberEnd()) {
+      Value& cytosine_colorVal = setting_["cytosine_color"];
+      readDoubleArray(cytosine_colorVal, cytosine_color, 4);
+    }
+
+    if (setting_.FindMember("staple_colors") != setting_.MemberEnd()) {
+      Value& staple_colorsVal = setting_["staple_colors"];
+      readDoubleArray(staple_colorsVal, staple_colors, 48);
+    }
+
+    if (setting_.FindMember("nucleotide_V_radius") != setting_.MemberEnd()) {
+      nucleotide_V_radius = setting_["nucleotide_V_radius"].GetDouble();
+    }
+
+    if (setting_.FindMember("nucleotide_E_radius") != setting_.MemberEnd()) {
+      nucleotide_E_radius = setting_["nucleotide_E_radius"].GetDouble();
+    }
+
+    if (setting_.FindMember("base_pair_radius") != setting_.MemberEnd()) {
+      base_pair_radius = setting_["base_pair_radius"].GetDouble();
+    }
+
+    if (setting_.FindMember("num_staple_colors") != setting_.MemberEnd()) {
+      num_staple_colors = setting_["num_staple_colors"].GetDouble();
+    }
+
+    if (setting_.FindMember("auto_set_scaffold_sequence") != setting_.MemberEnd()) {
+      auto_set_scaffold_sequence = setting_["auto_set_scaffold_sequence"].GetBool();
+    }
+
+    if (setting_.FindMember("auto_calculate_binding_regions") != setting_.MemberEnd()) {
+      auto_calculate_binding_regions = setting_["auto_calculate_binding_regions"].GetBool();
+    }
   }
 }
 

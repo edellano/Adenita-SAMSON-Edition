@@ -6,11 +6,11 @@
 #include "SBMStructuralModelNodeRoot.hpp"
 
 
-class ADNPart : public Orientable, public PositionableSB, public SBStructuralModel {
+class ADNPart : public SBStructuralModel {
   SB_CLASS
 public:
 
-  ADNPart() : Orientable(), PositionableSB(), SBStructuralModel() {};
+  ADNPart() : SBStructuralModel() {};
   ADNPart(const ADNPart &n);
   ~ADNPart() = default;
 
