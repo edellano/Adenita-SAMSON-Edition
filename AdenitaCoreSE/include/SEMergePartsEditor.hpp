@@ -1,24 +1,19 @@
 #pragma once 
 
-#include <cmath>
-
 #include "SBGEditor.hpp"
-#include "SEDSDNACreatorEditorGUI.hpp"
+#include "SEMergePartsEditorGUI.hpp"
 
 #include "SBBaseEvent.hpp"
 #include "SBDocumentEvent.hpp"
 #include "SBDynamicalEvent.hpp"
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
-
 #include "SEAdenitaCoreSEApp.hpp"
-#include "ADNPart.hpp"
-#include "ADNDisplayHelper.hpp"
-#include "DASCreator.hpp"
+
 
 /// This class implements an editor
 
-class SEDSDNACreatorEditor : public SBGEditor {
+class SEMergePartsEditor : public SBGEditor {
 
 	SB_CLASS
 	Q_OBJECT
@@ -28,8 +23,8 @@ public :
 	/// \name Constructors and destructors
 	//@{
 
-	SEDSDNACreatorEditor();																													///< Builds an editor					
-	virtual ~SEDSDNACreatorEditor();																											///< Destructs the editor
+  SEMergePartsEditor();																													///< Builds an editor					
+	virtual ~SEMergePartsEditor();																											///< Destructs the editor
 
 	//@}
 
@@ -97,42 +92,12 @@ public :
 	/// \name GUI
 	//@{
 
-	SEDSDNACreatorEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
-
-	//@}
-
-  void SetMode(bool m);
-  void SetShowBox(bool s);
-  void SetBoxSize(double height, double width, double depth);
-  void SetCircular(bool c);
-  void SetManual(bool m);
-  void SetNumberNucleotides(int n);
-  void SetSequence(bool s);
+  SEMergePartsEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
 private:
-  ADNPointer<ADNPart> generateStrand(bool mock = false);
-  ADNPointer<ADNPart> generateCircularStrand(bool mock = false);
-  void displayStrand();
-  void displayBox();
-  void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
-  void ShowBox();
-  void SetSequence(ADNPointer<ADNPart> nanotube);
-
-  bool dsMode_ = true;  // true for dsDNA, false for ssDNA
-  bool circular_ = false;  // if we are creating circular strands
-  bool manual_ = false;
-  int numNts_ = 12;
-
-  DASCreatorEditors::UIData positions_;
-  bool display_ = false;
-  ADNPointer<ADNPart> tempPart_ = nullptr;
-  bool showBox_ = false;
-  SBQuantity::length boxHeight_;
-  SBQuantity::length boxWidth_;
-  SBQuantity::length boxDepth_;
-  bool setSequence_ = false;
+  SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
 };
 
 
-SB_REGISTER_TYPE(SEDSDNACreatorEditor, "SEDSDNACreatorEditor", "86204A08-DFD6-97A8-2BE2-4CFC8B4169A3");
-SB_DECLARE_BASE_TYPE(SEDSDNACreatorEditor, SBGEditor);
+SB_REGISTER_TYPE(SEMergePartsEditor, "SEMergePartsEditor", "EB812444-8EA8-BD83-988D-AFF5987461D8");
+SB_DECLARE_BASE_TYPE(SEMergePartsEditor, SBGEditor);

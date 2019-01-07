@@ -1,3 +1,4 @@
+#include <QInputDialog>
 #include "SEDSDNACreatorEditorGUI.hpp"
 #include "SEDSDNACreatorEditor.hpp"
 #include "SAMSON.hpp"
@@ -30,6 +31,19 @@ void SEDSDNACreatorEditorGUI::saveSettings( SBGSettings *settings ) {
 
 	// SAMSON Element generator pro tip: complete this function so your editor can save its GUI state from one session to the next
 
+}
+
+std::string SEDSDNACreatorEditorGUI::AskUserForSequence(int l)
+{
+  bool ok;
+  QString def = QString(l, 'N');
+  std::string title = "Base pairs: " + std::to_string(l);
+  QString seq = QInputDialog::getText(this, tr("Set sequence"), tr(title.c_str()), QLineEdit::Normal, def, &ok);
+  std::string res = "";
+  if (ok) {
+    res = seq.toStdString();
+  }
+  return res;
 }
 
 void SEDSDNACreatorEditorGUI::onSetDSDNA(bool b)
@@ -78,6 +92,12 @@ void SEDSDNACreatorEditorGUI::onChangeBoxSize()
   double depth = ui.spnBoxDepth->value();
   SEDSDNACreatorEditor* t = getEditor();
   t->SetBoxSize(height, width, depth);
+}
+
+void SEDSDNACreatorEditorGUI::onSetSequence(bool s)
+{
+  SEDSDNACreatorEditor* t = getEditor();
+  t->SetSequence(s);
 }
 
 SBCContainerUUID SEDSDNACreatorEditorGUI::getUUID() const { return SBCContainerUUID( "751903AE-14BC-F0B9-01D9-D2CF8412AEF9" );}

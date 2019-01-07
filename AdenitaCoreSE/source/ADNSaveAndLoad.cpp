@@ -25,8 +25,8 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
 
   std::string name = d["name"].GetString();
   part->SetName(name);
-  std::string position = d["position"].GetString();
-  part->SetPosition(ADNAuxiliary::StringToSBPosition(position));
+  //std::string position = d["position"].GetString();
+  //part->SetPosition(ADNAuxiliary::StringToSBPosition(position));
 
   ElementMap<ADNNucleotide> nts;
   std::map<int, int> nexts;
@@ -210,8 +210,8 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
 
   std::string name = d["name"].GetString();
   part->SetName(name);
-  std::string position = d["position"].GetString();
-  part->SetPosition(ADNAuxiliary::StringToSBPosition(position));
+  //std::string position = d["position"].GetString();
+  //part->SetPosition(ADNAuxiliary::StringToSBPosition(position));
 
   Value& strands = d["strands"];
   std::map<int, ADNPointer<ADNSingleStrand>> origSingleStrandId;
@@ -526,10 +526,10 @@ ADNNanorobot * ADNLoader::LoadNanorobotFromJson(std::string filename)
 void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, rapidjson::Writer<StringBuffer>& writer)
 {
 
-  std::string st_position = ADNAuxiliary::SBPositionToString(p->GetPosition());
+  //std::string st_position = ADNAuxiliary::SBPositionToString(p->GetPosition());
 
-  writer.Key("position");
-  writer.String(st_position.c_str());
+  //writer.Key("position");
+  //writer.String(st_position.c_str());
 
   writer.Key("name");
   writer.String(p->GetName().c_str());
