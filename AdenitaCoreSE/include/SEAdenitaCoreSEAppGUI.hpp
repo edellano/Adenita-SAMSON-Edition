@@ -81,9 +81,12 @@ public slots:
   void onOxDNAImport();
   void onFromDatagraph();
 
+private slots:
+  void CheckForLoadedParts();
 
 private:
   std::string IsJsonCadnano(QString filename);
+  
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
 };
