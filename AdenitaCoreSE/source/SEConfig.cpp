@@ -138,9 +138,6 @@ void SEConfig::loadConfig() {
 
     writer.Key("auto_set_scaffold_sequence");
     writer.Bool(auto_set_scaffold_sequence);
-
-    writer.Key("auto_calculate_binding_regions");
-    writer.Bool(auto_calculate_binding_regions);
     
     writer.EndObject();
 
@@ -351,10 +348,6 @@ void SEConfig::updateConfig() {
 
     if (setting_.FindMember("auto_set_scaffold_sequence") != setting_.MemberEnd()) {
       auto_set_scaffold_sequence = setting_["auto_set_scaffold_sequence"].GetBool();
-    }
-
-    if (setting_.FindMember("auto_calculate_binding_regions") != setting_.MemberEnd()) {
-      auto_calculate_binding_regions = setting_["auto_calculate_binding_regions"].GetBool();
     }
   }
 }
