@@ -111,8 +111,6 @@ public:
   bool show_overlay = false;
   // toggle to automatically set the scaffold sequence when loading a part
   bool auto_set_scaffold_sequence = true;
-  // toggle to automatically calculate binding regions when loading a part
-  bool auto_calculate_binding_regions = false;
   // group general
   SEConfigMode mode = DEBUG_NO_LOG; //which mode of the software active. debug_log, debug_no_log, haichao, elisa
 
