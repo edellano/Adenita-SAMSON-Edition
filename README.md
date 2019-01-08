@@ -4,6 +4,8 @@
 - CMake
 - Visual Studio 2015
 - Google Test
+- Other SAMSON elements:
+-- Python Scripting Element
 
 if multiple Qt versions are installed then the best solution is to set the environment setting in the visual studio  PATH=PathToQt5.8_bin;%PATH%
 
