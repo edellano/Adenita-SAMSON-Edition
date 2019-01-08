@@ -937,10 +937,10 @@ ADNBaseSegment & ADNBaseSegment::operator=(const ADNBaseSegment & other) {
 
 void ADNBaseSegment::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
-  SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  /*SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 
   serializer->writeIntElement("number", GetNumber());
-  serializer->writeUnsignedIntElement("cell", nodeIndexer.getIndex(cell_()));
+  serializer->writeUnsignedIntElement("cell", nodeIndexer.getIndex(cell_()));*/
 }
 
 void ADNBaseSegment::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
@@ -1098,12 +1098,12 @@ ADNDoubleStrand & ADNDoubleStrand::operator=(const ADNDoubleStrand & other) {
 
 void ADNDoubleStrand::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
-  SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  /*SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 
   serializer->writeBoolElement("isCircular", IsCircular());
   serializer->writeDoubleElement("twistAngle", GetInitialTwistAngle());
   serializer->writeUnsignedIntElement("start", nodeIndexer.getIndex(start_()));
-  serializer->writeUnsignedIntElement("end", nodeIndexer.getIndex(end_()));
+  serializer->writeUnsignedIntElement("end", nodeIndexer.getIndex(end_()));*/
 }
 
 void ADNDoubleStrand::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
