@@ -552,6 +552,8 @@ void SEAdenitaCoreSEApp::AddLoadedPartToNanorobot(ADNPointer<ADNPart> part)
     ConnectStructuralSignalSlots(part);
 
     part->loadedViaSAMSON(false);
+
+    ResetVisualModel();
   }
 }
 
