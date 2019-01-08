@@ -89,6 +89,5 @@ private:
   std::map<SBDocument*, ADNNanorobot*> nanorobots_;
 };
 
-
 SB_REGISTER_TARGET_TYPE(SEAdenitaCoreSEApp, "SEAdenitaCoreSEApp", "85DB7CE6-AE36-0CF1-7195-4A5DF69B1528");
 SB_DECLARE_BASE_TYPE(SEAdenitaCoreSEApp, SBDApp);

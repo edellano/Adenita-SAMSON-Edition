@@ -8,6 +8,7 @@
 #include "SEDeleteEditor.hpp"
 #include "SETwistHelixEditor.hpp"
 #include <QPixmap>
+#include <QTimer>
 
 SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( t ) {
 
@@ -40,6 +41,10 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   #if NDEBUG
   ui.tabWidget->removeTab(2);
   #endif
+
+  QTimer *timer = new QTimer(this);
+  connect(timer, SIGNAL(timeout()), this, SLOT(CheckForLoadedParts()));
+  timer->start();
 }
 
 SEAdenitaCoreSEAppGUI::~SEAdenitaCoreSEAppGUI() {
@@ -570,6 +575,18 @@ std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
   }
 
   return format;
+}
+
+void SEAdenitaCoreSEAppGUI::CheckForLoadedParts()
+{
+  SEAdenitaCoreSEApp* adenita = getApp();
+  SBNodeIndexer nodeIndexer;
+  SAMSON::getActiveDocument()->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  SB_FOR(SBNode* n, nodeIndexer) {
+    ADNPointer<ADNPart> part = static_cast<ADNPart*>(n);
+    adenita->AddLoadedPartToNanorobot(part);
+  }
 }
 
 void SEAdenitaCoreSEAppGUI::keyPressEvent(QKeyEvent* event)
