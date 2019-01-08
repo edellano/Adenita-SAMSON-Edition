@@ -85,8 +85,6 @@ public slots:
 private:
   std::string IsJsonCadnano(QString filename);
 
-
-
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
 };
 
