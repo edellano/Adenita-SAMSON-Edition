@@ -86,9 +86,6 @@ public :
 private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);
 
-  
-
-
   std::map<SBDocument*, ADNNanorobot*> nanorobots_;
 };
 
