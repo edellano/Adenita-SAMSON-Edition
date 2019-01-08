@@ -540,7 +540,7 @@ void SEAdenitaCoreSEApp::AddLoadedPartToNanorobot(ADNPointer<ADNPart> part)
 {
   if (part->loadedViaSAMSON()) {
     DASBackToTheAtom btta = DASBackToTheAtom();
-    btta.PopulateWithMockAtoms(part, true);
+    btta.PopulateWithMockAtoms(part, true, true);
     SEConfig& config = SEConfig::GetInstance();
     if (config.use_atomic_details) {
       btta.GenerateAllAtomModel(part);

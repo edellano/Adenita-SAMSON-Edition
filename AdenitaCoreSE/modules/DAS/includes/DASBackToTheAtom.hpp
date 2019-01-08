@@ -45,7 +45,7 @@ public:
   
   void CheckDistances(ADNPointer<ADNPart> part);
 
-  void PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool positionsFromNucleotide = false);
+  void PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool positionsFromNucleotide = false, bool createAtoms = false);
 
   //! Set the backbone and sidechain position of the nucleotides of a base segment
   /*!
