@@ -586,6 +586,18 @@ void SEAdenitaCoreSEAppGUI::onFromDatagraph()
   t->FromDatagraph();
 }
 
+void SEAdenitaCoreSEAppGUI::onHighlightXOs()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->HighlightXOs();
+}
+
+void SEAdenitaCoreSEAppGUI::onHighlightPosXOs()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->HighlightPosXOs();
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";

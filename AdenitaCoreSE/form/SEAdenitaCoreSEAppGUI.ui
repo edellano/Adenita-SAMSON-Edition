@@ -338,6 +338,20 @@
             </property>
            </widget>
           </item>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="btnHighlightCrossovers">
+            <property name="text">
+             <string>Highlight Crossovers</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QPushButton" name="btnHighlightPosXOs">
+            <property name="text">
+             <string>Highlight Possible Crossovers</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </widget>
@@ -669,6 +683,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnHighlightCrossovers</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onHighlightXOs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnHighlightPosXOs</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onHighlightPosXOs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -700,5 +746,7 @@
   <slot>onCheckDisplayCrossovers(bool)</slot>
   <slot>onCheckClearLogFile(bool)</slot>
   <slot>onCheckInterpolateDimensions(bool)</slot>
+  <slot>onHighlightXOs()</slot>
+  <slot>onHighlightPosXOs()</slot>
  </slots>
 </ui>
