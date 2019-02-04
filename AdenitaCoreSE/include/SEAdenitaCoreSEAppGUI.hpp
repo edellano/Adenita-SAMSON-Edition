@@ -85,6 +85,8 @@ public slots:
   void onTestNeighbors();
   void onOxDNAImport();
   void onFromDatagraph();
+  void onHighlightXOs();
+  void onHighlightPosXOs();
 
 private slots:
   void CheckForLoadedParts();

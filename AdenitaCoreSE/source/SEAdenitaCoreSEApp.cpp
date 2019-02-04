@@ -1,6 +1,7 @@
 #include "SEAdenitaCoreSEApp.hpp"
 #include "SEAdenitaCoreSEAppGUI.hpp"
 #include "SEAdenitaVisualModelProperties.hpp"
+#include "PICrossovers.hpp"
 
 SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
 
@@ -395,6 +396,26 @@ void SEAdenitaCoreSEApp::FromDatagraph()
 {
   ADNPointer<ADNPart> part = ADNLoader::GenerateModelFromDatagraph();
   AddPartToActiveLayer(part, false, true);
+  ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::HighlightXOs()
+{
+  auto parts = GetNanorobot()->GetParts();
+
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    PICrossovers::GetCrossovers(p);
+  }
+  ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::HighlightPosXOs()
+{
+  auto parts = GetNanorobot()->GetParts();
+
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    PICrossovers::GetPossibleCrossovers(p);
+  }
   ResetVisualModel();
 }
 

@@ -53,18 +53,20 @@ public :
   void BreakSingleStrand();
   void DeleteNucleotide();
   void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
+  void CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
   // Debug
   void CenterPart();
   void CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);
   void LinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int num);
   void Kinetoplast(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols);
-  void CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
   void SetStart();
   void MergeComponents();
   void TwistDoubleHelix();
   void TestNeighbors();
   void ImportFromOxDNA(std::string topoFile, std::string configFile);
   void FromDatagraph();
+  void HighlightXOs();
+  void HighlightPosXOs();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
