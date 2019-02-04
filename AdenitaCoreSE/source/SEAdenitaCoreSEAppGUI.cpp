@@ -330,6 +330,36 @@ void SEAdenitaCoreSEAppGUI::onChangeScaffold(int idx)
   }
 }
 
+void SEAdenitaCoreSEAppGUI::onCheckDisplayCrossovers(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setDisplayPossibleCrossovers(b);
+}
+
+void SEAdenitaCoreSEAppGUI::onCheckInterpolateDimensions(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setInterpolateDimensions(b);
+}
+
+void SEAdenitaCoreSEAppGUI::onCheckClearLogFile(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setClearLogFile(b);
+}
+
+void SEAdenitaCoreSEAppGUI::onCheckAutoScaffold(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setAutoSetScaffoldSequence(b);
+}
+
+void SEAdenitaCoreSEAppGUI::onCheckShowOverlay(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setShowOverlay(b);
+}
+
 void SEAdenitaCoreSEAppGUI::onDSRing()
 {
   bool ok;

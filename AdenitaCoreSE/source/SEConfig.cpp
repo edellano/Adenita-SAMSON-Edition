@@ -1,9 +1,75 @@
 #include "SEConfig.hpp"
+#include "rapidjson/filewritestream.h"
 
 SEConfig & SEConfig::GetInstance()
 {
   static SEConfig instance;
   return instance;
+}
+
+void SEConfig::setAutoSetScaffoldSequence(bool b)
+{
+  if (setting_.FindMember("auto_set_scaffold_sequence") != setting_.MemberEnd()) {
+    setting_["auto_set_scaffold_sequence"].SetBool(b);
+  }
+  else {
+    Value v;
+    v.SetBool(b);
+    setting_.AddMember("auto_set_scaffold_sequence", v, setting_.GetAllocator());
+  }
+  writeDocumentToJson();
+}
+
+void SEConfig::setShowOverlay(bool b)
+{
+  if (setting_.FindMember("show_overlay") != setting_.MemberEnd()) {
+    setting_["show_overlay"].SetBool(b);
+  }
+  else {
+    Value v;
+    v.SetBool(b);
+    setting_.AddMember("show_overlay", v, setting_.GetAllocator());
+  }
+  writeDocumentToJson();
+}
+
+void SEConfig::setDisplayPossibleCrossovers(bool b)
+{
+  if (setting_.FindMember("display_possible_crossovers") != setting_.MemberEnd()) {
+    setting_["display_possible_crossovers"].SetBool(b);
+  }
+  else {
+    Value v;
+    v.SetBool(b);
+    setting_.AddMember("display_possible_crossovers", v, setting_.GetAllocator());
+  }
+  writeDocumentToJson();
+}
+
+void SEConfig::setClearLogFile(bool b)
+{
+  if (setting_.FindMember("clear_log_file") != setting_.MemberEnd()) {
+    setting_["clear_log_file"].SetBool(b);
+  }
+  else {
+    Value v;
+    v.SetBool(b);
+    setting_.AddMember("clear_log_file", v, setting_.GetAllocator());
+  }
+  writeDocumentToJson();
+}
+
+void SEConfig::setInterpolateDimensions(bool b)
+{
+  if (setting_.FindMember("interpolate_dimensions") != setting_.MemberEnd()) {
+    setting_["interpolate_dimensions"].SetBool(b);
+  }
+  else {
+    Value v;
+    v.SetBool(b);
+    setting_.AddMember("interpolate_dimensions", v, setting_.GetAllocator());
+  }
+  writeDocumentToJson();
 }
 
 void SEConfig::updateDebugConfig()
@@ -12,34 +78,34 @@ void SEConfig::updateDebugConfig()
   if (fp != NULL) {
     char readBuffer[65536];
     FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-    setting_.ParseStream(is);
+    debugSetting_.ParseStream(is);
 
-    if (setting_.FindMember("min_cutoff") != setting_.MemberEnd()) {
-      debugOptions.minCutOff = setting_["min_cutoff"].GetDouble();
+    if (debugSetting_.FindMember("min_cutoff") != debugSetting_.MemberEnd()) {
+      debugOptions.minCutOff = debugSetting_["min_cutoff"].GetDouble();
     }
     
-    if (setting_.FindMember("max_cutoff") != setting_.MemberEnd()) {
-      debugOptions.maxCutOff = setting_["max_cutoff"].GetDouble();
+    if (debugSetting_.FindMember("max_cutoff") != setting_.MemberEnd()) {
+      debugOptions.maxCutOff = debugSetting_["max_cutoff"].GetDouble();
     }
 
-    if (setting_.FindMember("display_nucleotide_basis") != setting_.MemberEnd()) {
-      debugOptions.display_nucleotide_basis = setting_["display_nucleotide_basis"].GetBool();
+    if (debugSetting_.FindMember("display_nucleotide_basis") != debugSetting_.MemberEnd()) {
+      debugOptions.display_nucleotide_basis = debugSetting_["display_nucleotide_basis"].GetBool();
     }
 
-    if (setting_.FindMember("display_base_pairing") != setting_.MemberEnd()) {
-      debugOptions.display_base_pairing = setting_["display_base_pairing"].GetBool();
+    if (debugSetting_.FindMember("display_base_pairing") != debugSetting_.MemberEnd()) {
+      debugOptions.display_base_pairing = debugSetting_["display_base_pairing"].GetBool();
     }
 
-    if (setting_.FindMember("custom_bool") != setting_.MemberEnd()) {
-      debugOptions.customBool = setting_["custom_bool"].GetBool();
+    if (debugSetting_.FindMember("custom_bool") != debugSetting_.MemberEnd()) {
+      debugOptions.customBool = debugSetting_["custom_bool"].GetBool();
     }
 
-    if (setting_.FindMember("custom_double") != setting_.MemberEnd()) {
-      debugOptions.customDouble = setting_["custom_double"].GetDouble();
+    if (debugSetting_.FindMember("custom_double") != debugSetting_.MemberEnd()) {
+      debugOptions.customDouble = debugSetting_["custom_double"].GetDouble();
     }
 
-    if (setting_.FindMember("custom_int") != setting_.MemberEnd()) {
-      debugOptions.customInt = setting_["custom_int"].GetInt();
+    if (debugSetting_.FindMember("custom_int") != debugSetting_.MemberEnd()) {
+      debugOptions.customInt = debugSetting_["custom_int"].GetInt();
     }
   }
 }
@@ -112,9 +178,6 @@ void SEConfig::loadConfig() {
     writer.Key("crossover_angle_threshold");
     writer.Double(crossover_angle_threshold);
 
-    writer.Key("use_twist");
-    writer.Bool(use_twist);
-
     writer.Key("detect_possible_crossovers");
     writer.Bool(detect_possible_crossovers);
 
@@ -123,9 +186,6 @@ void SEConfig::loadConfig() {
 
     writer.Key("clear_log_file");
     writer.Bool(clear_log_file);
-
-    writer.Key("test_type");
-    writer.Int(test_type);
 
     writer.Key("display_possible_crossovers");
     writer.Bool(display_possible_crossovers);
@@ -248,11 +308,6 @@ void SEConfig::updateConfig() {
     }
 
     // not used currently
-    if (setting_.FindMember("test_type") != setting_.MemberEnd()) {
-      test_type = setting_["test_type"].GetInt();
-    }
-
-    // not used currently
     if (setting_.FindMember("automatic_camera") != setting_.MemberEnd()) {
       automatic_camera = setting_["automatic_camera"].GetBool();
     }
@@ -274,11 +329,6 @@ void SEConfig::updateConfig() {
     // not used currently
     if (setting_.FindMember("display_possible_crossovers") != setting_.MemberEnd()) {
       display_possible_crossovers = setting_["display_possible_crossovers"].GetBool();
-    }
-
-    // not used currently
-    if (setting_.FindMember("use_twist") != setting_.MemberEnd()) {
-      use_twist = setting_["use_twist"].GetBool();
     }
 
     // not used currently
@@ -367,5 +417,15 @@ void SEConfig::readDoubleArray(Value & val, double * arr, int length) {
   for (int i = 0; i < length; ++i) {
     arr[i] = val[i].GetDouble();
   }
+}
+
+void SEConfig::writeDocumentToJson()
+{
+  FILE* fp = fopen(DEFAULT_CONFIGPATH.c_str(), "wb"); // non-Windows use "w"
+  char writeBuffer[65536];
+  FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
+  Writer<FileWriteStream> writer(os);
+  setting_.Accept(writer);
+  fclose(fp);
 }
 

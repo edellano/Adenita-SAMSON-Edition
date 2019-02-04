@@ -43,7 +43,7 @@ public:
 
   static SEConfig& GetInstance();
 
-  // visual_model settin
+  // visual_model settings
   float min_melting_temp = 25.0f;
   float max_melting_temp = 80.0f;
   float min_gibbs_free_energy = 0.0f;
@@ -98,14 +98,12 @@ public:
   bool preview_editor = true;  // adjusting camera according to dimension
   // structure prediction and algorithms
   bool use_atomic_details = false;
-  bool use_twist = true;
   bool detect_possible_crossovers = false;
-  float crossover_distance_threshold = 15.0;  // ansgtroms
+  float crossover_distance_threshold = 15.0;  // angstroms
   float crossover_angle_threshold = 25.0;  // angstroms
   float dh_dist = 4.0;  // distance between double helices belonging to the same edge (angstroms)
   // logging and debugging
   bool clear_log_file = false;
-  int test_type = 2;  // 2 for short
   // toggle overlays and display options
   bool display_possible_crossovers = true;
   bool show_overlay = false;
@@ -116,6 +114,13 @@ public:
 
   // debug
   DebugOptions debugOptions;
+
+  // setters
+  void setAutoSetScaffoldSequence(bool b);
+  void setShowOverlay(bool b);
+  void setDisplayPossibleCrossovers(bool b);
+  void setClearLogFile(bool b);
+  void setInterpolateDimensions(bool b);
 
 public slots:
   void updateConfig();
@@ -128,6 +133,7 @@ private:
   const std::string DEBUG_CONFIGPATH = SAMSON::getUserDataPath() + "/adenita_debug_settings.json";
   const std::string DEFAULT_CONFIGPATH = SAMSON::getUserDataPath() + "/adenita_settings.json";
   Document setting_;
+  Document debugSetting_;
   QFileSystemWatcher configFileWatcher_;
   QFileSystemWatcher debugConfigFileWatcher_;
 
@@ -135,5 +141,6 @@ private:
   void loadDebugConfig();
   void writeDoubleArray(Writer<StringBuffer> & writer, std::string key, double * arr, int length);
   void readDoubleArray(Value & val, double * arr, int length);
+  void writeDocumentToJson();
 };
 
