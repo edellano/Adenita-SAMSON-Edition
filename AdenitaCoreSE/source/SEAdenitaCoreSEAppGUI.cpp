@@ -314,6 +314,13 @@ void SEAdenitaCoreSEAppGUI::onSetScaffold()
   t->SetScaffoldSequence(filename);
 }
 
+void SEAdenitaCoreSEAppGUI::onAddNtThreeP()
+{
+  SEAdenitaCoreSEApp *t = getApp();
+  int numNt = 1;
+  t->AddNtThreeP(numNt);
+}
+
 void SEAdenitaCoreSEAppGUI::onCenterPart()
 {
   SEAdenitaCoreSEApp *t = getApp();

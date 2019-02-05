@@ -352,6 +352,13 @@
             </property>
            </widget>
           </item>
+          <item row="3" column="2">
+           <widget class="QPushButton" name="btnAddNtThreeP">
+            <property name="text">
+             <string>Add nt 3'</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </widget>
@@ -715,6 +722,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnAddNtThreeP</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onAddNtThreeP()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>421</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -748,5 +771,6 @@
   <slot>onCheckInterpolateDimensions(bool)</slot>
   <slot>onHighlightXOs()</slot>
   <slot>onHighlightPosXOs()</slot>
+  <slot>onAddNtThreeP()</slot>
  </slots>
 </ui>
