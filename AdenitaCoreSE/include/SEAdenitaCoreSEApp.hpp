@@ -55,6 +55,7 @@ public :
   void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
   void CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
   // Debug
+  void AddNtThreeP(int numNt);
   void CenterPart();
   void CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal);
   void LinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int num);

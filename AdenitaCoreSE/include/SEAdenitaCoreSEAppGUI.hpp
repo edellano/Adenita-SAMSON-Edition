@@ -75,6 +75,7 @@ public slots:
   void onCheckAutoScaffold(bool b);
   void onCheckShowOverlay(bool b);
   // Debug
+  void onAddNtThreeP();
   void onCenterPart();
   void onDSRing();
   void onCatenanes();

@@ -8,6 +8,9 @@ namespace ADNBasicOperations {
   ADNPointer<ADNDoubleStrand> MergeDoubleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNDoubleStrand> first_strand, ADNPointer<ADNDoubleStrand> second_strand);
   ADNPointer<ADNPart> MergeParts(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2);
 
+  // Extend
+  void AddNucleotidesThreePrime(ADNPointer<ADNSingleStrand> ss, int number, SBVector3 dir);
+
   // Break
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> BreakSingleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt);
   std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> BreakDoubleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNBaseSegment> bs);
@@ -52,4 +55,5 @@ namespace ADNBasicOperations {
 
   // Ordering
   std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> OrderNucleotides(ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2);
+  std::pair<End, ADNPointer<ADNBaseSegment>> GetNextBaseSegment(ADNPointer<ADNNucleotide> nt);
 }

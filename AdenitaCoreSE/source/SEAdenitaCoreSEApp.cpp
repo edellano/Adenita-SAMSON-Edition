@@ -120,6 +120,19 @@ void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOption
   }
 }
 
+void SEAdenitaCoreSEApp::AddNtThreeP(int numNt)
+{
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  if (nts.size() == 1) {
+    ADNPointer<ADNNucleotide> nt = nts[0];
+    auto ss = nt->GetStrand();
+    SBVector3 dir = ADNAuxiliary::UblasVectorToSBVector(nt->GetE3());
+
+    ADNBasicOperations::AddNucleotidesThreePrime(ss, numNt, dir);
+  }
+  ResetVisualModel();
+}
+
 void SEAdenitaCoreSEApp::CenterPart()
 {
   auto parts = GetNanorobot()->GetSelectedParts();
