@@ -302,6 +302,24 @@ std::string ADNNucleotide::getBaseSegmentType() const
   return ADNModel::CellTypeToString(t);
 }
 
+std::string ADNNucleotide::getEndType() const
+{
+  std::string s;
+  if (end_ == FivePrime) {
+    s = "5'";
+  }
+  else if (end_ == ThreePrime) {
+    s = "3'";
+  }
+  else if (end_ == FiveAndThreePrime) {
+    s = "5' and 3'";
+  }
+  else if (end_ == NotEnd) {
+    s = "Not end";
+  }
+  return s;
+}
+
 End ADNNucleotide::GetEnd()
 {
   return end_;
