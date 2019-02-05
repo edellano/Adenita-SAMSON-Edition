@@ -191,6 +191,7 @@ public:
   ADNPointer<ADNBaseSegment> GetBaseSegment();
   SBNode* getBaseSegment() const;
   std::string getBaseSegmentType() const;
+  std::string getEndType() const;
 
   End GetEnd();
   void SetEnd(End e);
