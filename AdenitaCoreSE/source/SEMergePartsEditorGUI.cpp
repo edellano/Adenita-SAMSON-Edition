@@ -39,7 +39,7 @@ QPixmap SEMergePartsEditorGUI::getLogo() const {
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
 	// Modify it to better reflect the purpose of your editor.
 
-	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/icons/twistDS.png"));
+	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/icons/merge.png"));
 
 }
 
