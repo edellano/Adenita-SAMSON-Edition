@@ -119,6 +119,8 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
 
         ADNPointer<ADNLoop> leftLoop = ADNPointer<ADNLoop>(new ADNLoop());
         ADNPointer<ADNLoop> rightLoop = ADNPointer<ADNLoop>(new ADNLoop());
+        lp_cell->SetLeftLoop(leftLoop);
+        lp_cell->SetRightLoop(rightLoop);
 
         if (left.HasMember("startNt")) {
           int startNtId = left["startNt"].GetInt();
