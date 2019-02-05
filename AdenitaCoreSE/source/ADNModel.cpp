@@ -583,7 +583,6 @@ void ADNSingleStrand::AddNucleotideThreePrime(ADNPointer<ADNNucleotide> nt)
     fivePrime_ = nt;
     nt->SetEnd(FiveAndThreePrime);
   }
-  auto test = nt->GetPrev();
   threePrime_ = nt;
 }
 

@@ -75,8 +75,10 @@ ADNPointer<ADNDoubleStrand> ADNBasicOperations::MergeDoubleStrand(ADNPointer<ADN
   return ds;
 }
 
-void ADNBasicOperations::AddNucleotidesThreePrime(ADNPointer<ADNSingleStrand> ss, int number, SBVector3 dir)
+CollectionMap<ADNNucleotide> ADNBasicOperations::AddNucleotidesThreePrime(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> ss, int number, SBVector3 dir)
 {
+  CollectionMap<ADNNucleotide> nts;
+
   for (int i = 0; i < number; ++i) {
 
     ADNPointer<ADNNucleotide> nt = ss->GetThreePrime();
@@ -86,21 +88,25 @@ void ADNBasicOperations::AddNucleotidesThreePrime(ADNPointer<ADNSingleStrand> ss
     auto n = GetNextBaseSegment(nt);
     End e = n.first;
     ADNPointer<ADNBaseSegment> nextBs = n.second;
+    SBPosition3 pos = nt->GetPosition() + SBQuantity::nanometer(ADNConstants::BP_RISE) * dir;
 
     if (nextBs == nullptr) {
       nextBs = new ADNBaseSegment(BasePair);
+      nextBs->create();
       if (e == ThreePrime) {
         ds->AddBaseSegmentEnd(nextBs);
       }
       else {
         ds->AddBaseSegmentBeginning(nextBs);
       }
+      nextBs->SetPosition(pos);
       nextBs->SetE3(ADNAuxiliary::SBVectorToUblasVector(dir));
     }
     ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(nextBs->GetCell()());
 
     ADNPointer<ADNNucleotide> newNt = new ADNNucleotide();
-
+    
+    newNt->SetPosition(pos);
     newNt->SetBaseSegment(nextBs);
     if (isLeft) {
       bp->SetLeftNucleotide(newNt);
@@ -108,8 +114,13 @@ void ADNBasicOperations::AddNucleotidesThreePrime(ADNPointer<ADNSingleStrand> ss
     else {
       bp->SetRightNucleotide(newNt);
     }
-    ss->AddNucleotideThreePrime(newNt);
+    newNt->create();
+    part->RegisterNucleotideThreePrime(ss, newNt);
+
+    nts.addReferenceTarget(newNt());
   }
+
+  return nts;
 }
 
 ADNPointer<ADNPart> ADNBasicOperations::MergeParts(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2)
