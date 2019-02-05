@@ -86,25 +86,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnSearch">
-            <property name="text">
-             <string>Search</string>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="shortcut">
-             <string>Ctrl+F</string>
-            </property>
-            <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextUnderIcon</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QToolButton" name="btnExport">
             <property name="text">
              <string>Export</string>
