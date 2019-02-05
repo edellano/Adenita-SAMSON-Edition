@@ -126,11 +126,14 @@ void SEAdenitaCoreSEApp::AddNtThreeP(int numNt)
   if (nts.size() == 1) {
     ADNPointer<ADNNucleotide> nt = nts[0];
     auto ss = nt->GetStrand();
-    SBVector3 dir = ADNAuxiliary::UblasVectorToSBVector(nt->GetE3());
+    auto part = GetNanorobot()->GetPart(ss);
+    SBVector3 dir = ADNAuxiliary::UblasVectorToSBVector(nt->GetBaseSegment()->GetE3());
 
-    ADNBasicOperations::AddNucleotidesThreePrime(ss, numNt, dir);
+    auto nts = ADNBasicOperations::AddNucleotidesThreePrime(part, ss, numNt, dir);
+    DASBackToTheAtom* btta = new DASBackToTheAtom();
+    btta->SetPositionsForNewNucleotides(part, nts);
+    ResetVisualModel();
   }
-  ResetVisualModel();
 }
 
 void SEAdenitaCoreSEApp::CenterPart()

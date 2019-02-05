@@ -9,7 +9,7 @@ namespace ADNBasicOperations {
   ADNPointer<ADNPart> MergeParts(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2);
 
   // Extend
-  void AddNucleotidesThreePrime(ADNPointer<ADNSingleStrand> ss, int number, SBVector3 dir);
+  CollectionMap<ADNNucleotide> AddNucleotidesThreePrime(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> ss, int number, SBVector3 dir);
 
   // Break
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> BreakSingleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt);
