@@ -45,91 +45,6 @@ SOURCE_GROUP ( form FILES ${${OUTPUT_UUID}_form} )
 SOURCE_GROUP ( translationFiles FILES ${${PROJECT_FOLDER_NAME}_QM} ${${OUTPUT_UUID}_ts} )
 SOURCE_GROUP ( GeneratedFiles FILES ${${OUTPUT_UUID}_MOC_GENERATED} ${${OUTPUT_UUID}_UI_GENERATED} ${${OUTPUT_UUID}_RCC_GENERATED} )
 
-####################################################
-#   Python bindings thanks to pybind11
-####################################################
-IF( NOT DEBUG ) # Disable the creation of Python bindings in the Debug mode since Python is not supported in the Debug mode
-
-    FIND_PACKAGE( PythonInterp ${PYTHON_VERSION} REQUIRED )
-
-	IF ( PYTHONINTERP_FOUND )
-	    SET(CREATE_PYTHON_BINDINGS TRUE)
-	ENDIF ( PYTHONINTERP_FOUND )
-
-ENDIF()
-
-IF ( CREATE_PYTHON_BINDINGS )
-
-    # Determine the include directory: set PYTHON_INCLUDE_DIR variable
-	# set PYTHON_INCLUDE_DIR variable using python: distutils.sysconfig.get_python_inc()  or  distutils.sysconfig.get_config_var(\"INCLUDEPY\")
-	IF( UNIX )
-	    EXECUTE_PROCESS(COMMAND
-			python3 -c "import sys; print(sys.prefix)"
-			OUTPUT_VARIABLE  PYTHON_INSTALL_PREFIX  OUTPUT_STRIP_TRAILING_WHITESPACE)
-		EXECUTE_PROCESS(COMMAND
-			which python3
-			OUTPUT_VARIABLE  PYTHON_EXECUTABLE  OUTPUT_STRIP_TRAILING_WHITESPACE)
-		EXECUTE_PROCESS(COMMAND
-			python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())"
-			OUTPUT_VARIABLE  PYTHON_INCLUDE_DIR  OUTPUT_STRIP_TRAILING_WHITESPACE)
-	ELSE( UNIX )
-	    # Windows: python3 is named python in Anaconda
-		EXECUTE_PROCESS(COMMAND
-			python -c "import sys; print(sys.prefix)"
-			OUTPUT_VARIABLE  PYTHON_INSTALL_PREFIX  OUTPUT_STRIP_TRAILING_WHITESPACE)
-		EXECUTE_PROCESS(COMMAND
-			where python
-			OUTPUT_VARIABLE  PYTHON_EXECUTABLE  OUTPUT_STRIP_TRAILING_WHITESPACE)
-		EXECUTE_PROCESS(COMMAND
-			python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())"
-			OUTPUT_VARIABLE  PYTHON_INCLUDE_DIR  OUTPUT_STRIP_TRAILING_WHITESPACE)
-	ENDIF( UNIX )
-
-	# Determine the Python library path: set PYTHON_LIBRARY variable
-	IF( UNIX )
-	    IF( APPLE )
-		    # Anaconda installation
-			#EXECUTE_PROCESS(COMMAND python3 -c "import sys; from distutils import sysconfig; sys.stdout.write(\"/\".join(map(sysconfig.get_config_var, (\"LIBDIR\", \"LDLIBRARY\"))))"
-			#    OUTPUT_VARIABLE PYTHON_LIBRARY        OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-			# Homebrew installation
-			EXECUTE_PROCESS(COMMAND
-				python3 -c "import sys; from distutils import sysconfig; sys.stdout.write(\"/\".join( [sysconfig.get_config_var(\"LIBDIR\"), \"libpython3.6m.dylib\"] ) )"
-				OUTPUT_VARIABLE  PYTHON_LIBRARY  OUTPUT_STRIP_TRAILING_WHITESPACE)
-		ELSE( APPLE )
-		    EXECUTE_PROCESS(COMMAND
-				python3 -c "import sys; from distutils import sysconfig; sys.stdout.write(\"/\".join(map(sysconfig.get_config_var, (\"LIBDIR\", \"INSTSONAME\"))))"
-				OUTPUT_VARIABLE  PYTHON_LIBRARY  OUTPUT_STRIP_TRAILING_WHITESPACE)
-		ENDIF( APPLE )
-	ELSE( UNIX )
-	    # Windows: python3 is named python in Anaconda
-		EXECUTE_PROCESS(COMMAND
-			python -c "import sys; from distutils import sysconfig; print(sysconfig.get_config_var(\"VERSION\"))"
-			OUTPUT_VARIABLE  PYTHON_CONFIG_VERSION  OUTPUT_STRIP_TRAILING_WHITESPACE)
-		SET (PYTHON_LIBRARY "${PYTHON_INSTALL_PREFIX}\\libs\\python${PYTHON_CONFIG_VERSION}.lib")
-	ENDIF( UNIX )
-
-	MESSAGE("Python install prefix: " ${PYTHON_INSTALL_PREFIX} )
-	MESSAGE("Python executable:     " ${PYTHON_EXECUTABLE} )
-	MESSAGE("Python include dir:    " ${PYTHON_INCLUDE_DIR} )
-	MESSAGE("Python lib:            " ${PYTHON_LIBRARY} )
-
-	# Set path to pybind11 headers
-	MESSAGE( "Adding pybind11 path...")
-	MESSAGE( "     PYBIND11_PATH            = ${PYBIND11_PATH} ")
-	SET(PYBIND11_INCLUDE_DIRS ${PYBIND11_PATH})
-
-	# include paths to python and pybind11 headers
-	INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_DIR} ${PYBIND11_INCLUDE_DIRS})
-
-	# This define is used in the code to determine whether Python bindings should be created or not
-	add_definitions(-DCREATE_PYTHON_BINDINGS)
-
-ELSE ( CREATE_PYTHON_BINDINGS )
-
-    SET (PYTHON_LIBRARY "")
-
-ENDIF ( CREATE_PYTHON_BINDINGS )
 
 ####################################################
 
@@ -137,7 +52,6 @@ ADD_LIBRARY ( ${OUTPUT_NAME} SHARED ${${OUTPUT_UUID}_externals_headers} ${${OUTP
 
 TARGET_LINK_LIBRARIES (${OUTPUT_NAME}
 						${QT_LIBRARIES}
-						${PYTHON_LIBRARY}
 						${OPENGL_LIBRARY}
 						${SAMSON_SDK_LIBRARIES}
 						)

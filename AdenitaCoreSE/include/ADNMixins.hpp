@@ -132,7 +132,7 @@ inline Collection<T> & Collection<T>::operator=(const Collection<T>& other)
 }
 
 template<class T>
-inline void Collection<T>::AddElement(ADNPointer<T> elem, int id = -1)
+inline void Collection<T>::AddElement(ADNPointer<T> elem, int id)
 {
   if (id == -1) {
     id = 0;

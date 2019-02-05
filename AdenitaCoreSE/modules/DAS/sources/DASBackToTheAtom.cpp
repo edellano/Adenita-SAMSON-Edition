@@ -597,7 +597,7 @@ void DASBackToTheAtom::FindAtomsPositions(ADNPointer<ADNNucleotide> nt)
   }
 }
 
-void DASBackToTheAtom::PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool positionsFromNucleotide)
+void DASBackToTheAtom::PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool positionsFromNucleotide, bool createAtoms)
 {
   auto nts = origami->GetNucleotides();
   SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
@@ -611,8 +611,8 @@ void DASBackToTheAtom::PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool p
       cSC->SetPosition(nt->GetPosition());
     }
     
-    origami->RegisterAtom(nt, NucleotideGroup::Backbone, cBB);
-    origami->RegisterAtom(nt, NucleotideGroup::SideChain, cSC);
+    origami->RegisterAtom(nt, NucleotideGroup::Backbone, cBB, createAtoms);
+    origami->RegisterAtom(nt, NucleotideGroup::SideChain, cSC, createAtoms);
     // hiding atoms here cause when they are created is too slow
     nt->HideCenterAtoms();
   }

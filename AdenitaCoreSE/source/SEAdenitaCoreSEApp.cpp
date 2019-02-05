@@ -13,8 +13,6 @@ SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
     logger.ClearLog();
   }
   logger.LogDateTime();
-
-  ConnectToDocument();
 }
 
 SEAdenitaCoreSEApp::~SEAdenitaCoreSEApp() {
@@ -178,7 +176,6 @@ SBVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
 
 void SEAdenitaCoreSEApp::ConnectSingleStrands()
 {
-
   int size1 = GetNanorobot()->GetSingleStrands().size();
 
   auto nts = GetNanorobot()->GetSelectedNucleotides();
@@ -200,7 +197,6 @@ void SEAdenitaCoreSEApp::ConnectSingleStrands()
       ResetVisualModel();
     }
   }
-
 }
 
 void SEAdenitaCoreSEApp::BreakSingleStrand()
@@ -404,34 +400,21 @@ void SEAdenitaCoreSEApp::FromDatagraph()
 
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
-  auto t = documentEvent->getType();
-  if (t != SBDocumentEvent::CameraChanged) {
-    int here = 1;
-  }
-
-  if (documentEvent->getType() == SBDocumentEvent::ActiveLayerChanged) {
-    ConnectToDocument();
-  }
-  if (documentEvent->getType() == SBDocumentEvent::ActiveDocumentChanged) {
-    ConnectToDocument();
-  }
-  if (documentEvent->getType() == SBDocumentEvent::DocumentAdded) {
-    int i = 0;
-  }
-
-  if (documentEvent->getType() == SBDocumentEvent::StructuralModelAdded) {
-    // on load a non-registered ADNPart
-    auto node = documentEvent->getAuxiliaryNode();
-    ADNPointer<ADNPart> part = dynamic_cast<ADNPart*>(node);
-    if (part != nullptr) {
-      AddLoadedPartToNanorobot(part);
-    }
-  }
+  //auto t = documentEvent->getType();
+  //if (documentEvent->getType() == SBDocumentEvent::StructuralModelAdded) {
+  //  // on load a non-registered ADNPart
+  //  auto node = documentEvent->getAuxiliaryNode();
+  //  ADNPointer<ADNPart> part = dynamic_cast<ADNPart*>(node);
+  //  if (part != nullptr) {
+  //    AddLoadedPartToNanorobot(part);
+  //  }
+  //}
 }
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
 {
-  if (documentEvent->getType() == SBStructuralEvent::ChainRemoved) {
+  auto t = documentEvent->getType();
+  if (t == SBStructuralEvent::ChainRemoved) {
     auto node = documentEvent->getAuxiliaryNode();
     ADNPointer<ADNSingleStrand> ss = dynamic_cast<ADNSingleStrand*>(node);
     if (ss != nullptr) {
@@ -456,8 +439,12 @@ void SEAdenitaCoreSEApp::ConnectToDocument(SBDocument* doc)
 
 void SEAdenitaCoreSEApp::ConnectToDocument()
 {
-  SAMSON::getActiveLayer()->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent));
-  SAMSON::getActiveDocument()->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent));
+  if (SAMSON::getActiveDocument()->documentSignalIsConnectedToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent)) == false) {
+    SAMSON::getActiveDocument()->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent));
+  }
+  if (SAMSON::getActiveLayer()->documentSignalIsConnectedToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent)) == false) {
+    SAMSON::getActiveLayer()->connectDocumentSignalToSlot(this, SB_SLOT(&SEAdenitaCoreSEApp::onDocumentEvent));
+  }
 }
 
 ADNNanorobot * SEAdenitaCoreSEApp::GetNanorobot()
@@ -538,11 +525,6 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool cal
   part->create();
   SAMSON::getActiveLayer()->addChild(part());
   SAMSON::endHolding();
-
-  if (c.auto_calculate_binding_regions) {
-    PIPrimer3& p = PIPrimer3::GetInstance();
-    //p.Calculate(part, 100, 5, 16);
-  }
 }
 
 void SEAdenitaCoreSEApp::AddConformationToActiveLayer(ADNPointer<ADNConformation> conf)
@@ -558,7 +540,7 @@ void SEAdenitaCoreSEApp::AddLoadedPartToNanorobot(ADNPointer<ADNPart> part)
 {
   if (part->loadedViaSAMSON()) {
     DASBackToTheAtom btta = DASBackToTheAtom();
-    btta.PopulateWithMockAtoms(part, true);
+    btta.PopulateWithMockAtoms(part, true, true);
     SEConfig& config = SEConfig::GetInstance();
     if (config.use_atomic_details) {
       btta.GenerateAllAtomModel(part);
@@ -569,18 +551,14 @@ void SEAdenitaCoreSEApp::AddLoadedPartToNanorobot(ADNPointer<ADNPart> part)
     //events
     ConnectStructuralSignalSlots(part);
 
-    if (config.auto_calculate_binding_regions) {
-      PIPrimer3& p = PIPrimer3::GetInstance();
-    }
-
     part->loadedViaSAMSON(false);
+
+    ResetVisualModel();
   }
 }
 
 void SEAdenitaCoreSEApp::ConnectStructuralSignalSlots(ADNPointer<ADNPart> part)
 {
-  //auto singleStrands = part->GetSingleStrands();
-
   part->connectStructuralSignalToSlot(
     this,
     SB_SLOT(&SEAdenitaCoreSEApp::onStructuralEvent)

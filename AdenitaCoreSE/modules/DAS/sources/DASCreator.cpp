@@ -282,6 +282,9 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddRingToADNPart(ADNPointer<ADNPart> par
   auto circumpherence = 2.0 * pi * radius;
   // see how many nts fit in circumpherence using B-DNA
   int numNts = floor((circumpherence / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
+  // recalculate number of nucleotides so 5' and 3' twisting meet
+  double Lk = floor(numNts * ADNConstants::BP_ROT / 360 );
+  numNts = 360 * Lk / ADNConstants::BP_ROT;
   // calculate angle and new radius so all nts fit
   auto theta = 2.0 * pi / numNts;
   auto R = theta * numNts * radius / (2.0 * pi);
