@@ -42,7 +42,7 @@ QString SEConnectSSDNAEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("SEConnectSSDNAEditor"); 
+	return QObject::tr("ssDNA Connection Editor"); 
 
 }
 
@@ -67,7 +67,7 @@ QString SEConnectSSDNAEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("SAMSON Element generator pro tip: modify me"); 
+	return QObject::tr("Connect and create crossovers between ssDNA"); 
 
 }
 

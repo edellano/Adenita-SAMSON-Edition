@@ -52,7 +52,8 @@ public:
 	//@}
 
 public slots:
-
+  void updatePartsList();
+  void onMerge();
 
 private:
 

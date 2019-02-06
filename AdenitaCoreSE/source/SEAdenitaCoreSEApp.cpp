@@ -252,13 +252,6 @@ void SEAdenitaCoreSEApp::TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, do
   }
 }
 
-void SEAdenitaCoreSEApp::CreateDSRing(SBQuantity::length radius, SBPosition3 center, SBVector3 normal)
-{
-  auto part = DASCreator::CreateDSRing(radius, center, normal);
-  AddPartToActiveLayer(part);
-  ResetVisualModel();
-}
-
 void SEAdenitaCoreSEApp::LinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int num)
 {
   auto part = DASCreator::CreateLinearCatenanes(radius, center, normal, num);
@@ -288,23 +281,13 @@ void SEAdenitaCoreSEApp::SetStart()
   ResetVisualModel();
 }
 
-void SEAdenitaCoreSEApp::MergeComponents()
+void SEAdenitaCoreSEApp::MergeComponents(ADNPointer<ADNPart> p1, ADNPointer<ADNPart> p2)
 {
-  auto parts = GetNanorobot()->GetSelectedParts();
-  if (parts.size() > 1) {
-    // Merge the parts in batches of 2
-    ADNPointer<ADNPart> fPart = parts[0];
-    SB_FOR(ADNPointer<ADNPart> part, parts) {
-      if (part == fPart) continue;
-
-      ADNPointer<ADNPart> newPart = ADNBasicOperations::MergeParts(fPart, part);
-      GetNanorobot()->DeregisterPart(part);
-      part->getParent()->removeChild(part());
-      fPart = newPart;
-    }
-    ResetVisualModel();
-  }
-  
+  ADNPointer<ADNPart> newPart = ADNBasicOperations::MergeParts(p1, p2);
+  GetNanorobot()->DeregisterPart(p2);
+  p2->getParent()->removeChild(p2());
+  p1 = newPart;
+  ResetVisualModel();
 }
 
 void SEAdenitaCoreSEApp::CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc)

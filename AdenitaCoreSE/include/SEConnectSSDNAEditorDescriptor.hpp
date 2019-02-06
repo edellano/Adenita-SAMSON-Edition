@@ -12,7 +12,7 @@
 SB_CLASS_BEGIN(SEConnectSSDNAEditor);
 
 	SB_CLASS_TYPE(SBCClass::Editor);
-        SB_CLASS_DESCRIPTION("SEConnectSSDNAEditor : SAMSON Element generator pro tip: modify me");
+        SB_CLASS_DESCRIPTION("ssDNA Connection : Connect and create crossovers between ssDNA");
 
 	SB_FACTORY_BEGIN;
 
