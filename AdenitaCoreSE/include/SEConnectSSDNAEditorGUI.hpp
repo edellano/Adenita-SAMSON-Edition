@@ -51,6 +51,9 @@ public:
 
 	//@}
 
+public slots:
+  void onSelectMode();
+
 private:
 
 	Ui::SEConnectSSDNAEditorGUIClass									ui;

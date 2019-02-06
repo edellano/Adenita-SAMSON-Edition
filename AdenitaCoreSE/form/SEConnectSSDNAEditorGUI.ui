@@ -21,14 +21,74 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>SAMSON Element generator pro tip: modify me</string>
-     </property>
-    </widget>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="rdnConcat">
+       <property name="text">
+        <string>Concatenation</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Sequence</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="lineSequence"/>
+     </item>
+     <item row="0" column="0" colspan="3">
+      <widget class="QRadioButton" name="rdnCrossover">
+       <property name="text">
+        <string>Crossover</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>rdnConcat</sender>
+   <signal>released()</signal>
+   <receiver>SEConnectSSDNAEditorGUIClass</receiver>
+   <slot>onSelectMode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>49</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdnCrossover</sender>
+   <signal>released()</signal>
+   <receiver>SEConnectSSDNAEditorGUIClass</receiver>
+   <slot>onSelectMode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>49</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onSelectMode()</slot>
+ </slots>
 </ui>
