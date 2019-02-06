@@ -271,7 +271,7 @@
            <x>0</x>
            <y>10</y>
            <width>481</width>
-           <height>161</height>
+           <height>170</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
@@ -356,6 +356,13 @@
            <widget class="QPushButton" name="btnAddNtThreeP">
             <property name="text">
              <string>Add nt 3'</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QPushButton" name="btnConcatStrands">
+            <property name="text">
+             <string>Concatenate SS</string>
             </property>
            </widget>
           </item>
@@ -738,6 +745,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnConcatStrands</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onConcatStrands()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -772,5 +795,6 @@
   <slot>onHighlightXOs()</slot>
   <slot>onHighlightPosXOs()</slot>
   <slot>onAddNtThreeP()</slot>
+  <slot>onConcatStrands()</slot>
  </slots>
 </ui>

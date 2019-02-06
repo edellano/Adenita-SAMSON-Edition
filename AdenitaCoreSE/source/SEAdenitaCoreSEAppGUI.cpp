@@ -605,6 +605,13 @@ void SEAdenitaCoreSEAppGUI::onHighlightPosXOs()
   t->HighlightPosXOs();
 }
 
+void SEAdenitaCoreSEAppGUI::onConcatStrands()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  std::string s = "NNNN";
+  t->ConcatStrands(s);
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";

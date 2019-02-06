@@ -49,7 +49,6 @@ public :
   void ResetVisualModel();
   SBVisualModel* GetVisualModel();
   // Modifications
-  void ConnectSingleStrands();
   void BreakSingleStrand();
   void DeleteNucleotide();
   void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
@@ -68,6 +67,7 @@ public :
   void FromDatagraph();
   void HighlightXOs();
   void HighlightPosXOs();
+  void ConcatStrands(std::string seq);
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
