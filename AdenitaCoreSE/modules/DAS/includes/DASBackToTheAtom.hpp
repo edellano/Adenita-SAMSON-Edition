@@ -52,13 +52,17 @@ public:
     \param The nucleotide we want to untwist
     \param Whether to also untwist the pair
   */
-  void SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool set_pair, double initialAngleDegrees = 0.0);
+  void SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool set_pair);
   //! Untwist the nucleotides of a base segment (remove the helix turn)
   /*!
     \param The base segment
     \param Whether to also untwist the pair
   */
   void UntwistNucleotidesPosition(ADNPointer<ADNBaseSegment> bs);
+
+  //! Sets the positions of a collection of nucleotides, meant to be called after modifications
+  void SetPositionsForNewNucleotides(ADNPointer<ADNPart> part, CollectionMap<ADNNucleotide> nts, bool all_atoms = false);
+
   //void SetAllAtomsPostions(ADNPointer<ADNPart> origami);
   // for cadnano
   /*void SetAllAtomsPostions2D(ADNPointer<ADNPart> origami);

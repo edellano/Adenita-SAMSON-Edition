@@ -75,6 +75,54 @@ ADNPointer<ADNDoubleStrand> ADNBasicOperations::MergeDoubleStrand(ADNPointer<ADN
   return ds;
 }
 
+CollectionMap<ADNNucleotide> ADNBasicOperations::AddNucleotidesThreePrime(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> ss, int number, SBVector3 dir)
+{
+  CollectionMap<ADNNucleotide> nts;
+
+  for (int i = 0; i < number; ++i) {
+
+    ADNPointer<ADNNucleotide> nt = ss->GetThreePrime();
+    auto bs = nt->GetBaseSegment();
+    auto ds = bs->GetDoubleStrand();
+    bool isLeft = bs->IsLeft(nt);
+    auto n = GetNextBaseSegment(nt);
+    End e = n.first;
+    ADNPointer<ADNBaseSegment> nextBs = n.second;
+    SBPosition3 pos = nt->GetPosition() + SBQuantity::nanometer(ADNConstants::BP_RISE) * dir;
+
+    if (nextBs == nullptr) {
+      nextBs = new ADNBaseSegment(BasePair);
+      nextBs->create();
+      if (e == ThreePrime) {
+        ds->AddBaseSegmentEnd(nextBs);
+      }
+      else {
+        ds->AddBaseSegmentBeginning(nextBs);
+      }
+      nextBs->SetPosition(pos);
+      nextBs->SetE3(ADNAuxiliary::SBVectorToUblasVector(dir));
+    }
+    ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(nextBs->GetCell()());
+
+    ADNPointer<ADNNucleotide> newNt = new ADNNucleotide();
+    
+    newNt->SetPosition(pos);
+    newNt->SetBaseSegment(nextBs);
+    if (isLeft) {
+      bp->SetLeftNucleotide(newNt);
+    }
+    else {
+      bp->SetRightNucleotide(newNt);
+    }
+    newNt->create();
+    part->RegisterNucleotideThreePrime(ss, newNt);
+
+    nts.addReferenceTarget(newNt());
+  }
+
+  return nts;
+}
+
 ADNPointer<ADNPart> ADNBasicOperations::MergeParts(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2)
 {
   ADNPointer<ADNPart> part = part1;
@@ -500,4 +548,24 @@ std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> ADNBasicOperatio
   return res;
 }
 
+std::pair<End, ADNPointer<ADNBaseSegment>> ADNBasicOperations::GetNextBaseSegment(ADNPointer<ADNNucleotide> nt)
+{
+  ADNPointer<ADNBaseSegment> nextBs = nullptr;
+  End end = NotEnd;
 
+  auto bs = nt->GetBaseSegment();
+  auto ds = bs->GetDoubleStrand();
+  auto e3 = nt->GetE3();
+  auto bsE3 = bs->GetE3();
+
+  if (ublas::inner_prod(e3, bsE3) > 0) {
+    nextBs = bs->GetNext(true);
+    end = ThreePrime;
+  }
+  else {
+    nextBs = bs->GetPrev(true);
+    end = FivePrime;
+  }
+
+  return std::make_pair(end, nextBs);
+}

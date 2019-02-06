@@ -40,7 +40,7 @@ void DASBackToTheAtom::SetDoubleStrandPositions(ADNPointer<ADNDoubleStrand> ds) 
       ADNPointer<ADNNucleotide> left = bp->GetLeftNucleotide();
       ADNPointer<ADNNucleotide> right = bp->GetRightNucleotide();
       bool paired = (left != nullptr && right != nullptr);
-      SetNucleotidePosition(bs, paired, ds->GetInitialTwistAngle());
+      SetNucleotidePosition(bs, paired);
     }
     else if (cell->GetType() == CellType::LoopPair) {
       loops.push_back(bs);
@@ -58,11 +58,14 @@ void DASBackToTheAtom::SetDoubleStrandPositions(ADNPointer<ADNDoubleStrand> ds) 
   }
 }
 
-void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool set_pair = false, double initialAngleDegrees) {
+void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool set_pair = false) {
   ADNPointer<ADNNucleotide> nt_left = nullptr;
   ADNPointer<ADNNucleotide> nt_right = nullptr;
   ADNPointer<ADNCell> cell = bs->GetCell();
   if (cell->GetType() != CellType::BasePair) return;
+
+  auto ds = bs->GetDoubleStrand();
+  double initialAngleDegrees = ds->GetInitialTwistAngle();
 
   ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(cell());
   ADNPointer<ADNNucleotide> nt_l = bp->GetLeftNucleotide();
@@ -152,6 +155,26 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
     nt_r->SetBackbonePosition(p_bb_right);
     SBPosition3 p_sc_right = UblasToSBPosition(ublas::row(new_pos, 5));
     nt_r->SetSidechainPosition(p_sc_right);
+  }
+}
+
+void DASBackToTheAtom::SetPositionsForNewNucleotides(ADNPointer<ADNPart> part, CollectionMap<ADNNucleotide> nts, bool all_atoms)
+{
+  SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+    // create mock atoms or all atoms
+    auto bb = nt->GetBackbone();
+    auto sc = nt->GetSidechain();
+
+    auto cBB = bb->GetCenterAtom();
+    auto cSC = sc->GetCenterAtom();
+
+    part->RegisterAtom(nt, NucleotideGroup::Backbone, cBB, false);
+    part->RegisterAtom(nt, NucleotideGroup::SideChain, cSC, false);
+    // hiding atoms here cause when they are created is too slow
+    nt->HideCenterAtoms();
+
+    auto bs = nt->GetBaseSegment();
+    SetNucleotidePosition(bs, true);
   }
 }
 

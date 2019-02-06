@@ -29,14 +29,14 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   exportIcon.addFile(string(iconsPath + "export.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnExport->setIcon(exportIcon);
 
-  QIcon searchIcon;
-  searchIcon.addFile(string(iconsPath + "search.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnSearch->setIcon(searchIcon);
-
   QIcon setScaffIcon;
   setScaffIcon.addFile(string(iconsPath + "setScaffold.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnSetScaff->setIcon(setScaffIcon);
   
+  QIcon calcProperties;
+  calcProperties.addFile(string(iconsPath + "calculate.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnCalculateBindingProperties->setIcon(calcProperties);
+
   // disable debug menu if compiling in release mode
   #if NDEBUG
   ui.tabWidget->removeTab(2);
@@ -314,6 +314,13 @@ void SEAdenitaCoreSEAppGUI::onSetScaffold()
   t->SetScaffoldSequence(filename);
 }
 
+void SEAdenitaCoreSEAppGUI::onAddNtThreeP()
+{
+  SEAdenitaCoreSEApp *t = getApp();
+  int numNt = 1;
+  t->AddNtThreeP(numNt);
+}
+
 void SEAdenitaCoreSEAppGUI::onCenterPart()
 {
   SEAdenitaCoreSEApp *t = getApp();
@@ -328,6 +335,36 @@ void SEAdenitaCoreSEAppGUI::onChangeScaffold(int idx)
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose scaffold"), QDir::currentPath(), tr("(Sequences *.fasta)"));
     ui.lineCustomScaffold->setText(filename);
   }
+}
+
+void SEAdenitaCoreSEAppGUI::onCheckDisplayCrossovers(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setDisplayPossibleCrossovers(b);
+}
+
+void SEAdenitaCoreSEAppGUI::onCheckInterpolateDimensions(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setInterpolateDimensions(b);
+}
+
+void SEAdenitaCoreSEAppGUI::onCheckClearLogFile(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setClearLogFile(b);
+}
+
+void SEAdenitaCoreSEAppGUI::onCheckAutoScaffold(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setAutoSetScaffoldSequence(b);
+}
+
+void SEAdenitaCoreSEAppGUI::onCheckShowOverlay(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setShowOverlay(b);
 }
 
 void SEAdenitaCoreSEAppGUI::onDSRing()
@@ -554,6 +591,25 @@ void SEAdenitaCoreSEAppGUI::onFromDatagraph()
 {
   SEAdenitaCoreSEApp* t = getApp();
   t->FromDatagraph();
+}
+
+void SEAdenitaCoreSEAppGUI::onHighlightXOs()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->HighlightXOs();
+}
+
+void SEAdenitaCoreSEAppGUI::onHighlightPosXOs()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->HighlightPosXOs();
+}
+
+void SEAdenitaCoreSEAppGUI::onConcatStrands()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  std::string s = "NNNN";
+  t->ConcatStrands(s);
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
