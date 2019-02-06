@@ -367,23 +367,6 @@ void SEAdenitaCoreSEAppGUI::onCheckShowOverlay(bool b)
   c.setShowOverlay(b);
 }
 
-void SEAdenitaCoreSEAppGUI::onDSRing()
-{
-  bool ok;
-  double radius = QInputDialog::getDouble(this, "Radius", "Choose the radius of the ring (nm)", 20.0, 0.0, 99999.9, 2, &ok);
-  SBQuantity::length R = SBQuantity::nanometer(radius);
-  SBVector3 normal = SBVector3();
-  normal[0] = 0.0;
-  normal[1] = 0.0;
-  normal[2] = 1.0;
-  SBPosition3 center = SBPosition3();
-
-  if (ok) {
-    SEAdenitaCoreSEApp* t = getApp();
-    t->CreateDSRing(R, center, normal);
-  }
-}
-
 void SEAdenitaCoreSEAppGUI::onCatenanes()
 {
   QDialog* dialog = new QDialog();
@@ -565,12 +548,6 @@ void SEAdenitaCoreSEAppGUI::onSetStart()
 {
   SEAdenitaCoreSEApp* t = getApp();
   t->SetStart();
-}
-
-void SEAdenitaCoreSEAppGUI::onMergeComponents()
-{
-  SEAdenitaCoreSEApp* t = getApp();
-  t->MergeComponents();
 }
 
 void SEAdenitaCoreSEAppGUI::onTestNeighbors()
