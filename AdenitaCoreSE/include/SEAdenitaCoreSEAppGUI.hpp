@@ -69,7 +69,13 @@ public slots:
   void onSetScaffold();
   // Options
   void onChangeScaffold(int idx);
+  void onCheckDisplayCrossovers(bool b);
+  void onCheckInterpolateDimensions(bool b);
+  void onCheckClearLogFile(bool b);
+  void onCheckAutoScaffold(bool b);
+  void onCheckShowOverlay(bool b);
   // Debug
+  void onAddNtThreeP();
   void onCenterPart();
   void onDSRing();
   void onCatenanes();
@@ -80,6 +86,9 @@ public slots:
   void onTestNeighbors();
   void onOxDNAImport();
   void onFromDatagraph();
+  void onHighlightXOs();
+  void onHighlightPosXOs();
+  void onConcatStrands();
 
 private slots:
   void CheckForLoadedParts();

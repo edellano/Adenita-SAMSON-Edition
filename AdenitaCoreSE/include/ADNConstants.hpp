@@ -11,6 +11,8 @@ namespace ADNConstants {
   // Algorithm constants
   double const BP_THRESHOLD = 1.0;  // threshold for detecting pairs (nm)
   double const DS_ANGLE_THRESHOLD = 30.0;  // threshold for detecting double strands (grad)
+  double const MAX_CUTOFF_XO = 0.55;  // upper limit for detecting crossovers (nm)
+  double const MIN_CUTOFF_XO = 0.20;  // lower limit for detecting crossovers (nm)
 
   // Other constants
   double const JSON_FORMAT_VERSION = 0.4;  // version of the json format that we are using, to keep compatibility 

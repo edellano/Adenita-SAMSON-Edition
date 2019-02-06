@@ -1,6 +1,7 @@
 #include "SEAdenitaCoreSEApp.hpp"
 #include "SEAdenitaCoreSEAppGUI.hpp"
 #include "SEAdenitaVisualModelProperties.hpp"
+#include "PICrossovers.hpp"
 
 SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
 
@@ -119,6 +120,22 @@ void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOption
   }
 }
 
+void SEAdenitaCoreSEApp::AddNtThreeP(int numNt)
+{
+  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  if (nts.size() == 1) {
+    ADNPointer<ADNNucleotide> nt = nts[0];
+    auto ss = nt->GetStrand();
+    auto part = GetNanorobot()->GetPart(ss);
+    SBVector3 dir = ADNAuxiliary::UblasVectorToSBVector(nt->GetBaseSegment()->GetE3());
+
+    auto nts = ADNBasicOperations::AddNucleotidesThreePrime(part, ss, numNt, dir);
+    DASBackToTheAtom* btta = new DASBackToTheAtom();
+    btta->SetPositionsForNewNucleotides(part, nts);
+    ResetVisualModel();
+  }
+}
+
 void SEAdenitaCoreSEApp::CenterPart()
 {
   auto parts = GetNanorobot()->GetSelectedParts();
@@ -172,31 +189,6 @@ SBVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
     }
     
     return adenitaVm;
-}
-
-void SEAdenitaCoreSEApp::ConnectSingleStrands()
-{
-  int size1 = GetNanorobot()->GetSingleStrands().size();
-
-  auto nts = GetNanorobot()->GetSelectedNucleotides();
-  if (nts.size() == 2) {
-    ADNPointer<ADNNucleotide> fPrime = nts[0];
-    ADNPointer<ADNNucleotide> tPrime = nts[1];
-    if ((fPrime->GetStrand() != tPrime->GetStrand()) && fPrime->IsEnd() && tPrime->IsEnd()) {
-      if (fPrime->GetEnd() == ThreePrime && tPrime->GetEnd() == FivePrime) {
-        fPrime = nts[1];
-        tPrime = nts[0];
-      }
-      auto fPrimeStrand = fPrime->GetStrand();
-      auto tPrimeStrand = tPrime->GetStrand();
-      ADNPointer<ADNPart> part = GetNanorobot()->GetPart(tPrimeStrand);
-      auto newStrand = ADNBasicOperations::MergeSingleStrands(part, tPrimeStrand, fPrimeStrand);
-      GetNanorobot()->RemoveSingleStrand(tPrimeStrand);
-      GetNanorobot()->RemoveSingleStrand(fPrimeStrand);
-
-      ResetVisualModel();
-    }
-  }
 }
 
 void SEAdenitaCoreSEApp::BreakSingleStrand()
@@ -396,6 +388,43 @@ void SEAdenitaCoreSEApp::FromDatagraph()
   ADNPointer<ADNPart> part = ADNLoader::GenerateModelFromDatagraph();
   AddPartToActiveLayer(part, false, true);
   ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::HighlightXOs()
+{
+  auto parts = GetNanorobot()->GetParts();
+
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    PICrossovers::GetCrossovers(p);
+  }
+  ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::HighlightPosXOs()
+{
+  auto parts = GetNanorobot()->GetParts();
+
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    PICrossovers::GetPossibleCrossovers(p);
+  }
+  ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::ConcatStrands(std::string seq)
+{
+  auto singleStrands = GetNanorobot()->GetSelectedSingleStrands();
+  if (singleStrands.size() == 2) {
+    auto ss1 = singleStrands[0];
+    auto ss2 = singleStrands[1];
+    auto part = GetNanorobot()->GetPart(ss1);
+    DASOperations::FourSingleStrands res = DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
+    GetNanorobot()->RemoveSingleStrand(ss1);
+    GetNanorobot()->RemoveSingleStrand(ss2);
+    //GetNanorobot()->RemoveSingleStrand(res.second);
+    //GetNanorobot()->RemoveSingleStrand(res.third);
+
+    ResetVisualModel();
+  }
 }
 
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)

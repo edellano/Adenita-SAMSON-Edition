@@ -1,22 +1,32 @@
 #include "DASComplexOperations.hpp"
+#include "DASBackToTheAtom.hpp"
 
-//ADNPointer<ADNSingleStrand> DASOperations::LinkSingleStrands(ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand, std::string seq)
-//{
-//  int length = boost::numeric_cast<int>(seq.size());
-//
-//  ADNPointer<ADNNucleotide> threePrime = first_strand->GetThreePrime();
-//  ADNPointer<ADNNucleotide> fivePrime = second_strand->GetFivePrime();
-//
-//  SBVector3 direction = (fivePrime->GetPosition() - threePrime->GetPosition()).normalizedVersion();
-//  SBQuantity::length expectedLength = SBQuantity::nanometer(ADNConstants::BP_RISE) * (length + 1);  // we need to accomodate space for distance between the ends
-//  SBPosition3 startPos = (fivePrime->GetPosition() + threePrime->GetPosition())*0.5 - expectedLength*0.5*direction;
-//
-//  ADNPointer<ADNSingleStrand> ss = DASEditor::CreateSingleStrand(length, startPos, direction);
-//  auto ssN = ADNBasicOperations::MergeSingleStrands(first_strand, ss);
-//  auto ssNN = ADNBasicOperations::MergeSingleStrands(ssN, second_strand);
-//
-//  return ssNN;
-//}
+DASOperations::FourSingleStrands DASOperations::LinkSingleStrands(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand, std::string seq)
+{
+  int length = boost::numeric_cast<int>(seq.size());
+
+  ADNPointer<ADNNucleotide> threePrime = first_strand->GetThreePrime();
+  ADNPointer<ADNNucleotide> fivePrime = second_strand->GetFivePrime();
+
+  SBVector3 direction = (fivePrime->GetPosition() - threePrime->GetPosition()).normalizedVersion();
+  SBQuantity::length expectedLength = SBQuantity::nanometer(ADNConstants::BP_RISE) * (length + 1);  // we need to accomodate space for distance between the ends
+  SBPosition3 startPos = (fivePrime->GetPosition() + threePrime->GetPosition())*0.5 - expectedLength*0.5*direction;
+
+  ADNPointer<ADNSingleStrand> ss = DASCreator::CreateSingleStrand(part, length, startPos, direction);
+  ss->create();
+  DASBackToTheAtom* btta = new DASBackToTheAtom();
+  btta->SetPositionsForNewNucleotides(part, ss->GetNucleotides());
+
+  auto ssN = ADNBasicOperations::MergeSingleStrands(part, first_strand, ss);
+  auto ssNN = ADNBasicOperations::MergeSingleStrands(part, ssN, second_strand);
+  part->DeregisterSingleStrand(ss);
+  part->DeregisterSingleStrand(ssN);
+
+  DASOperations::FourSingleStrands res;
+  res.first = ssNN;
+
+  return res;
+}
 
 //ADNPointer<ADNDoubleStrand> DASOperations::CreateDoubleStrandsBetweenSingleStrands(ADNPointer<ADNDoubleStrand> first_strand, ADNPointer<ADNDoubleStrand> second_strand, std::string seq)
 //{
@@ -68,7 +78,7 @@ DASOperations::FourSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPa
         ssLeftOvers.second = secondStrand;
         secondStrand = pair2.second;
       }
-      // connect trands
+      // connect strands
       auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, firstStrand, secondStrand);
       ssLeftOvers.third = firstStrand;
       ssLeftOvers.fourth = secondStrand;

@@ -6,14 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1351</width>
-    <height>110</height>
+    <width>524</width>
+    <height>276</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1351</width>
-    <height>100</height>
+    <width>524</width>
+    <height>276</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>524</width>
+    <height>276</height>
    </size>
   </property>
   <property name="focusPolicy">
@@ -27,8 +33,17 @@
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QTabWidget" name="tabWidget">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -37,9 +52,9 @@
         <widget class="QWidget" name="gridLayoutWidget_4">
          <property name="geometry">
           <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>1508</width>
+           <x>10</x>
+           <y>10</y>
+           <width>471</width>
            <height>51</height>
           </rect>
          </property>
@@ -79,25 +94,6 @@
             </property>
             <property name="shortcut">
              <string>Ctrl+S</string>
-            </property>
-            <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextUnderIcon</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="btnSearch">
-            <property name="text">
-             <string>Search</string>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="shortcut">
-             <string>Ctrl+F</string>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
@@ -147,6 +143,9 @@
             <property name="text">
              <string>Calculate Properties</string>
             </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
            </widget>
           </item>
          </layout>
@@ -161,11 +160,18 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>611</width>
-           <height>71</height>
+           <width>471</width>
+           <height>202</height>
           </rect>
          </property>
          <layout class="QFormLayout" name="formLayout">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Scaffold</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="1">
            <widget class="QComboBox" name="cmbScaffold">
             <item>
@@ -185,13 +191,6 @@
             </item>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Scaffold</string>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
@@ -201,6 +200,47 @@
           </item>
           <item row="3" column="1">
            <widget class="QLineEdit" name="lineCustomScaffold"/>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QCheckBox" name="chkAutoScaffold">
+            <property name="text">
+             <string>Automatically set the scaffold sequence</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
+           <widget class="QCheckBox" name="chkOverlay">
+            <property name="text">
+             <string>Show overlay</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0" colspan="2">
+           <widget class="QCheckBox" name="chkXODisplay">
+            <property name="text">
+             <string>Display possible crossovers</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0" colspan="2">
+           <widget class="QCheckBox" name="chkClearLog">
+            <property name="text">
+             <string>Clear log file on start-up</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0" colspan="2">
+           <widget class="QCheckBox" name="chkInterpolateDim">
+            <property name="text">
+             <string>Interpolate Dimensions</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -213,30 +253,23 @@
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>0</y>
-           <width>1342</width>
-           <height>65</height>
+           <y>10</y>
+           <width>481</width>
+           <height>170</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="9">
-           <widget class="QPushButton" name="btnCatenanes">
+          <item row="1" column="0">
+           <widget class="QPushButton" name="btnCenterPart">
             <property name="text">
-             <string>Catenanes</string>
+             <string>Center Part</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="8">
-           <widget class="QPushButton" name="btnDSRing">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="btnDataGraph">
             <property name="text">
-             <string>dsDNA Ring</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5">
-           <widget class="QPushButton" name="btnMergeComponents">
-            <property name="text">
-             <string>Merge Components</string>
+             <string>From Datagraph</string>
             </property>
            </widget>
           </item>
@@ -247,10 +280,17 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="6">
+          <item row="1" column="2">
            <widget class="QPushButton" name="btnSetStart">
             <property name="text">
              <string>Set Start</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="btnMergeComponents">
+            <property name="text">
+             <string>Merge Components</string>
             </property>
            </widget>
           </item>
@@ -261,24 +301,52 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="3" colspan="2">
-           <widget class="QPushButton" name="btnCenterPart">
-            <property name="text">
-             <string>Center Part</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="10">
+          <item row="2" column="2">
            <widget class="QPushButton" name="btnKinetoplast">
             <property name="text">
              <string>Kinetoplast</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="btnDataGraph">
+          <item row="2" column="0">
+           <widget class="QPushButton" name="btnDSRing">
             <property name="text">
-             <string>From Datagraph</string>
+             <string>dsDNA Ring</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="btnCatenanes">
+            <property name="text">
+             <string>Catenanes</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="btnHighlightCrossovers">
+            <property name="text">
+             <string>Highlight Crossovers</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QPushButton" name="btnHighlightPosXOs">
+            <property name="text">
+             <string>Highlight Possible Crossovers</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QPushButton" name="btnAddNtThreeP">
+            <property name="text">
+             <string>Add nt 3'</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QPushButton" name="btnConcatStrands">
+            <property name="text">
+             <string>Concatenate SS</string>
             </property>
            </widget>
           </item>
@@ -370,22 +438,6 @@
     <hint type="destinationlabel">
      <x>229</x>
      <y>300</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cmbScaffold</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onChangeScaffold(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>378</x>
-     <y>71</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>675</x>
-     <y>69</y>
     </hint>
    </hints>
   </connection>
@@ -533,6 +585,166 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cmbScaffold</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onChangeScaffold(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>378</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>69</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkAutoScaffold</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCheckAutoScaffold(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>258</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkClearLog</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCheckClearLogFile(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>258</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkOverlay</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCheckShowOverlay(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>156</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>258</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkXODisplay</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCheckDisplayCrossovers(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>183</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>258</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkInterpolateDim</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCheckInterpolateDimensions(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>237</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>258</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnHighlightCrossovers</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onHighlightXOs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnHighlightPosXOs</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onHighlightPosXOs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnAddNtThreeP</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onAddNtThreeP()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>421</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnConcatStrands</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onConcatStrands()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>201</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -559,5 +771,14 @@
   <slot>onTwistDoubleHelixMinus(bool)</slot>
   <slot>onTwistDoubleHelixPlus(bool)</slot>
   <slot>onCalculateBindingProperties()</slot>
+  <slot>onCheckAutoScaffold(bool)</slot>
+  <slot>onCheckShowOverlay(bool)</slot>
+  <slot>onCheckDisplayCrossovers(bool)</slot>
+  <slot>onCheckClearLogFile(bool)</slot>
+  <slot>onCheckInterpolateDimensions(bool)</slot>
+  <slot>onHighlightXOs()</slot>
+  <slot>onHighlightPosXOs()</slot>
+  <slot>onAddNtThreeP()</slot>
+  <slot>onConcatStrands()</slot>
  </slots>
 </ui>
