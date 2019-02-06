@@ -23,6 +23,34 @@ SEMergePartsEditor::~SEMergePartsEditor() {
 
 SEMergePartsEditorGUI* SEMergePartsEditor::getPropertyWidget() const { return static_cast<SEMergePartsEditorGUI*>(propertyWidget); }
 
+std::map<int, ADNPointer<ADNPart>> SEMergePartsEditor::getPartsList()
+{
+  indexParts_.clear();
+
+  SEAdenitaCoreSEApp* t = getAdenitaApp();
+  auto nr = t->GetNanorobot();
+  auto parts = nr->GetParts();
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    ++lastId_;
+    indexParts_.insert(std::make_pair(lastId_, p));
+  }
+  return indexParts_;
+}
+
+void SEMergePartsEditor::MergeParts(int idx, int jdx)
+{
+  if (idx == jdx) return;
+
+  ADNPointer<ADNPart> p1 = nullptr;
+  ADNPointer<ADNPart> p2 = nullptr;
+  if (indexParts_.find(idx) != indexParts_.end()) p1 = indexParts_.at(idx);
+  if (indexParts_.find(jdx) != indexParts_.end()) p2 = indexParts_.at(jdx);
+  if (p1 != nullptr && p2 != nullptr) {
+    SEAdenitaCoreSEApp* t = getAdenitaApp();
+    t->MergeComponents(p1, p2);
+  }
+}
+
 SEAdenitaCoreSEApp* SEMergePartsEditor::getAdenitaApp() const
 {
   return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));

@@ -23,6 +23,16 @@ SEConnectSSDNAEditor::~SEConnectSSDNAEditor() {
 
 SEConnectSSDNAEditorGUI* SEConnectSSDNAEditor::getPropertyWidget() const { return static_cast<SEConnectSSDNAEditorGUI*>(propertyWidget); }
 
+void SEConnectSSDNAEditor::SetMode(bool xo)
+{
+  if (xo) {
+    mode_ = Crossover;
+  }
+  else {
+    mode_ = Concatenate;
+  }
+}
+
 SEAdenitaCoreSEApp* SEConnectSSDNAEditor::getAdenitaApp() const
 {
   return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
@@ -42,7 +52,7 @@ QString SEConnectSSDNAEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("SEConnectSSDNAEditor"); 
+	return QObject::tr("ssDNA Connection Editor"); 
 
 }
 
@@ -67,7 +77,7 @@ QString SEConnectSSDNAEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("SAMSON Element generator pro tip: modify me"); 
+	return QObject::tr("Connect and create crossovers between ssDNA"); 
 
 }
 
@@ -75,7 +85,7 @@ void SEConnectSSDNAEditor::beginEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 
 	// Implement this function if you need to prepare some data structures in order to be able to handle GUI or SAMSON events.
-  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/connectSS.png";
+  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/cursor_connectSS.png";
   SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
   
 }
@@ -155,12 +165,12 @@ void SEConnectSSDNAEditor::mousePressEvent(QMouseEvent* event) {
     if (highlightedNucleotides.size() == 1) {
       auto nt = highlightedNucleotides[0];
       
-      nt->setSelectionFlag(true);
-      start_ = nt;
-      display_ = true;
-
+      if (mode_ == Crossover || nt->IsEnd()) {
+        nt->setSelectionFlag(true);
+        start_ = nt;
+        display_ = true;
+      }
     }
-
   }
 }
 
@@ -182,17 +192,38 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
       ADNPointer<ADNNucleotide> end = highlightedNucleotides[0];
       if (!end->IsEnd()) end = end->GetNext();
       ADNPointer<ADNPart> part = nanorobot->GetPart(end->GetStrand());
-      if (start->GetEnd() == FivePrime) {
+      if (start->GetEnd() == ThreePrime) {
         auto store = start;
         start = end;
         end = store;
       }
-      auto ssLeftOvers = DASOperations::CreateCrossover(part, start, end);
-      if (ssLeftOvers.first != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.first);
-      if (ssLeftOvers.second != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.second);
-      if (ssLeftOvers.third != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.third);
-      if (ssLeftOvers.fourth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fourth);
-      app->ResetVisualModel();
+      if (mode_ == Crossover) {
+        auto ssLeftOvers = DASOperations::CreateCrossover(part, start, end);
+        if (ssLeftOvers.first != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.first);
+        if (ssLeftOvers.second != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.second);
+        if (ssLeftOvers.third != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.third);
+        if (ssLeftOvers.fourth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fourth);
+        app->ResetVisualModel();
+      }
+      else {
+        std::string seq = "NNNNNNNNNNNN";
+        if (start->GetEnd() == FivePrime && end->GetEnd() == ThreePrime) {
+          ADNPointer<ADNSingleStrand> ss1 = end->GetStrand();
+          ADNPointer<ADNSingleStrand> ss2 = start->GetStrand();
+          DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
+          nanorobot->RemoveSingleStrand(ss1);
+          nanorobot->RemoveSingleStrand(ss2);
+          app->ResetVisualModel();
+        }
+        else if (start->GetEnd() == FivePrime && end->GetEnd() == ThreePrime) {
+          ADNPointer<ADNSingleStrand> ss1 = start->GetStrand();
+          ADNPointer<ADNSingleStrand> ss2 = end->GetStrand();
+          DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
+          nanorobot->RemoveSingleStrand(ss1);
+          nanorobot->RemoveSingleStrand(ss2);
+          app->ResetVisualModel();
+        }
+      }
     }
   }
 

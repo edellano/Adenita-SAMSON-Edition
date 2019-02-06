@@ -7,7 +7,6 @@ SEMergePartsEditorGUI::SEMergePartsEditorGUI(SEMergePartsEditor* editor) {
 
 	ui.setupUi( this );
 	this->editor = editor;
-
 }
 
 SEMergePartsEditorGUI::~SEMergePartsEditorGUI() {
@@ -30,6 +29,40 @@ void SEMergePartsEditorGUI::saveSettings( SBGSettings *settings ) {
 
 	// SAMSON Element generator pro tip: complete this function so your editor can save its GUI state from one session to the next
 
+}
+
+void SEMergePartsEditorGUI::updatePartsList() {
+
+  SEMergePartsEditor* editor = getEditor();
+  auto indexParts = editor->getPartsList();
+
+  int sel1 = ui.cmbPart1->currentIndex();
+  int sel2 = ui.cmbPart2->currentIndex();
+  ui.cmbPart1->clear();
+  ui.cmbPart2->clear();
+
+  ui.cmbPart1->insertItem(0, QString::fromStdString("None"));
+  ui.cmbPart2->insertItem(0, QString::fromStdString("None"));
+
+  for (auto& pair : indexParts) {
+    int i = pair.first;
+    ADNPointer<ADNPart> p = pair.second;
+    std::string n = p->GetName();
+    ui.cmbPart1->insertItem(i, QString::fromStdString(n));
+    ui.cmbPart2->insertItem(i, QString::fromStdString(n));
+  }
+
+  if (indexParts.find(sel1) != indexParts.end()) ui.cmbPart1->setCurrentIndex(sel1);
+  if (indexParts.find(sel2) != indexParts.end()) ui.cmbPart2->setCurrentIndex(sel2);
+}
+
+void SEMergePartsEditorGUI::onMerge()
+{
+  int sel1 = ui.cmbPart1->currentIndex();
+  int sel2 = ui.cmbPart2->currentIndex();
+
+  SEMergePartsEditor* e = getEditor();
+  e->MergeParts(sel1, sel2);
 }
 
 SBCContainerUUID SEMergePartsEditorGUI::getUUID() const { return SBCContainerUUID( "3F52AD7B-A478-D380-AA01-2041081D06CB" );}
