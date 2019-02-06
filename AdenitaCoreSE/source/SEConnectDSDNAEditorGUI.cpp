@@ -1,22 +1,22 @@
-#include "SEConnectSSDNAEditorGUI.hpp"
-#include "SEConnectSSDNAEditor.hpp"
+#include "SEConnectDSDNAEditorGUI.hpp"
+#include "SEConnectDSDNAEditor.hpp"
 #include "SAMSON.hpp"
 #include "SBGWindow.hpp"
 
-SEConnectSSDNAEditorGUI::SEConnectSSDNAEditorGUI(SEConnectSSDNAEditor* editor) {
+SEConnectDSDNAEditorGUI::SEConnectDSDNAEditorGUI(SEConnectDSDNAEditor* editor) {
 
 	ui.setupUi( this );
 	this->editor = editor;
 
 }
 
-SEConnectSSDNAEditorGUI::~SEConnectSSDNAEditorGUI() {
+SEConnectDSDNAEditorGUI::~SEConnectDSDNAEditorGUI() {
 
 }
 
-SEConnectSSDNAEditor* SEConnectSSDNAEditorGUI::getEditor() const { return editor; }
+SEConnectDSDNAEditor* SEConnectDSDNAEditorGUI::getEditor() const { return editor; }
 
-void SEConnectSSDNAEditorGUI::loadSettings( SBGSettings *settings ) {
+void SEConnectDSDNAEditorGUI::loadSettings( SBGSettings *settings ) {
 
 	if ( settings == NULL ) return;
 	
@@ -24,7 +24,7 @@ void SEConnectSSDNAEditorGUI::loadSettings( SBGSettings *settings ) {
 
 }
 
-void SEConnectSSDNAEditorGUI::saveSettings( SBGSettings *settings ) {
+void SEConnectDSDNAEditorGUI::saveSettings( SBGSettings *settings ) {
 
 	if ( settings == NULL ) return;
 
@@ -32,9 +32,9 @@ void SEConnectSSDNAEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
-SBCContainerUUID SEConnectSSDNAEditorGUI::getUUID() const { return SBCContainerUUID( "DF5209B7-1EE0-500C-9BCB-51411BAEC626" );}
+SBCContainerUUID SEConnectDSDNAEditorGUI::getUUID() const { return SBCContainerUUID( "DF5209B7-1EE0-500C-9BCB-51411BAEC626" );}
 
-QPixmap SEConnectSSDNAEditorGUI::getLogo() const { 
+QPixmap SEConnectDSDNAEditorGUI::getLogo() const {
 	
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
 	// Modify it to better reflect the purpose of your editor.
@@ -43,16 +43,16 @@ QPixmap SEConnectSSDNAEditorGUI::getLogo() const {
 
 }
 
-QString SEConnectSSDNAEditorGUI::getName() const { 
+QString SEConnectDSDNAEditorGUI::getName() const {
 
 	// SAMSON Element generator pro tip: this string will be the GUI title. 
 	// Modify this function to have a user-friendly description of your editor inside SAMSON
 
-	return "ssDNA Connect"; 
+	return "dsDNA Connect"; 
 
 }
 
-int SEConnectSSDNAEditorGUI::getFormat() const {
+int SEConnectDSDNAEditorGUI::getFormat() const {
 
 	// SAMSON Element generator pro tip: modify these default settings to configure the window
 	//
@@ -65,7 +65,7 @@ int SEConnectSSDNAEditorGUI::getFormat() const {
 
 }
 
-QString SEConnectSSDNAEditorGUI::getCitation() const {
+QString SEConnectDSDNAEditorGUI::getCitation() const {
 
 	// SAMSON Element generator pro tip: modify this function to add citation information
 
