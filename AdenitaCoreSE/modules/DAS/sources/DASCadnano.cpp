@@ -190,6 +190,7 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
     for (int i = 0; i < length; ++i) {
       // take into account the loops, we place for now base segments of loops in the same position as the previous base segment
       int max_iter = vs->loops_[tube.initPos_ + i];
+      bool skip = vs->skips_[tube.initPos_ + i] == -1;
       if (max_iter > 0) max_iter = 1;  // a loop is contained in a base segment
       for (int k = 0; k <= max_iter; k++) {
         fp = vGrid_.GetGridCellPos3D(tube.initPos_ + i, vs->row_, vs->col_);
@@ -202,7 +203,10 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
         bs->SetPosition(fp);
         bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(dir));
 
-        if (k > 0) {
+        if (skip) {
+          bs->SetCell(new ADNSkipPair());
+        }
+        else if (k > 0) {
           bs->SetCell(new ADNLoopPair());
         }
         else {
@@ -287,21 +291,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
 
     std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> bs_positions = cellBsMap_.at(&json_.vstrands_[vStrandId]);
 
-    if (vstrands[vStrandId].skips_[z] == -1) {
-      ADNPointer<ADNBaseSegment> bs = nullptr;
-      std::pair<int, int> key = std::make_pair(z, 0);
-      if (bs_positions.find(key) != bs_positions.end()) {
-        bs = bs_positions.at(key);
-      }
-      if (bs != nullptr) {
-        ADNPointer<ADNSkipPair> skipPair = static_cast<ADNSkipPair*>(bs->GetCell()());
-        if (skipPair == nullptr) {
-          skipPair = new ADNSkipPair();
-          bs->SetCell(skipPair());
-        }
-      }
-    }
-    else {
+    if (vstrands[vStrandId].skips_[z] != -1) {
       int max_iter = vstrands[vStrandId].loops_[z];
       bool left = true;
       Vstrand vs = vstrands[vStrandId];

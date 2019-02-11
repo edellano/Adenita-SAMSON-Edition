@@ -84,7 +84,7 @@ QString SETwistHelixEditor::getToolTip() const {
 
 QString SETwistHelixEditor::getDescription() const
 {
-  return QObject::tr("dsDNA Helical Twist");
+  return QObject::tr("Adenita | dsDNA Helical Twist");
 }
 
 void SETwistHelixEditor::beginEditing() {
