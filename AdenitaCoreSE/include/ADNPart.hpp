@@ -10,7 +10,7 @@ class ADNPart : public SBStructuralModel {
   SB_CLASS
 public:
 
-  ADNPart() : SBStructuralModel() {};
+  ADNPart() : SBStructuralModel() { SetName("Adenita Component"); };
   ADNPart(const ADNPart &n);
   ~ADNPart() = default;
 
@@ -53,7 +53,7 @@ public:
 
   void DeregisterSingleStrand(ADNPointer<ADNSingleStrand> ss, bool removeFromParent = true, bool removeFromIndex = true);
   void DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFromSs = true, bool removeFromBs = true, bool removeFromIndex = true);
-  void DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds);
+  void DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds, bool removeFromParent = true, bool removeFromIndex = true);
   void DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs, bool removeFromDs = true, bool removeFromIndex = true);
   void DeregisterAtom(ADNPointer<ADNAtom> atom, bool removeFromAtom = true);
 

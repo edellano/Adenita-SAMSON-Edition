@@ -80,14 +80,14 @@
 // todo: calculate positions
 ADNPointer<ADNDoubleStrand> DASCreator::CreateDoubleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction, bool mock)
 {
-  ADNPointer<ADNDoubleStrand> ds = AddDoubleStrandToADNPart(part, length, start, direction, mock);
-
-  return ds;
+  auto res = AddDoubleStrandToADNPart(part, length, start, direction, mock);
+  return res.ds;
 }
 
 ADNPointer<ADNSingleStrand> DASCreator::CreateSingleStrand(ADNPointer<ADNPart> part, int length, SBPosition3 start, SBVector3 direction, bool mock)
 {
-  return AddSingleStrandToADNPart(part, length, start, direction);
+  auto res = AddSingleStrandToADNPart(part, length, start, direction);
+  return res.ss1;
 }
 
 ADNPointer<ADNLoop> DASCreator::CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nextNt, std::string seq, ADNPointer<ADNPart> part)
@@ -362,7 +362,7 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddRingToADNPart(ADNPointer<ADNPart> par
   return ds;
 }
 
-ADNPointer<ADNDoubleStrand> DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction, bool mock)
+RTDoubleStrand DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction, bool mock)
 {
   SBPosition3 delt = SBQuantity::nanometer(ADNConstants::BP_RISE) * direction;
   SBPosition3 pos = start;
@@ -420,10 +420,15 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNP
     pos += delt;
   }
 
-  return ds;
+  RTDoubleStrand res;
+  res.ds = ds;
+  res.ss1 = ssLeft;
+  res.ss2 = ssRight;
+
+  return res;
 }
 
-ADNPointer<ADNSingleStrand> DASCreator::AddSingleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction)
+RTDoubleStrand DASCreator::AddSingleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction)
 {
   SBPosition3 delt = SBQuantity::nanometer(ADNConstants::BP_RISE) * direction;
   SBPosition3 pos = start;
@@ -458,7 +463,10 @@ ADNPointer<ADNSingleStrand> DASCreator::AddSingleStrandToADNPart(ADNPointer<ADNP
 
   ss->SetDefaultName();
 
-  return ss;
+  RTDoubleStrand res;
+  res.ds = ds;
+  res.ss1 = ss;
+  return res;
 }
 
 void DASCreatorEditors::resetPositions(UIData& pos)

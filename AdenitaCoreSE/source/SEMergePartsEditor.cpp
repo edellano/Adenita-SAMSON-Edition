@@ -99,6 +99,11 @@ QString SEMergePartsEditor::getToolTip() const {
 
 }
 
+QString SEMergePartsEditor::getDescription() const
+{
+  return QObject::tr("Merge Adenita Components");
+}
+
 void SEMergePartsEditor::beginEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 

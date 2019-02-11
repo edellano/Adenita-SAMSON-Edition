@@ -42,6 +42,7 @@ public :
 	virtual QPixmap												getLogo() const;														///< Returns the pixmap logo
 	virtual QKeySequence										getShortcut() const;													///< Returns the shorcut
 	virtual QString												getToolTip() const;														///< Returns the tool tip
+  virtual QString	getDescription() const;	///< Returns the menu item text
 
 	//@}
 

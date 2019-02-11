@@ -19,12 +19,9 @@ namespace DASOperations {
     ADNPointer<ADNDoubleStrand> fourth;
   };
 
-  // concatenate
   FourSingleStrands LinkSingleStrands(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand, std::string seq = "");
   ADNPointer<ADNDoubleStrand> CreateDoubleStrandsBetweenSingleStrands(ADNPointer<ADNDoubleStrand> first_strand, ADNPointer<ADNDoubleStrand> second_strand, std::string seq);
   std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> LinkDoubleStrandsWithXO(ADNPointer<ADNDoubleStrand> first_strand, ADNPointer<ADNDoubleStrand> second_strand);
 
-  // break and connect
   FourSingleStrands CreateCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2);
-  FourDoubleStrands CreateDsCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNBaseSegment> bs1, ADNPointer<ADNBaseSegment> bs2);
 }
