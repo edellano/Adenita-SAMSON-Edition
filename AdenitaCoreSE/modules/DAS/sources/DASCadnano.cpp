@@ -204,7 +204,6 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
 
         if (k > 0) {
           bs->SetCell(new ADNLoopPair());
-          // for now we place base segments in the same position
         }
         else {
           bs->SetCell(new ADNBasePair());

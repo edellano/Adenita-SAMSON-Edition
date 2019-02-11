@@ -54,7 +54,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
     this, 
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
   
-  changeScale(7);
+  changeScale(4);
 
   setupPropertyColors();
   
@@ -1658,6 +1658,8 @@ void SEAdenitaVisualModel::displayNucleotideBackbone()
         radiiV_(index) = config.nucleotide_V_radius;
         radiiE_(index) = config.nucleotide_E_radius;
 
+        displayLoops(nt(), index);
+
         //strand direction
         if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
           radiiE_(index) = config.nucleotide_E_radius;
@@ -1725,6 +1727,8 @@ void SEAdenitaVisualModel::displayNucleotideSideChain()
 
         radiiV_(index) = config.nucleotide_V_radius;
         radiiE_(index) = config.nucleotide_E_radius;
+
+        displayLoops(nt(), index);
 
         //strand direction
         if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
@@ -1799,6 +1803,8 @@ void SEAdenitaVisualModel::displayNucleotideScaffoldPlaiting()
             auto color = curColors->GetColor(nt);
             colorsV_.SetRow(index, color);
             colorsE_.SetRow(index, nucleotideEColor_);
+            displayLoops(nt(), index);
+
           }
         }
         else if (curColorType_ == MELTTEMP || curColorType_ == GIBBS) {
@@ -1961,6 +1967,7 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
         colorsE_(index, 3) = colorsV_(index, 3);
 
         radiiV_(index) = config.nucleotide_V_radius;
+        
         radiiE_(index) = config.nucleotide_V_radius;
 
         //strand direction
@@ -2017,8 +2024,15 @@ void SEAdenitaVisualModel::displayDoubleStrands()
 
         auto color = curColors->GetColor(baseSegment);
         colorsV_.SetRow(index, color);
-
         radiiV_(index) = config.base_pair_radius;
+
+        auto type = baseSegment->GetCellType();
+        if (type == CellType::LoopPair) {
+        //if (index < 10) {
+          radiiV_(index) = config.base_pair_radius / 2;
+          colorsV_(index, 1) = 0.5f;
+          colorsV_(index, 3) = 0.5f;
+        }
 
         flags_(index) = baseSegment->getInheritedFlags();
 
@@ -2233,6 +2247,14 @@ ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(int colorSchemeIdx, floa
   color(3) = 1.0f;
 
   return color;
+}
+
+void SEAdenitaVisualModel::displayLoops(ADNNucleotide *nt, unsigned int index)
+{
+  auto type = nt->GetBaseSegment()->GetCellType();
+  if (type == CellType::LoopPair) {
+    radiiV_(index) = radiiV_(index) * 0.7f;;
+  }
 }
 
 void SEAdenitaVisualModel::expandBounds(SBIAPosition3& bounds) const {

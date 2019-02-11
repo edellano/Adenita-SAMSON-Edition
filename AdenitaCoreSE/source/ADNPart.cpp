@@ -467,12 +467,14 @@ void ADNPart::DeregisterNucleotide(ADNPointer<ADNNucleotide> nt, bool removeFrom
   if (removeFromIndex) nucleotidesIndex_.removeReferenceTarget(nt());
 }
 
-void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds)
+void ADNPart::DeregisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds, bool removeFromParent, bool removeFromIndex)
 {
-  auto root = getStructuralRoot();
-  root->removeChild(ds());
+  if (removeFromParent) {
+    auto root = getStructuralRoot();
+    root->removeChild(ds());
+  }
 
-  doubleStrandsIndex_.removeReferenceTarget(ds());
+  if (removeFromIndex) doubleStrandsIndex_.removeReferenceTarget(ds());
 }
 
 void ADNPart::DeregisterBaseSegment(ADNPointer<ADNBaseSegment> bs, bool removeFromDs, bool removeFromIndex)
@@ -552,7 +554,9 @@ unsigned int ADNPart::GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs)
 
 void ADNPart::RegisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds) 
 {
-  ds->setName("Double Strand " + std::to_string(ds->getNodeIndex()));
+  if (ds->getName().empty()) {
+    ds->setName("Double Strand " + std::to_string(ds->getNodeIndex()));
+  }
   auto root = getStructuralRoot();
   root->addChild(ds());
 

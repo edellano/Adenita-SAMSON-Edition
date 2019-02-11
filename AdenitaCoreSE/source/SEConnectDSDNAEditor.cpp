@@ -71,6 +71,11 @@ QString SEConnectDSDNAEditor::getToolTip() const {
 
 }
 
+QString SEConnectDSDNAEditor::getDescription() const
+{
+  return QObject::tr("dsDNA Crossovers");
+}
+
 void SEConnectDSDNAEditor::beginEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 
@@ -183,11 +188,7 @@ void SEConnectDSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
         start = end;
         end = store;
       }
-      auto dsLeftOvers = DASOperations::CreateDsCrossover(part, start, end);
-      if (dsLeftOvers.first != nullptr) nanorobot->RemoveDoubleStrand(dsLeftOvers.first);
-      if (dsLeftOvers.second != nullptr) nanorobot->RemoveDoubleStrand(dsLeftOvers.second);
-      if (dsLeftOvers.third != nullptr) nanorobot->RemoveDoubleStrand(dsLeftOvers.third);
-      if (dsLeftOvers.fourth != nullptr) nanorobot->RemoveDoubleStrand(dsLeftOvers.fourth);
+      
       app->ResetVisualModel();
     }
   }

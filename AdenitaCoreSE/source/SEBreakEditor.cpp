@@ -71,6 +71,11 @@ QString SEBreakEditor::getToolTip() const {
 
 }
 
+QString SEBreakEditor::getDescription() const
+{
+  return QObject::tr("Break ssDNA");
+}
+
 void SEBreakEditor::beginEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 

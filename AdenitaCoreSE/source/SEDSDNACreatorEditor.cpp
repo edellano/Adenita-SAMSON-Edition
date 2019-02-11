@@ -228,8 +228,13 @@ QString SEDSDNACreatorEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("Add ssDNA and dsDNA to your design"); 
+	return QObject::tr("Add ssDNA and dsDNA to your model"); 
 
+}
+
+QString SEDSDNACreatorEditor::getDescription() const
+{
+  return QObject::tr("DNA strands Editor");
 }
 
 void SEDSDNACreatorEditor::beginEditing() {
