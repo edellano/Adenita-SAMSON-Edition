@@ -116,7 +116,7 @@ namespace DASCreator {
     \param direction of the double strand
     \param whether to generate a mock part or not
   */
-  ADNPointer<ADNDoubleStrand> AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction, bool mock = false);
+  RTDoubleStrand AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction, bool mock = false);
 
   //! Helper function that creates a single strand B-DNA like in a ADNPart
   /*!
@@ -125,7 +125,7 @@ namespace DASCreator {
     \param position of the 5' in space
     \param direction of the double strand
   */
-  ADNPointer<ADNSingleStrand> AddSingleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction);
+  RTDoubleStrand AddSingleStrandToADNPart(ADNPointer<ADNPart> part, size_t length, SBPosition3 start, SBVector3 direction);
 
   //* Generates a crippled cuboid for viewing purposes
   //*/

@@ -21,14 +21,64 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>SAMSON Element generator pro tip: modify me</string>
-     </property>
-    </widget>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QRadioButton" name="rdnSingleXO">
+       <property name="text">
+        <string>Single Crossover</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QRadioButton" name="rdnDoubleXO">
+       <property name="text">
+        <string>Double Crossover</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>rdnDoubleXO</sender>
+   <signal>released()</signal>
+   <receiver>SEConnectDSDNAEditorGUIClass</receiver>
+   <slot>onSelectMode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>220</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>49</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdnSingleXO</sender>
+   <signal>released()</signal>
+   <receiver>SEConnectDSDNAEditorGUIClass</receiver>
+   <slot>onSelectMode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>49</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onSelectMode()</slot>
+ </slots>
 </ui>

@@ -45,12 +45,15 @@ ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<AD
 ADNPointer<ADNDoubleStrand> ADNBasicOperations::MergeDoubleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNDoubleStrand> first_strand, ADNPointer<ADNDoubleStrand> second_strand)
 {
   ADNPointer<ADNDoubleStrand> ds = ADNPointer<ADNDoubleStrand>(new ADNDoubleStrand());
+  ds->setName("Merged Double Strand");
+  ds->create();
+  part->RegisterDoubleStrand(ds);
 
   auto firstF = first_strand->GetFirstBaseSegment();
   ADNPointer<ADNBaseSegment> bs = firstF;
   while (bs != nullptr) {
     ADNPointer<ADNBaseSegment> nextBs = bs->GetNext();
-    part->DeregisterBaseSegment(bs, true, false);
+    part->DeregisterBaseSegment(bs, true, true);
     part->RegisterBaseSegmentEnd(ds, bs);
     bs = nextBs;
   }
@@ -59,7 +62,7 @@ ADNPointer<ADNDoubleStrand> ADNBasicOperations::MergeDoubleStrand(ADNPointer<ADN
   bs = firstS;
   while (bs != nullptr) {
     ADNPointer<ADNBaseSegment> nextBs = bs->GetNext();
-    part->DeregisterBaseSegment(bs, true, false);
+    part->DeregisterBaseSegment(bs, true, true);
     part->RegisterBaseSegmentEnd(ds, bs);
     bs = nextBs;
   }
@@ -223,9 +226,11 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
 std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOperations::BreakDoubleStrand(ADNPointer<ADNPart> part, ADNPointer<ADNBaseSegment> bs)
 {
   ADNPointer<ADNDoubleStrand> dsFP = new ADNDoubleStrand();
+  dsFP->setName("Broken Double Strand 1");
   dsFP->create();
   part->RegisterDoubleStrand(dsFP);
   ADNPointer<ADNDoubleStrand> dsTP = new ADNDoubleStrand();
+  dsTP->setName("Broken Double Strand 2");
   dsTP->create();
   part->RegisterDoubleStrand(dsTP);
 

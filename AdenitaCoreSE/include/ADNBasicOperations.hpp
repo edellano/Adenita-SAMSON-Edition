@@ -2,6 +2,13 @@
 
 #include "ADNPart.hpp"
 
+// return types for operations
+struct RTDoubleStrand {
+  ADNPointer<ADNDoubleStrand> ds = nullptr;
+  ADNPointer<ADNSingleStrand> ss1 = nullptr;
+  ADNPointer<ADNSingleStrand> ss2 = nullptr;
+};
+
 namespace ADNBasicOperations {
   // Concatenate
   ADNPointer<ADNSingleStrand> MergeSingleStrands(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand);
