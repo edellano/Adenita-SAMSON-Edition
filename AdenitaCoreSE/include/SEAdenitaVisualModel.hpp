@@ -131,6 +131,7 @@ private:
   void                        orderVisibility();
   void                        setupPropertyColors();
   ADNArray<float>             calcPropertyColor(int colorSchemeIdx, float min, float max, float val);
+  virtual void                displayLoops(ADNNucleotide *nt, unsigned int index);
 
   // general display properties 
   ADNArray<float> nucleotideEColor_;
