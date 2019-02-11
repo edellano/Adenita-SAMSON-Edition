@@ -53,7 +53,7 @@ QString SETwistHelixEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("Twist dsDNA"); 
+	return QObject::tr("Twist dsDNA along helical axis"); 
 
 }
 
@@ -78,8 +78,13 @@ QString SETwistHelixEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("Twist dsDNA"); 
+	return QObject::tr("Twist dsDNA along helical axis"); 
 
+}
+
+QString SETwistHelixEditor::getDescription() const
+{
+  return QObject::tr("dsDNA Helical Twist");
 }
 
 void SETwistHelixEditor::beginEditing() {

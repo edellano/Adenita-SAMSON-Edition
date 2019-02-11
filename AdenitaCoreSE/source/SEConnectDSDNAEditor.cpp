@@ -71,6 +71,11 @@ QString SEConnectDSDNAEditor::getToolTip() const {
 
 }
 
+QString SEConnectDSDNAEditor::getDescription() const
+{
+  return QObject::tr("dsDNA Crossovers");
+}
+
 void SEConnectDSDNAEditor::beginEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 
