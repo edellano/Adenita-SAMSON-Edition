@@ -48,7 +48,7 @@ QString SEDNATwisterEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("aDeNitA Twister Editor"); 
+	return QObject::tr("dsDNA Visualization Twister"); 
 
 }
 
@@ -73,8 +73,13 @@ QString SEDNATwisterEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("Rotate double helix along its axis"); 
+	return QObject::tr("dsDNA Visualization Twister"); 
 
+}
+
+QString SEDNATwisterEditor::getDescription() const
+{
+  return QObject::tr("dsDNA Visualization Twister");
 }
 
 void SEDNATwisterEditor::beginEditing() {
