@@ -101,10 +101,11 @@ public :
 	//@}
 
 private:
-  QOpenGLFunctions_4_3_Core *                                 gl_;
 
   DASCreatorEditors::UIData positions_;
   bool display_ = false;
+  ADNPointer<ADNPart> tempPart_ = nullptr;
+
 };
 
 
