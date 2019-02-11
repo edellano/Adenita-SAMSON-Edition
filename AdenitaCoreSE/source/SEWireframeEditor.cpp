@@ -77,13 +77,13 @@ void SEWireframeEditor::beginEditing() {
 	// Implement this function if you need to prepare some data structures in order to be able to handle GUI or SAMSON events.
   string iconPath = SB_ELEMENT_PATH + "/Resource/icons/wireframeCreator.png";
   SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
-  SAMSON::unsetViewportCursor();
 }
 
 void SEWireframeEditor::endEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function immediately before your editor becomes inactive (for example when another editor becomes active). 
 	// Implement this function if you need to clean some data structures.
+  SAMSON::unsetViewportCursor();
 
 }
 
@@ -126,7 +126,13 @@ void SEWireframeEditor::mousePressEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
+  if (positions_.positionsCounter == 0) {
+    positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    positions_.positionsCounter++;
 
+    positions_.FirstVector = SAMSON::getActiveCamera()->getBasisZ().normalizedVersion();
+    positions_.vectorsCounter++;
+  }
 }
 
 void SEWireframeEditor::mouseReleaseEvent(QMouseEvent* event) {
@@ -134,6 +140,14 @@ void SEWireframeEditor::mouseReleaseEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+
+  if (positions_.positionsCounter == 0) {
+    positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    positions_.positionsCounter++;
+
+    positions_.FirstVector = SAMSON::getActiveCamera()->getBasisZ().normalizedVersion();
+    positions_.vectorsCounter++;
+  }
 }
 
 void SEWireframeEditor::mouseMoveEvent(QMouseEvent* event) {
@@ -141,6 +155,12 @@ void SEWireframeEditor::mouseMoveEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  if (event->buttons() == Qt::LeftButton) {
+    display_ = true;
+    //SAMSON::requestViewportUpdate();
+  }
+
+  SAMSON::requestViewportUpdate();
 }
 
 void SEWireframeEditor::mouseDoubleClickEvent(QMouseEvent* event) {
