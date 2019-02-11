@@ -2022,6 +2022,8 @@ void SEAdenitaVisualModel::displayDoubleStrands()
 
         flags_(index) = baseSegment->getInheritedFlags();
 
+        nodeIndices_(index) = baseSegment->getNodeIndex();
+
         if (!doubleStrand->isVisible()) {
           colorsV_(index, 3) = 0.0f;
           radiiV_(index) = 0.0f;
@@ -2031,8 +2033,6 @@ void SEAdenitaVisualModel::displayDoubleStrands()
         }
 
         ++index;
-
-        
 
       }
     }

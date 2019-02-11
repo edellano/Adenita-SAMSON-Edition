@@ -15,7 +15,7 @@ SEConnectSSDNAEditor::SEConnectSSDNAEditor() {
 SEConnectSSDNAEditor::~SEConnectSSDNAEditor() {
 
 	// SAMSON Element generator pro tip: disconnect from signals you might have connected to.
-
+  
 	propertyWidget->saveDefaultSettings();
 	delete propertyWidget;
 
