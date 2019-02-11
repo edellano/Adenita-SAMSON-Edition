@@ -68,7 +68,7 @@ QString SEWireframeEditor::getToolTip() const {
 
 QString SEWireframeEditor::getDescription() const
 {
-  return QObject::tr("Daedalus DNA Nanostructures");
+  return QObject::tr("Adenita | Daedalus DNA Nanostructures");
 }
 
 void SEWireframeEditor::beginEditing() {

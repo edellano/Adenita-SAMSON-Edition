@@ -234,7 +234,7 @@ QString SEDSDNACreatorEditor::getToolTip() const {
 
 QString SEDSDNACreatorEditor::getDescription() const
 {
-  return QObject::tr("DNA strands Editor");
+  return QObject::tr("Adenita | DNA strands Editor");
 }
 
 void SEDSDNACreatorEditor::beginEditing() {

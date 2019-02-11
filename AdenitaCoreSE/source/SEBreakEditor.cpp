@@ -73,7 +73,7 @@ QString SEBreakEditor::getToolTip() const {
 
 QString SEBreakEditor::getDescription() const
 {
-  return QObject::tr("Break ssDNA");
+  return QObject::tr("Adenita | Break ssDNA");
 }
 
 void SEBreakEditor::beginEditing() {

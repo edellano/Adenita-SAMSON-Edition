@@ -73,7 +73,7 @@ QString SEDeleteEditor::getToolTip() const {
 
 QString SEDeleteEditor::getDescription() const
 {
-  return QObject::tr("Delete Nucleotides");
+  return QObject::tr("Adenita | Delete Nucleotides");
 }
 
 void SEDeleteEditor::beginEditing() {
