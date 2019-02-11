@@ -37,7 +37,7 @@ QString SEWireframeEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("SEWireframeEditor"); 
+	return QObject::tr("Daedalus DNA Nanostructures"); 
 
 }
 
@@ -62,8 +62,13 @@ QString SEWireframeEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("SAMSON Element generator pro tip: modify me"); 
+	return QObject::tr("Create wireframe DNA nanostructures using Daedalus"); 
 
+}
+
+QString SEWireframeEditor::getDescription() const
+{
+  return QObject::tr("Daedalus DNA Nanostructures");
 }
 
 void SEWireframeEditor::beginEditing() {

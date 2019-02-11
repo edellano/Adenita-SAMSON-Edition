@@ -42,7 +42,7 @@ QString SEDeleteEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("SEDeleteEditor"); 
+	return QObject::tr("Delete nucleotides"); 
 
 }
 
@@ -67,8 +67,13 @@ QString SEDeleteEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("SAMSON Element generator pro tip: modify me"); 
+	return QObject::tr("Delete nucleotides from Adenita models"); 
 
+}
+
+QString SEDeleteEditor::getDescription() const
+{
+  return QObject::tr("Delete Nucleotides");
 }
 
 void SEDeleteEditor::beginEditing() {

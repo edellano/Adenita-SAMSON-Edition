@@ -154,6 +154,11 @@ QString SENanotubeCreatorEditor::getToolTip() const {
 
 }
 
+QString SENanotubeCreatorEditor::getDescription() const
+{
+  return QObject::tr("DNA Nanotube Editor");
+}
+
 void SENanotubeCreatorEditor::beginEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 
