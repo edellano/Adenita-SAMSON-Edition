@@ -178,17 +178,29 @@ CollectionMap<ADNBaseSegment> ADNNanorobot::GetSelectedBaseSegments()
 {
   CollectionMap<ADNBaseSegment> bss;
 
-  SBDocument* doc = SAMSON::getActiveDocument();
-  SBNodeIndexer nodes;
-  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  auto nts = GetSelectedNucleotides();
 
-  // only take one
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isSelected()) {
-      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+  std::vector<ADNPointer<ADNBaseSegment>> added;
+
+  SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+    ADNPointer<ADNBaseSegment> bs = nt->GetBaseSegment();
+    if (std::find(added.begin(), added.end(), bs) == added.end()) {
       bss.addReferenceTarget(bs());
+      added.push_back(bs);
     }
   }
+
+  //SBDocument* doc = SAMSON::getActiveDocument();
+  //SBNodeIndexer nodes;
+  //doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  //// only take one
+  //SB_FOR(SBNode* node, nodes) {
+  //  if (node->isSelected()) {
+  //    ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+  //    bss.addReferenceTarget(bs());
+  //  }
+  //}
 
   return bss;
 }
@@ -380,17 +392,29 @@ CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
 {
   CollectionMap<ADNBaseSegment> bss;
 
-  SBDocument* doc = SAMSON::getActiveDocument();
-  SBNodeIndexer nodes;
-  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  auto nts = GetHighlightedNucleotides();
 
-  // only take one
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isHighlighted()) {
-      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+  std::vector<ADNPointer<ADNBaseSegment>> added;
+
+  SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+    ADNPointer<ADNBaseSegment> bs = nt->GetBaseSegment();
+    if (std::find(added.begin(), added.end(), bs) == added.end()) {
       bss.addReferenceTarget(bs());
+      added.push_back(bs);
     }
   }
+
+  //SBDocument* doc = SAMSON::getActiveDocument();
+  //SBNodeIndexer nodes;
+  //doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  //// only take one
+  //SB_FOR(SBNode* node, nodes) {
+  //  if (node->isHighlighted()) {
+  //    ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+  //    bss.addReferenceTarget(bs());
+  //  }
+  //}
 
   return bss;
 }
