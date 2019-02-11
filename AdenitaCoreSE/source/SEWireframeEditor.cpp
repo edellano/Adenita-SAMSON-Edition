@@ -99,9 +99,27 @@ void SEWireframeEditor::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
-  gl_->glEnable(GL_DEPTH_TEST);
 
-  gl_->glDisable(GL_DEPTH_TEST);
+  SEConfig& config = SEConfig::GetInstance();
+
+
+  if (display_) {
+    SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+
+    if (positions_.positionsCounter == 1) {
+      ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
+      positions_.SecondPosition = currentPosition;
+    }
+
+    if (config.preview_editor) {
+      
+    }
+
+    if (tempPart_ != nullptr) {
+      
+    }
+  }
+
 
 }
 
@@ -141,12 +159,18 @@ void SEWireframeEditor::mouseReleaseEvent(QMouseEvent* event) {
 	// Implement this function to handle this event with your editor.
 
 
-  if (positions_.positionsCounter == 0) {
-    positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+  if (positions_.positionsCounter == 1) {
+    positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
 
-    positions_.FirstVector = SAMSON::getActiveCamera()->getBasisZ().normalizedVersion();
-    positions_.vectorsCounter++;
+   /* ADNPointer<ADNPart> part = nullptr;
+    if (!circular_) part = generateStrand();
+    else part = generateCircularStrand();
+
+    sendPartToAdenita(part);*/
+    DASCreatorEditors::resetPositions(positions_);
+    display_ = false;
+    tempPart_ == nullptr;
   }
 }
 
