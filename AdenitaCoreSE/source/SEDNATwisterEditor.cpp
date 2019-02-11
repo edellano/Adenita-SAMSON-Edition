@@ -79,7 +79,7 @@ QString SEDNATwisterEditor::getToolTip() const {
 
 QString SEDNATwisterEditor::getDescription() const
 {
-  return QObject::tr("dsDNA Visualization Twister");
+  return QObject::tr("Adenita | dsDNA Visualization Twister");
 }
 
 void SEDNATwisterEditor::beginEditing() {

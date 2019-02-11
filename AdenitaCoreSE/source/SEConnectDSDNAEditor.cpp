@@ -73,7 +73,7 @@ QString SEConnectDSDNAEditor::getToolTip() const {
 
 QString SEConnectDSDNAEditor::getDescription() const
 {
-  return QObject::tr("dsDNA Crossovers");
+  return QObject::tr("Adenita | dsDNA Crossovers");
 }
 
 void SEConnectDSDNAEditor::beginEditing() {

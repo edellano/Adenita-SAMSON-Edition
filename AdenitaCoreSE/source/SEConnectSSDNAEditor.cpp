@@ -83,7 +83,7 @@ QString SEConnectSSDNAEditor::getToolTip() const {
 
 QString SEConnectSSDNAEditor::getDescription() const
 {
-  return QObject::tr("Connect DNA single-strands");
+  return QObject::tr("Adenita | Connect DNA single-strands");
 }
 
 void SEConnectSSDNAEditor::beginEditing() {

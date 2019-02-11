@@ -2027,12 +2027,18 @@ void SEAdenitaVisualModel::displayDoubleStrands()
         radiiV_(index) = config.base_pair_radius;
 
         auto type = baseSegment->GetCellType();
-        if (type == CellType::LoopPair) {
-        //if (index < 10) {
-          radiiV_(index) = config.base_pair_radius / 2;
-          colorsV_(index, 1) = 0.5f;
-          colorsV_(index, 3) = 0.5f;
+        if (type == CellType::SkipPair) {
+          colorsV_(index, 1) = 0.0f;
+          colorsV_(index, 2) = 0.0f;
+          colorsV_(index, 3) = 0.3f;
         }
+
+        if (type == CellType::LoopPair) {
+          radiiV_(index) = config.base_pair_radius * 1.2f;
+          colorsV_(index, 0) = 0.0f;
+          colorsV_(index, 3) = 0.3f;
+        }
+
 
         flags_(index) = baseSegment->getInheritedFlags();
 

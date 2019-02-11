@@ -156,7 +156,7 @@ QString SENanotubeCreatorEditor::getToolTip() const {
 
 QString SENanotubeCreatorEditor::getDescription() const
 {
-  return QObject::tr("DNA Nanotube Editor");
+  return QObject::tr("Adenita | DNA Nanotube Editor");
 }
 
 void SENanotubeCreatorEditor::beginEditing() {
