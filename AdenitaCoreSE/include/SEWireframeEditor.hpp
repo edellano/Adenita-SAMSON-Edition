@@ -10,6 +10,10 @@
 #include "SBAction.hpp"
 #include <QOpenGLFunctions_4_3_Core>
 
+#include "SEAdenitaCoreSEApp.hpp"
+#include "ADNPart.hpp"
+#include "ADNDisplayHelper.hpp"
+#include "DASCreator.hpp"
 /// This class implements an editor
 
 class SEWireframeEditor : public SBGEditor {
@@ -99,6 +103,8 @@ public :
 private:
   QOpenGLFunctions_4_3_Core *                                 gl_;
 
+  DASCreatorEditors::UIData positions_;
+  bool display_ = false;
 };
 
 
