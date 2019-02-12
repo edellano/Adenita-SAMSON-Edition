@@ -58,24 +58,35 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
     float rel = min_edge_size / min_length;
 
     auto faces = polyhedron.GetFaces();
-    int k = 0;
 
-    for (auto & face : faces) {
-      
-      auto pos1 = face->halfEdge_->source_->GetSBPosition();
-      auto pos2 = face->halfEdge_->next_->source_->GetSBPosition();
-      //pos2 *= 100;
+    for (auto fit = faces.begin(); fit != faces.end(); ++fit) {
+      std::map<int, DOTNode*> node_relation;
+      auto begin = (*fit)->halfEdge_;
+      auto he = begin;
+      do {
+        auto sourcePos = he->source_->GetSBPosition();
+        auto targetPos = he->next_->source_->GetSBPosition();
+        
+        sourcePos *= (min_edge_size * 2);
+        targetPos *= (min_edge_size * 2);
+        
+        SBVector3 dir = (targetPos - sourcePos).normalizedVersion();
 
-      SBVector3 dir = (pos2 - pos1).normalizedVersion();
-      DASCreator::AddDoubleStrandToADNPart(part, 10, pos1, dir, true);
-      
+        DASCreator::AddDoubleStrandToADNPart(part, min_edge_size, sourcePos, dir, true);
+
+        he = he->next_;
+      } while (he != begin);
     }
   }
   else {
-    //DASDaedalus *alg = new DASDaedalus();
-    //alg->SetMinEdgeLength(min_edge_size);
-    //std::string seq = "";
-    //part = alg->ApplyAlgorithm(seq, filename);
+    
+    DASDaedalus *alg = new DASDaedalus();
+    alg->SetMinEdgeLength(min_edge_size);
+    std::string seq = "";
+    part = alg->ApplyAlgorithm(seq, filename);
+
+    auto & doubleStrands = part->GetDoubleStrands();
+
   }
 
 
