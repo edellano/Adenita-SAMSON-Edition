@@ -101,10 +101,14 @@ public :
 	//@}
 
 private:
+  ADNPointer<ADNPart> generateWireframe(bool mock = false);
+  void sendPartToAdenita(ADNPointer<ADNPart> part);
 
   DASCreatorEditors::UIData positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
+
+  DASCreator::EditorType editorType_ = DASCreator::WireframeCube;
 
 };
 

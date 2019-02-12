@@ -23,6 +23,54 @@ SEWireframeEditor::~SEWireframeEditor() {
 
 SEWireframeEditorGUI* SEWireframeEditor::getPropertyWidget() const { return static_cast<SEWireframeEditorGUI*>(propertyWidget); }
 
+ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
+{
+  auto radius = (positions_.SecondPosition - positions_.FirstPosition).norm();
+  unsigned int numNucleotides;
+
+  ADNPointer<ADNPart> part = nullptr;
+  string filename;
+
+  if (editorType_ == DASCreator::WireframeCube) {
+    part = new ADNPart();
+
+    double a = sqrt(pow(radius.getValue(), 2) * 2);
+    numNucleotides = a / (ADNConstants::BP_RISE * 1000);
+    filename = SB_ELEMENT_PATH + "/Data/02_cube.ply";
+  }
+
+  int min_edge_size = 31;
+  if (numNucleotides > 31) {
+    for (int i = 1; i < numNucleotides + 10.5; i++) {
+      int p = (i - 1) * 10.5;
+      int n = i * 10.5;
+
+      if (numNucleotides > p && numNucleotides < n) {
+        min_edge_size = p;
+      }
+    }
+  }
+
+
+  DASDaedalus *alg = new DASDaedalus();
+  alg->SetMinEdgeLength(min_edge_size);
+  std::string seq = "";
+  part = alg->ApplyAlgorithm(seq, filename);
+
+  return part;
+}
+
+void SEWireframeEditor::sendPartToAdenita(ADNPointer<ADNPart> part)
+{
+  if (part != nullptr) {
+    //SetSequence(part);
+
+    SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+    adenita->AddPartToActiveLayer(part);
+    adenita->ResetVisualModel();
+  }
+}
+
 SBCContainerUUID SEWireframeEditor::getUUID() const { return SBCContainerUUID("ED358EAC-14D1-A0EA-9A3A-F8035E019249"); }
 
 QString SEWireframeEditor::getName() const { 
@@ -163,11 +211,10 @@ void SEWireframeEditor::mouseReleaseEvent(QMouseEvent* event) {
     positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
 
-   /* ADNPointer<ADNPart> part = nullptr;
-    if (!circular_) part = generateStrand();
-    else part = generateCircularStrand();
 
-    sendPartToAdenita(part);*/
+    ADNPointer<ADNPart> part = generateWireframe();
+
+    sendPartToAdenita(part);
     DASCreatorEditors::resetPositions(positions_);
     display_ = false;
     tempPart_ == nullptr;
