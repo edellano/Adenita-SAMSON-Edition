@@ -732,6 +732,69 @@ void ADNDisplayHelper::displayTextBottomLeft(std::string text /*= ""*/)
   displayText(pos, text);
 }
 
+void ADNDisplayHelper::displayTriangleMesh(DASPolyhedron * p)
+{
+  unsigned int nTriangles = boost::numeric_cast<unsigned int>(p->GetNumFaces());
+  unsigned int nVertices = boost::numeric_cast<unsigned int>(p->GetNumVertices());
+  float * vertexPositions = new float[3 * nVertices];
+  float * colorData = new float[4 * nVertices];
+  unsigned int * flagData = new unsigned int[nVertices];
+  float * normalData = new float[3 * nVertices];
+  unsigned int * indexData = p->GetIndices();
+
+  for (unsigned int i = 0; i < nVertices; i++) {
+    vertexPositions[3 * i + 0] = p->GetVertexById(i)->GetSBPosition()[0].getValue();
+    vertexPositions[3 * i + 1] = p->GetVertexById(i)->GetSBPosition()[1].getValue();
+    vertexPositions[3 * i + 2] = p->GetVertexById(i)->GetSBPosition()[2].getValue();
+
+    colorData[4 * i + 0] = 1.0f;
+    colorData[4 * i + 1] = 0.0f;
+    colorData[4 * i + 2] = 0.0f;
+    colorData[4 * i + 3] = 1.0f;
+
+    flagData[i] = 0;
+
+    //normal
+    int idx1 = indexData[3 * i + 0];
+    int idx2 = indexData[3 * i + 1];
+    int idx3 = indexData[3 * i + 2];
+
+    ublas::vector<double> posA(3);
+    posA[0] = vertexPositions[3 * idx1 + 0];
+    posA[1] = vertexPositions[3 * idx1 + 1];
+    posA[2] = vertexPositions[3 * idx1 + 2];
+
+    ublas::vector<double> posB(3);
+    posB[0] = vertexPositions[3 * idx2 + 0];
+    posB[1] = vertexPositions[3 * idx2 + 1];
+    posB[2] = vertexPositions[3 * idx2 + 2];
+
+    ublas::vector<double> posC(3);
+    posC[0] = vertexPositions[3 * idx3 + 0];
+    posC[1] = vertexPositions[3 * idx3 + 1];
+    posC[2] = vertexPositions[3 * idx3 + 2];
+
+    ublas::vector<double> dir = ADNVectorMath::CrossProduct(posB - posA, posC - posA);
+
+    ublas::vector<double> n = dir / ublas::norm_2(dir);
+
+    normalData[3 * idx1 + 0] = n[0];
+    normalData[3 * idx1 + 1] = n[1];
+    normalData[3 * idx1 + 2] = n[2];
+
+  }
+
+  SAMSON::displayTriangles(
+    nTriangles,
+    nVertices,
+    indexData,
+    vertexPositions,
+    normalData,
+    colorData,
+    flagData
+  );
+}
+
 void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part)
 {
   SEConfig& config = SEConfig::GetInstance();
