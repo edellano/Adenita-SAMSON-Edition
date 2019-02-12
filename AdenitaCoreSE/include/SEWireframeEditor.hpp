@@ -107,7 +107,7 @@ private:
   DASCreatorEditors::UIData positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
-
+  DASPolyhedron * tempPolyedron_ = nullptr;
   DASCreator::EditorType editorType_ = DASCreator::WireframeCube;
 
 };

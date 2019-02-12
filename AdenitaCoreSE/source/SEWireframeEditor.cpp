@@ -36,7 +36,7 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
 
     double a = sqrt(pow(radius.getValue(), 2) * 2);
     numNucleotides = a / (ADNConstants::BP_RISE * 1000);
-    filename = SB_ELEMENT_PATH + "/Data/02_cube.ply";
+    filename = SB_ELEMENT_PATH + "/Data/02_cube_tri.ply";
   }
 
   int min_edge_size = 31;
@@ -51,11 +51,16 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
     }
   }
 
+  if (mock) {
+    tempPolyedron_ = new DASPolyhedron(filename);
+  }
+  else {
+    DASDaedalus *alg = new DASDaedalus();
+    alg->SetMinEdgeLength(min_edge_size);
+    std::string seq = "";
+    part = alg->ApplyAlgorithm(seq, filename);
+  }
 
-  DASDaedalus *alg = new DASDaedalus();
-  alg->SetMinEdgeLength(min_edge_size);
-  std::string seq = "";
-  part = alg->ApplyAlgorithm(seq, filename);
 
   return part;
 }
@@ -63,7 +68,6 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
 void SEWireframeEditor::sendPartToAdenita(ADNPointer<ADNPart> part)
 {
   if (part != nullptr) {
-    //SetSequence(part);
 
     SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
     adenita->AddPartToActiveLayer(part);
@@ -160,7 +164,8 @@ void SEWireframeEditor::display() {
     }
 
     if (config.preview_editor) {
-      
+      generateWireframe(true);
+      if(tempPolyedron_ != nullptr) ADNDisplayHelper::displayTriangleMesh(tempPolyedron_);
     }
 
     if (tempPart_ != nullptr) {
