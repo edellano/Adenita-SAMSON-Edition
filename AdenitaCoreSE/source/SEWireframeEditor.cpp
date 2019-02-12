@@ -36,7 +36,7 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
 
     double a = sqrt(pow(radius.getValue(), 2) * 2);
     numNucleotides = a / (ADNConstants::BP_RISE * 1000);
-    filename = SB_ELEMENT_PATH + "/Data/02_cube_tri.ply";
+    filename = SB_ELEMENT_PATH + "/Data/02_cube.ply";
   }
 
   int min_edge_size = 31;
@@ -52,13 +52,30 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
   }
 
   if (mock) {
-    tempPolyedron_ = new DASPolyhedron(filename);
+    DASPolyhedron polyhedron = DASPolyhedron(filename);
+
+    float min_length = polyhedron.MinimumEdgeLength().second;
+    float rel = min_edge_size / min_length;
+
+    auto faces = polyhedron.GetFaces();
+    int k = 0;
+
+    for (auto & face : faces) {
+      
+      auto pos1 = face->halfEdge_->source_->GetSBPosition();
+      auto pos2 = face->halfEdge_->next_->source_->GetSBPosition();
+      //pos2 *= 100;
+
+      SBVector3 dir = (pos2 - pos1).normalizedVersion();
+      DASCreator::AddDoubleStrandToADNPart(part, 10, pos1, dir, true);
+      
+    }
   }
   else {
-    DASDaedalus *alg = new DASDaedalus();
-    alg->SetMinEdgeLength(min_edge_size);
-    std::string seq = "";
-    part = alg->ApplyAlgorithm(seq, filename);
+    //DASDaedalus *alg = new DASDaedalus();
+    //alg->SetMinEdgeLength(min_edge_size);
+    //std::string seq = "";
+    //part = alg->ApplyAlgorithm(seq, filename);
   }
 
 
@@ -164,8 +181,8 @@ void SEWireframeEditor::display() {
     }
 
     if (config.preview_editor) {
-      generateWireframe(true);
-      if(tempPolyedron_ != nullptr) ADNDisplayHelper::displayTriangleMesh(tempPolyedron_);
+      tempPart_ = generateWireframe(true);
+      ADNDisplayHelper::displayPart(tempPart_);
     }
 
     if (tempPart_ != nullptr) {
