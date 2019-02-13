@@ -825,9 +825,8 @@ void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part)
 
       colorsV(index, 0) = config.double_strand_color[0];
       colorsV(index, 1) = config.double_strand_color[1];
-      //colorsV(index, 2) = config.double_strand_color[2];
-      colorsV(index, 2) = 0.0f;
-      colorsV(index, 3) = 0.4f;
+      colorsV(index, 2) = config.double_strand_color[2];
+      colorsV(index, 3) = 1.0f;
 
       radiiV(index) = config.base_pair_radius;
 
