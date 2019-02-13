@@ -208,6 +208,8 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
         if (ssLeftOvers.second != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.second);
         if (ssLeftOvers.third != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.third);
         if (ssLeftOvers.fourth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fourth);
+        if (ssLeftOvers.fifth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fifth);
+        if (ssLeftOvers.sixth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.sixth);
         app->ResetVisualModel();
       }
       else {

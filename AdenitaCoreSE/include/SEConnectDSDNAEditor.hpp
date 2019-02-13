@@ -97,12 +97,19 @@ public :
 
 	//@}
 
+  enum Mode {
+    Single = 0,
+    Double = 1
+  };
+
+  void SetMode(Mode m);
+
 private:
   SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
 
   bool display_ = false;
-  ADNPointer<ADNBaseSegment> start_;
-
+  ADNPointer<ADNNucleotide> start_;
+  Mode mode_ = Single;
 };
 
 
