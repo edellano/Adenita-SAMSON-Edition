@@ -5,7 +5,7 @@
 #include <iostream>
 #include <iomanip>
 #include "ADNVectorMath.hpp"
-//#include "ANTPolyhedron.hpp"
+#include "DASPolyhedron.hpp"
 #include "ADNPart.hpp"
 #include "ADNArray.hpp"
 #include "SEConfig.hpp"
@@ -29,6 +29,8 @@ namespace ADNDisplayHelper {
   void displayBaseVectors(ADNPointer<ADNNucleotide> nt, int scale);
   void displayText(SBPosition3 pos, std::string text = "");
   void displayTextBottomLeft(std::string text = "");
+  void displayTriangleMesh(DASPolyhedron * polyhedron);
+
   //! Display only the top scales of a part
   /*!
     \param ADNPointer to the ADNPart
