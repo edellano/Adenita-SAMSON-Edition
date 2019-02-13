@@ -190,13 +190,9 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
   if (mock) {
     DASPolyhedron polyhedron = DASPolyhedron(filename);
 
-    float min_length = polyhedron.MinimumEdgeLength().second;
-    float rel = min_edge_size / min_length;
-
     auto faces = polyhedron.GetFaces();
 
     for (auto fit = faces.begin(); fit != faces.end(); ++fit) {
-      std::map<int, DOTNode*> node_relation;
       auto begin = (*fit)->halfEdge_;
       auto he = begin;
       do {
