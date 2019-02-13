@@ -137,5 +137,59 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>rdbTetrahedron</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onTetrahedronClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>257</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>257</x>
+     <y>263</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbCube</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onCubeClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>257</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>257</x>
+     <y>263</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbCuboid</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onCuboidClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>50</x>
+     <y>463</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>510</x>
+     <y>495</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onTetrahedronClicked()</slot>
+  <slot>onCubeClicked()</slot>
+  <slot>onCuboidClicked()</slot>
+ </slots>
 </ui>
