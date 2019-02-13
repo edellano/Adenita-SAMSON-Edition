@@ -53,6 +53,7 @@ public:
   public slots:
   void                            onTetrahedronClicked();
   void                            onCubeClicked();
+  void                            onCuboidClicked();
 
 private:
 

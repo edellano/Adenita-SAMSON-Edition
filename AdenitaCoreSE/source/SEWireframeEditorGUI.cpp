@@ -75,6 +75,12 @@ void SEWireframeEditorGUI::onCubeClicked()
 
 }
 
+void SEWireframeEditorGUI::onCuboidClicked()
+{
+  editor->setWireframeType(DASCreator::WireframeCuboid);
+
+}
+
 SBCContainerUUID SEWireframeEditorGUI::getUUID() const { return SBCContainerUUID( "3A914FAF-691B-B3A1-3B91-58E77E7CCC6D" );}
 
 QPixmap SEWireframeEditorGUI::getLogo() const { 

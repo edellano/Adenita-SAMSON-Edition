@@ -103,6 +103,7 @@ public :
   void                                setWireframeType(DASCreator::EditorType type);
 
 private:
+  ADNPointer<ADNPart> generateCuboid(bool mock = false);
   ADNPointer<ADNPart> generateWireframe(bool mock = false);
   void sendPartToAdenita(ADNPointer<ADNPart> part);
 
