@@ -96,9 +96,11 @@ public :
 	/// \name GUI
 	//@{
 
-	SEWireframeEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
+	SEWireframeEditorGUI*								getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
+
+  void                                setWireframeType(DASCreator::EditorType type);
 
 private:
   ADNPointer<ADNPart> generateWireframe(bool mock = false);
@@ -107,7 +109,7 @@ private:
   DASCreatorEditors::UIData positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
-  DASCreator::EditorType editorType_ = DASCreator::WireframeCube;
+  DASCreator::EditorType wireframeType_ = DASCreator::WireframeTetrahedron;
 
 };
 
