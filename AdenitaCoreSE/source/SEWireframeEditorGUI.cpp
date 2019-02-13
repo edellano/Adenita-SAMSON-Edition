@@ -64,6 +64,17 @@ void SEWireframeEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+void SEWireframeEditorGUI::onTetrahedronClicked()
+{
+  editor->setWireframeType(DASCreator::WireframeTetrahedron);
+}
+
+void SEWireframeEditorGUI::onCubeClicked()
+{
+  editor->setWireframeType(DASCreator::WireframeCube);
+
+}
+
 SBCContainerUUID SEWireframeEditorGUI::getUUID() const { return SBCContainerUUID( "3A914FAF-691B-B3A1-3B91-58E77E7CCC6D" );}
 
 QPixmap SEWireframeEditorGUI::getLogo() const { 

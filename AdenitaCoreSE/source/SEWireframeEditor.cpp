@@ -23,6 +23,11 @@ SEWireframeEditor::~SEWireframeEditor() {
 
 SEWireframeEditorGUI* SEWireframeEditor::getPropertyWidget() const { return static_cast<SEWireframeEditorGUI*>(propertyWidget); }
 
+void SEWireframeEditor::setWireframeType(DASCreator::EditorType type)
+{
+  wireframeType_ = type;
+}
+
 ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
 {
   auto radius = (positions_.SecondPosition - positions_.FirstPosition).norm();
@@ -30,8 +35,13 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
 
   ADNPointer<ADNPart> part = nullptr;
   string filename;
+  if (wireframeType_ == DASCreator::WireframeTetrahedron) {
+    part = new ADNPart();
 
-  if (editorType_ == DASCreator::WireframeCube) {
+    double a = sqrt(pow(radius.getValue(), 2) * 2);
+    numNucleotides = a / (ADNConstants::BP_RISE * 1000);
+    filename = SB_ELEMENT_PATH + "/Data/01_tetrahedron.ply";
+  } else if (wireframeType_ == DASCreator::WireframeCube) {
     part = new ADNPart();
 
     double a = sqrt(pow(radius.getValue(), 2) * 2);
@@ -67,11 +77,13 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
         auto sourcePos = he->source_->GetSBPosition();
         auto targetPos = he->next_->source_->GetSBPosition();
         
-        sourcePos *= (min_edge_size * 2);
-        targetPos *= (min_edge_size * 2);
-        
         SBVector3 dir = (targetPos - sourcePos).normalizedVersion();
 
+        auto len = dir.norm();
+
+        sourcePos *= (min_edge_size * len.getValue() * 3);
+        targetPos *= (min_edge_size * len.getValue() * 3);
+        
         DASCreator::AddDoubleStrandToADNPart(part, min_edge_size, sourcePos, dir, true);
 
         he = he->next_;

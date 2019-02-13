@@ -50,6 +50,9 @@ public:
 	void														saveSettings(SBGSettings* settings);										///< Save GUI settings
 
 	//@}
+  public slots:
+  void                            onTetrahedronClicked();
+  void                            onCubeClicked();
 
 private:
 
