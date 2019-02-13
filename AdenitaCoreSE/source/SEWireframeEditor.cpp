@@ -164,8 +164,9 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
     part = new ADNPart();
 
     double a = sqrt(pow(radius.getValue(), 2) * 2);
-    numNucleotides = a / (ADNConstants::BP_RISE * 1000);
+    numNucleotides = a / (ADNConstants::BP_RISE * 1000) * 1.3;
     filename = SB_ELEMENT_PATH + "/Data/01_tetrahedron.ply";
+
   } else if (wireframeType_ == DASCreator::WireframeCube) {
     part = new ADNPart();
 
@@ -204,10 +205,8 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
         
         SBVector3 dir = (targetPos - sourcePos).normalizedVersion();
 
-        auto len = dir.norm();
-
-        sourcePos *= (min_edge_size * len.getValue() * 3);
-        targetPos *= (min_edge_size * len.getValue() * 3);
+        sourcePos *= (min_edge_size * 3);
+        targetPos *= (min_edge_size * 3);
         
         DASCreator::AddDoubleStrandToADNPart(part, min_edge_size, sourcePos, dir, true);
 
