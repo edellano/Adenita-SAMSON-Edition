@@ -27,7 +27,6 @@ SEAdenitaCoreSEAppGUI* SEAdenitaCoreSEApp::getGUI() const { return static_cast<S
 void SEAdenitaCoreSEApp::LoadPart(QString filename)
 {
   ADNPointer<ADNPart> part = ADNLoader::LoadPartFromJson(filename.toStdString());
-
   AddPartToActiveLayer(part);
 }
 
@@ -51,6 +50,10 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
   std::string seq = "";
   auto part = alg->ApplyAlgorithm(seq, filename.toStdString());
 
+  int lastPoint = filename.lastIndexOf(".");
+  QString s = filename.left(lastPoint);
+  part->SetName(s.toStdString());
+
   AddPartToActiveLayer(part);
 }
 
@@ -62,6 +65,10 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
 
   part = cad.CreateCadnanoPart(filename.toStdString());
   
+  int lastPoint = filename.lastIndexOf(".");
+  QString s = filename.left(lastPoint);
+  part->SetName(s.toStdString());
+
   AddPartToActiveLayer(part);
 
   cad.CreateConformations(part);
