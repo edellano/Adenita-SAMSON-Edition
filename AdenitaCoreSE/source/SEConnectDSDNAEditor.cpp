@@ -23,6 +23,11 @@ SEConnectDSDNAEditor::~SEConnectDSDNAEditor() {
 
 SEConnectDSDNAEditorGUI* SEConnectDSDNAEditor::getPropertyWidget() const { return static_cast<SEConnectDSDNAEditorGUI*>(propertyWidget); }
 
+void SEConnectDSDNAEditor::SetMode(Mode m)
+{
+  mode_ = m;
+}
+
 SEAdenitaCoreSEApp* SEConnectDSDNAEditor::getAdenitaApp() const
 {
   return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
@@ -108,17 +113,18 @@ void SEConnectDSDNAEditor::display() {
 
   if (display_) {
     SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
-    
-    //check if a base segment got selected
+
+    //check if a nucleotide got selected
     auto app = getAdenitaApp();
     auto nanorobot = app->GetNanorobot();
-    auto highlightedBaseSegments = nanorobot->GetHighlightedBaseSegments();
-    
-    if (highlightedBaseSegments.size() == 1) {
-      currentPosition = highlightedBaseSegments[0]->GetPosition();
+
+    auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
+
+    if (highlightedNucleotides.size() == 1) {
+      currentPosition = highlightedNucleotides[0]->GetBackbone()->GetPosition();
     }
-    
-    ADNDisplayHelper::displayCylinder(start_->GetPosition(), currentPosition);
+
+    ADNDisplayHelper::displayCylinder(start_->GetBackbone()->GetPosition(), currentPosition);
   }
 
 }
@@ -145,22 +151,25 @@ void SEConnectDSDNAEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
   if (event->buttons() == Qt::LeftButton && !display_) {
-    //check if a base segment got selected
+    //check if a nucleotide got selected
     auto app = getAdenitaApp();
     auto nanorobot = app->GetNanorobot();
 
-    auto selectedBaseSegments = nanorobot->GetSelectedBaseSegments();
-    auto highlightedBaseSegments = nanorobot->GetHighlightedBaseSegments();
+    auto selectedNucleotides = nanorobot->GetSelectedNucleotides();
+    auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
 
-    SB_FOR(auto node, selectedBaseSegments) {
+    SB_FOR(auto node, selectedNucleotides) {
       node->setSelectionFlag(false);
     }
 
-    if (highlightedBaseSegments.size() == 1) {
-      auto bs = highlightedBaseSegments[0];
-      bs->setSelectionFlag(true);
-      start_ = bs;
-      display_ = true;
+    if (highlightedNucleotides.size() == 1) {
+      auto nt = highlightedNucleotides[0];
+
+      if (mode_ == Single || nt->IsEnd()) {
+        nt->setSelectionFlag(true);
+        start_ = nt;
+        display_ = true;
+      }
     }
   }
 }
@@ -176,20 +185,45 @@ void SEConnectDSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
     auto app = getAdenitaApp();
     auto nanorobot = app->GetNanorobot();
 
-    auto highlightedBaseSegments = nanorobot->GetHighlightedBaseSegments();
-    
-    if (highlightedBaseSegments.size() == 1) {
+    auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
+
+    if (highlightedNucleotides.size() == 1) {
       auto start = start_;
-      ADNPointer<ADNBaseSegment> end = highlightedBaseSegments[0];
+      ADNPointer<ADNNucleotide> end = highlightedNucleotides[0];
       if (!end->IsEnd()) end = end->GetNext();
-      ADNPointer<ADNPart> part = nanorobot->GetPart(end->GetDoubleStrand());
-      if (start->IsFirst()) {
+      ADNPointer<ADNPart> part = nanorobot->GetPart(end->GetStrand());
+      if (start->GetEnd() == ThreePrime) {
         auto store = start;
         start = end;
         end = store;
       }
-      
-      app->ResetVisualModel();
+      if (mode_ == Single) {
+        auto ssLeftOvers = DASOperations::CreateCrossover(part, start, end);
+        if (ssLeftOvers.first != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.first);
+        if (ssLeftOvers.second != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.second);
+        if (ssLeftOvers.third != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.third);
+        if (ssLeftOvers.fourth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fourth);
+        app->ResetVisualModel();
+      }
+      else {
+        std::string seq = "NNNNNNNNNNNN";
+        if (start->GetEnd() == FivePrime && end->GetEnd() == ThreePrime) {
+          ADNPointer<ADNSingleStrand> ss1 = end->GetStrand();
+          ADNPointer<ADNSingleStrand> ss2 = start->GetStrand();
+          DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
+          nanorobot->RemoveSingleStrand(ss1);
+          nanorobot->RemoveSingleStrand(ss2);
+          app->ResetVisualModel();
+        }
+        else if (start->GetEnd() == FivePrime && end->GetEnd() == ThreePrime) {
+          ADNPointer<ADNSingleStrand> ss1 = start->GetStrand();
+          ADNPointer<ADNSingleStrand> ss2 = end->GetStrand();
+          DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
+          nanorobot->RemoveSingleStrand(ss1);
+          nanorobot->RemoveSingleStrand(ss2);
+          app->ResetVisualModel();
+        }
+      }
     }
   }
 

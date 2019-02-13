@@ -407,7 +407,7 @@ void SEAdenitaCoreSEApp::ConcatStrands(std::string seq)
     auto ss1 = singleStrands[0];
     auto ss2 = singleStrands[1];
     auto part = GetNanorobot()->GetPart(ss1);
-    DASOperations::FourSingleStrands res = DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
+    DASOperations::SixSingleStrands res = DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
     GetNanorobot()->RemoveSingleStrand(ss1);
     GetNanorobot()->RemoveSingleStrand(ss2);
     //GetNanorobot()->RemoveSingleStrand(res.second);

@@ -320,9 +320,9 @@ End ADNNanorobot::GetNucleotideEnd(ADNPointer<ADNNucleotide> nt)
   return nt->GetEnd();
 }
 
-ADNPointer<ADNNucleotide> ADNNanorobot::GetNucleotideNext(ADNPointer<ADNNucleotide> nt)
+ADNPointer<ADNNucleotide> ADNNanorobot::GetNucleotideNext(ADNPointer<ADNNucleotide> nt, bool circular)
 {
-  return nt->GetNext();
+  return nt->GetNext(circular);
 }
 
 ADNPointer<ADNNucleotide> ADNNanorobot::GetNucleotidePair(ADNPointer<ADNNucleotide> nt)
