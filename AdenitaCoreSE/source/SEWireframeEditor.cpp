@@ -30,6 +30,8 @@ void SEWireframeEditor::setWireframeType(DASCreator::EditorType type)
 
 ADNPointer<ADNPart> SEWireframeEditor::generateCuboid(bool mock /*= false*/)
 {
+  SEConfig& config = SEConfig::GetInstance();
+
   ADNPointer<ADNPart> part = nullptr;
 
   SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
@@ -50,10 +52,46 @@ ADNPointer<ADNPart> SEWireframeEditor::generateCuboid(bool mock /*= false*/)
   int ySize = bpSize;
 
   if (mock) {
-    DASEditor editor = DASEditor();
-    part = editor.CreateCrippledWireframeCuboid(positions_.FirstPosition, xSize, ySize, zSize);
-  }
-  else {
+    
+    part = new ADNPart();
+
+    SBVector3 xDir(1.0, 0.0, 0.0);
+    SBVector3 yDir(0.0, 1.0, 0.0);
+    SBVector3 zDir(0.0, 0.0, 1.0);
+
+    SBQuantity::nanometer xLength = SBQuantity::nanometer(ADNConstants::BP_RISE * xSize);
+    SBQuantity::nanometer yLength = SBQuantity::nanometer(ADNConstants::BP_RISE * ySize);
+    SBQuantity::nanometer zLength = SBQuantity::nanometer(ADNConstants::BP_RISE * zSize);
+
+    auto topLeftFront = positions_.FirstPosition;
+
+    // create 12 double helices
+    DASCreator::AddDoubleStrandToADNPart(part, xSize, topLeftFront, xDir, true);
+    DASCreator::AddDoubleStrandToADNPart(part, ySize, topLeftFront, -yDir, true);
+    DASCreator::AddDoubleStrandToADNPart(part, zSize, topLeftFront, -zDir, true);
+
+    SBPosition3 bottomRightFront = topLeftFront + (xLength*xDir - yLength*yDir);
+
+    DASCreator::AddDoubleStrandToADNPart(part, xSize, bottomRightFront, -xDir, true);
+    DASCreator::AddDoubleStrandToADNPart(part, ySize, bottomRightFront, yDir, true);
+    DASCreator::AddDoubleStrandToADNPart(part, zSize, bottomRightFront, -zDir, true);
+
+    SBPosition3 bottomLeftBack = topLeftFront - (yLength*yDir + zLength*zDir);
+    
+    DASCreator::AddDoubleStrandToADNPart(part, xSize, bottomLeftBack, xDir, true);
+    DASCreator::AddDoubleStrandToADNPart(part, ySize, bottomLeftBack, yDir, true);
+    DASCreator::AddDoubleStrandToADNPart(part, zSize, bottomLeftBack, zDir, true);
+
+    SBPosition3 topRightBack = topLeftFront + (xLength*xDir - zLength*zDir);
+
+    DASCreator::AddDoubleStrandToADNPart(part, xSize, topRightBack, -xDir, true);
+    DASCreator::AddDoubleStrandToADNPart(part, ySize, topRightBack, -yDir, true);
+    DASCreator::AddDoubleStrandToADNPart(part, zSize, topRightBack, zDir, true);
+
+    return part;
+    
+  } else {
+    part = new ADNPart();
     DASPolyhedron& p = DASPolyhedron();
     std::map<int, SBPosition3> vertices;
     std::map<int, std::vector<int>> faces;
@@ -302,6 +340,7 @@ void SEWireframeEditor::display() {
         ADNDisplayHelper::displayLine(positions_.FirstPosition, xPos, xyText);
         ADNDisplayHelper::displayLine(positions_.FirstPosition, yPos, xyText);
         if (config.preview_editor) tempPart_ = generateCuboid(true);
+        ADNDisplayHelper::displayPart(tempPart_);
       }
       else if (positions_.positionsCounter == 2) {
         SBQuantity::length radius = (positions_.SecondPosition - positions_.FirstPosition).norm();
@@ -321,6 +360,8 @@ void SEWireframeEditor::display() {
         positions_.ThirdPosition = currentPosition;
 
         if (config.preview_editor) tempPart_ = generateCuboid(true);
+        ADNDisplayHelper::displayPart(tempPart_);
+
       }
     }
   }
