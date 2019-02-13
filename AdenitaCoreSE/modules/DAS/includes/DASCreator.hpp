@@ -10,17 +10,28 @@
 namespace DASCreator {
 
   enum EditorType {
-    DoubleStrand = 0,
-    Nanotube = 1,
-    TwoDoubleHelices = 2,
+    DoubleStrand, 
+    Nanotube, 
+    TwoDoubleHelices,
 
-    WireframeTetrahedron = 10,
-    WireframeCube = 11,
-    WireframeDodecahedron = 12,
-    WireframeOctahedron = 13,
-    WireframeIcosahedron = 14,
+    Tetrahedron,
+    Cube,
+    Octahedron,
+    Dodecahedron,
+    Icosahedron,
+    Cubocahedron, 
+    Icosidodecahedron, 
+    Rhombicuboctahedron,
+    Snub_cube,
+    Truncated_cube,
+    Truncated_cuboctahedron,
 
-    WireframeCuboid = 20
+    Helix,
+    Stickman,
+    Bottle,
+    Bunny,
+
+    Cuboid
   };
 
   //! Creates a double strand
