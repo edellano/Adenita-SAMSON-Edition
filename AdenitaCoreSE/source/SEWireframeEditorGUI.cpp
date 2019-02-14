@@ -38,6 +38,22 @@ SEWireframeEditorGUI::SEWireframeEditorGUI(SEWireframeEditor* editor) {
   octahedronIcon.addFile(QString(string(iconPath + "octahedron.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
   ui.rdbOctahedron->setIcon(octahedronIcon);
 
+  QIcon rhombicuboctahedronIcon;
+  rhombicuboctahedronIcon.addFile(QString(string(iconPath + "rhombicuboctahedron.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbRhombicuboctahedron->setIcon(rhombicuboctahedronIcon);
+
+  QIcon snubCubeIcon;
+  snubCubeIcon.addFile(QString(string(iconPath + "snub_Cube.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbSnub_cube->setIcon(snubCubeIcon);
+
+  QIcon truncated_cubeIcon;
+  truncated_cubeIcon.addFile(QString(string(iconPath + "truncated_cube.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbTruncated_cube->setIcon(truncated_cubeIcon);
+
+  QIcon truncated_cuboctahedronIcon;
+  truncated_cuboctahedronIcon.addFile(QString(string(iconPath + "Truncated_cuboctahedron.png").c_str()), QSize(), QIcon::Normal, QIcon::Off);
+  ui.rdbTruncated_cuboctahedron->setIcon(truncated_cuboctahedronIcon);
+
   ui.rdbCuboid->setIcon(cubeIcon);
 
 }
@@ -66,19 +82,77 @@ void SEWireframeEditorGUI::saveSettings( SBGSettings *settings ) {
 
 void SEWireframeEditorGUI::onTetrahedronClicked()
 {
-  editor->setWireframeType(DASCreator::WireframeTetrahedron);
+  editor->setWireframeType(DASCreator::Tetrahedron);
 }
 
 void SEWireframeEditorGUI::onCubeClicked()
 {
-  editor->setWireframeType(DASCreator::WireframeCube);
-
+  editor->setWireframeType(DASCreator::Cube);
 }
 
 void SEWireframeEditorGUI::onCuboidClicked()
 {
-  editor->setWireframeType(DASCreator::WireframeCuboid);
+  editor->setWireframeType(DASCreator::Cuboid);
+}
 
+void SEWireframeEditorGUI::onOctahedronClicked()
+{
+  editor->setWireframeType(DASCreator::Octahedron);
+}
+
+void SEWireframeEditorGUI::onDodecahedronClicked()
+{
+  editor->setWireframeType(DASCreator::Dodecahedron);
+}
+
+void SEWireframeEditorGUI::onCubocahedronClicked()
+{
+  editor->setWireframeType(DASCreator::Cubocahedron);
+}
+
+void SEWireframeEditorGUI::onIcosahedronClicked()
+{
+  editor->setWireframeType(DASCreator::Icosahedron);
+}
+
+void SEWireframeEditorGUI::onIcosidodecahedronClicked()
+{
+  editor->setWireframeType(DASCreator::Icosidodecahedron);
+}
+
+void SEWireframeEditorGUI::onRhombicuboctahedronClicked()
+{
+  editor->setWireframeType(DASCreator::Rhombicuboctahedron);
+}
+
+void SEWireframeEditorGUI::onSnubCubeClicked()
+{
+  editor->setWireframeType(DASCreator::Snub_cube);
+}
+
+void SEWireframeEditorGUI::onTruncatedCubeClicked()
+{
+  editor->setWireframeType(DASCreator::Truncated_cube);
+}
+
+void SEWireframeEditorGUI::onTruncatedCuboctahedronClicked()
+{
+  editor->setWireframeType(DASCreator::Truncated_cuboctahedron);
+}
+
+void SEWireframeEditorGUI::onHelixClicked()
+{
+  editor->setWireframeType(DASCreator::Helix);
+}
+
+void SEWireframeEditorGUI::onStickmanClicked()
+{
+  editor->setWireframeType(DASCreator::Stickman);
+}
+
+void SEWireframeEditorGUI::onBunnyClicked()
+{
+  editor->setWireframeType(DASCreator::Bunny);
 }
 
 SBCContainerUUID SEWireframeEditorGUI::getUUID() const { return SBCContainerUUID( "3A914FAF-691B-B3A1-3B91-58E77E7CCC6D" );}

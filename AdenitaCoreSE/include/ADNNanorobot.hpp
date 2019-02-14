@@ -143,7 +143,7 @@ public:
     \param a ADNPointer to a ADNNucleotide
     \return a ADNPointer to the ADNNucleotide next on the single strand
   */
-  ADNPointer<ADNNucleotide> GetNucleotideNext(ADNPointer<ADNNucleotide> nt);
+  ADNPointer<ADNNucleotide> GetNucleotideNext(ADNPointer<ADNNucleotide> nt, bool circular = false);
   //! Return a nucleotide's pair
   /*!
     \param a ADNPointer to a ADNNucleotide

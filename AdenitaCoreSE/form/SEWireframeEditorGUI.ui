@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>515</width>
+    <width>393</width>
     <height>527</height>
    </rect>
   </property>
@@ -21,8 +21,95 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="4" column="1">
+      <widget class="QRadioButton" name="rdbHelix">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Helix</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QRadioButton" name="rdbStickman">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Stickman</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QRadioButton" name="rdbBunny">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Bunny</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="rdbCube">
+       <property name="text">
+        <string>Cube</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QRadioButton" name="rdbCuboid">
+       <property name="text">
+        <string>Cuboid</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QRadioButton" name="rdbOctahedron">
+       <property name="text">
+        <string>Octahedron</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
       <widget class="QRadioButton" name="rdbTetrahedron">
        <property name="text">
         <string>Tetrahedron</string>
@@ -41,33 +128,7 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QRadioButton" name="rdbCube">
-       <property name="text">
-        <string>Cube</string>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>64</width>
-         <height>64</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="rdbOctahedron">
-       <property name="text">
-        <string>Octahedron</string>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>64</width>
-         <height>64</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
+     <item row="3" column="0">
       <widget class="QRadioButton" name="rdbDodecahedron">
        <property name="text">
         <string>Dodecahedron</string>
@@ -80,7 +141,7 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="4" column="0">
       <widget class="QRadioButton" name="rdbCuboctahedron">
        <property name="text">
         <string>Cuboctahedron</string>
@@ -93,7 +154,7 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="5" column="0">
       <widget class="QRadioButton" name="rdbIcosahedron">
        <property name="text">
         <string>Icosahedron</string>
@@ -106,7 +167,7 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="6" column="0">
       <widget class="QRadioButton" name="rdbIcosidodecahedron">
        <property name="text">
         <string>Icosidodecahedron</string>
@@ -119,10 +180,49 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QRadioButton" name="rdbCuboid">
+     <item row="0" column="1">
+      <widget class="QRadioButton" name="rdbRhombicuboctahedron">
        <property name="text">
-        <string>Cuboid</string>
+        <string>Rhombicuboctahedron</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QRadioButton" name="rdbTruncated_cube">
+       <property name="text">
+        <string>Truncated Cube</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QRadioButton" name="rdbTruncated_cuboctahedron">
+       <property name="text">
+        <string>Truncated Cuboctahedron</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QRadioButton" name="rdbSnub_cube">
+       <property name="text">
+        <string>Snub Cube</string>
        </property>
        <property name="iconSize">
         <size>
@@ -145,7 +245,7 @@
    <slot>onTetrahedronClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>257</x>
+     <x>192</x>
      <y>53</y>
     </hint>
     <hint type="destinationlabel">
@@ -161,7 +261,7 @@
    <slot>onCubeClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>257</x>
+     <x>192</x>
      <y>112</y>
     </hint>
     <hint type="destinationlabel">
@@ -181,8 +281,200 @@
      <y>463</y>
     </hint>
     <hint type="destinationlabel">
-     <x>510</x>
+     <x>392</x>
      <y>495</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbOctahedron</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onOctahedronClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>81</x>
+     <y>173</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>392</x>
+     <y>519</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbDodecahedron</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onDodecahedronClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>230</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>392</x>
+     <y>332</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbCuboctahedron</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onCubocahedronClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>46</x>
+     <y>291</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>392</x>
+     <y>422</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbIcosahedron</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onIcosahedronClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>133</x>
+     <y>349</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>392</x>
+     <y>394</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbIcosidodecahedron</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onIcosidodecahedronClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>103</x>
+     <y>409</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>392</x>
+     <y>459</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbRhombicuboctahedron</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onRhombicuboctahedronClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>279</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>105</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbSnub_cube</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onSnubCubeClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>165</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbTruncated_cube</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onTruncatedCubeClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>262</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>215</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbTruncated_cuboctahedron</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onTruncatedCuboctahedronClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>310</x>
+     <y>238</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>389</x>
+     <y>287</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbHelix</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onHelixClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>229</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>390</x>
+     <y>320</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbStickman</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onStickmanClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>311</x>
+     <y>352</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>368</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbBunny</sender>
+   <signal>clicked()</signal>
+   <receiver>SEWireframeEditorGUIClass</receiver>
+   <slot>onBunnyClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>409</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>388</x>
+     <y>80</y>
     </hint>
    </hints>
   </connection>
@@ -191,5 +483,17 @@
   <slot>onTetrahedronClicked()</slot>
   <slot>onCubeClicked()</slot>
   <slot>onCuboidClicked()</slot>
+  <slot>onOctahedronClicked()</slot>
+  <slot>onDodecahedronClicked()</slot>
+  <slot>onCubocahedronClicked()</slot>
+  <slot>onIcosahedronClicked()</slot>
+  <slot>onIcosidodecahedronClicked()</slot>
+  <slot>onRhombicuboctahedronClicked()</slot>
+  <slot>onSnubCubeClicked()</slot>
+  <slot>onTruncatedCubeClicked()</slot>
+  <slot>onTruncatedCuboctahedronClicked()</slot>
+  <slot>onHelixClicked()</slot>
+  <slot>onStickmanClicked()</slot>
+  <slot>onBunnyClicked()</slot>
  </slots>
 </ui>

@@ -22,7 +22,24 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0" colspan="2">
+     <item row="1" column="3">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Sequence:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3" colspan="2">
+      <widget class="QRadioButton" name="rdnConcat">
+       <property name="text">
+        <string>Concatenation</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QLineEdit" name="lineSequence"/>
+     </item>
+     <item row="0" column="0" rowspan="2" colspan="2">
       <widget class="QRadioButton" name="rdnCrossover">
        <property name="text">
         <string>Crossover</string>
@@ -32,10 +49,10 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="2">
-      <widget class="QRadioButton" name="rdnConcat">
-       <property name="text">
-        <string>Concatenation</string>
+     <item row="0" column="2" rowspan="2">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
@@ -77,8 +94,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>lineSequence</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SEConnectSSDNAEditorGUIClass</receiver>
+   <slot>onSetSequence(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>237</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>49</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSelectMode()</slot>
+  <slot>onSetSequence(QString)</slot>
  </slots>
 </ui>

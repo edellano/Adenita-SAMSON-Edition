@@ -54,7 +54,18 @@ public:
   void                            onTetrahedronClicked();
   void                            onCubeClicked();
   void                            onCuboidClicked();
-
+  void                            onOctahedronClicked();
+  void                            onDodecahedronClicked();
+  void                            onCubocahedronClicked();
+  void                            onIcosahedronClicked();
+  void                            onIcosidodecahedronClicked();
+  void                            onRhombicuboctahedronClicked();
+  void                            onSnubCubeClicked();
+  void                            onTruncatedCubeClicked();
+  void                            onTruncatedCuboctahedronClicked();
+  void                            onHelixClicked();
+  void                            onStickmanClicked();
+  void                            onBunnyClicked();
 private:
 
 	Ui::SEWireframeEditorGUIClass									ui;
