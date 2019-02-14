@@ -131,6 +131,16 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
     // connect strands
     if (sameStrand) {
  
+      if (two && firstStrandTwo != nullptr && secondStrandTwo != nullptr) {
+        if (firstStrandTwo == secondStrandTwo) {
+          firstStrandTwo->IsCircular(true);
+        }
+        else {
+          auto ssConnectTwo = ADNBasicOperations::MergeSingleStrands(part, firstStrandTwo, secondStrandTwo);
+          ssConnectTwo->IsCircular(circResTwo);
+        }
+      }
+
       if (firstStrand->getNumberOfNucleotides() == 0) {
         ssLeftOvers.third = firstStrand;
         secondStrand->IsCircular(true);
@@ -151,17 +161,6 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
         secondStrand->IsCircular(true);
       }
 
-      if (two && firstStrandTwo != nullptr && secondStrandTwo != nullptr) {
-        if (firstStrandTwo == secondStrandTwo) {
-          firstStrandTwo->IsCircular(true);
-        }
-        else {
-          auto ssConnectTwo = ADNBasicOperations::MergeSingleStrands(part, firstStrandTwo, secondStrandTwo);
-          ssConnectTwo->IsCircular(circResTwo);
-          ssLeftOvers.fifth = firstStrandTwo;
-          ssLeftOvers.sixth = secondStrandTwo;
-        }
-      }
     }
     else {
       auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, firstStrand, secondStrand);

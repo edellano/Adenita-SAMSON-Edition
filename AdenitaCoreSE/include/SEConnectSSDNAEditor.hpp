@@ -103,6 +103,7 @@ public :
 	//@}
 
   void SetMode(bool xo);
+  void SetSequence(std::string seq);
 
 private:
   SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app

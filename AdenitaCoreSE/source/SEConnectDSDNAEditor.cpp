@@ -198,31 +198,14 @@ void SEConnectDSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
         end = store;
       }
       if (mode_ == Single) {
-        auto ssLeftOvers = DASOperations::CreateCrossover(part, start, end);
+        auto ssLeftOvers = DASOperations::CreateCrossover(part, start, end, true);
         if (ssLeftOvers.first != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.first);
         if (ssLeftOvers.second != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.second);
         if (ssLeftOvers.third != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.third);
         if (ssLeftOvers.fourth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fourth);
+        if (ssLeftOvers.fifth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fifth);
+        if (ssLeftOvers.sixth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.sixth);
         app->ResetVisualModel();
-      }
-      else {
-        std::string seq = "NNNNNNNNNNNN";
-        if (start->GetEnd() == FivePrime && end->GetEnd() == ThreePrime) {
-          ADNPointer<ADNSingleStrand> ss1 = end->GetStrand();
-          ADNPointer<ADNSingleStrand> ss2 = start->GetStrand();
-          DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
-          nanorobot->RemoveSingleStrand(ss1);
-          nanorobot->RemoveSingleStrand(ss2);
-          app->ResetVisualModel();
-        }
-        else if (start->GetEnd() == FivePrime && end->GetEnd() == ThreePrime) {
-          ADNPointer<ADNSingleStrand> ss1 = start->GetStrand();
-          ADNPointer<ADNSingleStrand> ss2 = end->GetStrand();
-          DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
-          nanorobot->RemoveSingleStrand(ss1);
-          nanorobot->RemoveSingleStrand(ss2);
-          app->ResetVisualModel();
-        }
       }
     }
   }

@@ -32,6 +32,12 @@ void SEConnectSSDNAEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+void SEConnectSSDNAEditorGUI::onSetSequence(QString seq)
+{
+  SEConnectSSDNAEditor* t = getEditor();
+  t->SetSequence(seq.toStdString());
+}
+
 SBCContainerUUID SEConnectSSDNAEditorGUI::getUUID() const { return SBCContainerUUID( "CDC75BAA-A7AD-F837-49F4-E0F14DF87181" );}
 
 QPixmap SEConnectSSDNAEditorGUI::getLogo() const {

@@ -94,8 +94,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>lineSequence</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SEConnectSSDNAEditorGUIClass</receiver>
+   <slot>onSetSequence(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>237</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>49</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSelectMode()</slot>
+  <slot>onSetSequence(QString)</slot>
  </slots>
 </ui>
