@@ -33,6 +33,11 @@ void SEConnectSSDNAEditor::SetMode(bool xo)
   }
 }
 
+void SEConnectSSDNAEditor::SetSequence(std::string seq)
+{
+  sequence_ = seq;
+}
+
 SEAdenitaCoreSEApp* SEConnectSSDNAEditor::getAdenitaApp() const
 {
   return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
@@ -208,14 +213,15 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
         if (ssLeftOvers.second != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.second);
         if (ssLeftOvers.third != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.third);
         if (ssLeftOvers.fourth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fourth);
+        if (ssLeftOvers.fifth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fifth);
+        if (ssLeftOvers.sixth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.sixth);
         app->ResetVisualModel();
       }
       else {
-        std::string seq = "NNNNNNNNNNNN";
         if (start->GetEnd() == FivePrime && end->GetEnd() == ThreePrime) {
           ADNPointer<ADNSingleStrand> ss1 = end->GetStrand();
           ADNPointer<ADNSingleStrand> ss2 = start->GetStrand();
-          DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
+          DASOperations::LinkSingleStrands(part, ss1, ss2, sequence_);
           nanorobot->RemoveSingleStrand(ss1);
           nanorobot->RemoveSingleStrand(ss2);
           app->ResetVisualModel();
@@ -223,7 +229,7 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
         else if (start->GetEnd() == FivePrime && end->GetEnd() == ThreePrime) {
           ADNPointer<ADNSingleStrand> ss1 = start->GetStrand();
           ADNPointer<ADNSingleStrand> ss2 = end->GetStrand();
-          DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
+          DASOperations::LinkSingleStrands(part, ss1, ss2, sequence_);
           nanorobot->RemoveSingleStrand(ss1);
           nanorobot->RemoveSingleStrand(ss2);
           app->ResetVisualModel();

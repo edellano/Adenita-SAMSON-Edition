@@ -27,7 +27,6 @@ SEAdenitaCoreSEAppGUI* SEAdenitaCoreSEApp::getGUI() const { return static_cast<S
 void SEAdenitaCoreSEApp::LoadPart(QString filename)
 {
   ADNPointer<ADNPart> part = ADNLoader::LoadPartFromJson(filename.toStdString());
-
   AddPartToActiveLayer(part);
 }
 
@@ -51,6 +50,10 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
   std::string seq = "";
   auto part = alg->ApplyAlgorithm(seq, filename.toStdString());
 
+  int lastPoint = filename.lastIndexOf(".");
+  QString s = filename.left(lastPoint);
+  part->SetName(s.toStdString());
+
   AddPartToActiveLayer(part);
 }
 
@@ -62,6 +65,10 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
 
   part = cad.CreateCadnanoPart(filename.toStdString());
   
+  int lastPoint = filename.lastIndexOf(".");
+  QString s = filename.left(lastPoint);
+  part->SetName(s.toStdString());
+
   AddPartToActiveLayer(part);
 
   cad.CreateConformations(part);
@@ -400,7 +407,7 @@ void SEAdenitaCoreSEApp::ConcatStrands(std::string seq)
     auto ss1 = singleStrands[0];
     auto ss2 = singleStrands[1];
     auto part = GetNanorobot()->GetPart(ss1);
-    DASOperations::FourSingleStrands res = DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
+    DASOperations::SixSingleStrands res = DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
     GetNanorobot()->RemoveSingleStrand(ss1);
     GetNanorobot()->RemoveSingleStrand(ss2);
     //GetNanorobot()->RemoveSingleStrand(res.second);
