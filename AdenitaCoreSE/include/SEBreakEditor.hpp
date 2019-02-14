@@ -97,9 +97,12 @@ public :
 
 	//@}
 
+  void SetMode(bool five);
+
 private:
   SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
 
+  bool fivePrimeMode_ = true;
 };
 
 

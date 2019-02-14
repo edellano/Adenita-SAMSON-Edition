@@ -198,8 +198,9 @@ SBVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
     return adenitaVm;
 }
 
-void SEAdenitaCoreSEApp::BreakSingleStrand()
+void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
 {
+  ADNPointer<ADNNucleotide> breakNt = nullptr;
   auto nts = GetNanorobot()->GetSelectedNucleotides();
   if (nts.size() == 1) {
     ADNPointer<ADNNucleotide> nt = nts[0];
@@ -207,9 +208,10 @@ void SEAdenitaCoreSEApp::BreakSingleStrand()
       ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
       ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
       // to break in the 3' direction
-      auto ntNext = nt->GetNext();
-      if (ntNext != nullptr) {
-        auto newStrands = ADNBasicOperations::BreakSingleStrand(part, ntNext);
+      if (fPrime) breakNt = nt;
+      else breakNt = nt->GetNext(true);
+      if (breakNt != nullptr) {
+        auto newStrands = ADNBasicOperations::BreakSingleStrand(part, breakNt);
         GetNanorobot()->RemoveSingleStrand(ss);
 
         ResetVisualModel();
