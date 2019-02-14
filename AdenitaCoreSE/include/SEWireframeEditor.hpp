@@ -110,7 +110,7 @@ private:
   DASCreatorEditors::UIData positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
-  DASCreator::EditorType wireframeType_ = DASCreator::WireframeTetrahedron;
+  DASCreator::EditorType wireframeType_ = DASCreator::Tetrahedron;
 
 };
 
