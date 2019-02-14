@@ -72,33 +72,78 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
   }
   else {
       
+    ADNPointer<ADNNucleotide> firstNext = nullptr;
+    ADNPointer<ADNNucleotide> secondPrev = nullptr;
     ADNPointer<ADNSingleStrand> firstStrandTwo = nullptr;
     ADNPointer<ADNSingleStrand> secondStrandTwo = nullptr;
-
-    bool circResOne = false;
-    bool circResTwo = false;
 
     ssLeftOvers.first = firstStrand;
     ssLeftOvers.second = secondStrand;
 
-    bool caseOne = true;
     // order nucleotides
     if (sameStrand) {
-      auto orderedNt = ADNBasicOperations::OrderNucleotides(nt1, nt2);
-      if (orderedNt.first == nt2 && orderedNt.second == nt1) {
-        caseOne = false;
-        circResOne = true;
-        circResTwo = firstStrand->IsCircular();
+      bool circ = firstStrand->IsCircular();
+      // break first nucleotide in 3'
+      if (nt1->GetEnd() != ThreePrime) {
+        firstNext = nt1->GetNext(true);
+        auto pair1 = ADNBasicOperations::BreakSingleStrand(part, firstNext);
+        firstStrand = pair1.first;
       }
-      else {
-        circResOne = firstStrand->IsCircular();
-        circResTwo = true;
+      // break second nucleotide in 5'
+      if (nt2->GetEnd() != FivePrime) {
+        secondPrev = nt2->GetPrev(true);
+        auto pair2 = ADNBasicOperations::BreakSingleStrand(part, nt2);
+        secondStrand = pair2.second;
       }
 
+      // connect strands
+      if (nt2->GetStrand() != nt1->GetStrand()) {
+        auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, nt1->GetStrand(), nt2->GetStrand());
+        if (two) {
+          firstStrandTwo = firstNext->GetStrand();
+          secondStrandTwo = secondPrev->GetStrand();
+          auto ssConnectTwo = ADNBasicOperations::MergeSingleStrands(part, secondStrandTwo, firstStrandTwo);
+        }
+      }
+      else
+      {
+        nt2->GetStrand()->IsCircular(true);
+        if (circ) {
+          // left over strands need to be attached if they are not
+          firstStrandTwo = firstNext->GetStrand();
+          secondStrandTwo = secondPrev->GetStrand();
+          auto ssConnectTwo = ADNBasicOperations::MergeSingleStrands(part, firstStrandTwo, secondStrandTwo);
+          if (two) ssConnectTwo->IsCircular(true);
+        }
+        else {
+          if (two) {
+            firstStrandTwo = firstNext->GetStrand();
+            secondStrandTwo = secondPrev->GetStrand();
+            auto ssConnectTwo = ADNBasicOperations::MergeSingleStrands(part, secondStrandTwo, firstStrandTwo);
+          }
+        }
+      }
+
+      // mark empty strands for deletion
       ssLeftOvers.second = nullptr;
+      if (firstStrand->getNumberOfNucleotides() == 0) {
+        ssLeftOvers.third = firstStrand;
+        //secondStrand->IsCircular(true);
+      }
+      if (secondStrand->getNumberOfNucleotides() == 0) {
+        ssLeftOvers.fourth = secondStrand;
+        //firstStrand->IsCircular(true);
+      }
+      if (firstStrandTwo != nullptr && firstStrandTwo->getNumberOfNucleotides() == 0) {
+        ssLeftOvers.fifth = firstStrandTwo;
+        //firstStrand->IsCircular(true);
+      }
+      if (secondStrandTwo != nullptr && secondStrandTwo->getNumberOfNucleotides() == 0) {
+        ssLeftOvers.sixth = secondStrandTwo;
+        //secondStrand->IsCircular(true);
+      }
     }
-
-    if (caseOne) {
+    else {
       // break first nucleotide in 3'
       if (nt1->GetEnd() != ThreePrime) {
         auto ntNext = nt1->GetNext();
@@ -112,64 +157,12 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
         secondStrand = pair2.second;
         firstStrandTwo = pair2.first;
       }
-    }
-    else {
-      // break first nucleotide in 3'
-      if (nt1->GetEnd() != FivePrime) {
-        auto pair1 = ADNBasicOperations::BreakSingleStrand(part, nt1);
-        firstStrand = pair1.second;
-        secondStrandTwo = pair1.first;
-      }
-      // break second nucleotide in 5'
-      if (nt2->GetEnd() != ThreePrime) {
-        auto ntNext = nt2->GetNext();
-        auto pair2 = ADNBasicOperations::BreakSingleStrand(part, ntNext);
-        secondStrand = pair2.first;
-        firstStrandTwo = pair2.second;
-      }
-    }
-    // connect strands
-    if (sameStrand) {
- 
-      if (two && firstStrandTwo != nullptr && secondStrandTwo != nullptr) {
-        if (firstStrandTwo == secondStrandTwo) {
-          firstStrandTwo->IsCircular(true);
-        }
-        else {
-          auto ssConnectTwo = ADNBasicOperations::MergeSingleStrands(part, firstStrandTwo, secondStrandTwo);
-          ssConnectTwo->IsCircular(circResTwo);
-        }
-      }
-
-      if (firstStrand->getNumberOfNucleotides() == 0) {
-        ssLeftOvers.third = firstStrand;
-        secondStrand->IsCircular(true);
-      }
-
-      if (secondStrand->getNumberOfNucleotides() == 0) {
-        ssLeftOvers.fourth = secondStrand;
-        firstStrand->IsCircular(true);
-      }
-
-      if (firstStrandTwo->getNumberOfNucleotides() == 0) {
-        ssLeftOvers.fifth = firstStrandTwo;
-        firstStrand->IsCircular(true);
-      }
-
-      if (secondStrandTwo->getNumberOfNucleotides() == 0) {
-        ssLeftOvers.sixth = secondStrandTwo;
-        secondStrand->IsCircular(true);
-      }
-
-    }
-    else {
+      // connect parts
       auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, firstStrand, secondStrand);
       ssLeftOvers.third = firstStrand;
       ssLeftOvers.fourth = secondStrand;
-      ssConnect->IsCircular(circResOne);
       if (two && firstStrandTwo != nullptr && secondStrandTwo != nullptr) {
         auto ssConnectTwo = ADNBasicOperations::MergeSingleStrands(part, firstStrandTwo, secondStrandTwo);
-        ssConnectTwo->IsCircular(circResTwo);
         ssLeftOvers.fifth = firstStrandTwo;
         ssLeftOvers.sixth = secondStrandTwo;
       }
