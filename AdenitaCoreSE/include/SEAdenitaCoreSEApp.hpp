@@ -49,7 +49,7 @@ public :
   void ResetVisualModel();
   SBVisualModel* GetVisualModel();
   // Modifications
-  void BreakSingleStrand();
+  void BreakSingleStrand(bool fPrime = false);
   void DeleteNucleotide();
   void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
   void CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
