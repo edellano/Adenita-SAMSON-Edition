@@ -38,6 +38,19 @@ void SEConnectSSDNAEditorGUI::onSetSequence(QString seq)
   t->SetSequence(seq.toStdString());
 }
 
+void SEConnectSSDNAEditorGUI::onInsert(bool e)
+{
+  SEConnectSSDNAEditor* editor = getEditor();
+  editor->SetConcat(e);
+}
+
+void SEConnectSSDNAEditorGUI::onAuto(bool e)
+{
+  ui.lineSequence->setDisabled(e);
+  SEConnectSSDNAEditor* editor = getEditor();
+  editor->SetAutoSequence(e);
+}
+
 SBCContainerUUID SEConnectSSDNAEditorGUI::getUUID() const { return SBCContainerUUID( "CDC75BAA-A7AD-F837-49F4-E0F14DF87181" );}
 
 QPixmap SEConnectSSDNAEditorGUI::getLogo() const {
@@ -54,7 +67,7 @@ QString SEConnectSSDNAEditorGUI::getName() const {
 	// SAMSON Element generator pro tip: this string will be the GUI title. 
 	// Modify this function to have a user-friendly description of your editor inside SAMSON
 
-	return "ssDNA Connection Editor"; 
+	return "DNA Connection Tool"; 
 
 }
 
@@ -83,7 +96,7 @@ QString SEConnectSSDNAEditorGUI::getCitation() const {
 }
 
 void SEConnectSSDNAEditorGUI::onSelectMode() {
-  bool xo = ui.rdnCrossover->isChecked();
+  bool xo = ui.rdnSS->isChecked();
   SEConnectSSDNAEditor* t = getEditor();
   t->SetMode(xo);
 }
