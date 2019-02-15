@@ -206,6 +206,8 @@ void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
     ADNPointer<ADNNucleotide> nt = nts[0];
     if (nt->GetEnd() != ThreePrime) {
       ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
+      bool circ = ss->IsCircular();
+
       ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
       // to break in the 3' direction
       if (fPrime) breakNt = nt;
@@ -213,6 +215,12 @@ void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
       if (breakNt != nullptr) {
         auto newStrands = ADNBasicOperations::BreakSingleStrand(part, breakNt);
         GetNanorobot()->RemoveSingleStrand(ss);
+
+        if (circ) {
+          ADNBasicOperations::MergeSingleStrands(part, newStrands.second, newStrands.first);
+          part->DeregisterSingleStrand(newStrands.first);
+          part->DeregisterSingleStrand(newStrands.second);
+        }
 
         ResetVisualModel();
       }
