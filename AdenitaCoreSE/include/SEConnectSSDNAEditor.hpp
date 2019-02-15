@@ -14,8 +14,8 @@
 /// This class implements an editor
 
 enum ConnectionMode {
-  Crossover,
-  Concatenate
+  Single,
+  Double
 };
 
 class SEConnectSSDNAEditor : public SBGEditor {
@@ -104,6 +104,8 @@ public :
 
   void SetMode(bool xo);
   void SetSequence(std::string seq);
+  void SetAutoSequence(bool s);
+  void SetConcat(bool c);
 
 private:
   SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
@@ -111,8 +113,10 @@ private:
   bool display_ = false;
   ADNPointer<ADNNucleotide> start_;
 
-  ConnectionMode mode_ = Crossover;
+  ConnectionMode mode_ = Single;
   std::string sequence_ = "";
+  bool concat_ = false;
+  bool autoSequence_ = false;
 };
 
 
