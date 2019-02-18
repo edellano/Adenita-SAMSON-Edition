@@ -95,8 +95,8 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
   if (config.mode == SEConfigMode::HAICHAO) {
     
     SEAdenitaCoreSEApp* t = getApp();
-    //t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/hextube/hextube.json");
-    t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/samples/skip.json");
+    t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/hextube/hextube.json");
+    //t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/samples/skip.json");
     //t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/samples/loop.json");
 
     t->ResetVisualModel();
