@@ -66,7 +66,7 @@ public :
   void FromDatagraph();
   void HighlightXOs();
   void HighlightPosXOs();
-  void ConcatStrands(std::string seq);
+  void DoubleXO();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events

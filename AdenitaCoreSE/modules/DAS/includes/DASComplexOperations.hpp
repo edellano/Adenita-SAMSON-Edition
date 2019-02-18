@@ -21,9 +21,7 @@ namespace DASOperations {
     ADNPointer<ADNDoubleStrand> fourth = nullptr;
   };
 
-  SixSingleStrands LinkSingleStrands(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand, std::string seq = "");
-  ADNPointer<ADNDoubleStrand> CreateDoubleStrandsBetweenSingleStrands(ADNPointer<ADNDoubleStrand> first_strand, ADNPointer<ADNDoubleStrand> second_strand, std::string seq);
-  std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> LinkDoubleStrandsWithXO(ADNPointer<ADNDoubleStrand> first_strand, ADNPointer<ADNDoubleStrand> second_strand);
-
   SixSingleStrands CreateCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2, bool two = false, std::string seq = "");
+  void CreateDoubleCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt11, ADNPointer<ADNNucleotide> nt12, 
+    ADNPointer<ADNNucleotide> nt21, ADNPointer<ADNNucleotide> nt22, std::string seq = "");
 }

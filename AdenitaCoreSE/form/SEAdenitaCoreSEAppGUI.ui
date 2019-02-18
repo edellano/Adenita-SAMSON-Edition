@@ -43,7 +43,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -330,9 +330,9 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QPushButton" name="btnConcatStrands">
+           <widget class="QPushButton" name="btnDoubleXO">
             <property name="text">
-             <string>Concatenate SS</string>
+             <string>Double XO</string>
             </property>
            </widget>
           </item>
@@ -684,10 +684,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>btnConcatStrands</sender>
+   <sender>btnDoubleXO</sender>
    <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onConcatStrands()</slot>
+   <slot>onDoubleXO()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>87</x>
@@ -704,25 +704,15 @@
   <slot>onSetScaffold()</slot>
   <slot>onCenterPart()</slot>
   <slot>onLoadFile()</slot>
-  <slot>onCreate()</slot>
   <slot>onSaveFile()</slot>
   <slot>onExport()</slot>
-  <slot>onConnectSingleStrands()</slot>
-  <slot>onBreak()</slot>
-  <slot>onConnectDoubleStrands()</slot>
-  <slot>onMutate()</slot>
-  <slot>onDelete()</slot>
   <slot>onChangeScaffold(int)</slot>
   <slot>onCatenanes()</slot>
   <slot>onKinetoplast()</slot>
-  <slot>onCalculateBindingRegions()</slot>
   <slot>onSetStart()</slot>
-  <slot>onMergeComponents()</slot>
   <slot>onTestNeighbors()</slot>
   <slot>onOxDNAImport()</slot>
   <slot>onFromDatagraph()</slot>
-  <slot>onTwistDoubleHelixMinus(bool)</slot>
-  <slot>onTwistDoubleHelixPlus(bool)</slot>
   <slot>onCalculateBindingProperties()</slot>
   <slot>onCheckAutoScaffold(bool)</slot>
   <slot>onCheckShowOverlay(bool)</slot>
@@ -732,6 +722,6 @@
   <slot>onHighlightXOs()</slot>
   <slot>onHighlightPosXOs()</slot>
   <slot>onAddNtThreeP()</slot>
-  <slot>onConcatStrands()</slot>
+  <slot>onDoubleXO()</slot>
  </slots>
 </ui>

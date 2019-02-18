@@ -410,21 +410,29 @@ void SEAdenitaCoreSEApp::HighlightPosXOs()
   ResetVisualModel();
 }
 
-void SEAdenitaCoreSEApp::ConcatStrands(std::string seq)
+void SEAdenitaCoreSEApp::DoubleXO()
 {
-  auto singleStrands = GetNanorobot()->GetSelectedSingleStrands();
-  if (singleStrands.size() == 2) {
-    auto ss1 = singleStrands[0];
-    auto ss2 = singleStrands[1];
-    auto part = GetNanorobot()->GetPart(ss1);
-    DASOperations::SixSingleStrands res = DASOperations::LinkSingleStrands(part, ss1, ss2, seq);
-    GetNanorobot()->RemoveSingleStrand(ss1);
-    GetNanorobot()->RemoveSingleStrand(ss2);
-    //GetNanorobot()->RemoveSingleStrand(res.second);
-    //GetNanorobot()->RemoveSingleStrand(res.third);
+  auto nucleotides = GetNanorobot()->GetSelectedNucleotides();
+
+  if (nucleotides.size() == 2) {
+    ADNPointer<ADNNucleotide> nt11 = nucleotides[0];
+    ADNPointer<ADNNucleotide> nt12 = nucleotides[1];
+
+    // get other nucleotides
+    ADNPointer<ADNNucleotide> nt21 = nt11;
+    ADNPointer<ADNNucleotide> nt22 = nt12;
+    for (int i = 0; i < 6; ++i) {
+      nt21 = nt21->GetNext(true);
+      nt22 = nt22->GetPrev(true);
+    }
+
+    auto part = GetNanorobot()->GetPart(nt11->GetStrand());
+    std::string seq = "NNNNNNNNNNNNNNNNNNNNNNNNN";
+
+    DASOperations::CreateDoubleCrossover(part, nt11, nt12, nt21, nt22, seq);
 
     ResetVisualModel();
-  }
+  }  
 }
 
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)

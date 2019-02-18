@@ -1,49 +1,6 @@
 #include "DASComplexOperations.hpp"
 #include "DASBackToTheAtom.hpp"
 
-DASOperations::SixSingleStrands DASOperations::LinkSingleStrands(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand, std::string seq)
-{
-  int length = boost::numeric_cast<int>(seq.size());
-
-  ADNPointer<ADNNucleotide> threePrime = first_strand->GetThreePrime();
-  ADNPointer<ADNNucleotide> fivePrime = second_strand->GetFivePrime();
-
-  SBVector3 direction = (fivePrime->GetPosition() - threePrime->GetPosition()).normalizedVersion();
-  SBQuantity::length expectedLength = SBQuantity::nanometer(ADNConstants::BP_RISE) * (length + 1);  // we need to accomodate space for distance between the ends
-  SBPosition3 startPos = (fivePrime->GetPosition() + threePrime->GetPosition())*0.5 - expectedLength*0.5*direction;
-
-  ADNPointer<ADNSingleStrand> ss = DASCreator::CreateSingleStrand(part, length, startPos, direction);
-  ss->create();
-  DASBackToTheAtom* btta = new DASBackToTheAtom();
-  btta->SetPositionsForNewNucleotides(part, ss->GetNucleotides());
-
-  auto ssN = ADNBasicOperations::MergeSingleStrands(part, first_strand, ss);
-  auto ssNN = ADNBasicOperations::MergeSingleStrands(part, ssN, second_strand);
-  part->DeregisterSingleStrand(ss);
-  part->DeregisterSingleStrand(ssN);
-
-  DASOperations::SixSingleStrands res;
-  res.first = ssNN;
-
-  return res;
-}
-
-//ADNPointer<ADNDoubleStrand> DASOperations::CreateDoubleStrandsBetweenSingleStrands(ADNPointer<ADNDoubleStrand> first_strand, ADNPointer<ADNDoubleStrand> second_strand, std::string seq)
-//{
-//  int length = boost::numeric_cast<int>(seq.size());
-//
-//  ADNPointer<ADNBaseSegment> endBs = first_strand->GetLastBaseSegment();
-//  ADNPointer<ADNBaseSegment> startBs = second_strand->GetFirstBaseSegment();
-//
-//  SBVector3 direction = (startBs->GetPosition() - endBs->GetPosition()).normalizedVersion();
-//  SBQuantity::length expectedLength = SBQuantity::nanometer(ADNConstants::BP_RISE) * (length + 1);  // we need to accomodate space for distance between the ends
-//  SBPosition3 startPos = (startBs->GetPosition() + endBs->GetPosition())*0.5 - expectedLength*0.5*direction;
-//
-//  ADNPointer<ADNDoubleStrand> ds = DASEditor::CreateDoubleStrand(length, startPos, direction);
-//
-//  return ds;
-//}
-
 DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2, bool two, std::string seq)
 {
   SixSingleStrands ssLeftOvers;
@@ -258,4 +215,45 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
   }
 
   return ssLeftOvers;
+}
+
+void DASOperations::CreateDoubleCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt11, ADNPointer<ADNNucleotide> nt12, 
+  ADNPointer<ADNNucleotide> nt21, ADNPointer<ADNNucleotide> nt22, std::string seq)
+{
+  auto ssLeftOvers = CreateCrossover(part, nt11, nt12, true, seq);
+  if (ssLeftOvers.first != nullptr) part->DeregisterSingleStrand(ssLeftOvers.first);
+  if (ssLeftOvers.second != nullptr) part->DeregisterSingleStrand(ssLeftOvers.second);
+  if (ssLeftOvers.third != nullptr) part->DeregisterSingleStrand(ssLeftOvers.third);
+  if (ssLeftOvers.fourth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fourth);
+  if (ssLeftOvers.fifth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fifth);
+  if (ssLeftOvers.sixth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.sixth);
+
+  ssLeftOvers = CreateCrossover(part, nt21, nt22, true, seq);
+  if (ssLeftOvers.first != nullptr) part->DeregisterSingleStrand(ssLeftOvers.first);
+  if (ssLeftOvers.second != nullptr) part->DeregisterSingleStrand(ssLeftOvers.second);
+  if (ssLeftOvers.third != nullptr) part->DeregisterSingleStrand(ssLeftOvers.third);
+  if (ssLeftOvers.fourth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fourth);
+  if (ssLeftOvers.fifth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fifth);
+  if (ssLeftOvers.sixth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.sixth);
+
+  // create crossover
+  int dist = 6;
+  ADNPointer<ADNNucleotide> ntXO1 = nt11;
+  ADNPointer<ADNNucleotide> ntXO2 = nt21;
+
+  for (int i = 0; i < dist; ++i) {
+    ntXO1 = ntXO1->GetNext();
+    ntXO2 = ntXO2->GetPrev();
+  }
+  ntXO2 = ntXO2->GetPair();
+
+  if (ntXO2 != nullptr) {
+    ssLeftOvers = CreateCrossover(part, ntXO1, ntXO2, true);
+    if (ssLeftOvers.first != nullptr) part->DeregisterSingleStrand(ssLeftOvers.first);
+    if (ssLeftOvers.second != nullptr) part->DeregisterSingleStrand(ssLeftOvers.second);
+    if (ssLeftOvers.third != nullptr) part->DeregisterSingleStrand(ssLeftOvers.third);
+    if (ssLeftOvers.fourth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fourth);
+    if (ssLeftOvers.fifth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fifth);
+    if (ssLeftOvers.sixth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.sixth);
+  }
 }
