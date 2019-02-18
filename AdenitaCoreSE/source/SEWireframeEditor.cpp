@@ -281,7 +281,7 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
         
         SBVector3 dir = (targetPos - sourcePos).normalizedVersion();
 
-        sourcePos *= (min_edge_size * 3);
+        sourcePos *= (min_edge_size * 3); 
         targetPos *= (min_edge_size * 3);
         
         DASCreator::AddDoubleStrandToADNPart(part, min_edge_size, sourcePos, dir, true);

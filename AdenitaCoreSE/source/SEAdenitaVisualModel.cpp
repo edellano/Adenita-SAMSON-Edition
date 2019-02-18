@@ -1568,6 +1568,8 @@ void SEAdenitaVisualModel::display() {
 
   }
 
+  displayCircularDNAConnection();
+
   if (nCylinders_ > 0) {
     SAMSON::displayCylinders(
       nCylinders_,
@@ -2207,6 +2209,54 @@ void SEAdenitaVisualModel::displayForDebugging()
     displayBaseBairConnections(true);
   }
 
+}
+
+void SEAdenitaVisualModel::displayCircularDNAConnection()
+{
+
+  if (scale_ < (float)NUCLEOTIDES_BACKBONE && scale_ > (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) return;
+
+  auto parts = nanorobot_->GetParts();
+
+  SB_FOR(auto part, parts) {
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      if (ss->IsCircular()) {
+
+        SEConfig& config = SEConfig::GetInstance();
+
+        auto startNt = ss->GetFivePrime();
+        auto endNt = ss->GetThreePrime();
+        int startIdx = ntMap_[startNt()];
+        int endIdx = ntMap_[endNt()];
+
+        float * startPos = new float[3];
+        startPos[0] = positions_(startIdx, 0);
+        startPos[1] = positions_(startIdx, 1);
+        startPos[2] = positions_(startIdx, 2);
+        
+        float * endPos = new float[3];
+        endPos[0] = positions_(endIdx, 0);
+        endPos[1] = positions_(endIdx, 1);
+        endPos[2] = positions_(endIdx, 2);
+
+        float * color = new float[4];
+        color[0] = colorsE_(endIdx, 0);
+        color[1] = colorsE_(endIdx, 1);
+        color[2] = colorsE_(endIdx, 2);
+        color[3] = colorsE_(endIdx, 3);
+        
+        auto radius = radiiE_(startIdx);
+
+        ADNDisplayHelper::displayDirectedCylinder(startPos, endPos, color, radius);
+        
+        delete[] startPos;
+        delete[] endPos;
+        delete[] color;
+
+      }
+    }
+  }
 }
 
 ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(int colorSchemeIdx, float min, float max, float val) {

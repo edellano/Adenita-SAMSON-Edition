@@ -54,6 +54,8 @@ public:
 public slots:
   void onSelectMode();
   void onSetSequence(QString seq);
+  void onInsert(bool e);
+  void onAuto(bool e);
 
 private:
 

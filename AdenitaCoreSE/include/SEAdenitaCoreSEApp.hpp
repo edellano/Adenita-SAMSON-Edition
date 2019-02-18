@@ -49,7 +49,7 @@ public :
   void ResetVisualModel();
   SBVisualModel* GetVisualModel();
   // Modifications
-  void BreakSingleStrand();
+  void BreakSingleStrand(bool fPrime = false);
   void DeleteNucleotide();
   void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
   void CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
@@ -66,7 +66,7 @@ public :
   void FromDatagraph();
   void HighlightXOs();
   void HighlightPosXOs();
-  void ConcatStrands(std::string seq);
+  void DoubleXO();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
