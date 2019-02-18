@@ -248,12 +248,12 @@ void DASOperations::CreateDoubleCrossover(ADNPointer<ADNPart> part, ADNPointer<A
   ntXO2 = ntXO2->GetPair();
 
   if (ntXO2 != nullptr) {
-    ssLeftOvers = CreateCrossover(part, ntXO1, ntXO2, true);
+    /*ssLeftOvers = CreateCrossover(part, ntXO1, ntXO2, true);
     if (ssLeftOvers.first != nullptr) part->DeregisterSingleStrand(ssLeftOvers.first);
     if (ssLeftOvers.second != nullptr) part->DeregisterSingleStrand(ssLeftOvers.second);
     if (ssLeftOvers.third != nullptr) part->DeregisterSingleStrand(ssLeftOvers.third);
     if (ssLeftOvers.fourth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fourth);
     if (ssLeftOvers.fifth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fifth);
-    if (ssLeftOvers.sixth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.sixth);
+    if (ssLeftOvers.sixth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.sixth);*/
   }
 }
