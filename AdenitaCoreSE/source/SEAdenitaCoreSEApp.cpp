@@ -151,7 +151,6 @@ void SEAdenitaCoreSEApp::CenterPart()
 
 void SEAdenitaCoreSEApp::ResetVisualModel() {
   //create visual model per nanorobot
-  SBNodeIndexer allNodes;
   ADNLogger& logger = ADNLogger::GetLogger();
 
   clock_t start = clock();
@@ -167,7 +166,7 @@ void SEAdenitaCoreSEApp::ResetVisualModel() {
   }
   else {
     SBProxy* vmProxy = SAMSON::getProxy("SEAdenitaVisualModel");
-    SEAdenitaVisualModel* newVm = vmProxy->createInstance(allNodes);
+    SEAdenitaVisualModel* newVm = vmProxy->createInstance();
     newVm->create();
     SAMSON::getActiveLayer()->addChild(newVm);
 
@@ -385,9 +384,17 @@ void SEAdenitaCoreSEApp::ImportFromOxDNA(std::string topoFile, std::string confi
 
 void SEAdenitaCoreSEApp::FromDatagraph()
 {
-  ADNPointer<ADNPart> part = ADNLoader::GenerateModelFromDatagraph();
-  AddPartToActiveLayer(part, false, true);
-  ResetVisualModel();
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, SBNode::IsType(SBNode::StructuralModel));
+
+  SB_FOR(auto node, nodes) {
+    if (node->isSelected()) {
+      ADNPointer<ADNPart> part = ADNLoader::GenerateModelFromDatagraph(node);
+      AddPartToActiveLayer(part, false, true);
+    }
+  }
+  
 }
 
 void SEAdenitaCoreSEApp::HighlightXOs()

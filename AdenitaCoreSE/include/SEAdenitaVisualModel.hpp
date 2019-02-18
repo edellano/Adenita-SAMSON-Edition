@@ -113,6 +113,7 @@ public :
 	//@}
 
 private:
+  void                        init();
   void												initNucleotideArraysForDisplay(bool createIndex = true);
   void												initBaseSegmentArraysForDisplay(bool createIndex = true);
   ADNArray<unsigned int>      getNucleotideIndices();
