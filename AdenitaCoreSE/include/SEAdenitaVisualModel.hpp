@@ -94,6 +94,7 @@ public :
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
   virtual void                        displayBaseBairConnections(bool onlySelected);
   virtual void                        displayForDebugging();
+  virtual void                        displayCircularDNAConnection();
 
 	virtual void												expandBounds(SBIAPosition3& bounds) const;								///< Expands the bounds to make sure the visual model fits inside them
 

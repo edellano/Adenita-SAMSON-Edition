@@ -22,6 +22,7 @@ namespace ADNDisplayHelper {
   void displayLengthText(SBPosition3 start, SBPosition3 end, std::string text = "");
   void displayDirectedCylinder(SBPosition3 start, SBPosition3 end);
   void displayDirectedCylinder(SBPosition3 start, SBPosition3 end, float * color, int radius);
+  void displayDirectedCylinder(float * start, float * end, float * color, int radius);
   void displayPlane(SBVector3 vec, SBPosition3 shift);
   void displayOrthoPlane(SBVector3 vec, SBPosition3 shift);
   void displaySphere(SBPosition3 pos, float radius);
