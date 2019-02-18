@@ -39,6 +39,7 @@ ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<AD
     ADNLogger& logger = ADNLogger::GetLogger();
     logger.LogDebug(msg);
   }
+
   return ss;
 }
 

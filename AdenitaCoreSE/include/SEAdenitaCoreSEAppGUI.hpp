@@ -86,7 +86,7 @@ public slots:
   void onFromDatagraph();
   void onHighlightXOs();
   void onHighlightPosXOs();
-  void onConcatStrands();
+  void onDoubleXO();
 
 private slots:
   void CheckForLoadedParts();

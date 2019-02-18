@@ -197,7 +197,8 @@ void ADNDisplayHelper::displayDirectedCylinder(SBPosition3 start, SBPosition3 en
 
 }
 
-void ADNDisplayHelper::displayDirectedCylinder(SBPosition3 start, SBPosition3 end, float * color, int radius) {
+void ADNDisplayHelper::displayDirectedCylinder(float * start, float * end, float * color, int radius)
+{
   unsigned int nCylinders = 1;
   unsigned int nPositions = 2 * nCylinders;
   unsigned int* indexData = new unsigned int[2 * nCylinders];
@@ -207,12 +208,12 @@ void ADNDisplayHelper::displayDirectedCylinder(SBPosition3 start, SBPosition3 en
   float *colorData = new float[4 * 2 * nCylinders];
   unsigned int *flagData = new unsigned int[2 * nCylinders];
 
-  positionData[0 * 3 + 0] = start.v[0].getValue();
-  positionData[0 * 3 + 1] = start.v[1].getValue();
-  positionData[0 * 3 + 2] = start.v[2].getValue();
-  positionData[1 * 3 + 0] = end.v[0].getValue();
-  positionData[1 * 3 + 1] = end.v[1].getValue();
-  positionData[1 * 3 + 2] = end.v[2].getValue();
+  positionData[0 * 3 + 0] = start[0];
+  positionData[0 * 3 + 1] = start[1];
+  positionData[0 * 3 + 2] = start[2];
+  positionData[1 * 3 + 0] = end[0];
+  positionData[1 * 3 + 1] = end[1];
+  positionData[1 * 3 + 2] = end[2];
 
   indexData[0] = 0;
   indexData[1] = 1;
@@ -243,6 +244,26 @@ void ADNDisplayHelper::displayDirectedCylinder(SBPosition3 start, SBPosition3 en
   delete[] capData;
   delete[] colorData;
   delete[] flagData;
+}
+
+void ADNDisplayHelper::displayDirectedCylinder(SBPosition3 start, SBPosition3 end, float * color, int radius) {
+  
+  float * fStart = new float[3];
+  float * fEnd = new float[3];
+
+  fStart[0] = start.v[0].getValue();
+  fStart[1] = start.v[1].getValue();
+  fStart[2] = start.v[2].getValue();
+
+  fEnd[0] = end.v[0].getValue();
+  fEnd[1] = end.v[1].getValue();
+  fEnd[2] = end.v[2].getValue();
+
+  displayDirectedCylinder(fStart, fEnd, color, radius);
+
+  delete[] fStart;
+  delete[] fEnd;
+
 }
 
 void ADNDisplayHelper::displayPlane(SBVector3 vec, SBPosition3 shift) {

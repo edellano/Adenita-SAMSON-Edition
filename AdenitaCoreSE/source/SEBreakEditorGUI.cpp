@@ -75,3 +75,9 @@ QString SEBreakEditorGUI::getCitation() const {
 		"[1] <a href=\"https://www.samson-connect.net\">https://www.samson-connect.net</a><br/>";
 
 }
+
+void SEBreakEditorGUI::onSetMode() {
+  bool m = ui.rdnFive->isChecked();
+  SEBreakEditor* editor = getEditor();
+  editor->SetMode(m);
+}

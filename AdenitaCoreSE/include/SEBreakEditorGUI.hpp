@@ -51,6 +51,10 @@ public:
 
 	//@}
 
+public slots:
+
+  void onSetMode();
+
 private:
 
 	Ui::SEBreakEditorGUIClass									ui;

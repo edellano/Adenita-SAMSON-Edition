@@ -9,7 +9,6 @@
 #include "SEBreakEditorDescriptor.hpp"
 #include "SEDeleteEditorDescriptor.hpp"
 #include "SEConnectSSDNAEditorDescriptor.hpp"
-#include "SEConnectDSDNAEditorDescriptor.hpp"
 #include "SEDSDNACreatorEditorDescriptor.hpp"
 #include "SENanotubeCreatorEditorDescriptor.hpp"
 #include "PIBindingRegionDescriptor.hpp"
@@ -25,7 +24,7 @@
 
 SB_ELEMENT_DESCRIPTION("Modeling and Visualization of DNA Nanostructures");
 SB_ELEMENT_DOCUMENTATION("Resource/Documentation/doc.html");
-SB_ELEMENT_VERSION_NUMBER("0.7.0.5");
+SB_ELEMENT_VERSION_NUMBER("0.7.0.6");
 
 SB_ELEMENT_CLASSES_BEGIN;
 
@@ -51,7 +50,6 @@ SB_ELEMENT_CLASSES_BEGIN;
   SB_ELEMENT_CLASS(SEBreakEditor);
   SB_ELEMENT_CLASS(SEDeleteEditor);
   SB_ELEMENT_CLASS(SEConnectSSDNAEditor);
-  SB_ELEMENT_CLASS(SEConnectDSDNAEditor);
   SB_ELEMENT_CLASS(SEDSDNACreatorEditor);
   SB_ELEMENT_CLASS(SENanotubeCreatorEditor);
   SB_ELEMENT_CLASS(SEDNATwisterEditor);
