@@ -816,6 +816,19 @@ void ADNDisplayHelper::displayTriangleMesh(DASPolyhedron * p)
   );
 }
 
+void ADNDisplayHelper::colorCylinders(ADNArray<float> & colorsE, vector<unsigned int> indices, float * color)
+{
+
+  for (int i = 0; i < indices.size(); i++) {
+    auto index = indices[i];
+
+    colorsE(index, 0) = color[0];
+    colorsE(index, 1) = color[1];
+    colorsE(index, 2) = color[2];
+    colorsE(index, 3) = color[3];
+  }
+}
+
 void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part)
 {
   SEConfig& config = SEConfig::GetInstance();

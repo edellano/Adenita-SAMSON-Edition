@@ -1529,6 +1529,19 @@ void SEAdenitaVisualModel::changePropertyColors(int propertyIdx, int colorScheme
   }
 }
 
+void SEAdenitaVisualModel::changeHighlight(int highlightIdx)
+{
+  if (highlightIdx == 0) {
+    highlightType_ = HighlightType::NONE;
+  }
+  else if (highlightIdx == 1) {
+    highlightType_ = HighlightType::CROSSOVERS;
+  }
+  else if (highlightIdx == 2) {
+    highlightType_ = HighlightType::GC;
+  }
+}
+
 void SEAdenitaVisualModel::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. This is the main function of your visual model. 
@@ -1580,6 +1593,8 @@ void SEAdenitaVisualModel::display() {
   }
 
   displayCircularDNAConnection();
+
+  highlightNucleotides();
 
   if (nCylinders_ > 0) {
     SAMSON::displayCylinders(
@@ -2267,6 +2282,54 @@ void SEAdenitaVisualModel::displayCircularDNAConnection()
 
       }
     }
+  }
+}
+
+void SEAdenitaVisualModel::highlightNucleotides()
+{
+  if (highlightType_ == GC) {
+
+    auto parts = nanorobot_->GetParts();
+
+    vector<unsigned int> indicesFocus;
+    vector<unsigned int> indicesContext;
+
+    SB_FOR(auto part, parts) {
+      auto singleStrands = nanorobot_->GetSingleStrands(part);
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+          auto index = ntMap_[nt()];
+          if (nt->getNucleotideType() == DNABlocks::DC || nt->getNucleotideType() == DNABlocks::DG) {
+            indicesFocus.push_back(index);
+          }
+          else {
+            indicesContext.push_back(index);
+          }
+        }
+      }
+    }
+
+    float * colorFocus = new float[4];
+    colorFocus[0] = 1.0f;
+    colorFocus[1] = 0.2f;
+    colorFocus[2] = 0.2f;
+    colorFocus[3] = 1.0f;
+
+    float * colorContext = new float[4];
+    colorContext[0] = 0.5f;
+    colorContext[1] = 0.5f;
+    colorContext[2] = 0.5f;
+    colorContext[3] = 1.0f;
+
+    colorFocus[3] = 1.0f;
+    ADNDisplayHelper::colorCylinders(colorsV_, indicesFocus, colorFocus);
+    ADNDisplayHelper::colorCylinders(colorsE_, indicesFocus, colorFocus);
+    ADNDisplayHelper::colorCylinders(colorsV_, indicesContext, colorContext);
+    ADNDisplayHelper::colorCylinders(colorsE_, indicesContext, colorContext);
+
+    delete[] colorFocus;
+    delete[] colorContext;
   }
 }
 
