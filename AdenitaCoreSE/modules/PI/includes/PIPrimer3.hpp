@@ -12,10 +12,11 @@ public:
   static PIPrimer3& GetInstance();
   ~PIPrimer3() = default;
 
-  void CreateBindingRegions(ADNPointer<ADNPart> p);
+  void UpdateBindingRegions(ADNPointer<ADNPart> p);
   CollectionMap<PIBindingRegion> GetBindingRegions();
   CollectionMap<PIBindingRegion> GetBindingRegions(ADNPointer<ADNPart> p);
   void Calculate(ADNPointer<ADNPart> p, int oligo_conc, int mv, int dv);
+  void DeleteBindingRegions(ADNPointer<ADNPart> p);
 
 private:
   PIPrimer3() = default;

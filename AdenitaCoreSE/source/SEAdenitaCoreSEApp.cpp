@@ -306,25 +306,18 @@ void SEAdenitaCoreSEApp::MergeComponents(ADNPointer<ADNPart> p1, ADNPointer<ADNP
   ResetVisualModel();
 }
 
-void SEAdenitaCoreSEApp::CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc)
+bool SEAdenitaCoreSEApp::CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc)
 {
-  // get selected part
-  SBDocument* doc = SAMSON::getActiveDocument();
-  SBNodeIndexer nodes;
-  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-
-  // only take one
-  ADNPointer<ADNPart> part = nullptr;
-  SB_FOR(SBNode* node, nodes) {
-    if (node->isSelected()) {
-      part = static_cast<ADNPart*>(node);
-    }
-  }
-
-  if (part != nullptr) {
+  bool res = false;
+  auto parts = GetNanorobot()->GetSelectedParts();
+  SB_FOR(ADNPointer<ADNPart> part, parts) {
     PIPrimer3& p = PIPrimer3::GetInstance();
+    p.UpdateBindingRegions(part);
     p.Calculate(part, oligoConc, monovalentConc, divalentConc);
+    res = true;
   }
+
+  return res;
 }
 
 void SEAdenitaCoreSEApp::TwistDoubleHelix()

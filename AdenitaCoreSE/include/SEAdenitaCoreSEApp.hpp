@@ -52,7 +52,7 @@ public :
   void BreakSingleStrand(bool fPrime = false);
   void DeleteNucleotide();
   void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
-  void CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
+  bool CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
   void MergeComponents(ADNPointer<ADNPart> p1, ADNPointer<ADNPart> p2);
   // Debug
   void AddNtThreeP(int numNt);

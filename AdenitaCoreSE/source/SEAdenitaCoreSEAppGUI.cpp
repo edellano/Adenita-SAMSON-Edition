@@ -540,23 +540,21 @@ void SEAdenitaCoreSEAppGUI::onCalculateBindingProperties()
     if (oligoConcOk && monovalentConcOk && divalentConcOk) {
       SEAdenitaCoreSEApp* t = getApp();
 
-      t->CalculateBindingRegions(oligoConc, monovalentConc, divalentConc);
+      bool res = t->CalculateBindingRegions(oligoConc, monovalentConc, divalentConc);
 
-      SEAdenitaVisualModel* adenitaVm = static_cast<SEAdenitaVisualModel*>(t->GetVisualModel());
-      if (adenitaVm != nullptr) {
-        adenitaVm->changePropertyColors(1, 0);
-        SAMSON::requestViewportUpdate();
-        
+      if (res) {
+        SEAdenitaVisualModel* adenitaVm = static_cast<SEAdenitaVisualModel*>(t->GetVisualModel());
+        if (adenitaVm != nullptr) {
+          adenitaVm->changePropertyColors(1, 0);
+          SAMSON::requestViewportUpdate();
+        }
       }
-      
     }
     else {
       QMessageBox messageBox;
       messageBox.critical(0, "Error", "Check whether the entered values are numeric! Check if the Structural Model is selected");
       messageBox.setFixedSize(500, 200);
     }
-
-
   }
 }
 
