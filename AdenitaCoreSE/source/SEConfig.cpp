@@ -72,6 +72,19 @@ void SEConfig::setInterpolateDimensions(bool b)
   writeDocumentToJson();
 }
 
+void SEConfig::setNtthalExe(std::string filename)
+{
+  if (setting_.FindMember("ntthal") != setting_.MemberEnd()) {
+    setting_["ntthal"].SetString(filename.c_str(), filename.size());
+  }
+  else {
+    Value v;
+    v.SetString(filename.c_str(), filename.size());
+    setting_.AddMember("ntthal", v, setting_.GetAllocator());
+  }
+  writeDocumentToJson();
+}
+
 void SEConfig::updateDebugConfig()
 {
   FILE* fp = fopen(DEBUG_CONFIGPATH.c_str(), "rb");
@@ -199,6 +212,9 @@ void SEConfig::loadConfig() {
     writer.Key("auto_set_scaffold_sequence");
     writer.Bool(auto_set_scaffold_sequence);
     
+    writer.Key("ntthal");
+    writer.String(ntthal.c_str());
+
     writer.EndObject();
 
     std::ofstream out(DEFAULT_CONFIGPATH);
@@ -398,6 +414,10 @@ void SEConfig::updateConfig() {
 
     if (setting_.FindMember("auto_set_scaffold_sequence") != setting_.MemberEnd()) {
       auto_set_scaffold_sequence = setting_["auto_set_scaffold_sequence"].GetBool();
+    }
+
+    if (setting_.FindMember("ntthal") != setting_.MemberEnd()) {
+      ntthal = setting_["ntthal"].GetString();
     }
   }
 }

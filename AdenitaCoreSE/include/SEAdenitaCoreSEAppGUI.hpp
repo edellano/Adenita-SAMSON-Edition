@@ -74,6 +74,7 @@ public slots:
   void onCheckClearLogFile(bool b);
   void onCheckAutoScaffold(bool b);
   void onCheckShowOverlay(bool b);
+  void onSetPathNtthal();
   // Debug
   void onAddNtThreeP();
   void onCenterPart();
