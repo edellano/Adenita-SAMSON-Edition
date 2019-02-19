@@ -7,7 +7,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel() {
 
   // SAMSON Element generator pro tip: this default constructor is called when unserializing the node, so it should perform all default initializations.
 	
-
+  init();
 }
 
 SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
@@ -18,47 +18,10 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
   // the atoms' structural signals (e.g. to update the center of mass when an atom is moved).
 
   SEAdenitaCoreSEApp* app = getAdenitaApp();
-  nanorobot_ = app->GetNanorobot();
-
-  SEConfig& config = SEConfig::GetInstance();
-
-  MSVColors * regularColors = new MSVColors();
-  MSVColors * meltTempColors = new MSVColors();
-  MSVColors * gibbsColors = new MSVColors();
-  colors_[ColorType::REGULAR] = regularColors;
-  colors_[ColorType::MELTTEMP] = meltTempColors;
-  colors_[ColorType::GIBBS] = gibbsColors;
-
-  //setup the display properties
-  nucleotideEColor_ = ADNArray<float>(4);
-  nucleotideEColor_(0) = config.nucleotide_E_Color[0];
-  nucleotideEColor_(1) = config.nucleotide_E_Color[1];
-  nucleotideEColor_(2) = config.nucleotide_E_Color[2];
-  nucleotideEColor_(3) = config.nucleotide_E_Color[3];
-
-  auto parts = nanorobot_->GetParts();
-
-  SB_FOR(auto part, parts) {
-    part->connectBaseSignalToSlot(
-      this,
-      SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
-  }
-
-  SB_FOR(auto part, parts) {
-    part->connectStructuralSignalToSlot(
-      this,
-      SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent));
-  }
   
-  SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
-    this, 
-    SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
-  
-  changeScale(7);
+  app->FromDatagraph();
 
-  setupPropertyColors();
-  
-  //orderVisibility();
+  init();
 
 }
 
@@ -233,6 +196,54 @@ void SEAdenitaVisualModel::changeVisibility(double layer)
 
   SAMSON::requestViewportUpdate();
 
+}
+
+void SEAdenitaVisualModel::init()
+{
+  SEAdenitaCoreSEApp* app = getAdenitaApp();
+  nanorobot_ = app->GetNanorobot();
+
+  ADNPointer<ADNPart> part = new ADNPart();
+
+  SEConfig& config = SEConfig::GetInstance();
+
+  MSVColors * regularColors = new MSVColors();
+  MSVColors * meltTempColors = new MSVColors();
+  MSVColors * gibbsColors = new MSVColors();
+  colors_[ColorType::REGULAR] = regularColors;
+  colors_[ColorType::MELTTEMP] = meltTempColors;
+  colors_[ColorType::GIBBS] = gibbsColors;
+
+  //setup the display properties
+  nucleotideEColor_ = ADNArray<float>(4);
+  nucleotideEColor_(0) = config.nucleotide_E_Color[0];
+  nucleotideEColor_(1) = config.nucleotide_E_Color[1];
+  nucleotideEColor_(2) = config.nucleotide_E_Color[2];
+  nucleotideEColor_(3) = config.nucleotide_E_Color[3];
+
+  auto parts = nanorobot_->GetParts();
+
+  SB_FOR(auto part, parts) {
+    part->connectBaseSignalToSlot(
+      this,
+      SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
+  }
+
+  SB_FOR(auto part, parts) {
+    part->connectStructuralSignalToSlot(
+      this,
+      SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent));
+  }
+
+  SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
+    this,
+    SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
+
+  changeScale(7);
+
+  setupPropertyColors();
+
+  //orderVisibility();
 }
 
 void SEAdenitaVisualModel::initNucleotideArraysForDisplay(bool createIndex /* = true */)

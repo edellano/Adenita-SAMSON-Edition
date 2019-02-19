@@ -24,7 +24,7 @@ namespace ADNLoader {
   ADNPointer<ADNPart> LoadPartFromPDB(std::string filename, int id = -1);
 
   // samson
-  ADNPointer<ADNPart> GenerateModelFromDatagraph();
+  ADNPointer<ADNPart> GenerateModelFromDatagraph(SBNode* sn);
 
   // oxdna
   void OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options);
