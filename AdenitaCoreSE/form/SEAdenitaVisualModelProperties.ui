@@ -302,7 +302,7 @@
        </item>
        <item>
         <property name="text">
-         <string>C&amp;G</string>
+         <string>GC Content</string>
         </property>
        </item>
       </widget>
