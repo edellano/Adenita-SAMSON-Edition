@@ -109,6 +109,8 @@ public:
   bool show_overlay = false;
   // toggle to automatically set the scaffold sequence when loading a part
   bool auto_set_scaffold_sequence = true;
+  // path to ntthal.exe
+  std::string ntthal = "";
   // group general
   SEConfigMode mode = DEBUG_NO_LOG; //which mode of the software active. debug_log, debug_no_log, haichao, elisa
 
@@ -121,6 +123,7 @@ public:
   void setDisplayPossibleCrossovers(bool b);
   void setClearLogFile(bool b);
   void setInterpolateDimensions(bool b);
+  void setNtthalExe(std::string filename);
 
 public slots:
   void updateConfig();
