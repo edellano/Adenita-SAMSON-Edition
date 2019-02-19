@@ -795,15 +795,15 @@ void ADNLoader::SaveNanorobotToJson(ADNNanorobot * nr, std::string filename)
   file.close();
 }
 
-ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph()
+ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph(SBNode* n)
 {
   ADNPointer<ADNPart> part = new ADNPart();
 
-  SBDocument* doc = SAMSON::getActiveDocument();
   SBNodeIndexer nodes;
-  doc->getNodes(nodes, SBNode::IsType(SBNode::Chain));
+  n->getNodes(nodes, SBNode::IsType(SBNode::Chain));
 
   SB_FOR(SBNode* node, nodes) {
+    
     SBPointer<SBChain> chain = static_cast<SBChain*>(node);
 
     ADNPointer<ADNSingleStrand> ss = new ADNSingleStrand();
@@ -879,6 +879,7 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph()
       // delete single strands since it's empty
       part->DeregisterSingleStrand(ss);
     }
+    
   }
 
   BuildTopScales(part);
