@@ -157,14 +157,14 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
+     <item row="9" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Property Colors</string>
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
+     <item row="9" column="1">
       <widget class="QComboBox" name="cbbPropertyColorSchemes">
        <item>
         <property name="text">
@@ -183,14 +183,14 @@
        </item>
       </widget>
      </item>
-     <item row="9" column="0">
+     <item row="10" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>Single Strand Colors</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="1">
+     <item row="10" column="1">
       <widget class="QComboBox" name="cbbSingleStrandColorScheme">
        <item>
         <property name="text">
@@ -214,14 +214,14 @@
        </item>
       </widget>
      </item>
-     <item row="10" column="0">
+     <item row="11" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>Nucleotide Colors</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="1">
+     <item row="11" column="1">
       <widget class="QComboBox" name="cbbNucleotideColorScheme">
        <item>
         <property name="text">
@@ -245,14 +245,14 @@
        </item>
       </widget>
      </item>
-     <item row="11" column="0">
+     <item row="12" column="0">
       <widget class="QLabel" name="label_8">
        <property name="text">
         <string>Double Strand Colors</string>
        </property>
       </widget>
      </item>
-     <item row="11" column="1">
+     <item row="12" column="1">
       <widget class="QComboBox" name="cbbDoulbeStrandColorScheme">
        <item>
         <property name="text">
@@ -277,6 +277,32 @@
        <item>
         <property name="text">
          <string>12 Colors Pastel</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>Highlight</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QComboBox" name="cbbHighlight">
+       <item>
+        <property name="text">
+         <string>None</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Crossovers</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>C&amp;G</string>
         </property>
        </item>
       </widget>
@@ -390,8 +416,8 @@
    <slot>onPropertyColorSchemeChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>219</x>
-     <y>242</y>
+     <x>359</x>
+     <y>282</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -406,8 +432,8 @@
    <slot>onSingleStrandColorSchemeChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>219</x>
-     <y>271</y>
+     <x>359</x>
+     <y>311</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -422,8 +448,8 @@
    <slot>onNucleotideColorSchemeChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>302</x>
-     <y>307</y>
+     <x>420</x>
+     <y>340</y>
     </hint>
     <hint type="destinationlabel">
      <x>430</x>
@@ -438,12 +464,28 @@
    <slot>onDoubleStrandColorSchemeChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>349</x>
-     <y>329</y>
+     <x>420</x>
+     <y>369</y>
     </hint>
     <hint type="destinationlabel">
      <x>432</x>
      <y>387</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbbHighlight</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onHighlightChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>279</x>
+     <y>240</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>428</x>
+     <y>371</y>
     </hint>
    </hints>
   </connection>
@@ -459,5 +501,6 @@
   <slot>onSingleStrandColorSchemeChanged(int)</slot>
   <slot>onNucleotideColorSchemeChanged(int)</slot>
   <slot>onDoubleStrandColorSchemeChanged(int)</slot>
+  <slot>onHighlightChanged(int)</slot>
  </slots>
 </ui>
