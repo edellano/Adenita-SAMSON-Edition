@@ -3,6 +3,7 @@
 #include "SAMSON.hpp"
 #include "SBGWindow.hpp"
 #include <QInputDialog>
+#include <QFormLayout>
 #include "SEWireframeEditor.hpp"
 #include "SEBreakEditor.hpp"
 #include "SEDeleteEditor.hpp"
@@ -41,6 +42,10 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   #if NDEBUG
   ui.tabWidget->removeTab(2);
   #endif
+
+  // set ntthal if previously defined
+  SEConfig& c = SEConfig::GetInstance();
+  if (c.ntthal != "") ui.lineNtthal->setText(QString::fromStdString(c.ntthal));
 
   QTimer *timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(CheckForLoadedParts()));
@@ -367,6 +372,15 @@ void SEAdenitaCoreSEAppGUI::onCheckShowOverlay(bool b)
 {
   SEConfig& c = SEConfig::GetInstance();
   c.setShowOverlay(b);
+}
+
+void SEAdenitaCoreSEAppGUI::onSetPathNtthal()
+{
+  QString filename = QFileDialog::getOpenFileName(this, tr("Set path to ntthal executable"), QDir::currentPath(), tr("(ntthal.exe)"));
+  ui.lineNtthal->setText(filename);
+  // update config
+  SEConfig& c = SEConfig::GetInstance();
+  c.setNtthalExe(filename.toStdString());
 }
 
 void SEAdenitaCoreSEAppGUI::onCatenanes()
