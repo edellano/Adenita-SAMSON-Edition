@@ -31,8 +31,12 @@ CollectionMap<PIBindingRegion> PIPrimer3::GetBindingRegions(ADNPointer<ADNPart> 
 
 ThermParam PIPrimer3::ExecuteNtthal(std::string leftSequence, std::string rightSequence, int oligo_conc, int mv, int dv)
 {
-  QString workingDirection = QString::fromStdString(SB_ELEMENT_PATH + "/Resource/externals/primer3-win-bin-2.3.6/release-2.3.6/");
-  QString program = QString(workingDirection + "ntthal.exe");
+  SEConfig& c = SEConfig::GetInstance();
+  QFileInfo ntthal(QString::fromStdString(c.ntthal));
+  QString workingDirection = ntthal.absolutePath();
+  QString program = ntthal.absoluteFilePath();
+  std::string test1 = program.toStdString();
+  std::string test2 = workingDirection.toStdString();
   QStringList arguments;
 
   arguments << "-s1" << leftSequence.c_str();
@@ -95,7 +99,7 @@ void PIPrimer3::Calculate(ADNPointer<ADNPart> p, int oligo_conc, int mv, int dv)
     ThermParam res = ExecuteNtthal(seqs.first, seqs.second, oligo_conc, mv, dv);
     r->SetThermParam(res);
   }
-}          
+}
 
 void PIPrimer3::CreateBindingRegions(ADNPointer<ADNPart> p)
 {
