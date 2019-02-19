@@ -2287,28 +2287,9 @@ void SEAdenitaVisualModel::displayCircularDNAConnection()
 
 void SEAdenitaVisualModel::highlightNucleotides()
 {
+  if (scale_ < (float)NUCLEOTIDES_BACKBONE) return;
+
   if (highlightType_ == GC) {
-
-    auto parts = nanorobot_->GetParts();
-
-    vector<unsigned int> indicesFocus;
-    vector<unsigned int> indicesContext;
-
-    SB_FOR(auto part, parts) {
-      auto singleStrands = nanorobot_->GetSingleStrands(part);
-      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-          auto index = ntMap_[nt()];
-          if (nt->getNucleotideType() == DNABlocks::DC || nt->getNucleotideType() == DNABlocks::DG) {
-            indicesFocus.push_back(index);
-          }
-          else {
-            indicesContext.push_back(index);
-          }
-        }
-      }
-    }
 
     float * colorFocus = new float[4];
     colorFocus[0] = 1.0f;
@@ -2322,7 +2303,50 @@ void SEAdenitaVisualModel::highlightNucleotides()
     colorContext[2] = 0.5f;
     colorContext[3] = 1.0f;
 
-    colorFocus[3] = 1.0f;
+    auto parts = nanorobot_->GetParts();
+
+    vector<unsigned int> indicesFocus;
+    vector<unsigned int> indicesContext;
+
+    if (scale_ > (float)NUCLEOTIDES_BACKBONE && scale_ <= (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+      SB_FOR(auto part, parts) {
+        auto singleStrands = nanorobot_->GetSingleStrands(part);
+        SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+          auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+          SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+            auto index = ntMap_[nt()];
+            if (nt->getNucleotideType() == DNABlocks::DC || nt->getNucleotideType() == DNABlocks::DG) {
+              indicesFocus.push_back(index);
+            }
+            else {
+              indicesContext.push_back(index);
+            }
+          }
+        }
+      }
+    }
+    else if (scale_ == (float)DOUBLE_STRANDS){
+      unsigned int index = 0;
+      SB_FOR(auto part, parts) {
+        auto doubleStrands = part->GetDoubleStrands();
+        SB_FOR(auto doubleStrand, doubleStrands) {
+          auto baseSegments = doubleStrand->GetBaseSegments();
+          SB_FOR(auto baseSegment, baseSegments) {
+            auto nts = baseSegment->GetNucleotides();
+            SB_FOR(auto nt, nts) {
+              if (nt->getNucleotideType() == DNABlocks::DC || nt->getNucleotideType() == DNABlocks::DG) {
+                indicesFocus.push_back(index);
+              }
+              else {
+                indicesContext.push_back(index);
+              }
+            }
+
+            ++index;
+          }
+        }
+      }
+    }
     ADNDisplayHelper::colorCylinders(colorsV_, indicesFocus, colorFocus);
     ADNDisplayHelper::colorCylinders(colorsE_, indicesFocus, colorFocus);
     ADNDisplayHelper::colorCylinders(colorsV_, indicesContext, colorContext);
@@ -2330,6 +2354,13 @@ void SEAdenitaVisualModel::highlightNucleotides()
 
     delete[] colorFocus;
     delete[] colorContext;
+  }
+  else if (highlightType_ == HighlightType::CROSSOVERS) {
+    auto parts = nanorobot_->GetParts();
+
+    SB_FOR(auto part, parts) {
+      
+    }
   }
 }
 
