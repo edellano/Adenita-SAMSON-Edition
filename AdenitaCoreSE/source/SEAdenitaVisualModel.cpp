@@ -2359,7 +2359,8 @@ void SEAdenitaVisualModel::highlightNucleotides()
     auto parts = nanorobot_->GetParts();
 
     SB_FOR(auto part, parts) {
-      
+      //auto xos = PICrossovers::GetCrossovers(part);
+
     }
   }
 }
