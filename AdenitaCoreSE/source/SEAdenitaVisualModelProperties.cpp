@@ -74,9 +74,12 @@ QString SEAdenitaVisualModelProperties::getCitation() const {
 	// SAMSON Element generator pro tip: modify this function to add citation information
 
 	return
-		"If you use this visual model in your work, please cite: <br/>"
+		"If you use these visualizations in your work, please cite: <br/>"
 		"<br/>"
-		"[1] <a href=\"https://www.samson-connect.net\">https://www.samson-connect.net</a><br/>";
+		"[1] H. Miao et al. <strong>Multiscale Visualization and Scale-adaptive Modification of DNA Nanostructures</strong>, "
+    "<em>IEEE Transactions on Visualization and Computer Graphics</em>, 24(1), January 2018 <br/>"
+    "[2] H. Miao et al. <strong>DimSUM: Dimension and Scale Unifying Maps for Visual Abstraction of DNA Origami Structures</strong>, "
+    "<em>Computer Graphics Forum</em>, 37(3), June 2018";
 
 }
 
