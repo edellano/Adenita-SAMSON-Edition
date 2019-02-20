@@ -31,7 +31,8 @@ namespace ADNDisplayHelper {
   void displayText(SBPosition3 pos, std::string text = "");
   void displayTextBottomLeft(std::string text = "");
   void displayTriangleMesh(DASPolyhedron * polyhedron);
-  void colorCylinders(ADNArray<float> & colorsV, vector<unsigned int> indices, float * color);
+  void replaceCylinderColors(ADNArray<float> & colors, vector<unsigned int> indices, float * color);
+  void deemphasizeCylinderColors(ADNArray<float> & colors, vector<unsigned int> indices, float r, float g, float b, float a);
 
   //! Display only the top scales of a part
   /*!
