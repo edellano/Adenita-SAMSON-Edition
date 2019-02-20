@@ -157,6 +157,7 @@ void SEAdenitaVisualModelProperties::onPropertyColorsChanged(int propertyIdx)
 void SEAdenitaVisualModelProperties::onHighlightChanged(int highlightIdx)
 {
   visualModel->changeHighlight(highlightIdx);
+  SAMSON::requestViewportUpdate();
 }
 
 void SEAdenitaVisualModelProperties::onPropertyColorSchemeChanged(int colorSchemeIdx)
