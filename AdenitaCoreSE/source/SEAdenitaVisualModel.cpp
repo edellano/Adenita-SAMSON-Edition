@@ -2319,17 +2319,11 @@ void SEAdenitaVisualModel::highlightNucleotides()
   if (highlightType_ == NONE) return;
 
   float * colorHighlight = new float[4];
-  colorHighlight[0] = 1.0f;
-  colorHighlight[1] = 0.2f;
+  colorHighlight[0] = 0.2f;
+  colorHighlight[1] = 0.8f;
   colorHighlight[2] = 0.2f;
   colorHighlight[3] = 1.0f;
-
-  float * colorContext = new float[4];
-  colorContext[0] = 0.5f;
-  colorContext[1] = 0.5f;
-  colorContext[2] = 0.5f;
-  colorContext[3] = 1.0f;
-
+  
   if (highlightType_ == GC) {
 
     auto parts = nanorobot_->GetParts();
@@ -2359,7 +2353,10 @@ void SEAdenitaVisualModel::highlightNucleotides()
       }
     }
     else if (scale_ == (float)DOUBLE_STRANDS){
-      
+      for (auto p : bsMap_) {
+        auto index = p.second;
+        indicesContext.push_back(index);
+      }
       SB_FOR(auto part, parts) {
         auto doubleStrands = part->GetDoubleStrands();
         SB_FOR(auto doubleStrand, doubleStrands) {
@@ -2385,39 +2382,52 @@ void SEAdenitaVisualModel::highlightNucleotides()
     ADNDisplayHelper::replaceCylinderColors(colorsV_, indicesHighlight, colorHighlight);
     ADNDisplayHelper::replaceCylinderColors(colorsE_, indicesHighlight, colorHighlight);
 
-
     delete[] colorHighlight;
-    delete[] colorContext;
   }
   else if (highlightType_ == HighlightType::CROSSOVERS) {
     auto parts = nanorobot_->GetParts();
     vector<unsigned int> indicesHighlight;
     vector<unsigned int> indicesContext;
 
-    SB_FOR(auto part, parts) {
-      auto xos = PICrossovers::GetCrossovers(part);
+    if (scale_ >= (float)NUCLEOTIDES_BACKBONE && scale_ <= (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+      for (auto p : ntMap_) {
+        auto index = p.second;
+        indicesContext.push_back(index);
+      }
+      SB_FOR(auto part, parts) {
+        auto xos = PICrossovers::GetCrossovers(part);
         for (auto xo : xos) {
           auto startNt = xo.first;
           auto endNt = xo.second;
-          if (scale_ >= (float)NUCLEOTIDES_BACKBONE && scale_ <= (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
 
-            auto startIdx = ntMap_[startNt()];
-            auto endIdx = ntMap_[endNt()];
+          auto startIdx = ntMap_[startNt()];
+          auto endIdx = ntMap_[endNt()];
 
-            indicesHighlight.push_back(startIdx);
-            indicesHighlight.push_back(endIdx);
-          }
-          else if (scale_ == (float)DOUBLE_STRANDS) {
-            auto startBs = startNt->GetBaseSegment();
-            auto endBs = endNt->GetBaseSegment();
-
-            auto startIdx = bsMap_[startBs()];
-            auto endIdx = bsMap_[endBs()];
-
-            indicesHighlight.push_back(startIdx);
-            indicesHighlight.push_back(endIdx);
-          }
+          indicesHighlight.push_back(startIdx);
+          indicesHighlight.push_back(endIdx);
         }
+
+      }
+    } else if (scale_ == (float)DOUBLE_STRANDS) {
+      for (auto p : bsMap_) {
+        auto index = p.second;
+        indicesContext.push_back(index);
+      }
+      SB_FOR(auto part, parts) {
+        auto xos = PICrossovers::GetCrossovers(part);
+        for (auto xo : xos) {
+          auto startNt = xo.first;
+          auto endNt = xo.second;
+          auto startBs = startNt->GetBaseSegment();
+          auto endBs = endNt->GetBaseSegment();
+
+          auto startIdx = bsMap_[startBs()];
+          auto endIdx = bsMap_[endBs()];
+
+          indicesHighlight.push_back(startIdx);
+          indicesHighlight.push_back(endIdx);
+        }
+      }
     }
 
     ADNDisplayHelper::deemphasizeCylinderColors(colorsV_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
@@ -2427,7 +2437,6 @@ void SEAdenitaVisualModel::highlightNucleotides()
     ADNDisplayHelper::replaceCylinderColors(colorsE_, indicesHighlight, colorHighlight);
 
     delete[] colorHighlight;
-    delete[] colorContext;
   }
 
 }
