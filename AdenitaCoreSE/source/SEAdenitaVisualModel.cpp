@@ -2312,7 +2312,7 @@ void SEAdenitaVisualModel::highlightNucleotides()
     vector<unsigned int> indicesHighlight;
     vector<unsigned int> indicesContext;
 
-    if (scale_ > (float)NUCLEOTIDES_BACKBONE && scale_ <= (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+    if (scale_ >= (float)NUCLEOTIDES_BACKBONE && scale_ <= (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
       //deemphasize the context with grey color
 
       for (auto p : ntMap_) {
@@ -2372,7 +2372,7 @@ void SEAdenitaVisualModel::highlightNucleotides()
 
     SB_FOR(auto part, parts) {
       auto xos = PICrossovers::GetCrossovers(part);
-      if (scale_ > (float)NUCLEOTIDES_BACKBONE && scale_ <= (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+      if (scale_ >= (float)NUCLEOTIDES_BACKBONE && scale_ <= (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
         for (auto xo : xos) {
           auto startIdx = ntMap_[xo.first()];
           auto endIdx = ntMap_[xo.second()];
