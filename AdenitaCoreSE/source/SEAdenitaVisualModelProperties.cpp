@@ -52,7 +52,7 @@ QString SEAdenitaVisualModelProperties::getName() const {
 	// SAMSON Element generator pro tip: this string will be the GUI title. 
 	// Modify this function to have a user-friendly description of your visual model inside SAMSON
 
-	return "SEAdenitaVisualModel properties"; 
+	return "Adenita Visual Model"; 
 
 }
 
