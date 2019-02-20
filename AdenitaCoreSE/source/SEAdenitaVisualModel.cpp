@@ -1,6 +1,7 @@
 #include "SEAdenitaVisualModel.hpp"
 #include "SAMSON.hpp"
 #include "ADNLogger.hpp"
+#include "PICrossovers.hpp"
 
 
 SEAdenitaVisualModel::SEAdenitaVisualModel() {
@@ -287,7 +288,9 @@ void SEAdenitaVisualModel::initBaseSegmentArraysForDisplay(bool createIndex /*= 
   flags_ = ADNArray<unsigned int>(nPositions);
   nodeIndices_ = ADNArray<unsigned int>(nPositions);
 
-
+  if (createIndex) {
+    indices_ = getBaseSegmentIndices();
+  }
 }
 
 ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
@@ -373,6 +376,38 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 
 }
 
+
+ADNArray<unsigned int> SEAdenitaVisualModel::getBaseSegmentIndices()
+{
+  //not clear yet whether the indices are needed
+  //for now this function is just used to construct the bsMap_
+
+  ADNLogger& logger = ADNLogger::GetLogger();
+  auto parts = nanorobot_->GetParts();
+
+  bsMap_.clear();
+  unsigned int index = 0;
+
+  unsigned int nDs = 0;
+  SB_FOR(auto part, parts) {
+    auto doubleStrands = nanorobot_->GetDoubleStrands(part);
+    nDs += doubleStrands.size();
+    SB_FOR(ADNPointer<ADNDoubleStrand> ds, doubleStrands) {
+      auto baseSegments = ds->GetBaseSegments();
+      SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
+        bsMap_.insert(make_pair(bs(), index));
+        ++index;
+      }
+    }
+  }
+
+  unsigned int nPositions = nanorobot_->GetNumberOfBaseSegments();
+  unsigned int nCylinders = boost::numeric_cast<unsigned int>(nPositions - nDs);
+
+  ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
+
+  return indices;
+}
 
 void SEAdenitaVisualModel::prepareArraysForDisplay()
 {
@@ -854,18 +889,13 @@ void SEAdenitaVisualModel::highlightFlagChanged()
   }
   else if (scale_ >= (float)DOUBLE_STRANDS) {
 
-    unsigned int index = 0;
-
     SB_FOR(auto part, parts) {
       auto doubleStrands = part->GetDoubleStrands();
-
       SB_FOR(auto doubleStrand, doubleStrands) {
         auto baseSegments = doubleStrand->GetBaseSegments();
-
         SB_FOR(auto baseSegment, baseSegments) {
-          
+          auto index = bsMap_[baseSegment];
           flags_(index) = baseSegment->getInheritedFlags();
-
           ++index;
         }
       }
@@ -1529,6 +1559,19 @@ void SEAdenitaVisualModel::changePropertyColors(int propertyIdx, int colorScheme
   }
 }
 
+void SEAdenitaVisualModel::changeHighlight(int highlightIdx)
+{
+  if (highlightIdx == 0) {
+    highlightType_ = HighlightType::NONE;
+  }
+  else if (highlightIdx == 1) {
+    highlightType_ = HighlightType::CROSSOVERS;
+  }
+  else if (highlightIdx == 2) {
+    highlightType_ = HighlightType::GC;
+  }
+}
+
 void SEAdenitaVisualModel::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. This is the main function of your visual model. 
@@ -1580,6 +1623,8 @@ void SEAdenitaVisualModel::display() {
   }
 
   displayCircularDNAConnection();
+
+  highlightNucleotides();
 
   if (nCylinders_ > 0) {
     SAMSON::displayCylinders(
@@ -2018,16 +2063,14 @@ void SEAdenitaVisualModel::displayDoubleStrands()
   flags_ = ADNArray<unsigned int>(nPositions_);
   colorsV_ = ADNArray<float>(4, nPositions_);
   nodeIndices_ = ADNArray<unsigned int>(nPositions_);
-
-  unsigned int index = 0; //fix this with map
-
+  
   SB_FOR(auto part, parts) {
     auto doubleStrands = part->GetDoubleStrands();
     //for now also the base segments that have loops and skips are displayed as sphere
     SB_FOR(auto doubleStrand, doubleStrands) {
       auto baseSegments = doubleStrand->GetBaseSegments();
-
       SB_FOR(auto baseSegment, baseSegments) {
+        auto index = bsMap_[baseSegment];
         auto cell = baseSegment->GetCell();
 
         SBPosition3 pos = baseSegment->GetPosition();
@@ -2268,6 +2311,134 @@ void SEAdenitaVisualModel::displayCircularDNAConnection()
       }
     }
   }
+}
+
+void SEAdenitaVisualModel::highlightNucleotides()
+{
+  if (scale_ < (float)NUCLEOTIDES_BACKBONE) return;
+  if (highlightType_ == NONE) return;
+
+  float * colorHighlight = new float[4];
+  colorHighlight[0] = 0.2f;
+  colorHighlight[1] = 0.8f;
+  colorHighlight[2] = 0.2f;
+  colorHighlight[3] = 1.0f;
+  
+  if (highlightType_ == GC) {
+
+    auto parts = nanorobot_->GetParts();
+    
+    vector<unsigned int> indicesHighlight;
+    vector<unsigned int> indicesContext;
+
+    if (scale_ >= (float)NUCLEOTIDES_BACKBONE && scale_ <= (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+      //deemphasize the context with grey color
+
+      for (auto p : ntMap_) {
+        auto index = p.second;
+        indicesContext.push_back(index);
+      }
+
+      SB_FOR(auto part, parts) {
+        auto singleStrands = nanorobot_->GetSingleStrands(part);
+        SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+          auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+          SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+            auto index = ntMap_[nt()];
+            if (nt->getNucleotideType() == DNABlocks::DC || nt->getNucleotideType() == DNABlocks::DG) {
+              indicesHighlight.push_back(index);
+            }
+          }
+        }
+      }
+    }
+    else if (scale_ == (float)DOUBLE_STRANDS){
+      for (auto p : bsMap_) {
+        auto index = p.second;
+        indicesContext.push_back(index);
+      }
+      SB_FOR(auto part, parts) {
+        auto doubleStrands = part->GetDoubleStrands();
+        SB_FOR(auto doubleStrand, doubleStrands) {
+          auto baseSegments = doubleStrand->GetBaseSegments();
+          SB_FOR(auto baseSegment, baseSegments) {
+            auto index = bsMap_[baseSegment];
+            auto nts = baseSegment->GetNucleotides();
+            SB_FOR(auto nt, nts) {
+              if (nt->getNucleotideType() == DNABlocks::DC || nt->getNucleotideType() == DNABlocks::DG) {
+                indicesHighlight.push_back(index);
+              }
+              else {
+                indicesContext.push_back(index);
+              }
+            }
+
+          }
+        }
+      }
+    }
+    ADNDisplayHelper::deemphasizeCylinderColors(colorsV_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
+    ADNDisplayHelper::deemphasizeCylinderColors(colorsE_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
+    ADNDisplayHelper::replaceCylinderColors(colorsV_, indicesHighlight, colorHighlight);
+    ADNDisplayHelper::replaceCylinderColors(colorsE_, indicesHighlight, colorHighlight);
+
+    delete[] colorHighlight;
+  }
+  else if (highlightType_ == HighlightType::CROSSOVERS) {
+    auto parts = nanorobot_->GetParts();
+    vector<unsigned int> indicesHighlight;
+    vector<unsigned int> indicesContext;
+
+    if (scale_ >= (float)NUCLEOTIDES_BACKBONE && scale_ <= (float)STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+      for (auto p : ntMap_) {
+        auto index = p.second;
+        indicesContext.push_back(index);
+      }
+      SB_FOR(auto part, parts) {
+        auto xos = PICrossovers::GetCrossovers(part);
+        for (auto xo : xos) {
+          auto startNt = xo.first;
+          auto endNt = xo.second;
+
+          auto startIdx = ntMap_[startNt()];
+          auto endIdx = ntMap_[endNt()];
+
+          indicesHighlight.push_back(startIdx);
+          indicesHighlight.push_back(endIdx);
+        }
+
+      }
+    } else if (scale_ == (float)DOUBLE_STRANDS) {
+      for (auto p : bsMap_) {
+        auto index = p.second;
+        indicesContext.push_back(index);
+      }
+      SB_FOR(auto part, parts) {
+        auto xos = PICrossovers::GetCrossovers(part);
+        for (auto xo : xos) {
+          auto startNt = xo.first;
+          auto endNt = xo.second;
+          auto startBs = startNt->GetBaseSegment();
+          auto endBs = endNt->GetBaseSegment();
+
+          auto startIdx = bsMap_[startBs()];
+          auto endIdx = bsMap_[endBs()];
+
+          indicesHighlight.push_back(startIdx);
+          indicesHighlight.push_back(endIdx);
+        }
+      }
+    }
+
+    ADNDisplayHelper::deemphasizeCylinderColors(colorsV_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
+    ADNDisplayHelper::deemphasizeCylinderColors(colorsE_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
+
+    ADNDisplayHelper::replaceCylinderColors(colorsV_, indicesHighlight, colorHighlight);
+    ADNDisplayHelper::replaceCylinderColors(colorsE_, indicesHighlight, colorHighlight);
+
+    delete[] colorHighlight;
+  }
+
 }
 
 ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(int colorSchemeIdx, float min, float max, float val) {

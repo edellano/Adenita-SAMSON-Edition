@@ -76,6 +76,7 @@ public :
   virtual void												changeDimension(int dimension);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
   void                                changePropertyColors(int propertyIdx, int colorSchemeIdx);
+  void                                changeHighlight(int highlightIdx);
   void                                setupSingleStrandColors(int index);
   void                                setupNucleotideColors(int index);
   void                                setupDoubleStrandColors(int index);
@@ -95,6 +96,7 @@ public :
   virtual void                        displayBaseBairConnections(bool onlySelected);
   virtual void                        displayForDebugging();
   virtual void                        displayCircularDNAConnection();
+  virtual void                        highlightNucleotides();
 
 	virtual void												expandBounds(SBIAPosition3& bounds) const;								///< Expands the bounds to make sure the visual model fits inside them
 
@@ -117,6 +119,7 @@ private:
   void												initNucleotideArraysForDisplay(bool createIndex = true);
   void												initBaseSegmentArraysForDisplay(bool createIndex = true);
   ADNArray<unsigned int>      getNucleotideIndices();
+  ADNArray<unsigned int>      getBaseSegmentIndices();
   void												prepareArraysForDisplay(); // Prepare the arrays for displaying (this separates the interpolation from display)
   void												prepareScale0to1(double iv, bool forSelection = false); // scale 0 -> 1: depicting licorice to sticks representation
   void												prepareScale1to2(double iv, bool forSelection = false); // scale 1 -> 2: transition from thick bond to atoms without bonds
@@ -161,6 +164,7 @@ private:
   ADNArray<unsigned int> indices_;
 
   std::map<ADNNucleotide*, unsigned int> ntMap_;
+  std::map<ADNBaseSegment*, unsigned int> bsMap_;
 
   // new color implementation
   
@@ -175,6 +179,14 @@ private:
   ColorType curColorType_ = REGULAR;
 
   std::map<ColorType, MSVColors*> colors_;
+
+  enum HighlightType {
+    NONE = 0,
+    CROSSOVERS = 1,
+    GC = 2
+  };
+
+  HighlightType highlightType_ = NONE;
 };
 
 

@@ -17,8 +17,8 @@ std::vector<XOPair> PICrossovers::GetCrossovers(ADNPointer<ADNPart> part)
         XOPair xo = std::make_pair(nt, next);
         xos.push_back(xo);
 
-        nt->setHighlightingFlag(true);
-        next->setHighlightingFlag(true);
+        /*nt->setHighlightingFlag(true);
+        next->setHighlightingFlag(true);*/
       }
     }
   }
