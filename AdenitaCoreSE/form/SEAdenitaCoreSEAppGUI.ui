@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>524</width>
+    <width>526</width>
     <height>276</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>524</width>
+    <width>526</width>
     <height>276</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>524</width>
+    <width>526</width>
     <height>276</height>
    </size>
   </property>
@@ -54,7 +54,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>471</width>
+           <width>481</width>
            <height>51</height>
           </rect>
          </property>
@@ -84,7 +84,26 @@
           <item>
            <widget class="QToolButton" name="btnSave">
             <property name="text">
-             <string>Save</string>
+             <string>Save All</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+S</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnSaveSelection">
+            <property name="text">
+             <string>Save Selection</string>
             </property>
             <property name="iconSize">
              <size>
@@ -736,6 +755,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnSaveSelection</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onSaveSelection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -761,5 +796,6 @@
   <slot>onAddNtThreeP()</slot>
   <slot>onDoubleXO()</slot>
   <slot>onSetPathNtthal()</slot>
+  <slot>onSaveSelection()</slot>
  </slots>
 </ui>
