@@ -65,6 +65,7 @@ public slots:
 
   void onLoadFile();
   void onSaveFile();
+  void onSaveSelection();
   void onExport();
   void onSetScaffold();
   // Options
