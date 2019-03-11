@@ -291,7 +291,7 @@ void SEAdenitaCoreSEApp::SetStart()
   }
   else if (nts.size() == 1) {
     auto nt = nts[0];
-    ADNBasicOperations::SetStart(nt);
+    ADNBasicOperations::SetStart(nt, true);
   }
 
   ResetVisualModel();
