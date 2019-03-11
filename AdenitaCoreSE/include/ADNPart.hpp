@@ -30,6 +30,7 @@ public:
   void RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, 
     ADNPointer<ADNNucleotide> ntNext, bool addToSs = true);
   void RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at, bool create = false);
+  void RegisterAtom(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNAtom> at, bool create = false);
 
   unsigned int GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs);
 
