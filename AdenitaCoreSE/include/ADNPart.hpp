@@ -70,6 +70,11 @@ private:
   CollectionMap<ADNDoubleStrand> doubleStrandsIndex_;
 
   bool loadedViaSAMSON_ = false;
+
+  // ids are just for naming
+  unsigned int nucleotideId_ = 1;
+  unsigned int singleStrandId_ = 1;
+  unsigned int doubleStrandId_ = 1;
 };
 
 SB_REGISTER_TARGET_TYPE(ADNPart, "ADNPart", "D3809709-A2EA-DDC1-9753-A40B2B9DE57E");

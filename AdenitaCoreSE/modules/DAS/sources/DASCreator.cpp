@@ -377,9 +377,6 @@ RTDoubleStrand DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, si
     part->RegisterSingleStrand(ssLeft);
     ssRight = new ADNSingleStrand();
     part->RegisterSingleStrand(ssRight);
-
-    ssLeft->SetDefaultName();
-    ssRight->SetDefaultName();
   }
 
   for (size_t i = 0; i < length; ++i) {

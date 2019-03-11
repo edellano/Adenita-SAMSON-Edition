@@ -118,6 +118,7 @@ private:
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
   void ShowBox();
   void SetSequence(ADNPointer<ADNPart> nanotube);
+  SEAdenitaCoreSEApp* getAdenitaApp();
 
   bool dsMode_ = true;  // true for dsDNA, false for ssDNA
   bool circular_ = false;  // if we are creating circular strands

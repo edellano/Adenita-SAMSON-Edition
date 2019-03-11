@@ -203,6 +203,9 @@ public:
   SBPosition3 GetNucleotideBackbonePosition(ADNConformation  conformation, ADNPointer<ADNNucleotide> nt);
   SBPosition3 GetNucleotideSidechainPosition(ADNConformation  conformation, ADNPointer<ADNNucleotide> nt);
 
+  unsigned int UseSingleStrandId();
+  unsigned int UseDoubleStrandId();
+  unsigned int UsePartId();
 
 private:
   CollectionMap<ADNPart> partsIndex_;

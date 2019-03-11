@@ -501,6 +501,11 @@ void ADNPart::loadedViaSAMSON(bool l)
 
 void ADNPart::RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss) 
 {
+  if (ss->getName().empty()) {
+    ss->setName("Single Strand " + std::to_string(singleStrandId_));
+    ++singleStrandId_;
+  }
+
   auto root = getStructuralRoot();
   root->addChild(ss());
 
@@ -509,6 +514,10 @@ void ADNPart::RegisterSingleStrand(ADNPointer<ADNSingleStrand> ss)
 
 void ADNPart::RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, bool addToSs)
 {
+  if (nt->getName().empty()) {
+    nt->setName(ADNModel::GetResidueName(nt->GetType()) + " " + std::to_string(nucleotideId_));
+    ++nucleotideId_;
+  }
   if (addToSs) ss->AddNucleotideThreePrime(nt);
 
   nucleotidesIndex_.addReferenceTarget(nt());
@@ -516,6 +525,11 @@ void ADNPart::RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPo
 
 void ADNPart::RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, bool addToSs)
 {
+  if (nt->getName().empty()) {
+    nt->setName(ADNModel::GetResidueName(nt->GetType()) + " " + std::to_string(nucleotideId_));
+    ++nucleotideId_;
+  }
+
   if (addToSs) ss->AddNucleotideFivePrime(nt);
 
   nucleotidesIndex_.addReferenceTarget(nt());
@@ -524,6 +538,11 @@ void ADNPart::RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPoi
 void ADNPart::RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, 
   ADNPointer<ADNNucleotide> ntNext, bool addToSs)
 {
+  if (nt->getName().empty()) {
+    nt->setName(ADNModel::GetResidueName(nt->GetType()) + " " + std::to_string(nucleotideId_));
+    ++nucleotideId_;
+  }
+
   if (addToSs) ss->AddNucleotide(nt, ntNext);
 
   nucleotidesIndex_.addReferenceTarget(nt());
@@ -555,7 +574,8 @@ unsigned int ADNPart::GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs)
 void ADNPart::RegisterDoubleStrand(ADNPointer<ADNDoubleStrand> ds) 
 {
   if (ds->getName().empty()) {
-    ds->setName("Double Strand " + std::to_string(ds->getNodeIndex()));
+    ds->setName("Double Strand " + std::to_string(doubleStrandId_));
+    ++doubleStrandId_;
   }
   auto root = getStructuralRoot();
   root->addChild(ds());
