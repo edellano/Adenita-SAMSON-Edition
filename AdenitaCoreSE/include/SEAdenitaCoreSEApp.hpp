@@ -54,6 +54,8 @@ public :
   void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
   bool CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
   void MergeComponents(ADNPointer<ADNPart> p1, ADNPointer<ADNPart> p2);
+  void MoveDoubleStrand(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNPart> p);
+  void MoveSingleStrand(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> p);
   // Debug
   void AddNtThreeP(int numNt);
   void CenterPart();

@@ -306,6 +306,22 @@ void SEAdenitaCoreSEApp::MergeComponents(ADNPointer<ADNPart> p1, ADNPointer<ADNP
   ResetVisualModel();
 }
 
+void SEAdenitaCoreSEApp::MoveDoubleStrand(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNPart> p)
+{
+  ADNPointer<ADNPart> oldPart = GetNanorobot()->GetPart(ds);
+  if (oldPart != p) {
+    ADNBasicOperations::MoveStrand(oldPart, p, ds);
+  }
+}
+
+void SEAdenitaCoreSEApp::MoveSingleStrand(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> p)
+{
+  ADNPointer<ADNPart> oldPart = GetNanorobot()->GetPart(ss);
+  if (oldPart != p) {
+    ADNBasicOperations::MoveStrand(oldPart, p, ss);
+  }
+}
+
 bool SEAdenitaCoreSEApp::CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc)
 {
   bool res = false;
