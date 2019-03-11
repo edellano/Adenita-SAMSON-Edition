@@ -10,7 +10,7 @@ class ADNPart : public SBStructuralModel {
   SB_CLASS
 public:
 
-  ADNPart() : SBStructuralModel() { SetName("Adenita Component"); };
+  ADNPart() : SBStructuralModel() { };
   ADNPart(const ADNPart &n);
   ~ADNPart() = default;
 
