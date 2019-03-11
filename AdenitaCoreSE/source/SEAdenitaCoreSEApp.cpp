@@ -50,8 +50,8 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
   std::string seq = "";
   auto part = alg->ApplyAlgorithm(seq, filename.toStdString());
 
-  int lastPoint = filename.lastIndexOf(".");
-  QString s = filename.left(lastPoint);
+  QFileInfo fi(filename);
+  QString s = fi.baseName();
   part->SetName(s.toStdString());
 
   AddPartToActiveLayer(part);
@@ -65,8 +65,8 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
 
   part = cad.CreateCadnanoPart(filename.toStdString());
   
-  int lastPoint = filename.lastIndexOf(".");
-  QString s = filename.left(lastPoint);
+  QFileInfo fi(filename);
+  QString s = fi.baseName();
   part->SetName(s.toStdString());
 
   AddPartToActiveLayer(part);
