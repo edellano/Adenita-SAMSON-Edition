@@ -559,6 +559,17 @@ void ADNPart::RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNP
   atomsIndex_.addReferenceTarget(at());
 }
 
+void ADNPart::RegisterAtom(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNAtom> at, bool create)
+{
+  if (create) {
+    at->create();
+  }
+
+  bs->addChild(at());
+
+  atomsIndex_.addReferenceTarget(at());
+}
+
 void ADNPart::RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNBaseSegment> bs, bool addToDs)
 {
   if (addToDs) ds->AddBaseSegmentEnd(bs);

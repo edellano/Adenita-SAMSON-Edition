@@ -639,6 +639,16 @@ void DASBackToTheAtom::PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool p
     // hiding atoms here cause when they are created is too slow
     nt->HideCenterAtoms();
   }
+
+  auto bss = origami->GetBaseSegments();
+  SB_FOR(ADNPointer<ADNBaseSegment> bs, bss) {
+    auto at = bs->GetCenterAtom();
+    at->setElementType(SBElement::Meitnerium);
+
+    origami->RegisterAtom(bs, at, createAtoms);
+    // hiding atoms here cause when they are created is too slow
+    bs->HideCenterAtom();
+  }
 }
 
 void DASBackToTheAtom::PopulateNucleotideWithAllAtoms(ADNPointer<ADNPart> origami, ADNPointer<ADNNucleotide> nt)
