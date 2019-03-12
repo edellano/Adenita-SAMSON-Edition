@@ -40,6 +40,7 @@ public :
 	//@}
 
   void LoadPart(QString filename);
+  void LoadParts(QString filename);
   void SaveFile(QString filename, ADNPointer<ADNPart> part = nullptr);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename);

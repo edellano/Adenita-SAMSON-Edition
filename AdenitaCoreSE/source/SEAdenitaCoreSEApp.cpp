@@ -30,6 +30,14 @@ void SEAdenitaCoreSEApp::LoadPart(QString filename)
   AddPartToActiveLayer(part);
 }
 
+void SEAdenitaCoreSEApp::LoadParts(QString filename)
+{
+  std::vector<ADNPointer<ADNPart>> parts = ADNLoader::LoadPartsFromJson(filename.toStdString());
+  for (ADNPointer<ADNPart> p : parts) {
+    AddPartToActiveLayer(p);
+  }
+}
+
 void SEAdenitaCoreSEApp::SaveFile(QString filename, ADNPointer<ADNPart> part)
 {
   if (part == nullptr) {
