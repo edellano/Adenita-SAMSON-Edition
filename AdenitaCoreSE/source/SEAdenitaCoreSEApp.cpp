@@ -216,7 +216,7 @@ void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
       bool circ = ss->IsCircular();
 
       ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
-      // to break in the 3' direction
+      // to break in the 5' or 3' direction
       if (fPrime) breakNt = nt;
       else breakNt = nt->GetNext(true);
       if (breakNt != nullptr) {
