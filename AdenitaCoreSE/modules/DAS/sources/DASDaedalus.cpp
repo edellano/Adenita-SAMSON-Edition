@@ -520,21 +520,27 @@ void DASDaedalus::CreateVertexStaples(ADNPointer<ADNPart> origami, DASPolyhedron
       he = he->pair_->next_;
     } while (he != begin);
 
+    // move elements in ps so we start creating the vertex away from polyT
+    std::rotate(edges.begin(), edges.begin() + 1, edges.end());
+
+    unsigned int start = 0;
     for (int i = 0; i < a; ++i) {
       // 52nt span 2 edges = 4 half edges
-      std::vector<DASHalfEdge*> ps(edges.end() - 4, edges.end());
+      unsigned int sz = 4;
+      std::vector<DASHalfEdge*> ps(edges.begin() + start, edges.begin() + start + sz);
       ADNPointer<ADNSingleStrand> chain = CreateVertexChain(origami, c_id, ps, bpLengths_);
       chains_.insert(std::make_pair(c_id, chain));
       ++c_id;
-      edges.erase(edges.end() - 4, edges.end());
+      start += sz;
     }
     for (int i = 0; i < b; ++i) {
       // 78nt span 3 edges = 6 half edges
-      std::vector<DASHalfEdge*> ps(edges.end() - 6, edges.end());
+      unsigned int sz = 6;
+      std::vector<DASHalfEdge*> ps(edges.begin() + start, edges.begin() + start + sz);
       ADNPointer<ADNSingleStrand> chain = CreateVertexChain(origami, c_id, ps, bpLengths_);
       chains_.insert(std::make_pair(c_id, chain));
       ++c_id;
-      edges.erase(edges.end() - 6, edges.end());
+      start += sz;
     }
   }
 }
@@ -828,20 +834,17 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
   ADNPointer<ADNSingleStrand> chain = new ADNSingleStrand();
   chain->SetName("Vertex Staple " + std::to_string(c_id));
 
-  bool beg = true;
+  bool beg = false;
   int len = 0;
+  ADNPointer<ADNNucleotide> prev_nt = nullptr;
+  int count = 1;
 
-  bool fst = true; // we can change it for polyT to int = 0, 1, 2
-  ADNPointer<ADNNucleotide> prev_nt = new ADNNucleotide();
-
-  int count = 0;
   for (auto pit = ps.begin(); pit != ps.end(); ++pit) {
     ADNPointer<ADNBaseSegment> bs = firstBasesHe_.at(*pit);
     // vertex of lower index gets end, vertex of higher index gets beginning
     if (beg) {
       len = vertex_staple_span_end_;
       beg = false;
-      // we need first bs
     }
     else {
       len = vertex_staple_span_start_;
@@ -849,7 +852,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
       beg = true;
     }
     for (int i = 0; i < len; ++i) {
-      // this are the ANTBasePair nts
+      // this are the ADNBasePair nts
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
       part->RegisterNucleotideFivePrime(chain, nt);
 
@@ -869,9 +872,9 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
         nt->SetType(ADNModel::GetComplementaryBase(ntOld->GetType()));
       }
       
+      prev_nt = nt;
       nt->SetBaseSegment(bs);
 
-      prev_nt = nt;
       bs = bs->GetNext();
     }
     if (count % 2 != 0) {
@@ -902,10 +905,6 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
 
     ++count;
   }
-
-  // break chain away from polyT region
-  auto shiftNt = chain->GetNthNucleotide(12);
-  chain->ShiftStart(shiftNt);
 
   return chain;
 }

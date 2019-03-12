@@ -297,7 +297,7 @@ void DASPolyhedron::BuildPolyhedron(std::map<int, SBPosition3> vertices, std::ma
       face->halfEdge_ = he;
       he->left_ = face;
 
-      // create ANTEdge
+      // create DASEdge
       auto next_i = std::next(j);
       if (next_i == v.end()) {
         next_i = v.begin();
@@ -309,7 +309,7 @@ void DASPolyhedron::BuildPolyhedron(std::map<int, SBPosition3> vertices, std::ma
         edge_pair = std::make_pair(*next_i, *j);
       }
       if (seen_edges.find(edge_pair) == seen_edges.end()) {
-        // we need to create ANTEdge;
+        // we need to create DASEdge;
         edge->halfEdge_ = he;
         edge->id_ = e_id;
         seen_edges.insert(std::make_pair(edge_pair, edge));
