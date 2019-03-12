@@ -53,7 +53,7 @@ void DASBackToTheAtom::SetDoubleStrandPositions(ADNPointer<ADNDoubleStrand> ds) 
   }
 
   // Calculate last the loops so we can use already inserted positions
-  for (auto &bs : loops) {
+  for (ADNPointer<ADNBaseSegment> bs : loops) {
     SetPositionLoopNucleotides(bs);
   }
 }

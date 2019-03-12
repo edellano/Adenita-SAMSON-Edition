@@ -144,6 +144,9 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
       else if (filename.endsWith(".adnpart")) {
         t->LoadPart(filename);
       }
+      else if (filename.endsWith(".adn")) {
+        t->LoadParts(filename);
+      }
       else {
         loadVM = false;
       }
