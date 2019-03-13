@@ -65,6 +65,7 @@ public slots:
 
   void onLoadFile();
   void onSaveFile();
+  void onSaveSelection();
   void onExport();
   void onSetScaffold();
   // Options
@@ -87,7 +88,6 @@ public slots:
   void onFromDatagraph();
   void onHighlightXOs();
   void onHighlightPosXOs();
-  void onDoubleXO();
 
 private slots:
   void CheckForLoadedParts();

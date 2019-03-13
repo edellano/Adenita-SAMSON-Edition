@@ -31,6 +31,11 @@ CollectionMap<ADNSingleStrand> ADNNanorobot::GetSingleStrands() const
 
 void ADNNanorobot::RegisterPart(ADNPointer<ADNPart> part)
 {
+  if (part->getName().empty()) {
+    part->setName("Adenita component " + std::to_string(partId_));
+    ++partId_;
+  }
+
   partsIndex_.addReferenceTarget(part());
 }
 

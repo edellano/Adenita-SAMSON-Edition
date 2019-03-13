@@ -213,8 +213,8 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
         }
         std::pair<int, int> key = std::make_pair(tube.initPos_ + i, k);
         positions.insert(std::make_pair(key, bs));
+        ++bs_number;
       }
-      ++bs_number;
     }
     cellBsMap_[vs] = positions;
   }
@@ -338,19 +338,24 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
           if (c->GetType() == LoopPair) {
             ADNPointer<ADNLoopPair> lp = static_cast<ADNLoopPair*>(c());
             ADNPointer<ADNLoop> loop;
-            if (scaf) loop = lp->GetLeftLoop();
+            if (left) loop = lp->GetLeftLoop();
             else loop = lp->GetRightLoop();
 
             if (loop == nullptr) {
               // first time we need to create
               loop = new ADNLoop();
-              if (left) lp->SetLeftLoop(loop);
-              else lp->SetRightLoop(loop);
-
-              loop->SetStart(nt);
+              if (left) {
+                lp->SetLeftLoop(loop);
+                loop->SetStart(nt);
+              }
+              else {
+                lp->SetRightLoop(loop);
+                loop->SetEnd(nt);
+              }
             }
             loop->AddNucleotide(nt);
-            loop->SetEnd(nt);
+            if (left) loop->SetEnd(nt);
+            else loop->SetStart(nt);
             nt->SetBaseSegment(bs);
           }
           else {

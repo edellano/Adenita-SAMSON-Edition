@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>524</width>
+    <width>526</width>
     <height>276</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>524</width>
+    <width>526</width>
     <height>276</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>524</width>
+    <width>526</width>
     <height>276</height>
    </size>
   </property>
@@ -43,7 +43,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -54,7 +54,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>471</width>
+           <width>485</width>
            <height>51</height>
           </rect>
          </property>
@@ -84,7 +84,26 @@
           <item>
            <widget class="QToolButton" name="btnSave">
             <property name="text">
-             <string>Save</string>
+             <string>Save All</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+S</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnSaveSelection">
+            <property name="text">
+             <string>Save Selection</string>
             </property>
             <property name="iconSize">
              <size>
@@ -145,6 +164,13 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnSetStart">
+            <property name="text">
+             <string>Set 5'</string>
             </property>
            </widget>
           </item>
@@ -280,10 +306,17 @@
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="1" column="0">
-           <widget class="QPushButton" name="btnCenterPart">
+          <item row="1" column="1">
+           <widget class="QPushButton" name="btnCatenanes">
             <property name="text">
-             <string>Center Part</string>
+             <string>Catenanes</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="btnHighlightCrossovers">
+            <property name="text">
+             <string>Highlight Crossovers</string>
             </property>
            </widget>
           </item>
@@ -291,6 +324,27 @@
            <widget class="QPushButton" name="btnDataGraph">
             <property name="text">
              <string>From Datagraph</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="btnKinetoplast">
+            <property name="text">
+             <string>Kinetoplast</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="btnHighlightPosXOs">
+            <property name="text">
+             <string>Highlight Possible Crossovers</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="btnCenterPart">
+            <property name="text">
+             <string>Center Part</string>
             </property>
            </widget>
           </item>
@@ -308,52 +362,10 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="btnSetStart">
-            <property name="text">
-             <string>Set Start</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="btnCatenanes">
-            <property name="text">
-             <string>Catenanes</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="btnKinetoplast">
-            <property name="text">
-             <string>Kinetoplast</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QPushButton" name="btnHighlightCrossovers">
-            <property name="text">
-             <string>Highlight Crossovers</string>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="2">
-           <widget class="QPushButton" name="btnHighlightPosXOs">
-            <property name="text">
-             <string>Highlight Possible Crossovers</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
            <widget class="QPushButton" name="btnAddNtThreeP">
             <property name="text">
              <string>Add nt 3'</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QPushButton" name="btnDoubleXO">
-            <property name="text">
-             <string>Double XO</string>
             </property>
            </widget>
           </item>
@@ -472,22 +484,6 @@
    <hints>
     <hint type="sourcelabel">
      <x>1195</x>
-     <y>56</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>675</x>
-     <y>71</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnSetStart</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onSetStart()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>512</x>
      <y>56</y>
     </hint>
     <hint type="destinationlabel">
@@ -705,22 +701,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>btnDoubleXO</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onDoubleXO()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>87</x>
-     <y>201</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>261</x>
-     <y>137</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>btnSetPathNtthal</sender>
    <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
@@ -729,6 +709,22 @@
     <hint type="sourcelabel">
      <x>464</x>
      <y>237</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnSaveSelection</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onSaveSelection()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>67</y>
     </hint>
     <hint type="destinationlabel">
      <x>261</x>
@@ -759,7 +755,7 @@
   <slot>onHighlightXOs()</slot>
   <slot>onHighlightPosXOs()</slot>
   <slot>onAddNtThreeP()</slot>
-  <slot>onDoubleXO()</slot>
   <slot>onSetPathNtthal()</slot>
+  <slot>onSaveSelection()</slot>
  </slots>
 </ui>

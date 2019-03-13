@@ -26,15 +26,45 @@ SEMergePartsEditorGUI* SEMergePartsEditor::getPropertyWidget() const { return st
 std::map<int, ADNPointer<ADNPart>> SEMergePartsEditor::getPartsList()
 {
   indexParts_.clear();
+  int lastId = 0;
 
   SEAdenitaCoreSEApp* t = getAdenitaApp();
   auto nr = t->GetNanorobot();
   auto parts = nr->GetParts();
   SB_FOR(ADNPointer<ADNPart> p, parts) {
-    ++lastId_;
-    indexParts_.insert(std::make_pair(lastId_, p));
+    ++lastId;
+    indexParts_.insert(std::make_pair(lastId, p));
   }
   return indexParts_;
+}
+
+std::map<int, SEMergePartsEditor::Element> SEMergePartsEditor::getElementsList()
+{
+  indexElements_.clear();
+  int lastId = 0;
+
+  SEAdenitaCoreSEApp* t = getAdenitaApp();
+  auto nr = t->GetNanorobot();
+  auto parts = nr->GetParts();
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    auto dss = p->GetDoubleStrands();
+    SB_FOR(ADNPointer<ADNDoubleStrand> ds, dss) {
+      ++lastId;
+      Element el;
+      el.type = 0;
+      el.ds = ds;
+      indexElements_.insert(std::make_pair(lastId, el));
+    }
+    auto sss = p->GetSingleStrands();
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, sss) {
+      ++lastId;
+      Element el;
+      el.type = 1;
+      el.ss = ss;
+      indexElements_.insert(std::make_pair(lastId, el));
+    }
+  }
+  return indexElements_;
 }
 
 void SEMergePartsEditor::MergeParts(int idx, int jdx)
@@ -48,6 +78,23 @@ void SEMergePartsEditor::MergeParts(int idx, int jdx)
   if (p1 != nullptr && p2 != nullptr) {
     SEAdenitaCoreSEApp* t = getAdenitaApp();
     t->MergeComponents(p1, p2);
+  }
+}
+
+void SEMergePartsEditor::MoveElement(int edx, int pdx)
+{
+  ADNPointer<ADNPart> p = nullptr;
+  if (indexParts_.find(pdx) != indexParts_.end()) p = indexParts_.at(pdx);
+  Element el;
+  if (indexElements_.find(edx) != indexElements_.end()) el = indexElements_.at(edx);
+  if (p != nullptr && el.type != -1) {
+    SEAdenitaCoreSEApp* t = getAdenitaApp();
+    if (el.type == 0) {
+      t->MoveDoubleStrand(el.ds, p);
+    }
+    else if (el.type == 1) {
+      t->MoveSingleStrand(el.ss, p);
+    }
   }
 }
 

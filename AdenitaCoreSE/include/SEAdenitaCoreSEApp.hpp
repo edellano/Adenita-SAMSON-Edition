@@ -40,6 +40,7 @@ public :
 	//@}
 
   void LoadPart(QString filename);
+  void LoadParts(QString filename);
   void SaveFile(QString filename, ADNPointer<ADNPart> part = nullptr);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename);
@@ -54,6 +55,8 @@ public :
   void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
   bool CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
   void MergeComponents(ADNPointer<ADNPart> p1, ADNPointer<ADNPart> p2);
+  void MoveDoubleStrand(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNPart> p);
+  void MoveSingleStrand(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> p);
   // Debug
   void AddNtThreeP(int numNt);
   void CenterPart();
@@ -66,7 +69,6 @@ public :
   void FromDatagraph();
   void HighlightXOs();
   void HighlightPosXOs();
-  void DoubleXO();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events

@@ -53,7 +53,7 @@ void DASBackToTheAtom::SetDoubleStrandPositions(ADNPointer<ADNDoubleStrand> ds) 
   }
 
   // Calculate last the loops so we can use already inserted positions
-  for (auto &bs : loops) {
+  for (ADNPointer<ADNBaseSegment> bs : loops) {
     SetPositionLoopNucleotides(bs);
   }
 }
@@ -638,6 +638,16 @@ void DASBackToTheAtom::PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool p
     origami->RegisterAtom(nt, NucleotideGroup::SideChain, cSC, createAtoms);
     // hiding atoms here cause when they are created is too slow
     nt->HideCenterAtoms();
+  }
+
+  auto bss = origami->GetBaseSegments();
+  SB_FOR(ADNPointer<ADNBaseSegment> bs, bss) {
+    auto at = bs->GetCenterAtom();
+    at->setElementType(SBElement::Meitnerium);
+
+    origami->RegisterAtom(bs, at, createAtoms);
+    // hiding atoms here cause when they are created is too slow
+    bs->HideCenterAtom();
   }
 }
 

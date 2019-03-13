@@ -10,7 +10,7 @@ class ADNPart : public SBStructuralModel {
   SB_CLASS
 public:
 
-  ADNPart() : SBStructuralModel() { SetName("Adenita Component"); };
+  ADNPart() : SBStructuralModel() {};
   ADNPart(const ADNPart &n);
   ~ADNPart() = default;
 
@@ -30,6 +30,7 @@ public:
   void RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, 
     ADNPointer<ADNNucleotide> ntNext, bool addToSs = true);
   void RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at, bool create = false);
+  void RegisterAtom(ADNPointer<ADNBaseSegment> bs, ADNPointer<ADNAtom> at, bool create = false);
 
   unsigned int GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs);
 
@@ -70,6 +71,11 @@ private:
   CollectionMap<ADNDoubleStrand> doubleStrandsIndex_;
 
   bool loadedViaSAMSON_ = false;
+
+  // ids are just for naming
+  unsigned int nucleotideId_ = 1;
+  unsigned int singleStrandId_ = 1;
+  unsigned int doubleStrandId_ = 1;
 };
 
 SB_REGISTER_TARGET_TYPE(ADNPart, "ADNPart", "D3809709-A2EA-DDC1-9753-A40B2B9DE57E");

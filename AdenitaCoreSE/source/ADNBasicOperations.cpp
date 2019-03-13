@@ -460,8 +460,8 @@ void ADNBasicOperations::MoveStrand(ADNPointer<ADNPart> oldPart, ADNPointer<ADNP
         strands.push_back(ss);
       }
     }
+    bs = bs->GetNext();
   }
-
 }
 
 void ADNBasicOperations::MoveStrand(ADNPointer<ADNPart> oldPart, ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> ss)
@@ -481,6 +481,7 @@ void ADNBasicOperations::MoveStrand(ADNPointer<ADNPart> oldPart, ADNPointer<ADNP
       oldPart->DeregisterAtom(at);
       part->RegisterAtom(nt, g, at);
     }
+    nt = nt->GetNext();
   }
 }
 
