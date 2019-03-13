@@ -66,16 +66,15 @@ SBPosition3 SEDSDNACreatorEditor::GetSnappedPosition()
 {
   SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
 
-  auto highlightedNucleotides = nanorobot_->GetHighlightedNucleotides();
-
-  if (highlightedNucleotides.size() == 1) {
-    currentPosition = highlightedNucleotides[0]->GetBackbone()->GetPosition();
-  }
-
   auto highlightedBaseSegments = nanorobot_->GetHighlightedBaseSegments();
+  auto highlightedBaseSegmentsFromNucleotides = nanorobot_->GetHighlightedBaseSegmentsFromNucleotides();
 
   if (highlightedBaseSegments.size() == 1) {
     currentPosition = highlightedBaseSegments[0]->GetPosition();
+  }
+  else if (highlightedBaseSegmentsFromNucleotides.size() == 1) {
+    currentPosition = highlightedBaseSegmentsFromNucleotides[0]->GetPosition();
+
   }
 
   return currentPosition;
