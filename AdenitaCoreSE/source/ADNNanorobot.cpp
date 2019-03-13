@@ -160,6 +160,24 @@ CollectionMap<ADNPart> ADNNanorobot::GetSelectedParts()
   return parts;
 }
 
+CollectionMap<SBAtom> ADNNanorobot::GetHighlightedAtoms()
+{
+  CollectionMap<SBAtom> atoms;
+
+  SBNodeIndexer atomIndexer;
+  SAMSON::getActiveDocument()->getNodes(atomIndexer, SBNode::IsType(SBNode::Atom));
+
+  // only take one
+  SB_FOR(SBNode* node, atomIndexer) {
+    if (node->isHighlighted()) {
+      ADNPointer<SBAtom> a = static_cast<SBAtom*>(node);
+      atoms.addReferenceTarget(a());
+    }
+  }
+
+  return atoms;
+}
+
 CollectionMap<ADNNucleotide> ADNNanorobot::GetHighlightedNucleotides()
 {
   CollectionMap<ADNNucleotide> nts;

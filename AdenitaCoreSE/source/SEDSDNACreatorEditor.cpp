@@ -68,14 +68,18 @@ SBPosition3 SEDSDNACreatorEditor::GetSnappedPosition()
 
   auto highlightedBaseSegments = nanorobot_->GetHighlightedBaseSegments();
   auto highlightedBaseSegmentsFromNucleotides = nanorobot_->GetHighlightedBaseSegmentsFromNucleotides();
+  auto highlightedAtoms = nanorobot_->GetHighlightedAtoms();
 
-  if (highlightedBaseSegments.size() == 1) {
+  if (highlightedAtoms.size() == 1) {
+    currentPosition = highlightedAtoms[0]->getPosition();
+  }
+  else if (highlightedBaseSegments.size() == 1) {
     currentPosition = highlightedBaseSegments[0]->GetPosition();
   }
   else if (highlightedBaseSegmentsFromNucleotides.size() == 1) {
     currentPosition = highlightedBaseSegmentsFromNucleotides[0]->GetPosition();
-
   }
+  
 
   return currentPosition;
 }
