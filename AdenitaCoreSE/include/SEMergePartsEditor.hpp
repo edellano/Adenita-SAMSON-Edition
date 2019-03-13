@@ -95,14 +95,33 @@ public :
 
   SEMergePartsEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
+  struct Element {
+    int type = -1;
+    ADNPointer<ADNSingleStrand> ss;
+    ADNPointer<ADNDoubleStrand> ds;
+
+    std::string GetName() {
+      std::string n = "";
+      if (type == 0) {
+        n = ds->getName();
+      }
+      else if (type == 1) {
+        n = ss->getName();
+      }
+      return n;
+    }
+  };
+
   std::map<int, ADNPointer<ADNPart>> getPartsList();
+  std::map<int, Element> getElementsList();
   void MergeParts(int idx, int jdx);
+  void MoveElement(int edx, int pdx);
 
 private:
   SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
 
   std::map<int, ADNPointer<ADNPart>> indexParts_;
-  int lastId_ = 0;
+  std::map<int, Element> indexElements_;
 };
 
 

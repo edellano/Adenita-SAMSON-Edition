@@ -5,8 +5,6 @@
 
 ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
 {
-  ADNPointer<ADNPart> part = new ADNPart();
-
   FILE* fp = fopen(filename.c_str(), "rb");
   char readBuffer[131072];
   FileReadStream is(fp, readBuffer, sizeof(readBuffer));
@@ -23,10 +21,19 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
     return LoadPartFromJsonLegacy(filename);
   }
 
+  ADNPointer<ADNPart> part = LoadPartFromJson(d);
+
+  return part;
+}
+
+ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(Value & val)
+{
+  ADNPointer<ADNPart> part = new ADNPart();
+
+  Value& d = val;
+
   std::string name = d["name"].GetString();
   part->SetName(name);
-  //std::string position = d["position"].GetString();
-  //part->SetPosition(ADNAuxiliary::StringToSBPosition(position));
 
   ElementMap<ADNNucleotide> nts;
   std::map<int, int> nexts;
@@ -38,7 +45,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
     ADNPointer<ADNSingleStrand> ss = ADNPointer<ADNSingleStrand>(new ADNSingleStrand());
     ss->SetName(itr->value["chainName"].GetString());
     ss->IsScaffold(itr->value["isScaffold"].GetBool());
-    
+
     const Value& val_nucleotides = itr->value["nucleotides"];
     for (Value::ConstMemberIterator itr2 = val_nucleotides.MemberBegin(); itr2 != val_nucleotides.MemberEnd(); ++itr2) {
 
@@ -56,14 +63,14 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
       prevs.insert(std::make_pair(std::stoi(itr2->name.GetString()), itr2->value["prev"].GetInt()));
       pairs.insert(std::make_pair(std::stoi(itr2->name.GetString()), itr2->value["pair"].GetInt()));
     }
-    
+
     int f_id = itr->value["fivePrimeId"].GetInt();
 
     ADNPointer<ADNNucleotide> nt = nts.Get(f_id).second;
     int currId = f_id;
     do {
       // pairing is done when parsing base segments
-      int nextId = nexts.at(currId);   
+      int nextId = nexts.at(currId);
       nt = nts.Get(currId).second;
       part->RegisterNucleotideThreePrime(ss, nt);
       currId = nextId;
@@ -117,12 +124,10 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
         const Value& left = c["leftLoop"];
         const Value& right = c["rightLoop"];
 
-        ADNPointer<ADNLoop> leftLoop = ADNPointer<ADNLoop>(new ADNLoop());
-        ADNPointer<ADNLoop> rightLoop = ADNPointer<ADNLoop>(new ADNLoop());
-        lp_cell->SetLeftLoop(leftLoop);
-        lp_cell->SetRightLoop(rightLoop);
-
         if (left.HasMember("startNt")) {
+          ADNPointer<ADNLoop> leftLoop = ADNPointer<ADNLoop>(new ADNLoop());
+          lp_cell->SetLeftLoop(leftLoop);
+
           int startNtId = left["startNt"].GetInt();
           int endNtId = left["endNt"].GetInt();
 
@@ -131,7 +136,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
           ADNPointer<ADNSingleStrand> ss = startNt->GetStrand();
           leftLoop->SetStart(startNt);
           leftLoop->SetEnd(lastNt);
-          
+
           std::string nucleotides = left["nucleotides"].GetString();
           std::vector<int> ntVec = ADNAuxiliary::StringToVector(nucleotides);
           for (auto &i : ntVec) {
@@ -142,14 +147,17 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
         }
 
         if (right.HasMember("startNt")) {
+          ADNPointer<ADNLoop> rightLoop = ADNPointer<ADNLoop>(new ADNLoop());
+          lp_cell->SetRightLoop(rightLoop);
+
           int startNtId = right["startNt"].GetInt();
           int endNtId = right["endNt"].GetInt();
 
           ADNPointer<ADNNucleotide> startNt = nts.Get(startNtId).second;
           ADNPointer<ADNNucleotide> lastNt = nts.Get(endNtId).second;
           ADNPointer<ADNSingleStrand> ss = startNt->GetStrand();
-          leftLoop->SetStart(startNt);
-          leftLoop->SetEnd(lastNt);
+          rightLoop->SetStart(startNt);
+          rightLoop->SetEnd(lastNt);
 
           std::string nucleotides = right["nucleotides"].GetString();
           std::vector<int> ntVec = ADNAuxiliary::StringToVector(nucleotides);
@@ -182,9 +190,35 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
     part->RegisterDoubleStrand(ds);
   }
 
-  fclose(fp);
-
   return part;
+}
+
+std::vector<ADNPointer<ADNPart>> ADNLoader::LoadPartsFromJson(std::string filename)
+{
+  std::vector<ADNPointer<ADNPart>> parts;
+
+  FILE* fp = fopen(filename.c_str(), "rb");
+  char readBuffer[131072];
+  FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+  Document d;
+  d.ParseStream(is);
+
+  // check for save version
+  double versionValue = 0.0;
+  if (Value* version = Pointer("/version").Get(d)) {
+    versionValue = version->GetDouble();
+  }
+
+  if (versionValue < 0.4) return parts;
+
+  Value& partList = d["parts"];
+  for (Value::MemberIterator itr = partList.MemberBegin(); itr != partList.MemberEnd(); ++itr) {
+    Value& v = itr->value;
+    ADNPointer<ADNPart> p = LoadPartFromJson(v);
+    parts.push_back(p);
+  }
+
+  return parts;
 }
 
 ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
@@ -502,29 +536,6 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
   return part;
 }
 
-ADNNanorobot * ADNLoader::LoadNanorobotFromJson(std::string filename)
-{
-  ADNNanorobot* nr = new ADNNanorobot();
-
-  FILE* fp = fopen(filename.c_str(), "rb");
-  char readBuffer[131072];
-  FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-  Document d;
-  d.ParseStream(is);
-
-  // check for save version
-  double versionValue = 0.0;
-  if (Value* version = Pointer("/version").Get(d)) {
-    versionValue = version->GetDouble();
-  }
-
-  if (versionValue > 0.3) {
-    // new format
-  }
-
-  return nr;
-}
-
 void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, rapidjson::Writer<StringBuffer>& writer)
 {
 
@@ -776,7 +787,10 @@ void ADNLoader::SaveNanorobotToJson(ADNNanorobot * nr, std::string filename)
   writer.Key("parts");
   writer.StartObject();
   SB_FOR(ADNPointer<ADNPart> p, parts) {
+    writer.Key(p->GetName().c_str());
+    writer.StartObject();
     SavePartToJson(p, writer);
+    writer.EndObject();  // end part
   }
 
   writer.EndObject();  // end parts

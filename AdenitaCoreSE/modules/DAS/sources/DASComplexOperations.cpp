@@ -175,22 +175,22 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
       ssLeftOvers.first = firstStrand;
       ssLeftOvers.second = secondStrand;
 
-      // break first nucleotide in 5'
-      if (nt1->GetEnd() != FivePrime) {
-        firstPrev = nt1->GetPrev(true);
-        auto pair1 = ADNBasicOperations::BreakSingleStrand(part, nt1);
-        firstStrand = pair1.second;
-        secondStrandTwo = pair1.first;
+      // break first nucleotide in 3'
+      if (nt1->GetEnd() != ThreePrime) {
+        secondNext = nt1->GetNext(true);
+        auto pair1 = ADNBasicOperations::BreakSingleStrand(part, secondNext);
+        secondStrand = pair1.first;
+        firstStrandTwo = pair1.second;
       }
-      // break second nucleotide in 3'
-      if (nt2->GetEnd() != ThreePrime) {
-        secondNext = nt2->GetNext(true);
-        auto pair2 = ADNBasicOperations::BreakSingleStrand(part, secondNext);
-        secondStrand = pair2.first;
-        firstStrandTwo = pair2.second;
+      // break second nucleotide in 5'
+      if (nt2->GetEnd() != FivePrime) {
+        firstPrev = nt2->GetPrev(true);
+        auto pair2 = ADNBasicOperations::BreakSingleStrand(part, firstPrev);
+        firstStrand = pair2.second;
+        secondStrandTwo = pair2.first;
       }
 
-      if (joinStrand1 != nullptr) {
+      /*if (joinStrand1 != nullptr) {
         auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand1, firstStrand);
         auto ssNN = ADNBasicOperations::MergeSingleStrands(part, secondStrand, ssN);
         part->DeregisterSingleStrand(ssN);
@@ -205,7 +205,7 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
         auto ssNN = ADNBasicOperations::MergeSingleStrands(part, secondStrandTwo, ssN);
         part->DeregisterSingleStrand(ssN);
         part->DeregisterSingleStrand(joinStrand2);
-      }
+      }*/
     }
 
     if (firstStrand->getNumberOfNucleotides() == 0) ssLeftOvers.third = firstStrand;

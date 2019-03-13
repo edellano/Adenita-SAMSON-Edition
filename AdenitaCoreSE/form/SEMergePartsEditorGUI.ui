@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>188</height>
+    <height>212</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>300</width>
-    <height>188</height>
+    <height>212</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -22,14 +22,81 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Component 2</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="6" column="3">
+      <widget class="QComboBox" name="cmbPartM">
+       <item>
+        <property name="text">
+         <string>None</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Move to</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="4">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Merge components</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Element</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QComboBox" name="cmbElement">
+       <item>
+        <property name="text">
+         <string>None</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Component 1</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="4">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Move</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="4">
+      <widget class="QPushButton" name="btnMerge">
+       <property name="text">
+        <string>Merge</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0" colspan="4">
+      <widget class="QPushButton" name="btnMove">
+       <property name="text">
+        <string>Move</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="3">
       <widget class="QComboBox" name="cmbPart1">
        <item>
         <property name="text">
@@ -38,14 +105,7 @@
        </item>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Component 1</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
+     <item row="3" column="1" colspan="3">
       <widget class="QComboBox" name="cmbPart2">
        <item>
         <property name="text">
@@ -54,24 +114,10 @@
        </item>
       </widget>
      </item>
-     <item row="1" column="2" rowspan="2">
+     <item row="0" column="0" colspan="4">
       <widget class="QPushButton" name="btnRefresh">
        <property name="text">
         <string>Refresh Lists</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="3">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Select two components</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="3">
-      <widget class="QPushButton" name="btnMerge">
-       <property name="text">
-        <string>Merge</string>
        </property>
       </widget>
      </item>
@@ -113,9 +159,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnMove</sender>
+   <signal>released()</signal>
+   <receiver>SEMergePartsEditorGUIClass</receiver>
+   <slot>onMove()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>149</x>
+     <y>166</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>93</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onMerge()</slot>
   <slot>updatePartsList()</slot>
+  <slot>onMove()</slot>
  </slots>
 </ui>

@@ -625,6 +625,9 @@ void ADNSingleStrand::ShiftStart(ADNPointer<ADNNucleotide> nt, bool shiftSeq) {
     AddNucleotideFivePrime(cpNt);
   }
   
+  stopNt->SetEnd(ThreePrime);
+  threePrime_ = stopNt;
+
   if (shiftSeq) {
     SetSequence(seq);
   }

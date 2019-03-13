@@ -30,6 +30,14 @@ void SEAdenitaCoreSEApp::LoadPart(QString filename)
   AddPartToActiveLayer(part);
 }
 
+void SEAdenitaCoreSEApp::LoadParts(QString filename)
+{
+  std::vector<ADNPointer<ADNPart>> parts = ADNLoader::LoadPartsFromJson(filename.toStdString());
+  for (ADNPointer<ADNPart> p : parts) {
+    AddPartToActiveLayer(p);
+  }
+}
+
 void SEAdenitaCoreSEApp::SaveFile(QString filename, ADNPointer<ADNPart> part)
 {
   if (part == nullptr) {
@@ -50,8 +58,8 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
   std::string seq = "";
   auto part = alg->ApplyAlgorithm(seq, filename.toStdString());
 
-  int lastPoint = filename.lastIndexOf(".");
-  QString s = filename.left(lastPoint);
+  QFileInfo fi(filename);
+  QString s = fi.baseName();
   part->SetName(s.toStdString());
 
   AddPartToActiveLayer(part);
@@ -65,8 +73,8 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
 
   part = cad.CreateCadnanoPart(filename.toStdString());
   
-  int lastPoint = filename.lastIndexOf(".");
-  QString s = filename.left(lastPoint);
+  QFileInfo fi(filename);
+  QString s = fi.baseName();
   part->SetName(s.toStdString());
 
   AddPartToActiveLayer(part);
@@ -208,7 +216,7 @@ void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
       bool circ = ss->IsCircular();
 
       ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
-      // to break in the 3' direction
+      // to break in the 5' or 3' direction
       if (fPrime) breakNt = nt;
       else breakNt = nt->GetNext(true);
       if (breakNt != nullptr) {
@@ -291,7 +299,7 @@ void SEAdenitaCoreSEApp::SetStart()
   }
   else if (nts.size() == 1) {
     auto nt = nts[0];
-    ADNBasicOperations::SetStart(nt);
+    ADNBasicOperations::SetStart(nt, true);
   }
 
   ResetVisualModel();
@@ -304,6 +312,22 @@ void SEAdenitaCoreSEApp::MergeComponents(ADNPointer<ADNPart> p1, ADNPointer<ADNP
   p2->getParent()->removeChild(p2());
   p1 = newPart;
   ResetVisualModel();
+}
+
+void SEAdenitaCoreSEApp::MoveDoubleStrand(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNPart> p)
+{
+  ADNPointer<ADNPart> oldPart = GetNanorobot()->GetPart(ds);
+  if (oldPart != p) {
+    ADNBasicOperations::MoveStrand(oldPart, p, ds);
+  }
+}
+
+void SEAdenitaCoreSEApp::MoveSingleStrand(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> p)
+{
+  ADNPointer<ADNPart> oldPart = GetNanorobot()->GetPart(ss);
+  if (oldPart != p) {
+    ADNBasicOperations::MoveStrand(oldPart, p, ss);
+  }
 }
 
 bool SEAdenitaCoreSEApp::CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc)
@@ -408,31 +432,6 @@ void SEAdenitaCoreSEApp::HighlightPosXOs()
     PICrossovers::GetPossibleCrossovers(p);
   }
   ResetVisualModel();
-}
-
-void SEAdenitaCoreSEApp::DoubleXO()
-{
-  auto nucleotides = GetNanorobot()->GetSelectedNucleotides();
-
-  if (nucleotides.size() == 2) {
-    ADNPointer<ADNNucleotide> nt11 = nucleotides[0];
-    ADNPointer<ADNNucleotide> nt12 = nucleotides[1];
-
-    // get other nucleotides
-    ADNPointer<ADNNucleotide> nt21 = nt11;
-    ADNPointer<ADNNucleotide> nt22 = nt12;
-    for (int i = 0; i < 6; ++i) {
-      nt21 = nt21->GetNext(true);
-      nt22 = nt22->GetPrev(true);
-    }
-
-    auto part = GetNanorobot()->GetPart(nt11->GetStrand());
-    std::string seq = "NNNNNNNNNNNNNNNNNNNNNNNNN";
-
-    DASOperations::CreateDoubleCrossover(part, nt11, nt12, nt21, nt22, seq);
-
-    ResetVisualModel();
-  }  
 }
 
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)

@@ -54,6 +54,7 @@ public:
 public slots:
   void updatePartsList();
   void onMerge();
+  void onMove();
 
 private:
 
