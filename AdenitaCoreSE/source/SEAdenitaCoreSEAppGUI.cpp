@@ -22,9 +22,13 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   loadIcon.addFile(string(iconsPath + "load.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnLoad->setIcon(loadIcon);
 
-  QIcon saveIcon;
-  saveIcon.addFile(string(iconsPath + "save.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
-  ui.btnSave->setIcon(saveIcon);
+  QIcon saveAllIcon;
+  saveAllIcon.addFile(string(iconsPath + "saveAll.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnSaveAll->setIcon(saveAllIcon);
+
+  QIcon saveSelectionIcon;
+  saveSelectionIcon.addFile(string(iconsPath + "saveSelection.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnSaveSelection->setIcon(saveSelectionIcon);
 
   QIcon exportIcon; 
   exportIcon.addFile(string(iconsPath + "export.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);

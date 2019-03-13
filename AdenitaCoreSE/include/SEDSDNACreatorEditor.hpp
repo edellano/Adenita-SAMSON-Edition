@@ -118,6 +118,7 @@ private:
   void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
   void ShowBox();
   void SetSequence(ADNPointer<ADNPart> nanotube);
+  SBPosition3 GetSnappedPosition();
   SEAdenitaCoreSEApp* getAdenitaApp();
 
   bool dsMode_ = true;  // true for dsDNA, false for ssDNA
@@ -133,6 +134,8 @@ private:
   SBQuantity::length boxWidth_;
   SBQuantity::length boxDepth_;
   bool setSequence_ = false;
+
+  ADNNanorobot * nanorobot_;
 };
 
 

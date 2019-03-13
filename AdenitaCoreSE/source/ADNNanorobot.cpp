@@ -179,7 +179,7 @@ CollectionMap<ADNNucleotide> ADNNanorobot::GetHighlightedNucleotides()
   return nts;
 }
 
-CollectionMap<ADNBaseSegment> ADNNanorobot::GetSelectedBaseSegments()
+CollectionMap<ADNBaseSegment> ADNNanorobot::GetSelectedBaseSegmentsFromNucleotides()
 {
   CollectionMap<ADNBaseSegment> bss;
 
@@ -393,7 +393,7 @@ SBPosition3 ADNNanorobot::GetNucleotideSidechainPosition(ADNConformation conform
   return pos;
 }
 
-CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
+CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegmentsFromNucleotides()
 {
   CollectionMap<ADNBaseSegment> bss;
 
@@ -409,17 +409,25 @@ CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
     }
   }
 
-  //SBDocument* doc = SAMSON::getActiveDocument();
-  //SBNodeIndexer nodes;
-  //doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
-  //// only take one
-  //SB_FOR(SBNode* node, nodes) {
-  //  if (node->isHighlighted()) {
-  //    ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
-  //    bss.addReferenceTarget(bs());
-  //  }
-  //}
+  return bss;
+}
+
+CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
+{
+  CollectionMap<ADNBaseSegment> bss;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isHighlighted()) {
+      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+      bss.addReferenceTarget(bs());
+    }
+  }
 
   return bss;
 }
