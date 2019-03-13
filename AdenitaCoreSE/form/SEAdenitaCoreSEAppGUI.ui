@@ -43,7 +43,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -54,7 +54,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>485</width>
+           <width>603</width>
            <height>51</height>
           </rect>
          </property>
@@ -82,7 +82,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="btnSave">
+           <widget class="QToolButton" name="btnSaveAll">
             <property name="text">
              <string>Save All</string>
             </property>
@@ -187,7 +187,7 @@
            <x>10</x>
            <y>10</y>
            <width>481</width>
-           <height>211</height>
+           <height>223</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout">
@@ -403,8 +403,8 @@
    <slot>onCenterPart()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>114</x>
-     <y>110</y>
+     <x>129</x>
+     <y>144</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -413,10 +413,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>btnSave</sender>
+   <sender>btnSaveAll</sender>
    <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onSaveFile()</slot>
+   <slot>onSaveAll()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>88</x>
@@ -451,8 +451,8 @@
    <slot>onExport()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>222</x>
-     <y>65</y>
+     <x>298</x>
+     <y>82</y>
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
@@ -467,8 +467,8 @@
    <slot>onCatenanes()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1162</x>
-     <y>56</y>
+     <x>341</x>
+     <y>144</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>
@@ -483,8 +483,8 @@
    <slot>onKinetoplast()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1195</x>
-     <y>56</y>
+     <x>493</x>
+     <y>144</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>
@@ -499,8 +499,8 @@
    <slot>onTestNeighbors()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>75</x>
-     <y>56</y>
+     <x>424</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>
@@ -515,8 +515,8 @@
    <slot>onOxDNAImport()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>74</x>
-     <y>56</y>
+     <x>241</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>
@@ -531,8 +531,8 @@
    <slot>onFromDatagraph()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>65</x>
-     <y>56</y>
+     <x>80</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>
@@ -547,8 +547,8 @@
    <slot>onCalculateBindingProperties()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1227</x>
-     <y>61</y>
+     <x>525</x>
+     <y>82</y>
     </hint>
     <hint type="destinationlabel">
      <x>781</x>
@@ -563,8 +563,8 @@
    <slot>onChangeScaffold(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>378</x>
-     <y>71</y>
+     <x>123</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>
@@ -579,8 +579,8 @@
    <slot>onCheckAutoScaffold(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>129</y>
+     <x>123</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -595,8 +595,8 @@
    <slot>onCheckClearLogFile(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>210</y>
+     <x>123</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -611,8 +611,8 @@
    <slot>onCheckShowOverlay(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>156</y>
+     <x>123</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -627,8 +627,8 @@
    <slot>onCheckDisplayCrossovers(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>183</y>
+     <x>123</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -643,8 +643,8 @@
    <slot>onCheckInterpolateDimensions(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>259</x>
-     <y>237</y>
+     <x>123</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -707,8 +707,8 @@
    <slot>onSetPathNtthal()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>464</x>
-     <y>237</y>
+     <x>123</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel">
      <x>261</x>
@@ -737,7 +737,7 @@
   <slot>onSetScaffold()</slot>
   <slot>onCenterPart()</slot>
   <slot>onLoadFile()</slot>
-  <slot>onSaveFile()</slot>
+  <slot>onSaveAll()</slot>
   <slot>onExport()</slot>
   <slot>onChangeScaffold(int)</slot>
   <slot>onCatenanes()</slot>
