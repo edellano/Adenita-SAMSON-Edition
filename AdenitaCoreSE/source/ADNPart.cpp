@@ -19,12 +19,12 @@ ADNPart & ADNPart::operator=(const ADNPart& other)
 
 void ADNPart::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
-  //SBStructuralModel::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  SBStructuralModel::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 
-  serializer->writeIntElement("number_ds", GetNumberOfDoubleStrands());
-  serializer->writeIntElement("number_ss", GetNumberOfSingleStrands());
+  //serializer->writeIntElement("number_ds", GetNumberOfDoubleStrands());
+  //serializer->writeIntElement("number_ss", GetNumberOfSingleStrands());
 
-  // bottom scales
+  //// bottom scales
   //serializer->writeStartElement("single_strands");  // start single strand
   //SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrandsIndex_) {
   //  serializer->writeUnsignedIntElement("ss_idx", nodeIndexer.getIndex(ss()));
@@ -154,10 +154,10 @@ void ADNPart::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIn
 
 void ADNPart::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  //SBStructuralModel::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  SBStructuralModel::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 
-  int numDss = serializer->readIntElement();
-  int numSss = serializer->readIntElement();
+  //int numDss = serializer->readIntElement();
+  //int numSss = serializer->readIntElement();
 
   //serializer->readStartElement();  // begin single strands
 
@@ -212,7 +212,7 @@ void ADNPart::unserialize(SBCSerializer * serializer, const SBNodeIndexer & node
 
   //serializer->readEndElement();  // end single strands
 
-  // build top-down
+  //// build top-down
   //serializer->readStartElement();  // begin double strands
   //for (int i = 0; i < numDss; ++i) {
   //  unsigned int id = serializer->readUnsignedIntElement();
@@ -330,7 +330,7 @@ void ADNPart::unserialize(SBCSerializer * serializer, const SBNodeIndexer & node
   //}
   //serializer->readEndElement();  // end double strands
 
-  loadedViaSAMSON(true);
+  //loadedViaSAMSON(true);
 }
 
 std::string const & ADNPart::GetName() const
