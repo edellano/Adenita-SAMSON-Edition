@@ -141,11 +141,17 @@ void SEDeleteEditor::mousePressEvent(QMouseEvent* event) {
   }
 
   if (highlightedNucleotides.size() == 1) {
-    highlightedNucleotides[0]->setSelectionFlag(true);
+    ADNPointer<ADNNucleotide> nt = highlightedNucleotides[0];
+    ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
+    ADNPointer<ADNPart> part = nanorobot->GetPart(ss);
+    auto newStrands = ADNBasicOperations::DeleteNucleotide(part, nt);
+    if (ss->getNumberOfNucleotides() == 0) {
+      // delete single strand if was left empty
+      part->DeregisterSingleStrand(ss);
+    }
   }
 
-  app->DeleteNucleotide();
-
+  app->ResetVisualModel();
 }
 
 void SEDeleteEditor::mouseReleaseEvent(QMouseEvent* event) {
