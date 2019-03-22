@@ -235,26 +235,6 @@ void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
   }
 }
 
-void SEAdenitaCoreSEApp::DeleteNucleotide()
-{
-  auto numNts = GetNanorobot()->GetNumberOfNucleotides();
-  auto numSss = GetNanorobot()->GetNumberOfSingleStrands();
-
-  auto nts = GetNanorobot()->GetSelectedNucleotides();
-  if (nts.size() == 1) {
-    ADNPointer<ADNNucleotide> nt = nts[0];
-    ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
-    ADNPointer<ADNPart> part = GetNanorobot()->GetPart(ss);
-    auto newStrands = ADNBasicOperations::DeleteNucleotide(part, nt);
-    if (ss->getNumberOfNucleotides() == 0) {
-      // also delete single strand if was left empty
-      ADNBasicOperations::DeleteSingleStrand(ss);
-    }
-       
-    ResetVisualModel();
-  }
-}
-
 void SEAdenitaCoreSEApp::TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle)
 {
   DASBackToTheAtom btta = DASBackToTheAtom();

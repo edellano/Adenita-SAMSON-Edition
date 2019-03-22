@@ -280,7 +280,12 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
     // we don't need to break, just delete
     ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
     if (ntNext != nullptr) {
-      ntNext->SetEnd(e);
+      if (e == ThreePrime) {
+        ntNext->SetEnd(FiveAndThreePrime);
+      }
+      else {
+        ntNext->SetEnd(e);
+      }
       ss->SetFivePrime(ntNext);
       res.first = ss;
     }
@@ -289,6 +294,7 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
       part->DeregisterSingleStrand(ss);
     }
     part->DeregisterNucleotide(nt);
+    nt.deleteReferenceTarget();
   }
   else {
     // first break
@@ -314,6 +320,7 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
       ADNPointer<ADNLoopPair> loopPair = static_cast<ADNLoopPair*>(bs->GetCell()());
       loopPair->RemoveNucleotide(nt);
     }
+    part->DeregisterNucleotide(nt);
     nt.deleteReferenceTarget();
   }
 
