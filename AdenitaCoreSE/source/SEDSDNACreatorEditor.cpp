@@ -10,6 +10,8 @@ SEDSDNACreatorEditor::SEDSDNACreatorEditor() {
 	propertyWidget->loadDefaultSettings();
 	SAMSON::addWidget(propertyWidget);
 
+  auto app = getAdenitaApp();
+  nanorobot_ = app->GetNanorobot();
 }
 
 SEDSDNACreatorEditor::~SEDSDNACreatorEditor() {
@@ -60,6 +62,28 @@ void SEDSDNACreatorEditor::SetSequence(bool s)
   setSequence_ = s;
 }
 
+SBPosition3 SEDSDNACreatorEditor::GetSnappedPosition()
+{
+  SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+
+  auto highlightedBaseSegments = nanorobot_->GetHighlightedBaseSegments();
+  auto highlightedBaseSegmentsFromNucleotides = nanorobot_->GetHighlightedBaseSegmentsFromNucleotides();
+  auto highlightedAtoms = nanorobot_->GetHighlightedAtoms();
+
+  if (highlightedAtoms.size() == 1) {
+    currentPosition = highlightedAtoms[0]->getPosition();
+  }
+  else if (highlightedBaseSegments.size() == 1) {
+    currentPosition = highlightedBaseSegments[0]->GetPosition();
+  }
+  else if (highlightedBaseSegmentsFromNucleotides.size() == 1) {
+    currentPosition = highlightedBaseSegmentsFromNucleotides[0]->GetPosition();
+  }
+  
+
+  return currentPosition;
+}
+
 ADNPointer<ADNPart> SEDSDNACreatorEditor::generateStrand(bool mock)
 {
   auto length = (positions_.SecondPosition - positions_.FirstPosition).norm();
@@ -75,10 +99,7 @@ ADNPointer<ADNPart> SEDSDNACreatorEditor::generateStrand(bool mock)
     part = new ADNPart();
 
     SBVector3 dir = (positions_.SecondPosition - positions_.FirstPosition).normalizedVersion();
-
-    SEAdenitaCoreSEApp* adenita = getAdenitaApp();
-    auto nanorobot = adenita->GetNanorobot();
-
+    
     if (dsMode_) {
       auto ds = DASCreator::CreateDoubleStrand(part, numNucleotides, positions_.FirstPosition, dir, mock);
     }
@@ -279,11 +300,14 @@ void SEDSDNACreatorEditor::display() {
   displayBox();
 
   if (display_) {
-    SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
-
+    
     if (positions_.positionsCounter == 1) {
-      ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
-      positions_.SecondPosition = currentPosition;
+
+      positions_.SecondPosition = GetSnappedPosition();
+
+      ADNDisplayHelper::displayLine(positions_.FirstPosition, positions_.SecondPosition);
+
+
     }
 
     if (config.preview_editor) {
@@ -327,7 +351,7 @@ void SEDSDNACreatorEditor::mousePressEvent(QMouseEvent* event) {
 	// Implement this function to handle this event with your editor.
 
   if (positions_.positionsCounter == 0) {
-    positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    positions_.FirstPosition = GetSnappedPosition();
     positions_.positionsCounter++;
 
     positions_.FirstVector = SAMSON::getActiveCamera()->getBasisZ().normalizedVersion();
@@ -341,7 +365,7 @@ void SEDSDNACreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
 	// Implement this function to handle this event with your editor.
 
   if (positions_.positionsCounter == 1) {
-    positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    //positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
 
     ADNPointer<ADNPart> part = nullptr;

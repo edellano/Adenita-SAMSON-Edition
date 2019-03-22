@@ -56,12 +56,16 @@ public:
   CollectionMap<ADNSingleStrand> GetSingleStrands() const;
   //! Returns all currently selected ADNPart
   CollectionMap<ADNPart> GetSelectedParts();
+  //! Returns all currently highlighted SBAtoms
+  CollectionMap<SBAtom> GetHighlightedAtoms();
   //! Returns all currently highlighted ADNNucleotides
   CollectionMap<ADNNucleotide> GetHighlightedNucleotides();
   //! Returns all currently selected ADNNucleotides
   CollectionMap<ADNNucleotide> GetSelectedNucleotides();
-  //! Returns all currently selected ADNBaseSegment
-  CollectionMap<ADNBaseSegment> GetSelectedBaseSegments();
+  //! Returns all currently selected ADNBaseSegment 
+  CollectionMap<ADNBaseSegment> GetSelectedBaseSegmentsFromNucleotides();
+  //! Returns all currently highlighted ADNBaseSegments from Nucleotides
+  CollectionMap<ADNBaseSegment> GetHighlightedBaseSegmentsFromNucleotides();
   //! Returns all currently highlighted ADNBaseSegments
   CollectionMap<ADNBaseSegment> GetHighlightedBaseSegments();
   //! Returns all currently selected ADNSingleStrand
