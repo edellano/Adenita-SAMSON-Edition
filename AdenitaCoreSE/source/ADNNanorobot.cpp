@@ -160,6 +160,24 @@ CollectionMap<ADNPart> ADNNanorobot::GetSelectedParts()
   return parts;
 }
 
+CollectionMap<SBAtom> ADNNanorobot::GetHighlightedAtoms()
+{
+  CollectionMap<SBAtom> atoms;
+
+  SBNodeIndexer atomIndexer;
+  SAMSON::getActiveDocument()->getNodes(atomIndexer, SBNode::IsType(SBNode::Atom));
+
+  // only take one
+  SB_FOR(SBNode* node, atomIndexer) {
+    if (node->isHighlighted()) {
+      ADNPointer<SBAtom> a = static_cast<SBAtom*>(node);
+      atoms.addReferenceTarget(a());
+    }
+  }
+
+  return atoms;
+}
+
 CollectionMap<ADNNucleotide> ADNNanorobot::GetHighlightedNucleotides()
 {
   CollectionMap<ADNNucleotide> nts;
@@ -179,7 +197,7 @@ CollectionMap<ADNNucleotide> ADNNanorobot::GetHighlightedNucleotides()
   return nts;
 }
 
-CollectionMap<ADNBaseSegment> ADNNanorobot::GetSelectedBaseSegments()
+CollectionMap<ADNBaseSegment> ADNNanorobot::GetSelectedBaseSegmentsFromNucleotides()
 {
   CollectionMap<ADNBaseSegment> bss;
 
@@ -393,7 +411,7 @@ SBPosition3 ADNNanorobot::GetNucleotideSidechainPosition(ADNConformation conform
   return pos;
 }
 
-CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
+CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegmentsFromNucleotides()
 {
   CollectionMap<ADNBaseSegment> bss;
 
@@ -409,17 +427,25 @@ CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
     }
   }
 
-  //SBDocument* doc = SAMSON::getActiveDocument();
-  //SBNodeIndexer nodes;
-  //doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
-  //// only take one
-  //SB_FOR(SBNode* node, nodes) {
-  //  if (node->isHighlighted()) {
-  //    ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
-  //    bss.addReferenceTarget(bs());
-  //  }
-  //}
+  return bss;
+}
+
+CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
+{
+  CollectionMap<ADNBaseSegment> bss;
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  // only take one
+  SB_FOR(SBNode* node, nodes) {
+    if (node->isHighlighted()) {
+      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+      bss.addReferenceTarget(bs());
+    }
+  }
 
   return bss;
 }
