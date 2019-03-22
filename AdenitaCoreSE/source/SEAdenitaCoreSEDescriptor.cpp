@@ -24,7 +24,7 @@
 
 SB_ELEMENT_DESCRIPTION("Modeling and Visualization of DNA Nanostructures");
 SB_ELEMENT_DOCUMENTATION("Resource/Documentation/doc.html");
-SB_ELEMENT_VERSION_NUMBER("0.7.0.7");
+SB_ELEMENT_VERSION_NUMBER("0.7.08");
 
 SB_ELEMENT_CLASSES_BEGIN;
 
