@@ -731,6 +731,7 @@ void DASDaedalus::RouteScaffold(ADNPointer<ADNPart> part, ADNPointer<ADNSingleSt
     ADNPointer<ADNBaseSegment> bs = (*lit)->firstBase_;
     for (int i = 0; i < (*lit)->bp_; ++i) {
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+      nt->Init();
       part->RegisterNucleotideThreePrime(scaff, nt);
       nt->SetType(ADNModel::ResidueNameToType(used_seq[nt_id]));
       nt->SetPosition(bs->GetPosition());
@@ -781,6 +782,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateEdgeChain(ADNPointer<ADNPart> ori
  
   for (int i = 0; i < pos_span; ++i) {
     ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+    nt->Init();
     origami->RegisterNucleotideThreePrime(chain, nt);
 
     ADNPointer<ADNCell> cell = bs->GetCell();
@@ -806,6 +808,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateEdgeChain(ADNPointer<ADNPart> ori
 
   for (int i = 0; i < neg_span; ++i) {
     ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+    nt->Init();
     origami->RegisterNucleotideThreePrime(chain, nt);
 
     ADNPointer<ADNCell> cell = bs->GetCell();
@@ -854,6 +857,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
     for (int i = 0; i < len; ++i) {
       // this are the ADNBasePair nts
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+      nt->Init();
       part->RegisterNucleotideFivePrime(chain, nt);
 
       ADNPointer<ADNCell> cell = bs->GetCell();

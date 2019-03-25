@@ -109,7 +109,8 @@ CollectionMap<ADNNucleotide> ADNBasicOperations::AddNucleotidesThreePrime(ADNPoi
     ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(nextBs->GetCell()());
 
     ADNPointer<ADNNucleotide> newNt = new ADNNucleotide();
-    
+    newNt->Init();
+
     newNt->SetPosition(pos);
     newNt->SetBaseSegment(nextBs);
     if (isLeft) {

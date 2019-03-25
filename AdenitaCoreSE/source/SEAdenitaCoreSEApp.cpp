@@ -555,21 +555,12 @@ void SEAdenitaCoreSEApp::AddConformationToActiveLayer(ADNPointer<ADNConformation
 void SEAdenitaCoreSEApp::AddLoadedPartToNanorobot(ADNPointer<ADNPart> part)
 {
   if (part->loadedViaSAMSON()) {
-    DASBackToTheAtom btta = DASBackToTheAtom();
-    btta.PopulateWithMockAtoms(part, true, true);
-    SEConfig& config = SEConfig::GetInstance();
-    if (config.use_atomic_details) {
-      btta.GenerateAllAtomModel(part);
-    }
-
     GetNanorobot()->RegisterPart(part);
 
     //events
     ConnectStructuralSignalSlots(part);
 
     part->loadedViaSAMSON(false);
-
-    ResetVisualModel();
   }
 }
 
