@@ -300,6 +300,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
       for (int k = 0; k <= max_iter; k++) {
         //add loop
         ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+        nt->Init();
         nanorobot->RegisterNucleotideFivePrime(ss, nt);
         ntPositions_.insert(std::make_pair(nt(), count));
         ++count;

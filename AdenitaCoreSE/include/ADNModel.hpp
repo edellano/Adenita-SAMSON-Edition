@@ -163,7 +163,7 @@ SB_DECLARE_BASE_TYPE(ADNSidechain, SBSideChain);
 class ADNNucleotide: public PositionableSB, public SBResidue, public Orientable {
   SB_CLASS
 public:
-  ADNNucleotide();
+  ADNNucleotide() : PositionableSB(), SBResidue(), Orientable() {};
   ADNNucleotide(const ADNNucleotide& other);
   ~ADNNucleotide() = default;
 
@@ -197,6 +197,7 @@ public:
   void SetEnd(End e);
   bool IsEnd();
 
+  void Init();
   ADNPointer<ADNBackbone> GetBackbone() const;
   void SetBackbone(ADNPointer<ADNBackbone> bb);
   ADNPointer<ADNSidechain> GetSidechain() const;

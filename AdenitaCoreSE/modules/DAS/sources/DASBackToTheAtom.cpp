@@ -1090,7 +1090,9 @@ std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> DASBackToTheAtom
   }
 
   ADNPointer<ADNNucleotide> nt_left = new ADNNucleotide();
+  nt_left->Init();
   ADNPointer<ADNNucleotide> nt_right = new ADNNucleotide();
+  nt_right->Init();
 
   char line[1024];
   int atom_id_left = 0;
@@ -1264,6 +1266,7 @@ ADNPointer<ADNNucleotide> DASBackToTheAtom::ParsePDB(std::string source) {
   }
 
   ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+  nt->Init();
 
   char line[1024];
   int atom_id = 1;
