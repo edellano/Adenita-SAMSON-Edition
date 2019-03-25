@@ -1602,8 +1602,8 @@ void ADNLoopPair::unserialize(SBCSerializer * serializer, const SBNodeIndexer & 
   unsigned int rIdx = serializer->readUnsignedIntElement();
   ADNPointer<ADNLoop> lp = static_cast<ADNLoop*>(nodeIndexer.getNode(lIdx));
   ADNPointer<ADNLoop> rp = static_cast<ADNLoop*>(nodeIndexer.getNode(rIdx));
-  SetLeftLoop(lp);
-  SetRightLoop(rp);
+  if (lp != nullptr) SetLeftLoop(lp);
+  if (rp != nullptr) SetRightLoop(rp);
 }
 
 ADNPointer<ADNLoop> ADNLoopPair::GetLeftLoop() {
