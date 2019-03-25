@@ -84,6 +84,11 @@ ADNNucleotide & ADNNucleotide::operator=(const ADNNucleotide & other) {
 void ADNNucleotide::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
   SBResidue::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+
+  ADNPointer<ADNBackbone> bb = GetBackbone();
+  serializer->writeUnsignedIntElement("backboneId", (unsigned int) nodeIndexer.getIndex(bb()));
+  ADNPointer<ADNSidechain> sc = GetSidechain();
+  serializer->writeUnsignedIntElement("sidechainId", (unsigned int) nodeIndexer.getIndex(sc()));
   /*
   serializer->writeIntElement("end", end_);
   serializer->writeUnsignedIntElement("pair", nodeIndexer.getIndex(pair_()));
@@ -93,6 +98,13 @@ void ADNNucleotide::serialize(SBCSerializer * serializer, const SBNodeIndexer & 
 void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
   SBResidue::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  // link to the right backbone and sidechain
+  int bbId = serializer->readUnsignedIntElement();
+  ADNPointer<ADNBackbone> bb = static_cast<ADNBackbone*>(nodeIndexer[bbId]);
+  //SetBackbone(bb);
+  int scId = serializer->readUnsignedIntElement();
+  ADNPointer<ADNSidechain> sc = static_cast<ADNSidechain*>(nodeIndexer[scId]);
+  //SetSidechain(sc);
   /*
   SetEnd(End(serializer->readIntElement()));
   unsigned int pIdx = serializer->readUnsignedIntElement();
@@ -338,7 +350,7 @@ bool ADNNucleotide::IsEnd()
   return isEnd;
 }
 
-ADNPointer<ADNBackbone> ADNNucleotide::GetBackbone()
+ADNPointer<ADNBackbone> ADNNucleotide::GetBackbone() const
 {
   auto bb = static_cast<ADNBackbone*>(getBackbone());
   return ADNPointer<ADNBackbone>(bb);
@@ -350,7 +362,7 @@ void ADNNucleotide::SetBackbone(ADNPointer<ADNBackbone> bb)
   bbOld = bb;
 }
 
-ADNPointer<ADNSidechain> ADNNucleotide::GetSidechain()
+ADNPointer<ADNSidechain> ADNNucleotide::GetSidechain() const
 {
   auto sc = static_cast<ADNSidechain*>(getSideChain());
   return ADNPointer<ADNSidechain>(sc);
@@ -1654,7 +1666,6 @@ void ADNBackbone::unserialize(SBCSerializer * serializer, const SBNodeIndexer & 
   //SB_FOR(SBNode* n, *getChildren()) {
   //  ADNPointer<ADNAtom> at = static_cast<ADNAtom*>(n);
   //  AddAtom(at);
-  //  at->create();
   //}
 }
 
