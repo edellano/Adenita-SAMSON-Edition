@@ -197,9 +197,9 @@ public:
   void SetEnd(End e);
   bool IsEnd();
 
-  ADNPointer<ADNBackbone> GetBackbone();
+  ADNPointer<ADNBackbone> GetBackbone() const;
   void SetBackbone(ADNPointer<ADNBackbone> bb);
-  ADNPointer<ADNSidechain> GetSidechain();
+  ADNPointer<ADNSidechain> GetSidechain() const;
   void SetSidechain(ADNPointer<ADNSidechain> sc);
 
   void SetSidechainPosition(Position3D pos);
