@@ -231,7 +231,10 @@ void SEDSDNACreatorEditor::displayStrand()
   s2 << fixed << setprecision(2) << basePairRadius_;
   text += s2.str();
 
-  ADNDisplayHelper::displayText(SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport()), text);
+  SBPosition3 offset = SBPosition3(SBQuantity::nanometer(0),
+    SBQuantity::nanometer(-1),
+    SBQuantity::nanometer(0));
+  ADNDisplayHelper::displayText(SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport()) + offset, text);
 
 }
 
