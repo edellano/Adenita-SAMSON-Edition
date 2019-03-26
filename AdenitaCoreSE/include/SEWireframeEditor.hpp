@@ -107,6 +107,14 @@ private:
   ADNPointer<ADNPart> generateWireframe(bool mock = false);
   void sendPartToAdenita(ADNPointer<ADNPart> part);
 
+  //! Creates a ADNPart containing only the high-level model (double strands) of a daedalus wireframe design
+  /*!
+    \param the polyhedron containing the PLY information
+    \param position of the center of the model
+    \param minimum edge length
+  */
+  ADNPointer<ADNPart> CreateMockDaedalusWireframe(DASPolyhedron& polyhedron, int min_edge_length);
+
   DASCreatorEditors::UIData positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
