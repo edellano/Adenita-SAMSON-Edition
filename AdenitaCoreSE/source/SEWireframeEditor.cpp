@@ -153,7 +153,7 @@ ADNPointer<ADNPart> SEWireframeEditor::generateCuboid(bool mock /*= false*/)
   return part;
 }
 
-ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
+ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock)
 {
   auto radius = (positions_.SecondPosition - positions_.FirstPosition).norm();
   unsigned int numNucleotides;
@@ -257,6 +257,12 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
   }
   int min_edge_size = 31;
   if (numNucleotides > 31) {
+    int quot;
+    remquo(numNucleotides, 10.5, &quot);
+    min_edge_size = int(std::floor(float(quot * 10.5)));
+  }
+  /*int min_edge_size = 31;
+  if (numNucleotides > 31) {
     for (int i = 1; i < numNucleotides + 10.5; i++) {
       int p = (i - 1) * 10.5;
       int n = i * 10.5;
@@ -265,12 +271,13 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
         min_edge_size = p;
       }
     }
-  }
+  }*/
+  DASPolyhedron polyhedron = DASPolyhedron(filename);
+  polyhedron.Center(positions_.FirstPosition);
 
   if (mock) {
-    DASPolyhedron polyhedron = DASPolyhedron(filename);
-
-    auto faces = polyhedron.GetFaces();
+    part = CreateMockDaedalusWireframe(polyhedron, min_edge_size);
+    /*auto faces = polyhedron.GetFaces();
 
     for (auto fit = faces.begin(); fit != faces.end(); ++fit) {
       auto begin = (*fit)->halfEdge_;
@@ -278,27 +285,24 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock /*= false*/)
       do {
         auto sourcePos = he->source_->GetSBPosition();
         auto targetPos = he->next_->source_->GetSBPosition();
-        
+
         SBVector3 dir = (targetPos - sourcePos).normalizedVersion();
 
-        sourcePos *= (min_edge_size * 3); 
+        sourcePos *= (min_edge_size * 3);
         targetPos *= (min_edge_size * 3);
-        
+
         DASCreator::AddDoubleStrandToADNPart(part, min_edge_size, sourcePos, dir, true);
 
         he = he->next_;
       } while (he != begin);
-    }
+    }*/
   }
   else {
-    
     DASDaedalus *alg = new DASDaedalus();
     alg->SetMinEdgeLength(min_edge_size);
     std::string seq = "";
-    part = alg->ApplyAlgorithm(seq, filename);
-
+    part = alg->ApplyAlgorithm(seq, polyhedron, false);
   }
-
 
   return part;
 }
@@ -311,6 +315,18 @@ void SEWireframeEditor::sendPartToAdenita(ADNPointer<ADNPart> part)
     adenita->AddPartToActiveLayer(part);
     adenita->ResetVisualModel();
   }
+}
+
+ADNPointer<ADNPart> SEWireframeEditor::CreateMockDaedalusWireframe(DASPolyhedron & polyhedron, int min_edge_length)
+{
+  ADNPointer<ADNPart> mock = new ADNPart();
+
+  DASDaedalus *alg = new DASDaedalus();
+  alg->SetMinEdgeLength(min_edge_length);
+  alg->SetEdgeBps(min_edge_length, mock, polyhedron);
+  alg->SetVerticesPositions(mock, polyhedron, false);
+  alg->InitEdgeMap(mock, polyhedron);
+  return mock;
 }
 
 SBCContainerUUID SEWireframeEditor::getUUID() const { return SBCContainerUUID("ED358EAC-14D1-A0EA-9A3A-F8035E019249"); }

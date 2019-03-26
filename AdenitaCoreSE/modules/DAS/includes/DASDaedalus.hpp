@@ -135,6 +135,14 @@ public:
   * Calculates the size in integer multiples of 10.5bp
   */
   static int CalculateEdgeSize(SBQuantity::length nmLength);
+  /** Initializes the edge map object.
+ *
+ *  We generate now the base objects to make sure we don't forget any position.
+ *  \param origami ANTNanorobot object
+ */
+  void InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig);
+
+  void SetEdgeBps(int min_edge_bp, ADNPointer<ADNPart> part, DASPolyhedron &fig);
 protected:
 private:
   /** Minimum edge length
@@ -229,12 +237,6 @@ private:
    *  two 21bp staples is not possible.
    */
   CrossoverType GetCrossoverType(int edge_length);
-  /** Initializes the edge map object.
-   *
-   *  We generate now the base objects to make sure we don't forget any position.
-   *  \param origami ANTNanorobot object
-   */
-  void InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig);
   /** Get the length of an edge pair. Includes split edges.
    *  \param the edge pair.
    *  \param the edge map.
@@ -245,7 +247,6 @@ private:
   DOTLink* AddLink(std::pair<DOTNode*, DOTNode*> ab, int bp, DASPolyhedron &fig);
   DOTNode* GetNodeById(int id) const;
   DOTLink* GetLinkByNodes(DOTNode* v, DOTNode* w) const;
-  void SetEdgeBps(int min_edge_bp, ADNPointer<ADNPart> part, DASPolyhedron &fig);
   void RouteScaffold(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> scaff, std::string seq, int routing_length);
   ADNPointer<ADNBaseSegment> AdvanceBaseSegment(ADNPointer<ADNBaseSegment> bs, int pos);
   ADNPointer<ADNBaseSegment> MoveBackBaseSegment(ADNPointer<ADNBaseSegment> bs, int pos);
