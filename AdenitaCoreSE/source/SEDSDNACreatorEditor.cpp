@@ -226,7 +226,7 @@ void SEDSDNACreatorEditor::displayStrand()
   s1 << fixed << setprecision(2) << opaqueness_;
   text += s1.str();
 
-  text += "\n Radius: ";
+  text += ", Radius: ";
   stringstream s2;
   s2 << fixed << setprecision(2) << basePairRadius_;
   text += s2.str();
