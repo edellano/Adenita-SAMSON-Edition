@@ -5,6 +5,7 @@
 SEDSDNACreatorEditor::SEDSDNACreatorEditor() {
 
 	// SAMSON Element generator pro tip: this default constructor is called when unserializing the node, so it should perform all default initializations.
+  SEConfig& config = SEConfig::GetInstance();
 
 	propertyWidget = new SEDSDNACreatorEditorGUI(this);
 	propertyWidget->loadDefaultSettings();
@@ -12,6 +13,8 @@ SEDSDNACreatorEditor::SEDSDNACreatorEditor() {
 
   auto app = getAdenitaApp();
   nanorobot_ = app->GetNanorobot();
+
+  basePairRadius_ = config.base_pair_radius;
 }
 
 SEDSDNACreatorEditor::~SEDSDNACreatorEditor() {
@@ -216,7 +219,20 @@ void SEDSDNACreatorEditor::SetSequence(ADNPointer<ADNPart> nanotube)
 
 void SEDSDNACreatorEditor::displayStrand()
 {
-  ADNDisplayHelper::displayPart(tempPart_);
+  ADNDisplayHelper::displayPart(tempPart_, basePairRadius_, opaqueness_);
+
+  string text = "Opaqueness: ";
+  stringstream s1;
+  s1 << fixed << setprecision(2) << opaqueness_;
+  text += s1.str();
+
+  text += "\n Radius: ";
+  stringstream s2;
+  s2 << fixed << setprecision(2) << basePairRadius_;
+  text += s2.str();
+
+  ADNDisplayHelper::displayText(SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport()), text);
+
 }
 
 SBCContainerUUID SEDSDNACreatorEditor::getUUID() const { return SBCContainerUUID("2F353D32-A630-8800-5FCA-14EBA6AC36F9"); }
@@ -402,14 +418,36 @@ void SEDSDNACreatorEditor::wheelEvent(QWheelEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
-
+  
 }
 
 void SEDSDNACreatorEditor::keyPressEvent(QKeyEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
+  if (display_) {
+    SEConfig& config = SEConfig::GetInstance();
 
+    if (event->key() == Qt::Key_Up) {
+      opaqueness_ += 0.1f;
+      if (opaqueness_ > 1.0f) opaqueness_ = 1.0f;
+    }
+    else if (event->key() == Qt::Key_Down) {
+      opaqueness_ -= 0.1f;
+      if (opaqueness_ < 0.0f) opaqueness_ = 0.0f;
+    } 
+    else if (event->key() == Qt::Key_Left) {
+      basePairRadius_ -= 100.0f;
+      if (basePairRadius_ < 200.0f) basePairRadius_ = 200.0f;
+    }
+    else if (event->key() == Qt::Key_Right) {
+      basePairRadius_ += 100.0f;
+      if (basePairRadius_ > config.base_pair_radius) basePairRadius_ = config.base_pair_radius;
+    }
+
+    SAMSON::requestViewportUpdate();
+
+  }
 }
 
 void SEDSDNACreatorEditor::keyReleaseEvent(QKeyEvent* event) {
