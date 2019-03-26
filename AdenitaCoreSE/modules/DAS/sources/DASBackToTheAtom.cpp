@@ -257,8 +257,8 @@ void DASBackToTheAtom::SetPositionLoopNucleotides(ADNPointer<ADNBaseSegment> bs)
         nextE2Left = ADNAuxiliary::UblasVectorToSBVector(bs->GetE1());
       }
 
-      PositionLoopNucleotides(left, posPrevLeft, posNextLeft);
-      //PositionLoopNucleotidesQBezier(left, posPrevLeft, posNextLeft, prevE2Left, nextE2Left);
+      //PositionLoopNucleotides(left, posPrevLeft, posNextLeft);
+      PositionLoopNucleotidesQBezier(left, posPrevLeft, posNextLeft, prevE2Left, nextE2Left);
     }
 
     if (right != nullptr) {
@@ -291,8 +291,8 @@ void DASBackToTheAtom::SetPositionLoopNucleotides(ADNPointer<ADNBaseSegment> bs)
         nextE2Right = ADNAuxiliary::UblasVectorToSBVector(bs->GetE2());
       }
 
-      PositionLoopNucleotides(right, posPrevRight, posNextRight);
-      //PositionLoopNucleotidesQBezier(right, posPrevRight, posNextRight, prevE2Right, nextE2Right);
+      //PositionLoopNucleotides(right, posPrevRight, posNextRight);
+      PositionLoopNucleotidesQBezier(right, posPrevRight, posNextRight, prevE2Right, nextE2Right);
     }
   }
 }
@@ -484,26 +484,6 @@ void DASBackToTheAtom::PositionLoopNucleotides(ADNPointer<ADNLoop> loop, SBPosit
 void DASBackToTheAtom::PositionLoopNucleotidesQBezier(ADNPointer<ADNLoop> loop, SBPosition3 bsPositionPrev, SBPosition3 bsPositionNext, SBVector3 bsPrevE3, SBVector3 bsNextE3)
 {
   auto numNts = loop->getNumberOfNucleotides();
-  // height of the curve depends on the number of nucleotides
-  // just try and error
-  SBPosition3 P0 = bsPositionPrev;
-  SBPosition3 P2 = bsPositionNext;
-  SBVector3 nDir = -(bsPrevE3 + bsNextE3).normalizedVersion();
-  SBQuantity::length step = SBQuantity::nanometer(ADNConstants::BP_RISE)*0.9;
-  SBQuantity::length estLength = numNts*step;
-  SBPosition3 P1 = (P0 + P2)*0.5 + estLength*nDir;
-
-  SBQuantity::length length = ADNVectorMath::LengthQuadraticBezier(P0, P1, P2);
-
-  P1 += 3*step*nDir;
-  //while (length < estLength) {
-  //  P1 += step*nDir;
-  //  length = ADNVectorMath::LengthQuadraticBezier(P0, P1, P2);
-  //}
-
-  // calculate step of the bezier curve
-  double deltaT = 1.0 / (numNts - 1);
-
   ADNPointer<ADNNucleotide> startNt = loop->GetStart();
   ADNPointer<ADNNucleotide> endNt = loop->GetEnd();
 
@@ -511,16 +491,58 @@ void DASBackToTheAtom::PositionLoopNucleotidesQBezier(ADNPointer<ADNLoop> loop, 
   startNt = order.first;
   endNt = order.second;
 
+  // height of the curve depends on the number of nucleotides
+  // just try and error
+  ADNPointer<ADNNucleotide> refS = startNt->GetPrev();
+  ADNPointer<ADNNucleotide> refE = endNt->GetNext();
+  SBPosition3 P0;
+  SBPosition3 P2;
+  SBVector3 startE3;
+  SBVector3 endE3;
+
+  if (refS == nullptr) {
+    P0 = bsPositionPrev;
+    startE3 = bsPrevE3;
+  }
+  else {
+    P0 = refS->GetPosition();
+    startE3 = ADNAuxiliary::UblasVectorToSBVector(refS->GetE3());
+  }
+
+  if (refE == nullptr) {
+    P2 = bsPositionNext;
+    endE3 = bsNextE3;
+  }
+  else {
+    P2 = refE->GetPosition();
+    endE3 = ADNAuxiliary::UblasVectorToSBVector(refE->GetE3());
+  }
+  
+  SBVector3 nDir = (startE3 - endE3).normalizedVersion();
+  SBQuantity::length step = SBQuantity::nanometer(ADNConstants::BP_RISE)*0.1;
+  SBQuantity::length estLength = (numNts)* SBQuantity::nanometer(ADNConstants::BP_RISE);
+  SBPosition3 P1 = (P0 + P2)*0.5 + SBQuantity::nanometer(0.1)*nDir;
+
+  SBQuantity::length length = ADNVectorMath::LengthQuadraticBezier(P0, P1, P2);
+
+  //P1 += 3*step*nDir;
+  while (length < estLength) {
+    P1 += step*nDir;
+    length = ADNVectorMath::LengthQuadraticBezier(P0, P1, P2);
+  }
+
+  // calculate step of the bezier curve
+  double deltaT = 1.0 / (numNts + 1);
+
   if (startNt != nullptr && endNt != nullptr) {
-    auto t = 0.5*deltaT;
+    auto t = deltaT;
     ADNPointer<ADNNucleotide> nt = startNt;
 
-    ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(ADNVectorMath::DerivativeQuadraticBezier(P0, P1, P2, t));
-    auto subspace = ADNVectorMath::FindOrthogonalSubspace(e3);
-    ublas::vector<double> e1 = ublas::row(subspace, 0);
-    ublas::vector<double> e2 = ublas::row(subspace, 1);
-
     while (nt != endNt->GetNext()) {
+      ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(ADNVectorMath::DerivativeQuadraticBezier(P0, P1, P2, t));
+      auto subspace = ADNVectorMath::FindOrthogonalSubspace(e3);
+      ublas::vector<double> e1 = ublas::row(subspace, 0);
+      ublas::vector<double> e2 = ublas::row(subspace, 1);
       //float frac = float(i) / (nucleotides.size() + 1);
       SBPosition3 shift = ADNVectorMath::QuadraticBezierPoint(P0, P1, P2, t);
 
