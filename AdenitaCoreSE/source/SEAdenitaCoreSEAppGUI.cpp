@@ -112,6 +112,15 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
     SAMSON::getActiveCamera()->center();
 
   }
+  else if (config.mode == SEConfigMode::ELISA) {
+
+    SEAdenitaCoreSEApp* t = getApp();
+    t->LoadPartWithDaedalus("C:/Users/DeLlanoE/Documents/code/Data_DNA_Nanomodeling/daedalus_samples/01_tetrahedron.ply", 42);
+
+    t->ResetVisualModel();
+    SAMSON::getActiveCamera()->center();
+
+  }
   else {
     QString filename = QFileDialog::getOpenFileName(this, tr("Open document: caDNAno, mesh (ply), Adenita document (adn, adnpart)"), QDir::currentPath(), tr("(Documents *.json *.ply *.adn *.adnpart)"));
     bool loadVM = true;
