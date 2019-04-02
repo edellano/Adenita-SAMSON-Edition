@@ -51,7 +51,6 @@ public :
   SBVisualModel* GetVisualModel();
   // Modifications
   void BreakSingleStrand(bool fPrime = false);
-  void DeleteNucleotide();
   void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
   bool CalculateBindingRegions(int oligoConc, int monovalentConc, int divalentConc);
   void MergeComponents(ADNPointer<ADNPart> p1, ADNPointer<ADNPart> p2);

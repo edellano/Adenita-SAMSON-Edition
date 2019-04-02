@@ -49,7 +49,8 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(Value & val)
     const Value& val_nucleotides = itr->value["nucleotides"];
     for (Value::ConstMemberIterator itr2 = val_nucleotides.MemberBegin(); itr2 != val_nucleotides.MemberEnd(); ++itr2) {
 
-      ADNPointer<ADNNucleotide> nt = ADNPointer<ADNNucleotide>(new ADNNucleotide());
+      ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+      nt->Init();
       nt->SetType(ADNModel::ResidueNameToType(itr2->value["type"].GetString()[0]));
       nt->SetPosition(ADNAuxiliary::StringToSBPosition(itr2->value["position"].GetString()));
       nt->SetBackbonePosition(ADNAuxiliary::StringToSBPosition(itr2->value["backboneCenter"].GetString()));
@@ -266,7 +267,8 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
 
     const Value& val_nucleotides = itr->value["nucleotides"];
     for (Value::ConstMemberIterator itr2 = val_nucleotides.MemberBegin(); itr2 != val_nucleotides.MemberEnd(); ++itr2) {
-      ADNPointer<ADNNucleotide> nt = ADNPointer<ADNNucleotide>(new ADNNucleotide());
+      ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+      nt->Init();
       part->RegisterNucleotideThreePrime(ss, nt);
       std::string test = itr2->value["type"].GetString();
       auto test2 = test.c_str();
@@ -871,6 +873,7 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph(SBNode* n)
       ublas::vector<double> e1 = ADNVectorMath::CrossProduct(e2, e3);
 
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+      nt->Init();
       nt->SetPosition(pos);
       nt->SetE3(e3);
       nt->SetE2(e2);
@@ -1067,6 +1070,7 @@ std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoF
       }
 
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+      nt->Init();
       nt->SetType(ADNModel::ResidueNameToType(base));
       part->RegisterNucleotideThreePrime(ss, nt);
 
