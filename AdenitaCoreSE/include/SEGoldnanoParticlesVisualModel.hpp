@@ -64,6 +64,7 @@ public :
 
 	//@}
 
+  SBNodeIndexer										    goldAtoms_;
 
 };
 

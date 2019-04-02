@@ -15,6 +15,9 @@ SEGoldnanoParticlesVisualModel::SEGoldnanoParticlesVisualModel(const SBNodeIndex
 	// the center of mass of a group of atoms, you might want to connect to the atoms' base signals (e.g. to update the center of mass when an atom is erased) and
 	// the atoms' structural signals (e.g. to update the center of mass when an atom is moved).
 
+    SAMSON::getActiveDocument()->getNodes(goldAtoms_,
+    SBNode::IsType(SBNode::Atom) && SBNode::IsSelected());
+  
 }
 
 SEGoldnanoParticlesVisualModel::~SEGoldnanoParticlesVisualModel() {
@@ -65,11 +68,62 @@ void SEGoldnanoParticlesVisualModel::display() {
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. This is the main function of your visual model. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
 
+  displayGoldSphere();
 }
 
 void SEGoldnanoParticlesVisualModel::displayGoldSphere()
 {
+  unsigned int numberOfAtoms = goldAtoms_.size();
 
+  float* positionData = new float[3 * numberOfAtoms];
+  float* radiusData = new float[numberOfAtoms];
+  float* colorData = new float[4 * numberOfAtoms];
+  unsigned int* flagData = new unsigned int[numberOfAtoms];
+
+  SBNodeMaterial* material = getMaterial();
+
+  for (unsigned int i = 0; i < numberOfAtoms; i++) {
+
+    SBAtom* currentAtom = static_cast<SBAtom*>(goldAtoms_.getNode(i));
+
+    SBPosition3 position = currentAtom->getPosition();
+
+    positionData[3 * i + 0] = (float)position.v[0].getValue();
+    positionData[3 * i + 1] = (float)position.v[1].getValue();
+    positionData[3 * i + 2] = (float)position.v[2].getValue();
+
+    radiusData[i] = (float)currentAtom->getVanDerWaalsRadius().getValue();
+
+    if (material) {
+      material->getColorScheme()->getColor(colorData + 4 * i, currentAtom);
+    }
+    else {
+      colorData[4 * i + 0] = 1.0f;
+      colorData[4 * i + 1] = 1.0f;
+      colorData[4 * i + 2] = 1.0f;
+      colorData[4 * i + 3] = 1.0f;
+    }
+
+    colorData[4 * i + 0] = 0.0f;
+    colorData[4 * i + 1] = 0.4f;
+    colorData[4 * i + 2] = 0.6f;
+    colorData[4 * i + 3] = 1.0f;
+
+    flagData[i] = currentAtom->getInheritedFlags() | getInheritedFlags();
+
+  }
+
+  SAMSON::displaySpheres(
+    numberOfAtoms,
+    positionData,
+    radiusData,
+    colorData,
+    flagData);
+
+  delete[] positionData;
+  delete[] radiusData;
+  delete[] colorData;
+  delete[] flagData;
 }
 
 void SEGoldnanoParticlesVisualModel::displayForShadow() {
