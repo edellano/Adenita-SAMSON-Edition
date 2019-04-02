@@ -19,7 +19,7 @@ void ADNAtom::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIn
 
 void ADNAtom::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  //SBAtom::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  SBAtom::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 }
 
 std::string const & ADNAtom::GetName() const
@@ -57,17 +57,6 @@ bool ADNAtom::IsInBackbone()
   return isFromNucleicAcidBackbone();
 }
 
-ADNNucleotide::ADNNucleotide() : PositionableSB(), SBResidue(), Orientable()
-{
-  SetType(DNABlocks::DI);
-  ADNPointer<ADNBackbone> bb = new ADNBackbone();
-  bb->setName(getName() + " " + "Backbone");
-  ADNPointer<ADNSidechain> sc = new ADNSidechain();
-  sc->setName(getName() + " " + "Sidechain");
-  addChild(bb());
-  addChild(sc());
-}
-
 ADNNucleotide::ADNNucleotide(const ADNNucleotide & other) : PositionableSB(other), SBResidue(other), Orientable(other)
 {
   *this = other;
@@ -83,18 +72,35 @@ ADNNucleotide & ADNNucleotide::operator=(const ADNNucleotide & other) {
 
 void ADNNucleotide::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
-  /*SBResidue::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  SBResidue::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 
   serializer->writeIntElement("end", end_);
+
+  SBPosition3 pos = GetPosition();
+  serializer->writeStartElement("position");
+  serializer->writeFloatElement("x", pos[0].getValue());
+  serializer->writeFloatElement("y", pos[1].getValue());
+  serializer->writeFloatElement("z", pos[2].getValue());
+  serializer->writeEndElement();
+
   serializer->writeUnsignedIntElement("pair", nodeIndexer.getIndex(pair_()));
-  serializer->writeUnsignedIntElement("base_segment", nodeIndexer.getIndex(bs_()));*/
+  serializer->writeUnsignedIntElement("base_segment", nodeIndexer.getIndex(bs_()));
 }
 
 void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  /*SBResidue::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  SBResidue::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 
   SetEnd(End(serializer->readIntElement()));
+
+  SBPosition3 pos;
+  serializer->readStartElement();
+  pos[0] = SBQuantity::picometer(serializer->readFloatElement());
+  pos[1] = SBQuantity::picometer(serializer->readFloatElement());
+  pos[2] = SBQuantity::picometer(serializer->readFloatElement());
+  serializer->readEndElement();
+  SetPosition(pos);
+
   unsigned int pIdx = serializer->readUnsignedIntElement();
   unsigned int bsIdx = serializer->readUnsignedIntElement();
   SBNode* pNode = nodeIndexer.getNode(pIdx);
@@ -102,7 +108,7 @@ void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer 
   ADNPointer<ADNNucleotide> p = static_cast<ADNNucleotide*>(pNode);
   ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(bsNode);
   SetPair(p);
-  SetBaseSegment(bs);*/
+  SetBaseSegment(bs);
 }
 
 void ADNNucleotide::SetType(DNABlocks t)
@@ -338,7 +344,18 @@ bool ADNNucleotide::IsEnd()
   return isEnd;
 }
 
-ADNPointer<ADNBackbone> ADNNucleotide::GetBackbone()
+void ADNNucleotide::Init()
+{
+  SetType(DNABlocks::DI);
+  ADNPointer<ADNBackbone> bb = new ADNBackbone();
+  bb->setName(getName() + " " + "Backbone");
+  ADNPointer<ADNSidechain> sc = new ADNSidechain();
+  sc->setName(getName() + " " + "Sidechain");
+  addChild(bb());
+  addChild(sc());
+}
+
+ADNPointer<ADNBackbone> ADNNucleotide::GetBackbone() const
 {
   auto bb = static_cast<ADNBackbone*>(getBackbone());
   return ADNPointer<ADNBackbone>(bb);
@@ -350,7 +367,7 @@ void ADNNucleotide::SetBackbone(ADNPointer<ADNBackbone> bb)
   bbOld = bb;
 }
 
-ADNPointer<ADNSidechain> ADNNucleotide::GetSidechain()
+ADNPointer<ADNSidechain> ADNNucleotide::GetSidechain() const
 {
   auto sc = static_cast<ADNSidechain*>(getSideChain());
   return ADNPointer<ADNSidechain>(sc);
@@ -437,7 +454,7 @@ void ADNSingleStrand::serialize(SBCSerializer * serializer, const SBNodeIndexer 
 
 void ADNSingleStrand::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  /*SBChain::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  SBChain::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 
   bool isScaffold = serializer->readBoolElement();
   bool isCircular = serializer->readBoolElement();
@@ -450,7 +467,7 @@ void ADNSingleStrand::unserialize(SBCSerializer * serializer, const SBNodeIndexe
   SBNode* tPrime = nodeIndexer.getNode(tPrimeIdx);
   ADNPointer<ADNNucleotide> tp = static_cast<ADNNucleotide*>(tPrime);
   fivePrime_ = fp;
-  threePrime_ = tp;*/
+  threePrime_ = tp;
 }
 
 std::string const & ADNSingleStrand::GetName() const
@@ -957,20 +974,20 @@ ADNBaseSegment & ADNBaseSegment::operator=(const ADNBaseSegment & other) {
 
 void ADNBaseSegment::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
-  /*SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
-
+  SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  
   serializer->writeIntElement("number", GetNumber());
-  serializer->writeUnsignedIntElement("cell", nodeIndexer.getIndex(cell_()));*/
+  serializer->writeUnsignedIntElement("cell", nodeIndexer.getIndex(cell_()));
 }
 
 void ADNBaseSegment::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  /*SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
-
+  SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  
   SetNumber(serializer->readIntElement());
   SBNode* cNode = nodeIndexer.getNode(serializer->readUnsignedIntElement());
   ADNPointer<ADNCell> cell = static_cast<ADNCell*>(cNode);
-  SetCell(cell());*/
+  SetCell(cell());
 }
 
 void ADNBaseSegment::SetNumber(int n)
@@ -1118,18 +1135,18 @@ ADNDoubleStrand & ADNDoubleStrand::operator=(const ADNDoubleStrand & other) {
 
 void ADNDoubleStrand::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
-  /*SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
-
+  SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  
   serializer->writeBoolElement("isCircular", IsCircular());
   serializer->writeDoubleElement("twistAngle", GetInitialTwistAngle());
   serializer->writeUnsignedIntElement("start", nodeIndexer.getIndex(start_()));
-  serializer->writeUnsignedIntElement("end", nodeIndexer.getIndex(end_()));*/
+  serializer->writeUnsignedIntElement("end", nodeIndexer.getIndex(end_()));
 }
 
 void ADNDoubleStrand::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  /*SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
-
+  SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  
   IsCircular(serializer->readBoolElement());
   SetInitialTwistAngle(serializer->readDoubleElement());
   unsigned int sIdx = serializer->readUnsignedIntElement();
@@ -1137,7 +1154,7 @@ void ADNDoubleStrand::unserialize(SBCSerializer * serializer, const SBNodeIndexe
   SBNode* sNode = nodeIndexer.getNode(sIdx);
   SBNode* eNode = nodeIndexer.getNode(eIdx);
   start_ = static_cast<ADNBaseSegment*>(sNode);
-  end_ = static_cast<ADNBaseSegment*>(eNode);*/
+  end_ = static_cast<ADNBaseSegment*>(eNode);
 }
 
 void ADNDoubleStrand::SetInitialTwistAngle(double angle)
@@ -1280,7 +1297,7 @@ void ADNBasePair::serialize(SBCSerializer * serializer, const SBNodeIndexer & no
 
 void ADNBasePair::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  /*ADNCell::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  ADNCell::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 
   unsigned int lIdx = serializer->readUnsignedIntElement();
   unsigned int rIdx = serializer->readUnsignedIntElement();
@@ -1289,7 +1306,7 @@ void ADNBasePair::unserialize(SBCSerializer * serializer, const SBNodeIndexer & 
   SetLeftNucleotide(static_cast<ADNNucleotide*>(lNode));
 
   SBNode* rNode = nodeIndexer.getNode(rIdx);
-  SetRightNucleotide(static_cast<ADNNucleotide*>(rNode));*/
+  SetRightNucleotide(static_cast<ADNNucleotide*>(rNode));
 }
 
 ADNPointer<ADNNucleotide> ADNBasePair::GetLeftNucleotide() {
@@ -1303,7 +1320,6 @@ SBNode* ADNBasePair::getLeft() const
 
 void ADNBasePair::SetLeftNucleotide(ADNPointer<ADNNucleotide> nt) {
   left_ = nt;
-  addChild(left_());
 }
 
 ADNPointer<ADNNucleotide> ADNBasePair::GetRightNucleotide() {
@@ -1317,7 +1333,6 @@ SBNode* ADNBasePair::getRight() const
 
 void ADNBasePair::SetRightNucleotide(ADNPointer<ADNNucleotide> nt) {
   right_ = nt;
-  addChild(right_());
 }
 
 void ADNBasePair::SetRemainingNucleotide(ADNPointer<ADNNucleotide> nt)
@@ -1387,7 +1402,7 @@ void ADNSkipPair::serialize(SBCSerializer * serializer, const SBNodeIndexer & no
 
 void ADNSkipPair::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  //ADNCell::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  ADNCell::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 }
 
 void ADNSkipPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
@@ -1454,7 +1469,7 @@ CollectionMap<ADNNucleotide> ADNLoopPair::GetNucleotides()
 void ADNLoop::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
   SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
-
+  
   serializer->writeUnsignedIntElement("startNt", nodeIndexer.getIndex(startNt_()));
   serializer->writeUnsignedIntElement("endNt", nodeIndexer.getIndex(endNt_()));
   serializer->writeUnsignedIntElement("numNt", getNumberOfNucleotides());
@@ -1469,8 +1484,8 @@ void ADNLoop::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIn
 
 void ADNLoop::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  /*SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
-
+  SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  
   unsigned int sIdx = serializer->readUnsignedIntElement();
   unsigned int eIdx = serializer->readUnsignedIntElement();
   unsigned int numNt = serializer->readUnsignedIntElement();
@@ -1488,7 +1503,7 @@ void ADNLoop::unserialize(SBCSerializer * serializer, const SBNodeIndexer & node
   SBNode* sNode = nodeIndexer.getNode(sIdx);
   SetStart(static_cast<ADNNucleotide*>(sNode));
   SBNode* eNode = nodeIndexer.getNode(eIdx);
-  SetEnd(static_cast<ADNNucleotide*>(eNode));*/
+  SetEnd(static_cast<ADNNucleotide*>(eNode));
 }
 
 void ADNLoop::SetStart(ADNPointer<ADNNucleotide> nt)
@@ -1558,12 +1573,10 @@ CollectionMap<ADNNucleotide> ADNLoop::GetNucleotides() const
 }
 
 void ADNLoop::AddNucleotide(ADNPointer<ADNNucleotide> nt) {
-  addChild(nt());
   nucleotides_.addReferenceTarget(nt());
 }
 
 void ADNLoop::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
-  removeChild(nt());
   nucleotides_.removeReferenceTarget(nt());
 }
 
@@ -1576,21 +1589,21 @@ bool ADNLoop::IsEmpty() {
 void ADNLoopPair::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
   ADNCell::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
-
+  
   serializer->writeUnsignedIntElement("left", nodeIndexer.getIndex(left_()));
   serializer->writeUnsignedIntElement("right", nodeIndexer.getIndex(right_()));
 }
 
 void ADNLoopPair::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  /*ADNCell::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
-
+  ADNCell::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  
   unsigned int lIdx = serializer->readUnsignedIntElement();
   unsigned int rIdx = serializer->readUnsignedIntElement();
   ADNPointer<ADNLoop> lp = static_cast<ADNLoop*>(nodeIndexer.getNode(lIdx));
   ADNPointer<ADNLoop> rp = static_cast<ADNLoop*>(nodeIndexer.getNode(rIdx));
-  SetLeftLoop(lp);
-  SetRightLoop(rp);*/
+  if (lp != nullptr) SetLeftLoop(lp);
+  if (rp != nullptr) SetRightLoop(rp);
 }
 
 ADNPointer<ADNLoop> ADNLoopPair::GetLeftLoop() {
@@ -1645,11 +1658,18 @@ ADNBackbone & ADNBackbone::operator=(const ADNBackbone & other)
 void ADNBackbone::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
   SBBackbone::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+
+  ADNPointer<ADNAtom> at = GetCenterAtom();
+  serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
 }
 
 void ADNBackbone::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  //SBBackbone::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  SBBackbone::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+
+  unsigned int idx = serializer->readUnsignedIntElement();
+  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  SetCenterAtom(at);
 }
 
 bool ADNBackbone::AddAtom(ADNPointer<ADNAtom> atom)
@@ -1715,11 +1735,18 @@ ADNSidechain & ADNSidechain::operator=(const ADNSidechain & other)
 void ADNSidechain::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber) const
 {
   SBSideChain::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+
+  ADNPointer<ADNAtom> at = GetCenterAtom();
+  serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
 }
 
 void ADNSidechain::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  //SBSideChain::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  SBSideChain::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+
+  unsigned int idx = serializer->readUnsignedIntElement();
+  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  SetCenterAtom(at);
 }
 
 bool ADNSidechain::AddAtom(ADNPointer<ADNAtom> atom)
@@ -1816,5 +1843,5 @@ void ADNCell::serialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIn
 
 void ADNCell::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
 {
-  //SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
+  SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 }

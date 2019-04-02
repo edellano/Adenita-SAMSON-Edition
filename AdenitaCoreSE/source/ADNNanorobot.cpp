@@ -19,11 +19,18 @@ CollectionMap<ADNSingleStrand> ADNNanorobot::GetSingleStrands() const
 {
   CollectionMap<ADNSingleStrand> singleStrands;
 
-  SBNodeIndexer nodeIndexer;
+  /*SBNodeIndexer nodeIndexer;
   SAMSON::getActiveDocument()->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNSingleStrand")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
   SB_FOR(SBNode* n, nodeIndexer) {
     singleStrands.addReferenceTarget(static_cast<ADNSingleStrand*>(n));
+  }*/
+
+  SB_FOR(ADNPointer<ADNPart> p, partsIndex_) {
+    auto pSingleStrands = p->GetSingleStrands();
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, pSingleStrands) {
+      singleStrands.addReferenceTarget(ss());
+    }
   }
 
   return singleStrands;

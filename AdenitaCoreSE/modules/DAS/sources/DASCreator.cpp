@@ -96,6 +96,7 @@ ADNPointer<ADNLoop> DASCreator::CreateLoop(ADNPointer<ADNSingleStrand> ss, ADNPo
 
   for (size_t k = 0; k < seq.size(); ++k) {
     ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+    nt->Init();
     if (part != nullptr) {
       part->RegisterNucleotide(ss, nt, nextNt);
     }else {
@@ -323,6 +324,7 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddRingToADNPart(ADNPointer<ADNPart> par
     if (!mock) {
       // create nucleotides
       ADNPointer<ADNNucleotide> ntLeft = new ADNNucleotide();
+      ntLeft->Init();
       part->RegisterNucleotideThreePrime(ssLeft, ntLeft);
       cell->SetLeftNucleotide(ntLeft);
       ntLeft->SetPosition(bs->GetPosition());
@@ -333,6 +335,7 @@ ADNPointer<ADNDoubleStrand> DASCreator::AddRingToADNPart(ADNPointer<ADNPart> par
 
       if (!ssDNA) {
         ADNPointer<ADNNucleotide> ntRight = new ADNNucleotide();
+        ntRight->Init();
         part->RegisterNucleotideFivePrime(ssRight, ntRight);
         cell->SetRightNucleotide(ntRight);
         ntRight->SetPosition(bs->GetPosition());
@@ -390,6 +393,7 @@ RTDoubleStrand DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, si
     if (!mock) {
       // create nucleotides
       ADNPointer<ADNNucleotide> ntLeft = new ADNNucleotide();
+      ntLeft->Init();
       part->RegisterNucleotideThreePrime(ssLeft, ntLeft);
       cell->SetLeftNucleotide(ntLeft);
       ntLeft->SetPosition(bs->GetPosition());
@@ -399,6 +403,7 @@ RTDoubleStrand DASCreator::AddDoubleStrandToADNPart(ADNPointer<ADNPart> part, si
       ntLeft->SetType(DNABlocks::DI);
 
       ADNPointer<ADNNucleotide> ntRight = new ADNNucleotide();
+      ntRight->Init();
       part->RegisterNucleotideFivePrime(ssRight, ntRight);
       cell->SetRightNucleotide(ntRight);
       ntRight->SetPosition(bs->GetPosition());
@@ -447,6 +452,7 @@ RTDoubleStrand DASCreator::AddSingleStrandToADNPart(ADNPointer<ADNPart> part, si
     bs->SetCell(bp());
 
     ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
+    nt->Init();
     part->RegisterNucleotideThreePrime(ss, nt);
     nt->SetType(DNABlocks::DI);
     nt->SetPosition(bs->GetPosition());
