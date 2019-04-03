@@ -426,6 +426,21 @@ bool ADNNucleotide::IsRight()
   return bs_->IsRight(this);
 }
 
+std::string ADNNucleotide::getTag() const
+{
+  return tag_;
+}
+
+void ADNNucleotide::setTag(std::string t)
+{
+  tag_ = t;
+}
+
+bool ADNNucleotide::hasTag()
+{
+  return tag_.size() > 0;
+}
+
 ADNSingleStrand::ADNSingleStrand(const ADNSingleStrand & other)
 {
   *this = other;
