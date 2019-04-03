@@ -8,6 +8,9 @@
 #include "SBDynamicalEvent.hpp"
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
+#include "DASCreator.hpp"
+#include "SEAdenitaCoreSEApp.hpp"
+#include "ADNDisplayHelper.hpp"
 
 /// This class implements an editor
 
@@ -17,6 +20,10 @@ class SEGoldnanoParticlesEditor : public SBGEditor {
 	Q_OBJECT
 
 public :
+  enum GoldNanoShape {
+    Nanosphere,
+    Nanorod
+  };
 
 	/// \name Constructors and destructors
 	//@{
@@ -57,7 +64,9 @@ public :
 	//@{
 
 	virtual void												display();																///< Displays the editor
-	virtual void												displayForShadow();														///< Displays the editor for shadow purposes
+  virtual void												displayGoldSphere();
+
+  virtual void												displayForShadow();														///< Displays the editor for shadow purposes
 	virtual void												displayInterface();														///< Displays the 2D interface in the viewport
 
 	//@}
@@ -91,8 +100,19 @@ public :
 	//@{
 
 	SEGoldnanoParticlesEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
+  SBPosition3                                       GetSnappedPosition();
 
 	//@}
+
+  ADNNanorobot * nanorobot_;
+
+  GoldNanoShape shape_ = GoldNanoShape::Nanosphere;
+
+  DASCreatorEditors::UIData positions_;
+  bool display_ = false;
+
+  float opaqueness_ = 0.5f;
+  float radius_ = 100.0f;
 
 };
 
