@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>526</width>
-    <height>276</height>
+    <height>297</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>526</width>
-    <height>276</height>
+    <height>297</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>526</width>
-    <height>276</height>
+    <height>297</height>
    </size>
   </property>
   <property name="focusPolicy">
@@ -41,6 +41,18 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>502</width>
+         <height>273</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>502</width>
+         <height>273</height>
+        </size>
        </property>
        <property name="currentIndex">
         <number>0</number>
@@ -187,7 +199,7 @@
            <x>10</x>
            <y>10</y>
            <width>481</width>
-           <height>223</height>
+           <height>231</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout">
