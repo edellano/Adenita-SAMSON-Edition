@@ -183,7 +183,8 @@ private:
   enum HighlightType {
     NONE = 0,
     CROSSOVERS = 1,
-    GC = 2
+    GC = 2,
+    TAGGED
   };
 
   HighlightType highlightType_ = NONE;

@@ -305,6 +305,11 @@
          <string>GC Content</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Tagged</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>

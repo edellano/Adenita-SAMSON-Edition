@@ -658,7 +658,7 @@ void ADNDisplayHelper::displayOrthoPlane(SBVector3 vec, SBPosition3 shift)
 }
 
 
-void ADNDisplayHelper::displaySphere(SBPosition3 pos, float radius)
+void ADNDisplayHelper::displaySphere(SBPosition3 pos, float radius, ADNArray<float> color)
 {
   ADNArray<float> positions = ADNArray<float>(3);
   ADNArray<float> radiiV = ADNArray<float>(1);
@@ -671,17 +671,12 @@ void ADNDisplayHelper::displaySphere(SBPosition3 pos, float radius)
 
   radiiV(0) = radius;
   flags(0) = 0;
-
-  colorsV(0) = 1;
-  colorsV(1) = 0;
-  colorsV(2) = 0;
-  colorsV(3) = 1;
-
+  
   SAMSON::displaySpheres(
     1,
     positions.GetArray(),
     radiiV.GetArray(),
-    colorsV.GetArray(),
+    color.GetArray(),
     flags.GetArray());
 }
 
@@ -1091,4 +1086,59 @@ void ADNDisplayHelper::displayArrow(SBPosition3 start, SBPosition3 end, unsigned
   delete[] colorData;
   delete[] flagData;
 
+}
+
+void ADNDisplayHelper::displayGoldSphere(SBNodeIndexer goldAtoms)
+{
+  unsigned int nPositions = goldAtoms.size();
+
+  float* positionData = new float[3 * nPositions];
+  float* radiusData = new float[nPositions];
+  float* colorData = new float[4 * nPositions];
+  unsigned int* flagData = new unsigned int[nPositions];
+
+
+  for (unsigned int i = 0; i < nPositions; i++) {
+
+    SBAtom* currentAtom = static_cast<SBAtom*>(goldAtoms.getNode(i));
+    SBNodeMaterial* material = currentAtom->getMaterial();
+
+    SBPosition3 position = currentAtom->getPosition();
+
+    positionData[3 * i + 0] = (float)position.v[0].getValue();
+    positionData[3 * i + 1] = (float)position.v[1].getValue();
+    positionData[3 * i + 2] = (float)position.v[2].getValue();
+
+    radiusData[i] = 100.0f;
+
+    if (material) {
+      material->getColorScheme()->getColor(colorData + 4 * i, currentAtom);
+    }
+    else {
+      colorData[4 * i + 0] = 1.0f;
+      colorData[4 * i + 1] = 1.0f;
+      colorData[4 * i + 2] = 1.0f;
+      colorData[4 * i + 3] = 1.0f;
+    }
+
+    colorData[4 * i + 0] = 0.0f;
+    colorData[4 * i + 1] = 0.4f;
+    colorData[4 * i + 2] = 0.6f;
+    colorData[4 * i + 3] = 1.0f;
+
+    flagData[i] = currentAtom->getInheritedFlags();
+
+  }
+
+  SAMSON::displaySpheres(
+    nPositions,
+    positionData,
+    radiusData,
+    colorData,
+    flagData);
+
+  delete[] positionData;
+  delete[] radiusData;
+  delete[] colorData;
+  delete[] flagData;
 }
