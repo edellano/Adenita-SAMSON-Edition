@@ -92,6 +92,66 @@ void SEGoldnanoParticlesEditor::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
+  SEConfig& config = SEConfig::GetInstance();
+
+  if (display_) {
+
+    if (shape_ == GoldNanoShape::Nanosphere) {
+      if (positions_.positionsCounter == 1) {
+
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        displayGoldSphere();
+
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+
+      }
+    }
+    else if (shape_ == GoldNanoShape::Nanorod) {
+
+      /*if (positions_.positionsCounter == 1) {
+
+        positions_.SecondPosition = GetSnappedPosition();
+
+        ADNDisplayHelper::displayLine(positions_.FirstPosition, positions_.SecondPosition);
+
+
+      }
+
+      if (config.preview_editor) {
+        if (!circular_) tempPart_ = generateStrand(true);
+        else tempPart_ = generateCircularStrand(true);
+      }
+
+      if (tempPart_ != nullptr) {
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        displayStrand();
+
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+      }*/
+    }
+
+
+  }
+}
+
+void SEGoldnanoParticlesEditor::displayGoldSphere()
+{
+  return;
+  ADNArray<float> color = ADNArray<float>(4);
+  color(0) = 1.0f;
+  color(1) = 1.0f;
+  color(2) = 0.0f;
+  color(3) = opaqueness_;
+
+  ADNDisplayHelper::displaySphere(GetSnappedPosition(), radius_, color);
 
 }
 
@@ -117,6 +177,13 @@ void SEGoldnanoParticlesEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  if (positions_.positionsCounter == 0) {
+    positions_.FirstPosition = GetSnappedPosition();
+    positions_.positionsCounter++;
+
+    positions_.FirstVector = SAMSON::getActiveCamera()->getBasisZ().normalizedVersion();
+    positions_.vectorsCounter++;
+  }
 }
 
 void SEGoldnanoParticlesEditor::mouseReleaseEvent(QMouseEvent* event) {
@@ -124,6 +191,14 @@ void SEGoldnanoParticlesEditor::mouseReleaseEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  if (positions_.positionsCounter == 1) {
+    //positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    positions_.positionsCounter++;
+
+    DASCreatorEditors::resetPositions(positions_);
+    display_ = false;
+
+  }
 }
 
 void SEGoldnanoParticlesEditor::mouseMoveEvent(QMouseEvent* event) {
@@ -131,6 +206,12 @@ void SEGoldnanoParticlesEditor::mouseMoveEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  if (event->buttons() == Qt::LeftButton) {
+    display_ = true;
+    //SAMSON::requestViewportUpdate();
+  }
+
+  SAMSON::requestViewportUpdate();
 }
 
 void SEGoldnanoParticlesEditor::mouseDoubleClickEvent(QMouseEvent* event) {
@@ -152,6 +233,29 @@ void SEGoldnanoParticlesEditor::keyPressEvent(QKeyEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  if (display_) {
+    SEConfig& config = SEConfig::GetInstance();
+
+    if (event->key() == Qt::Key_Up) {
+      opaqueness_ += 0.1f;
+      if (opaqueness_ > 1.0f) opaqueness_ = 1.0f;
+    }
+    else if (event->key() == Qt::Key_Down) {
+      opaqueness_ -= 0.1f;
+      if (opaqueness_ < 0.0f) opaqueness_ = 0.0f;
+    }
+    else if (event->key() == Qt::Key_Left) {
+      radius_ -= 10.0f;
+      if (radius_ < 20.0f) radius_ = 20.0f;
+    }
+    else if (event->key() == Qt::Key_Right) {
+      radius_ += 10.0f;
+      if (radius_ > 1000.0f) radius_ = 1000.0f;
+    }
+
+    SAMSON::requestViewportUpdate();
+
+  }
 }
 
 void SEGoldnanoParticlesEditor::keyReleaseEvent(QKeyEvent* event) {
@@ -184,3 +288,26 @@ void SEGoldnanoParticlesEditor::onStructuralEvent(SBStructuralEvent* documentEve
 	// SAMSON Element generator pro tip: implement this function if you need to handle structural events
 
 }
+
+SBPosition3 SEGoldnanoParticlesEditor::GetSnappedPosition()
+{
+  SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+
+  auto highlightedBaseSegments = nanorobot_->GetHighlightedBaseSegments();
+  auto highlightedBaseSegmentsFromNucleotides = nanorobot_->GetHighlightedBaseSegmentsFromNucleotides();
+  auto highlightedAtoms = nanorobot_->GetHighlightedAtoms();
+
+  if (highlightedAtoms.size() == 1) {
+    currentPosition = highlightedAtoms[0]->getPosition();
+  }
+  else if (highlightedBaseSegments.size() == 1) {
+    currentPosition = highlightedBaseSegments[0]->GetPosition();
+  }
+  else if (highlightedBaseSegmentsFromNucleotides.size() == 1) {
+    currentPosition = highlightedBaseSegmentsFromNucleotides[0]->GetPosition();
+  }
+
+
+  return currentPosition;
+}
+
