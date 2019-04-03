@@ -1,18 +1,18 @@
-#include "SEGoldnanoParticlesEditor.hpp"
+#include "SETaggingEditor.hpp"
 #include "SAMSON.hpp"
 
 
-SEGoldnanoParticlesEditor::SEGoldnanoParticlesEditor() {
+SETaggingEditor::SETaggingEditor() {
 
 	// SAMSON Element generator pro tip: this default constructor is called when unserializing the node, so it should perform all default initializations.
 
-	propertyWidget = new SEGoldnanoParticlesEditorGUI(this);
+	propertyWidget = new SETaggingEditorGUI(this);
 	propertyWidget->loadDefaultSettings();
 	SAMSON::addWidget(propertyWidget);
 
 }
 
-SEGoldnanoParticlesEditor::~SEGoldnanoParticlesEditor() {
+SETaggingEditor::~SETaggingEditor() {
 
 	// SAMSON Element generator pro tip: disconnect from signals you might have connected to.
 
@@ -21,36 +21,36 @@ SEGoldnanoParticlesEditor::~SEGoldnanoParticlesEditor() {
 
 }
 
-SEGoldnanoParticlesEditorGUI* SEGoldnanoParticlesEditor::getPropertyWidget() const { return static_cast<SEGoldnanoParticlesEditorGUI*>(propertyWidget); }
+SETaggingEditorGUI* SETaggingEditor::getPropertyWidget() const { return static_cast<SETaggingEditorGUI*>(propertyWidget); }
 
-SBCContainerUUID SEGoldnanoParticlesEditor::getUUID() const { return SBCContainerUUID("2A1B195E-3E38-BD20-1B61-70A3CA6761C8"); }
+SBCContainerUUID SETaggingEditor::getUUID() const { return SBCContainerUUID("2A1B195E-3E38-BD20-1B61-70A3CA6761C8"); }
 
-QString SEGoldnanoParticlesEditor::getName() const { 
+QString SETaggingEditor::getName() const { 
 
 	// SAMSON Element generator pro tip: this name should not be changed
 
-	return "SEGoldnanoParticlesEditor"; 
+	return "SETaggingEditor"; 
 
 }
 
-QString SEGoldnanoParticlesEditor::getText() const { 
+QString SETaggingEditor::getText() const { 
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("SEGoldnanoParticlesEditor"); 
+	return QObject::tr("SETaggingEditor"); 
 
 }
 
-QPixmap SEGoldnanoParticlesEditor::getLogo() const {
+QPixmap SETaggingEditor::getLogo() const {
 
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
 	// Modify it to better reflect the purpose of your editor.
 
-	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/SEGoldnanoParticlesEditorIcon.png"));
+	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/SETaggingEditorIcon.png"));
 
 }
 
-QKeySequence SEGoldnanoParticlesEditor::getShortcut() const { 
+QKeySequence SETaggingEditor::getShortcut() const { 
 	
 	// SAMSON Element generator pro tip: modify this function to associate a tentative shortcut to your editor
 
@@ -58,7 +58,7 @@ QKeySequence SEGoldnanoParticlesEditor::getShortcut() const {
 
 }
 
-QString SEGoldnanoParticlesEditor::getToolTip() const { 
+QString SETaggingEditor::getToolTip() const { 
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
@@ -66,21 +66,21 @@ QString SEGoldnanoParticlesEditor::getToolTip() const {
 
 }
 
-void SEGoldnanoParticlesEditor::beginEditing() {
+void SETaggingEditor::beginEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 
 	// Implement this function if you need to prepare some data structures in order to be able to handle GUI or SAMSON events.
 
 }
 
-void SEGoldnanoParticlesEditor::endEditing() {
+void SETaggingEditor::endEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function immediately before your editor becomes inactive (for example when another editor becomes active). 
 	// Implement this function if you need to clean some data structures.
 
 }
 
-void SEGoldnanoParticlesEditor::getActions(SBVector<SBAction*>& actionVector) {
+void SETaggingEditor::getActions(SBVector<SBAction*>& actionVector) {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function to show the user actions associated to your editor in context menus.
 	// Append actions to the actionVector if necessary.
@@ -88,7 +88,7 @@ void SEGoldnanoParticlesEditor::getActions(SBVector<SBAction*>& actionVector) {
 
 }
 
-void SEGoldnanoParticlesEditor::display() {
+void SETaggingEditor::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
@@ -142,7 +142,7 @@ void SEGoldnanoParticlesEditor::display() {
   }
 }
 
-void SEGoldnanoParticlesEditor::displayGoldSphere()
+void SETaggingEditor::displayGoldSphere()
 {
 
   ADNArray<float> color = ADNArray<float>(4);
@@ -155,7 +155,7 @@ void SEGoldnanoParticlesEditor::displayGoldSphere()
 
 }
 
-void SEGoldnanoParticlesEditor::displayForShadow() {
+void SETaggingEditor::displayForShadow() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to compute shadows. 
 	// Implement this function if your editor displays things in viewports, so that your editor can cast shadows
@@ -164,7 +164,7 @@ void SEGoldnanoParticlesEditor::displayForShadow() {
 
 }
 
-void SEGoldnanoParticlesEditor::displayInterface() {
+void SETaggingEditor::displayInterface() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to display the editor 2D interface in viewports. 
 	// Implement this function if your editor displays a 2D user interface. For example, a rectangle selection editor would display a 2D rectangle in the active viewport. 
@@ -172,7 +172,7 @@ void SEGoldnanoParticlesEditor::displayInterface() {
 
 }
 
-void SEGoldnanoParticlesEditor::mousePressEvent(QMouseEvent* event) {
+void SETaggingEditor::mousePressEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
@@ -186,7 +186,7 @@ void SEGoldnanoParticlesEditor::mousePressEvent(QMouseEvent* event) {
   }
 }
 
-void SEGoldnanoParticlesEditor::mouseReleaseEvent(QMouseEvent* event) {
+void SETaggingEditor::mouseReleaseEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
@@ -201,7 +201,7 @@ void SEGoldnanoParticlesEditor::mouseReleaseEvent(QMouseEvent* event) {
   }
 }
 
-void SEGoldnanoParticlesEditor::mouseMoveEvent(QMouseEvent* event) {
+void SETaggingEditor::mouseMoveEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
@@ -214,21 +214,21 @@ void SEGoldnanoParticlesEditor::mouseMoveEvent(QMouseEvent* event) {
   SAMSON::requestViewportUpdate();
 }
 
-void SEGoldnanoParticlesEditor::mouseDoubleClickEvent(QMouseEvent* event) {
+void SETaggingEditor::mouseDoubleClickEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SEGoldnanoParticlesEditor::wheelEvent(QWheelEvent* event) {
+void SETaggingEditor::wheelEvent(QWheelEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SEGoldnanoParticlesEditor::keyPressEvent(QKeyEvent* event) {
+void SETaggingEditor::keyPressEvent(QKeyEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
@@ -258,38 +258,38 @@ void SEGoldnanoParticlesEditor::keyPressEvent(QKeyEvent* event) {
   }
 }
 
-void SEGoldnanoParticlesEditor::keyReleaseEvent(QKeyEvent* event) {
+void SETaggingEditor::keyReleaseEvent(QKeyEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SEGoldnanoParticlesEditor::onBaseEvent(SBBaseEvent* baseEvent) {
+void SETaggingEditor::onBaseEvent(SBBaseEvent* baseEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle base events
 
 }
 
-void SEGoldnanoParticlesEditor::onDocumentEvent(SBDocumentEvent* documentEvent) {
+void SETaggingEditor::onDocumentEvent(SBDocumentEvent* documentEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle document events 
 
 }
 
-void SEGoldnanoParticlesEditor::onDynamicalEvent(SBDynamicalEvent* dynamicalEvent) {
+void SETaggingEditor::onDynamicalEvent(SBDynamicalEvent* dynamicalEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle dynamical events 
 
 }
 
-void SEGoldnanoParticlesEditor::onStructuralEvent(SBStructuralEvent* documentEvent) {
+void SETaggingEditor::onStructuralEvent(SBStructuralEvent* documentEvent) {
 	
 	// SAMSON Element generator pro tip: implement this function if you need to handle structural events
 
 }
 
-SBPosition3 SEGoldnanoParticlesEditor::GetSnappedPosition()
+SBPosition3 SETaggingEditor::GetSnappedPosition()
 {
   SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
 

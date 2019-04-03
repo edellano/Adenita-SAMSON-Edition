@@ -1,15 +1,15 @@
-#include "SEGoldnanoParticlesVisualModel.hpp"
+#include "SETaggingVisualModel.hpp"
 #include "SAMSON.hpp"
 #include "ADNDisplayHelper.hpp"
 
 
-SEGoldnanoParticlesVisualModel::SEGoldnanoParticlesVisualModel() {
+SETaggingVisualModel::SETaggingVisualModel() {
 
 	// SAMSON Element generator pro tip: this default constructor is called when unserializing the node, so it should perform all default initializations.
 
 }
 
-SEGoldnanoParticlesVisualModel::SEGoldnanoParticlesVisualModel(const SBNodeIndexer& nodeIndexer) {
+SETaggingVisualModel::SETaggingVisualModel(const SBNodeIndexer& nodeIndexer) {
 
 	// SAMSON Element generator pro tip: implement this function if you want your visual model to be applied to a set of data graph nodes.
 	// You might want to connect to various signals and handle the corresponding events. For example, if your visual model represents a sphere positioned at
@@ -21,13 +21,13 @@ SEGoldnanoParticlesVisualModel::SEGoldnanoParticlesVisualModel(const SBNodeIndex
   
 }
 
-SEGoldnanoParticlesVisualModel::~SEGoldnanoParticlesVisualModel() {
+SETaggingVisualModel::~SETaggingVisualModel() {
 
 	// SAMSON Element generator pro tip: disconnect from signals you might have connected to.
 
 }
 
- bool SEGoldnanoParticlesVisualModel::isSerializable() const {
+ bool SETaggingVisualModel::isSerializable() const {
 
 	// SAMSON Element generator pro tip: serialization is used in SAMSON to e.g. save documents, copy nodes, etc. 
 	// Please refer to the SDK documentation for more information.
@@ -37,7 +37,7 @@ SEGoldnanoParticlesVisualModel::~SEGoldnanoParticlesVisualModel() {
 	
 }
 
-void SEGoldnanoParticlesVisualModel::serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber, const SBVersionNumber& classVersionNumber) const {
+void SETaggingVisualModel::serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber, const SBVersionNumber& classVersionNumber) const {
 
 	SBMVisualModel::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 
@@ -47,7 +47,7 @@ void SEGoldnanoParticlesVisualModel::serialize(SBCSerializer* serializer, const 
 
 }
 
-void SEGoldnanoParticlesVisualModel::unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber, const SBVersionNumber& classVersionNumber) {
+void SETaggingVisualModel::unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber, const SBVersionNumber& classVersionNumber) {
 
 	SBMVisualModel::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
 	
@@ -57,14 +57,14 @@ void SEGoldnanoParticlesVisualModel::unserialize(SBCSerializer* serializer, cons
 
 }
 
-void SEGoldnanoParticlesVisualModel::eraseImplementation() {
+void SETaggingVisualModel::eraseImplementation() {
 
 	// SAMSON Element generator pro tip: modify this function when you need to perform special tasks when your visual model is erased (e.g. disconnect from nodes you are connected to).
 	// Important: this function must be undoable (i.e. only call undoable functions or add an undo command to the undo stack)
 
 }
 
-void SEGoldnanoParticlesVisualModel::display() {
+void SETaggingVisualModel::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. This is the main function of your visual model. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
@@ -72,12 +72,12 @@ void SEGoldnanoParticlesVisualModel::display() {
   displayGoldSphere();
 }
 
-void SEGoldnanoParticlesVisualModel::displayGoldSphere()
+void SETaggingVisualModel::displayGoldSphere()
 {
   ADNDisplayHelper::displayGoldSphere(goldAtoms_);
 }
 
-void SEGoldnanoParticlesVisualModel::displayForShadow() {
+void SETaggingVisualModel::displayForShadow() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to compute shadows. 
 	// Implement this function so that your visual model can cast shadows to other objects in SAMSON, for example thanks to the utility
@@ -85,7 +85,7 @@ void SEGoldnanoParticlesVisualModel::displayForShadow() {
 
 }
 
-void SEGoldnanoParticlesVisualModel::displayForSelection() {
+void SETaggingVisualModel::displayForSelection() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to perform object picking.
 	// Instead of rendering colors, your visual model is expected to write the index of a data graph node (obtained with getIndex()).
@@ -94,14 +94,14 @@ void SEGoldnanoParticlesVisualModel::displayForSelection() {
 
 }
 
-void SEGoldnanoParticlesVisualModel::expandBounds(SBIAPosition3& bounds) const {
+void SETaggingVisualModel::expandBounds(SBIAPosition3& bounds) const {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON to determine the model's spatial bounds. 
 	// When this function returns, the bounds interval vector should contain the visual model. 
 
 }
 
-void SEGoldnanoParticlesVisualModel::collectAmbientOcclusion(const SBPosition3& boxOrigin, const SBPosition3& boxSize, unsigned int nCellsX, unsigned int nCellsY, unsigned int nCellsZ, float* ambientOcclusionData) {
+void SETaggingVisualModel::collectAmbientOcclusion(const SBPosition3& boxOrigin, const SBPosition3& boxSize, unsigned int nCellsX, unsigned int nCellsY, unsigned int nCellsZ, float* ambientOcclusionData) {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON to determine your model's influence on ambient occlusion.
 	// Implement this function if you want your visual model to occlude other objects in ambient occlusion calculations.
@@ -119,19 +119,19 @@ void SEGoldnanoParticlesVisualModel::collectAmbientOcclusion(const SBPosition3& 
 
 }
 
-void SEGoldnanoParticlesVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
+void SETaggingVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle base events (e.g. when a node for which you provide a visual representation emits a base signal, such as when it is erased)
 
 }
 
-void SEGoldnanoParticlesVisualModel::onDocumentEvent(SBDocumentEvent* documentEvent) {
+void SETaggingVisualModel::onDocumentEvent(SBDocumentEvent* documentEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle document events 
 
 }
 
-void SEGoldnanoParticlesVisualModel::onStructuralEvent(SBStructuralEvent* documentEvent) {
+void SETaggingVisualModel::onStructuralEvent(SBStructuralEvent* documentEvent) {
 	
 	// SAMSON Element generator pro tip: implement this function if you need to handle structural events (e.g. when a structural node for which you provide a visual representation is updated)
 

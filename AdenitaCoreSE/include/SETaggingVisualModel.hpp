@@ -9,7 +9,7 @@
 
 /// This class implements a visual model
 
-class SEGoldnanoParticlesVisualModel : public SBMVisualModel {
+class SETaggingVisualModel : public SBMVisualModel {
 
 	SB_CLASS
 
@@ -18,9 +18,9 @@ public :
 	/// \name Constructors and destructors
 	//@{
 
-	SEGoldnanoParticlesVisualModel();																													///< Builds a visual model					
-	SEGoldnanoParticlesVisualModel(const SBNodeIndexer& nodeIndexer);																					///< Builds a visual model 
-	virtual ~SEGoldnanoParticlesVisualModel();																											///< Destructs the visual model
+	SETaggingVisualModel();																													///< Builds a visual model					
+	SETaggingVisualModel(const SBNodeIndexer& nodeIndexer);																					///< Builds a visual model 
+	virtual ~SETaggingVisualModel();																											///< Destructs the visual model
 
 	//@}
 
@@ -69,5 +69,5 @@ public :
 };
 
 
-SB_REGISTER_TARGET_TYPE(SEGoldnanoParticlesVisualModel, "SEGoldnanoParticlesVisualModel", "5E0EB74B-CBEA-175C-43AA-EEC452539522");
-SB_DECLARE_BASE_TYPE(SEGoldnanoParticlesVisualModel, SBMVisualModel);
+SB_REGISTER_TARGET_TYPE(SETaggingVisualModel, "SETaggingVisualModel", "5E0EB74B-CBEA-175C-43AA-EEC452539522");
+SB_DECLARE_BASE_TYPE(SETaggingVisualModel, SBMVisualModel);
