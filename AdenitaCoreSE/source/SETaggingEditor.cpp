@@ -1,5 +1,6 @@
 #include "SETaggingEditor.hpp"
 #include "SAMSON.hpp"
+#include <QInputDialog>
 
 
 SETaggingEditor::SETaggingEditor() {
@@ -94,17 +95,7 @@ void SETaggingEditor::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
-  SEConfig& config = SEConfig::GetInstance();
-
-  if (display_) {
-
-    }
-    else if (shape_ == TaggingShape::Rod) {
-
-    }
-
-
-  }
+  
 }
 
 
@@ -131,13 +122,25 @@ void SETaggingEditor::mousePressEvent(QMouseEvent* event) {
 	// Implement this function to handle this event with your editor.
 
 
-  }
 }
 
 void SETaggingEditor::mouseReleaseEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
+
+  auto nt = GetHighlightedNucleotide();
+
+  if (nt()) {
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("Enter Nucleotide Tag"),
+      tr("Tag:"), QLineEdit::Normal,
+      QDir::home().dirName(), &ok);
+    if (ok && !text.isEmpty()) {
+      nt->setTag(text.toStdString());
+    }
+  }
+  
 
 }
 
@@ -201,25 +204,16 @@ void SETaggingEditor::onStructuralEvent(SBStructuralEvent* documentEvent) {
 
 }
 
-SBPosition3 SETaggingEditor::GetSnappedPosition()
+ADNPointer<ADNNucleotide> SETaggingEditor::GetHighlightedNucleotide()
 {
-  SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+  ADNPointer<ADNNucleotide> nt = nullptr;
+  auto highlightedNucleotides = nanorobot_->GetHighlightedNucleotides();
 
-  auto highlightedBaseSegments = nanorobot_->GetHighlightedBaseSegments();
-  auto highlightedBaseSegmentsFromNucleotides = nanorobot_->GetHighlightedBaseSegmentsFromNucleotides();
-  auto highlightedAtoms = nanorobot_->GetHighlightedAtoms();
-
-  if (highlightedAtoms.size() == 1) {
-    currentPosition = highlightedAtoms[0]->getPosition();
-  }
-  else if (highlightedBaseSegments.size() == 1) {
-    currentPosition = highlightedBaseSegments[0]->GetPosition();
-  }
-  else if (highlightedBaseSegmentsFromNucleotides.size() == 1) {
-    currentPosition = highlightedBaseSegmentsFromNucleotides[0]->GetPosition();
+  if (highlightedNucleotides.size() == 1) {
+    nt = highlightedNucleotides[0];
   }
 
 
-  return currentPosition;
+  return nt;
 }
 
