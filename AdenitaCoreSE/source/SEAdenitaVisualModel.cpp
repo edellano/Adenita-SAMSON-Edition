@@ -1579,10 +1579,10 @@ void SEAdenitaVisualModel::display() {
 
   if (nanorobot_ == nullptr) return;
 
-  glEnable(GL_BLEND);
+  /*glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_DEPTH_TEST);
-
+*/
   int iScale = (int)scale_;
 
   SEConfig& config = SEConfig::GetInstance();
@@ -1647,8 +1647,8 @@ void SEAdenitaVisualModel::display() {
 
   displayForDebugging();
 
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
+  //glDisable(GL_DEPTH_TEST);
+  //glDisable(GL_BLEND);
 
 
   //if (configuration_->display_base_pairing) {

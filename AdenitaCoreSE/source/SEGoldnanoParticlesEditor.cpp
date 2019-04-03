@@ -144,7 +144,7 @@ void SEGoldnanoParticlesEditor::display() {
 
 void SEGoldnanoParticlesEditor::displayGoldSphere()
 {
-  return;
+
   ADNArray<float> color = ADNArray<float>(4);
   color(0) = 1.0f;
   color(1) = 1.0f;
