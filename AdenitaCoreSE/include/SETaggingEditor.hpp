@@ -1,7 +1,7 @@
 #pragma once 
 
 #include "SBGEditor.hpp"
-#include "SEGoldnanoParticlesEditorGUI.hpp"
+#include "SETaggingEditorGUI.hpp"
 
 #include "SBBaseEvent.hpp"
 #include "SBDocumentEvent.hpp"
@@ -14,7 +14,7 @@
 
 /// This class implements an editor
 
-class SEGoldnanoParticlesEditor : public SBGEditor {
+class SETaggingEditor : public SBGEditor {
 
 	SB_CLASS
 	Q_OBJECT
@@ -28,8 +28,8 @@ public :
 	/// \name Constructors and destructors
 	//@{
 
-	SEGoldnanoParticlesEditor();																													///< Builds an editor					
-	virtual ~SEGoldnanoParticlesEditor();																											///< Destructs the editor
+	SETaggingEditor();																													///< Builds an editor					
+	virtual ~SETaggingEditor();																											///< Destructs the editor
 
 	//@}
 
@@ -99,7 +99,7 @@ public :
 	/// \name GUI
 	//@{
 
-	SEGoldnanoParticlesEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
+	SETaggingEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
   SBPosition3                                       GetSnappedPosition();
 
 	//@}
@@ -117,5 +117,5 @@ public :
 };
 
 
-SB_REGISTER_TYPE(SEGoldnanoParticlesEditor, "SEGoldnanoParticlesEditor", "473D2F88-5D06-25F5-EB58-053661504C43");
-SB_DECLARE_BASE_TYPE(SEGoldnanoParticlesEditor, SBGEditor);
+SB_REGISTER_TYPE(SETaggingEditor, "SETaggingEditor", "473D2F88-5D06-25F5-EB58-053661504C43");
+SB_DECLARE_BASE_TYPE(SETaggingEditor, SBGEditor);

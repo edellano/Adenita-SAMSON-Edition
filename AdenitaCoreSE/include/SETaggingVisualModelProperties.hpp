@@ -2,19 +2,19 @@
 
 
 #include "SBGDataGraphNodeProperties.hpp" 
-#include "ui_SEGoldnanoParticlesVisualModelProperties.h"
+#include "ui_SETaggingVisualModelProperties.h"
 #include "SBPointer.hpp"
-#include "SEGoldnanoParticlesVisualModel.hpp"
+#include "SETaggingVisualModel.hpp"
 
 
 /// This class implements the property window of the visual model
 
-// SAMSON Element generator pro tip: add GUI functionality in this class. The non-GUI functionality should go in the SEGoldnanoParticlesVisualModel class
+// SAMSON Element generator pro tip: add GUI functionality in this class. The non-GUI functionality should go in the SETaggingVisualModel class
 
 // SAMSON Element generator pro tip: if you do not want to have a property window associated to you visual model, do not expose it in the descriptor. 
-// Precisely, remove the line SB_ELEMENT_CLASS(SEGoldnanoParticlesVisualModelProperties); from the file SEGoldnanoParticlesDescriptor.cpp
+// Precisely, remove the line SB_ELEMENT_CLASS(SETaggingVisualModelProperties); from the file SETaggingDescriptor.cpp
 
-class SEGoldnanoParticlesVisualModelProperties : public SBGDataGraphNodeProperties {
+class SETaggingVisualModelProperties : public SBGDataGraphNodeProperties {
 
 	SB_CLASS
 	Q_OBJECT
@@ -24,8 +24,8 @@ public:
 	/// \name Constructors and destructors
 	//@{
 
-	SEGoldnanoParticlesVisualModelProperties();																								///< Constructs a widget to show the properties of the visual model
-	virtual ~SEGoldnanoParticlesVisualModelProperties();																						///< Destructs the widget
+	SETaggingVisualModelProperties();																								///< Constructs a widget to show the properties of the visual model
+	virtual ~SETaggingVisualModelProperties();																						///< Destructs the widget
 
 	//@}
 
@@ -58,27 +58,27 @@ public:
 
 	class Observer : public SBCReferenceTarget {
 
-		Observer(SEGoldnanoParticlesVisualModelProperties* properties);
+		Observer(SETaggingVisualModelProperties* properties);
 		virtual ~Observer();
 
-		friend class SEGoldnanoParticlesVisualModelProperties;
+		friend class SETaggingVisualModelProperties;
 
 		void														onBaseEvent(SBBaseEvent* baseEvent);								///< Base event management
 		void														onVisualEvent(SBVisualEvent* visualEvent);							///< Visual event management
 
-		SEGoldnanoParticlesVisualModelProperties* properties;
+		SETaggingVisualModelProperties* properties;
 
 	};
 
 private:
 
-	friend class SEGoldnanoParticlesVisualModel;
-	Ui::SEGoldnanoParticlesVisualModelPropertiesClass							ui;
-	SBPointer<SEGoldnanoParticlesVisualModel>									visualModel;
+	friend class SETaggingVisualModel;
+	Ui::SETaggingVisualModelPropertiesClass							ui;
+	SBPointer<SETaggingVisualModel>									visualModel;
 
 	SBPointer<Observer>											observer;
 
 };
 
-SB_REGISTER_TYPE(SEGoldnanoParticlesVisualModelProperties, "SEGoldnanoParticlesVisualModelProperties", "7E07A97C-279E-5D33-9F37-A2D47520C149");
-SB_DECLARE_BASE_TYPE(SEGoldnanoParticlesVisualModelProperties, SBGDataGraphNodeProperties);
+SB_REGISTER_TYPE(SETaggingVisualModelProperties, "SETaggingVisualModelProperties", "7E07A97C-279E-5D33-9F37-A2D47520C149");
+SB_DECLARE_BASE_TYPE(SETaggingVisualModelProperties, SBGDataGraphNodeProperties);

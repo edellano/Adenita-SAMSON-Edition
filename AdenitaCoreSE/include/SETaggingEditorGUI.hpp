@@ -2,16 +2,16 @@
 
 
 #include "SBGWindowWidget.hpp" 
-#include "ui_SEGoldnanoParticlesEditorGUI.h"
+#include "ui_SETaggingEditorGUI.h"
 
-class SEGoldnanoParticlesEditor;
+class SETaggingEditor;
 
 /// This class implements the GUI of the editor
 
 // SAMSON Element generator pro tip: add GUI functionality in this class. 
-// The non-GUI functionality (and the mouse and keyboard event handling methods that are specific to the editor) should go in the SEGoldnanoParticlesEditor class
+// The non-GUI functionality (and the mouse and keyboard event handling methods that are specific to the editor) should go in the SETaggingEditor class
 
-class SEGoldnanoParticlesEditorGUI : public SBGWindowWidget {
+class SETaggingEditorGUI : public SBGWindowWidget {
 
 	Q_OBJECT
 
@@ -20,15 +20,15 @@ public:
 	/// \name Constructors and destructors
 	//@{
 
-	SEGoldnanoParticlesEditorGUI(SEGoldnanoParticlesEditor* editor);																		///< Constructs a GUI for the editor
-	virtual ~SEGoldnanoParticlesEditorGUI();																										///< Destructs the GUI of the editor
+	SETaggingEditorGUI(SETaggingEditor* editor);																		///< Constructs a GUI for the editor
+	virtual ~SETaggingEditorGUI();																										///< Destructs the GUI of the editor
 
 	//@}
 
 	/// \name Editor
 	//@{
 
-	SEGoldnanoParticlesEditor*												getEditor() const;														///< Returns a pointer to the editor
+	SETaggingEditor*												getEditor() const;														///< Returns a pointer to the editor
 
 	//@}
 
@@ -53,8 +53,8 @@ public:
 
 private:
 
-	Ui::SEGoldnanoParticlesEditorGUIClass									ui;
-	SEGoldnanoParticlesEditor*												editor;
+	Ui::SETaggingEditorGUIClass									ui;
+	SETaggingEditor*												editor;
 
 };
 

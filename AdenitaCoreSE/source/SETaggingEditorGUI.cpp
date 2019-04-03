@@ -1,22 +1,22 @@
-#include "SEGoldnanoParticlesEditorGUI.hpp"
-#include "SEGoldnanoParticlesEditor.hpp"
+#include "SETaggingEditorGUI.hpp"
+#include "SETaggingEditor.hpp"
 #include "SAMSON.hpp"
 #include "SBGWindow.hpp"
 
-SEGoldnanoParticlesEditorGUI::SEGoldnanoParticlesEditorGUI(SEGoldnanoParticlesEditor* editor) {
+SETaggingEditorGUI::SETaggingEditorGUI(SETaggingEditor* editor) {
 
 	ui.setupUi( this );
 	this->editor = editor;
 
 }
 
-SEGoldnanoParticlesEditorGUI::~SEGoldnanoParticlesEditorGUI() {
+SETaggingEditorGUI::~SETaggingEditorGUI() {
 
 }
 
-SEGoldnanoParticlesEditor* SEGoldnanoParticlesEditorGUI::getEditor() const { return editor; }
+SETaggingEditor* SETaggingEditorGUI::getEditor() const { return editor; }
 
-void SEGoldnanoParticlesEditorGUI::loadSettings( SBGSettings *settings ) {
+void SETaggingEditorGUI::loadSettings( SBGSettings *settings ) {
 
 	if ( settings == NULL ) return;
 	
@@ -24,7 +24,7 @@ void SEGoldnanoParticlesEditorGUI::loadSettings( SBGSettings *settings ) {
 
 }
 
-void SEGoldnanoParticlesEditorGUI::saveSettings( SBGSettings *settings ) {
+void SETaggingEditorGUI::saveSettings( SBGSettings *settings ) {
 
 	if ( settings == NULL ) return;
 
@@ -32,27 +32,27 @@ void SEGoldnanoParticlesEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
-SBCContainerUUID SEGoldnanoParticlesEditorGUI::getUUID() const { return SBCContainerUUID( "EA0EDF95-028E-4DE2-236F-49EB9D68BC71" );}
+SBCContainerUUID SETaggingEditorGUI::getUUID() const { return SBCContainerUUID( "EA0EDF95-028E-4DE2-236F-49EB9D68BC71" );}
 
-QPixmap SEGoldnanoParticlesEditorGUI::getLogo() const { 
+QPixmap SETaggingEditorGUI::getLogo() const { 
 	
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
 	// Modify it to better reflect the purpose of your editor.
 
-	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/icons/SEGoldnanoParticlesEditorIcon.png"));
+	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/icons/SETaggingEditorIcon.png"));
 
 }
 
-QString SEGoldnanoParticlesEditorGUI::getName() const { 
+QString SETaggingEditorGUI::getName() const { 
 
 	// SAMSON Element generator pro tip: this string will be the GUI title. 
 	// Modify this function to have a user-friendly description of your editor inside SAMSON
 
-	return "SEGoldnanoParticlesEditor"; 
+	return "SETaggingEditor"; 
 
 }
 
-int SEGoldnanoParticlesEditorGUI::getFormat() const {
+int SETaggingEditorGUI::getFormat() const {
 
 	// SAMSON Element generator pro tip: modify these default settings to configure the window
 	//
@@ -65,7 +65,7 @@ int SEGoldnanoParticlesEditorGUI::getFormat() const {
 
 }
 
-QString SEGoldnanoParticlesEditorGUI::getCitation() const {
+QString SETaggingEditorGUI::getCitation() const {
 
 	// SAMSON Element generator pro tip: modify this function to add citation information
 
