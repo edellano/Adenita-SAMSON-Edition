@@ -98,81 +98,16 @@ void SETaggingEditor::display() {
 
   if (display_) {
 
-    if (shape_ == TaggingShape::Sphere) {
-      if (positions_.positionsCounter == 1) {
-
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        displayActiveSphere();
-
-        glDisable(GL_BLEND);
-        glDisable(GL_DEPTH_TEST);
-
-      }
     }
     else if (shape_ == TaggingShape::Rod) {
 
-      /*if (positions_.positionsCounter == 1) {
-
-        positions_.SecondPosition = GetSnappedPosition();
-
-        ADNDisplayHelper::displayLine(positions_.FirstPosition, positions_.SecondPosition);
-
-
-      }
-
-      if (config.preview_editor) {
-        if (!circular_) tempPart_ = generateStrand(true);
-        else tempPart_ = generateCircularStrand(true);
-      }
-
-      if (tempPart_ != nullptr) {
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        displayStrand();
-
-        glDisable(GL_BLEND);
-        glDisable(GL_DEPTH_TEST);
-      }*/
     }
 
 
   }
-  else {
-    displayInactiveSphere();
-
-  }
 }
 
-void SETaggingEditor::displayActiveSphere()
-{
 
-  ADNArray<float> color = ADNArray<float>(4);
-  color(0) = 1.0f;
-  color(1) = 0.1f;
-  color(2) = 0.3f;
-  color(3) = opaqueness_;
-
-  ADNDisplayHelper::displaySphere(GetSnappedPosition(), radius_, color);
-
-}
-
-void SETaggingEditor::displayInactiveSphere()
-{
-
-  ADNArray<float> color = ADNArray<float>(4);
-  color(0) = 0.0f;
-  color(1) = 0.7f;
-  color(2) = 0.7f;
-  color(3) = opaqueness_;
-
-  ADNDisplayHelper::displaySphere(GetSnappedPosition(), radius_, color);
-
-}
 void SETaggingEditor::displayForShadow() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to compute shadows. 
@@ -195,12 +130,7 @@ void SETaggingEditor::mousePressEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
-  if (positions_.positionsCounter == 0) {
-    positions_.FirstPosition = GetSnappedPosition();
-    positions_.positionsCounter++;
 
-    positions_.FirstVector = SAMSON::getActiveCamera()->getBasisZ().normalizedVersion();
-    positions_.vectorsCounter++;
   }
 }
 
@@ -209,14 +139,6 @@ void SETaggingEditor::mouseReleaseEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
-  if (positions_.positionsCounter == 1) {
-    //positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
-    positions_.positionsCounter++;
-
-    DASCreatorEditors::resetPositions(positions_);
-    display_ = false;
-
-  }
 }
 
 void SETaggingEditor::mouseMoveEvent(QMouseEvent* event) {
@@ -224,12 +146,7 @@ void SETaggingEditor::mouseMoveEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
-  if (event->buttons() == Qt::LeftButton) {
-    display_ = true;
-    //SAMSON::requestViewportUpdate();
-  }
 
-  SAMSON::requestViewportUpdate();
 }
 
 void SETaggingEditor::mouseDoubleClickEvent(QMouseEvent* event) {
@@ -251,29 +168,6 @@ void SETaggingEditor::keyPressEvent(QKeyEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
-  if (display_) {
-    SEConfig& config = SEConfig::GetInstance();
-
-    if (event->key() == Qt::Key_Up) {
-      opaqueness_ += 0.1f;
-      if (opaqueness_ > 1.0f) opaqueness_ = 1.0f;
-    }
-    else if (event->key() == Qt::Key_Down) {
-      opaqueness_ -= 0.1f;
-      if (opaqueness_ < 0.0f) opaqueness_ = 0.0f;
-    }
-    else if (event->key() == Qt::Key_Left) {
-      radius_ -= 10.0f;
-      if (radius_ < 20.0f) radius_ = 20.0f;
-    }
-    else if (event->key() == Qt::Key_Right) {
-      radius_ += 10.0f;
-      if (radius_ > 1000.0f) radius_ = 1000.0f;
-    }
-
-    SAMSON::requestViewportUpdate();
-
-  }
 }
 
 void SETaggingEditor::keyReleaseEvent(QKeyEvent* event) {
