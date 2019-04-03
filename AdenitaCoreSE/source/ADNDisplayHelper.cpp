@@ -740,7 +740,7 @@ void ADNDisplayHelper::displayText(SBPosition3 pos, std::string text /*= ""*/)
   SAMSON::displayText(
     text,
     pos,
-    QFont(QString("Helvetica"), 60),
+    QFont(QString("Helvetica"), 40),
     color);
 }
 
@@ -841,7 +841,7 @@ void ADNDisplayHelper::deemphasizeCylinderColors(ADNArray<float> & colors, vecto
   }
 }
 
-void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part)
+void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part, float basePairRadius, float opaqueness)
 {
   SEConfig& config = SEConfig::GetInstance();
 
@@ -872,9 +872,9 @@ void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part)
       colorsV(index, 0) = config.double_strand_color[0];
       colorsV(index, 1) = config.double_strand_color[1];
       colorsV(index, 2) = config.double_strand_color[2];
-      colorsV(index, 3) = 1.0f;
+      colorsV(index, 3) = opaqueness;
 
-      radiiV(index) = config.base_pair_radius;
+      radiiV(index) = basePairRadius;
 
       flags(index) = baseSegment->getInheritedFlags();
 
