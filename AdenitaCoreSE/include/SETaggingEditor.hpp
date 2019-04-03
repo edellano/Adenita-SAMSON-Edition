@@ -20,9 +20,10 @@ class SETaggingEditor : public SBGEditor {
 	Q_OBJECT
 
 public :
-  enum GoldNanoShape {
-    Nanosphere,
-    Nanorod
+  enum TaggingShape {
+    Sphere,
+    Rod,
+    HisTag
   };
 
 	/// \name Constructors and destructors
@@ -64,7 +65,8 @@ public :
 	//@{
 
 	virtual void												display();																///< Displays the editor
-  virtual void												displayGoldSphere();
+  virtual void												displayActiveSphere();
+  virtual void												displayInactiveSphere();
 
   virtual void												displayForShadow();														///< Displays the editor for shadow purposes
 	virtual void												displayInterface();														///< Displays the 2D interface in the viewport
@@ -106,7 +108,7 @@ public :
 
   ADNNanorobot * nanorobot_;
 
-  GoldNanoShape shape_ = GoldNanoShape::Nanosphere;
+  TaggingShape shape_ = TaggingShape::Sphere;
 
   DASCreatorEditors::UIData positions_;
   bool display_ = false;
