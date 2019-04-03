@@ -38,6 +38,6 @@ namespace ADNDisplayHelper {
   /*!
     \param ADNPointer to the ADNPart
   */
-  void displayPart(ADNPointer<ADNPart> part);
+  void displayPart(ADNPointer<ADNPart> part, float basePairRadius = 1000.0f, float opaqueness = 0.5f);
 };
 
