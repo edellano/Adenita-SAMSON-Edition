@@ -173,6 +173,20 @@ void DASBackToTheAtom::SetPositionsForNewNucleotides(ADNPointer<ADNPart> part, C
     // hiding atoms here cause when they are created is too slow
     nt->HideCenterAtoms();
 
+    // repeat for pair if there is one
+    auto pairNt = nt->GetPair();
+    if (pairNt != nullptr) {
+      auto bb = pairNt->GetBackbone();
+      auto sc = pairNt->GetSidechain();
+
+      auto cBB = bb->GetCenterAtom();
+      auto cSC = sc->GetCenterAtom();
+
+      part->RegisterAtom(pairNt, NucleotideGroup::Backbone, cBB, false);
+      part->RegisterAtom(pairNt, NucleotideGroup::SideChain, cSC, false);
+      pairNt->HideCenterAtoms();
+    }
+
     auto bs = nt->GetBaseSegment();
     SetNucleotidePosition(bs, true);
   }
