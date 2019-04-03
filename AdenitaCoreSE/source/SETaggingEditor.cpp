@@ -71,6 +71,8 @@ void SETaggingEditor::beginEditing() {
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 
 	// Implement this function if you need to prepare some data structures in order to be able to handle GUI or SAMSON events.
 
+  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/cursor_tagging.png";
+  SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
 }
 
 void SETaggingEditor::endEditing() {
@@ -96,21 +98,21 @@ void SETaggingEditor::display() {
 
   if (display_) {
 
-    if (shape_ == GoldNanoShape::Nanosphere) {
+    if (shape_ == TaggingShape::Sphere) {
       if (positions_.positionsCounter == 1) {
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        displayGoldSphere();
+        displayActiveSphere();
 
         glDisable(GL_BLEND);
         glDisable(GL_DEPTH_TEST);
 
       }
     }
-    else if (shape_ == GoldNanoShape::Nanorod) {
+    else if (shape_ == TaggingShape::Rod) {
 
       /*if (positions_.positionsCounter == 1) {
 
@@ -140,21 +142,37 @@ void SETaggingEditor::display() {
 
 
   }
+  else {
+    displayInactiveSphere();
+
+  }
 }
 
-void SETaggingEditor::displayGoldSphere()
+void SETaggingEditor::displayActiveSphere()
 {
 
   ADNArray<float> color = ADNArray<float>(4);
   color(0) = 1.0f;
-  color(1) = 1.0f;
-  color(2) = 0.0f;
+  color(1) = 0.1f;
+  color(2) = 0.3f;
   color(3) = opaqueness_;
 
   ADNDisplayHelper::displaySphere(GetSnappedPosition(), radius_, color);
 
 }
 
+void SETaggingEditor::displayInactiveSphere()
+{
+
+  ADNArray<float> color = ADNArray<float>(4);
+  color(0) = 0.0f;
+  color(1) = 0.7f;
+  color(2) = 0.7f;
+  color(3) = opaqueness_;
+
+  ADNDisplayHelper::displaySphere(GetSnappedPosition(), radius_, color);
+
+}
 void SETaggingEditor::displayForShadow() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to compute shadows. 
