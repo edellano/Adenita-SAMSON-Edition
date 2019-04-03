@@ -65,8 +65,6 @@ public :
 	//@{
 
 	virtual void												display();																///< Displays the editor
-  virtual void												displayActiveSphere();
-  virtual void												displayInactiveSphere();
 
   virtual void												displayForShadow();														///< Displays the editor for shadow purposes
 	virtual void												displayInterface();														///< Displays the 2D interface in the viewport
@@ -102,8 +100,7 @@ public :
 	//@{
 
 	SETaggingEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
-  SBPosition3                                       GetSnappedPosition();
-
+  ADNPointer<ADNNucleotide>               GetHighlightedNucleotide();
 	//@}
 
   ADNNanorobot * nanorobot_;
