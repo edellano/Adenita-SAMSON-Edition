@@ -226,11 +226,19 @@ public:
   //! check where in the base segment is the nucleotide located
   bool IsLeft();
   bool IsRight();
+
+  //! tagging
+  std::string getTag() const;
+  void setTag(std::string t);
+  bool hasTag();
+
 private:
   ADNWeakPointer<ADNNucleotide> pair_;
   ADNWeakPointer<ADNBaseSegment> bs_;  // base segment to which the nucleotide belongs to
 
   End end_;
+
+  std::string tag_;
 };
 
 SB_REGISTER_TARGET_TYPE(ADNNucleotide, "ADNNucleotide", "26603E7A-7792-0C83-B1D5-6C1D222B3379");
