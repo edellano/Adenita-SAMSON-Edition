@@ -15,7 +15,9 @@
 #include "SEDNATwisterEditorDescriptor.hpp"
 #include "SETwistHelixEditorDescriptor.hpp"
 #include "SEMergePartsEditorDescriptor.hpp"
-
+#include "SETaggingEditorDescriptor.hpp"
+#include "SETaggingVisualModelPropertiesDescriptor.hpp"
+#include "SETaggingVisualModelDescriptor.hpp"
 
 // Describe the SAMSON Element
 
@@ -55,6 +57,9 @@ SB_ELEMENT_CLASSES_BEGIN;
   SB_ELEMENT_CLASS(SEDNATwisterEditor);
   SB_ELEMENT_CLASS(SETwistHelixEditor);
   SB_ELEMENT_CLASS(SEMergePartsEditor);
+  SB_ELEMENT_CLASS(SETaggingEditor);
+  SB_ELEMENT_CLASS(SETaggingVisualModel);
+  SB_ELEMENT_CLASS(SETaggingVisualModelProperties);
 
 SB_ELEMENT_CLASSES_END;
 
