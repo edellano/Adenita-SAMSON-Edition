@@ -265,6 +265,15 @@ void SEAdenitaVisualModel::initNucleotideArraysForDisplay(bool createIndex /* = 
   flags_ = ADNArray<unsigned int>(nPositions);
   nodeIndices_ = ADNArray<unsigned int>(nPositions);
 
+  auto parts = nanorobot_->GetParts();
+  SB_FOR(auto part, parts) {
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      ntList_.push_back(nanorobot_->GetSingleStrandNucleotides(ss));
+
+    }
+  }
+
   if (createIndex) {
     indices_ = getNucleotideIndices();
   }
@@ -1987,69 +1996,67 @@ void SEAdenitaVisualModel::displayPlatingBackbone()
   auto conformation = conformations[dim_ - 1];
 
   MSVColors * curColors = colors_[curColorType_];
+  for(auto nucleotides: ntList_) {
+    SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+      unsigned int index = ntMap_[nt()];
+      auto ss = nt->getSingleStrand();
 
-  SB_FOR(auto part, parts) {
-    auto singleStrands = nanorobot_->GetSingleStrands(part);
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        unsigned int index = ntMap_[nt()];
+      capData_(index) = 0;
+      flags_(index) = nt->getInheritedFlags();
+      nodeIndices_(index) = nt->getNodeIndex();
 
-        capData_(index) = 0;
-        flags_(index) = nt->getInheritedFlags();
-        nodeIndices_(index) = nt->getNodeIndex();
-
-        if (dim_ == 3) {
-          positions_(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
-          positions_(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
-          positions_(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
-        }
-        else if (dim_ == 2 || dim_ == 1) {
-          SBPosition3 pos;
-          conformation->getPosition(nt()->GetBackboneCenterAtom()(), pos);
-
-          positions_(index, 0) = pos[0].getValue();
-          positions_(index, 1) = pos[1].getValue();
-          positions_(index, 2) = pos[2].getValue();
-        }
-
-        if (curColorType_ == REGULAR) {
-          auto color = curColors->GetColor(ss);
-          colorsV_.SetRow(index, color);
-        }
-        else if (curColorType_ == MELTTEMP || curColorType_ == GIBBS) {
-          auto color = curColors->GetColor(nt);
-          colorsV_.SetRow(index, color);
-        }
-
-        colorsE_(index, 0) = colorsV_(index, 0);
-        colorsE_(index, 1) = colorsV_(index, 1);
-        colorsE_(index, 2) = colorsV_(index, 2);
-        colorsE_(index, 3) = colorsV_(index, 3);
-
-        radiiV_(index) = config.nucleotide_V_radius;
-        
-        radiiE_(index) = config.nucleotide_V_radius;
-
-        //strand direction
-        if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
-          radiiE_(index) = config.nucleotide_E_radius;
-        }
-
-        if (!ss->isVisible()) {
-          colorsV_(index, 3) = 0.0f;
-          radiiV_(index) = 0.0f;
-          radiiE_(index) = 0.0f;
-          colorsE_(index, 3) = 0.0f;
-        }
-        else if (!nt->isVisible()) {
-          colorsV_(index, 3) = 0.0f;
-          colorsE_(index, 3) = 0.0f;
-        }
-
+      if (dim_ == 3) {
+        positions_(index, 0) = nanorobot_->GetNucleotideBackbonePosition(nt)[0].getValue();
+        positions_(index, 1) = nanorobot_->GetNucleotideBackbonePosition(nt)[1].getValue();
+        positions_(index, 2) = nanorobot_->GetNucleotideBackbonePosition(nt)[2].getValue();
       }
+      else if (dim_ == 2 || dim_ == 1) {
+        SBPosition3 pos;
+        conformation->getPosition(nt()->GetBackboneCenterAtom()(), pos);
+
+        positions_(index, 0) = pos[0].getValue();
+        positions_(index, 1) = pos[1].getValue();
+        positions_(index, 2) = pos[2].getValue();
+      }
+
+      if (curColorType_ == REGULAR) {
+        //auto color = curColors->GetColor(ss);
+        //colorsV_.SetRow(index, color);
+        auto color = curColors->GetColor(nt);
+        colorsV_.SetRow(index, color);
+      }
+      else if (curColorType_ == MELTTEMP || curColorType_ == GIBBS) {
+        auto color = curColors->GetColor(nt);
+        colorsV_.SetRow(index, color);
+      }
+
+      colorsE_(index, 0) = colorsV_(index, 0);
+      colorsE_(index, 1) = colorsV_(index, 1);
+      colorsE_(index, 2) = colorsV_(index, 2);
+      colorsE_(index, 3) = colorsV_(index, 3);
+
+      radiiV_(index) = config.nucleotide_V_radius;
+
+      radiiE_(index) = config.nucleotide_V_radius;
+
+      //strand direction
+      if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
+        radiiE_(index) = config.nucleotide_E_radius;
+      }
+
+      /*if (!ss->isVisible()) {
+        colorsV_(index, 3) = 0.0f;
+        radiiV_(index) = 0.0f;
+        radiiE_(index) = 0.0f;
+        colorsE_(index, 3) = 0.0f;
+      }
+      else if (!nt->isVisible()) {
+        colorsV_(index, 3) = 0.0f;
+        colorsE_(index, 3) = 0.0f;
+      }*/
     }
   }
+    
 
 }
 
