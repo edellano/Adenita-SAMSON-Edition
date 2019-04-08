@@ -151,6 +151,10 @@ private:
   map<ADNSingleStrand*, float> sortedSingleStrandsByDist_;
  
   // current arrays for being displayed (only spheres and cylinders)
+
+
+  vector<CollectionMap<ADNNucleotide>> ntList_;
+
   unsigned int nPositions_;
   unsigned int nCylinders_;
   ADNArray<float> colorsV_;
