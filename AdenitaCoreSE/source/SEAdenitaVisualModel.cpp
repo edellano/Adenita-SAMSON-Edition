@@ -88,6 +88,8 @@ void SEAdenitaVisualModel::changeDiscreteScale(int scale, bool createIndex /*= t
   else if (scale >= (float)DOUBLE_STRANDS) {
     initBaseSegmentArraysForDisplay(createIndex);
   }
+  
+  prepareUninterpolated();
 
   SAMSON::requestViewportUpdate();
 
@@ -105,7 +107,7 @@ void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/
     initBaseSegmentArraysForDisplay(createIndex);
   }
 
-  prepareArraysForDisplay();
+  prepareInterpolated();
 
 
   SAMSON::requestViewportUpdate();
@@ -241,6 +243,7 @@ void SEAdenitaVisualModel::init()
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
 
   changeScale(7);
+  changeDiscreteScale(7);
 
   setupPropertyColors();
 
@@ -418,7 +421,7 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getBaseSegmentIndices()
   return indices;
 }
 
-void SEAdenitaVisualModel::prepareArraysForDisplay()
+void SEAdenitaVisualModel::prepareInterpolated()
 {
 
   SEConfig& config = SEConfig::GetInstance();
@@ -476,6 +479,11 @@ void SEAdenitaVisualModel::prepareArraysForDisplay()
   else {
   }
 
+}
+
+void SEAdenitaVisualModel::prepareUninterpolated()
+{
+  preparePlatingBackbone();
 }
 
 void SEAdenitaVisualModel::prepareScale0to1(double iv, bool forSelection /*= false*/)
@@ -1599,41 +1607,41 @@ void SEAdenitaVisualModel::display() {
 
   SEConfig& config = SEConfig::GetInstance();
   ADNLogger& logger = ADNLogger::GetLogger();
+  /*
+    if (iScale == ALL_ATOMS_LINES) {
 
-  if (iScale == ALL_ATOMS_LINES) {
+    }
+    else if (iScale == ALL_ATOMS_STICKS) {
 
-  }
-  else if (iScale == ALL_ATOMS_STICKS) {
+    }
+    else if (iScale == ALL_ATOMS_BALLS) {
 
-  }
-  else if (iScale == ALL_ATOMS_BALLS) {
+    }
+    else if (iScale == NUCLEOTIDES_BACKBONE) {
+      displayNucleotideBackbone();
+    }
+    else if (iScale == NUCLEOTIDES_SIDECHAIN) {
+      displayNucleotideSideChain();
+    }
+    else if (iScale == NUCLEOTIDES_SCAFFOLD) {
+      displayNucleotideScaffoldPlaiting();
+    }
+    else if (iScale == STAPLES_SCAFFOLD_PLAITING_SIDECHAIN) {
+      displayPlatingSideChain();
+    }
+    else if (iScale == STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
+      preparePlatingBackbone();
+    }
+    else if (iScale == DOUBLE_STRANDS) {
+      displayDoubleStrands();
+    }
+    else if (iScale == OBJECTS) {
 
-  }
-  else if (iScale == NUCLEOTIDES_BACKBONE) {
-    displayNucleotideBackbone();
-  }
-  else if (iScale == NUCLEOTIDES_SIDECHAIN) {
-    displayNucleotideSideChain();
-  }
-  else if (iScale == NUCLEOTIDES_SCAFFOLD) {
-    displayNucleotideScaffoldPlaiting();
-  }
-  else if (iScale == STAPLES_SCAFFOLD_PLAITING_SIDECHAIN) {
-    displayPlatingSideChain();
-  }
-  else if (iScale == STAPLES_SCAFFOLD_PLAITING_BACKBONE) {
-    displayPlatingBackbone();
-  }
-  else if (iScale == DOUBLE_STRANDS) {
-    displayDoubleStrands();
-  }
-  else if (iScale == OBJECTS) {
-    
-  }
-  else {
+    }
+    else {
 
-  }
-
+    }*/
+  
   displayCircularDNAConnection();
 
   highlightNucleotides();
@@ -1987,7 +1995,7 @@ void SEAdenitaVisualModel::displayPlatingSideChain()
   }
 }
 
-void SEAdenitaVisualModel::displayPlatingBackbone()
+void SEAdenitaVisualModel::preparePlatingBackbone()
 {
   SEConfig& config = SEConfig::GetInstance();
   auto parts = nanorobot_->GetParts();
