@@ -89,7 +89,7 @@ public :
   virtual void												displayNucleotideSideChain();
   virtual void												displayNucleotideScaffoldPlaiting();
   virtual void												displayPlatingSideChain();
-  virtual void												displayPlatingBackbone();
+  virtual void												preparePlatingBackbone();
   virtual void												displayDoubleStrands();
   virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
@@ -120,7 +120,8 @@ private:
   void												initBaseSegmentArraysForDisplay(bool createIndex = true);
   ADNArray<unsigned int>      getNucleotideIndices();
   ADNArray<unsigned int>      getBaseSegmentIndices();
-  void												prepareArraysForDisplay(); // Prepare the arrays for displaying (this separates the interpolation from display)
+  void												prepareInterpolated(); // Prepare the arrays for displaying (this separates the interpolation from display)
+  void												prepareUninterpolated(); // 
   void												prepareScale0to1(double iv, bool forSelection = false); // scale 0 -> 1: depicting licorice to sticks representation
   void												prepareScale1to2(double iv, bool forSelection = false); // scale 1 -> 2: transition from thick bond to atoms without bonds
   void												prepareScale2to3(double iv, bool forSelection = false); // scale 2 -> 3: transition from atoms to nucleotides along the backbone (a tube appears along the backbone)
