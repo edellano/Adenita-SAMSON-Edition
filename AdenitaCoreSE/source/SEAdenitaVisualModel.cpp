@@ -2036,7 +2036,7 @@ void SEAdenitaVisualModel::preparePlatingBackbone()
         radiiE_(index) = config.nucleotide_E_radius;
       }
 
-      /*if (!ss->isVisible()) {
+      if (!ss->isVisible()) {
         colorsV_(index, 3) = 0.0f;
         radiiV_(index) = 0.0f;
         radiiE_(index) = 0.0f;
@@ -2045,7 +2045,7 @@ void SEAdenitaVisualModel::preparePlatingBackbone()
       else if (!nt->isVisible()) {
         colorsV_(index, 3) = 0.0f;
         colorsE_(index, 3) = 0.0f;
-      }*/
+      }
     }
   }
     
