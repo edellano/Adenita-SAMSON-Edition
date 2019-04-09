@@ -76,7 +76,7 @@ float SEAdenitaVisualModel::getScale()
   return scale_;
 }
 
-void SEAdenitaVisualModel::changeDiscreteScale(int scale, bool createIndex /*= true*/)
+void SEAdenitaVisualModel::changeScaleDiscrete(int scale, bool createIndex /*= true*/)
 {
   scale_ = scale;
 
@@ -242,8 +242,7 @@ void SEAdenitaVisualModel::init()
     this,
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
 
-  changeScale(7);
-  changeDiscreteScale(7);
+  changeScaleDiscrete(7);
 
   setupPropertyColors();
 
@@ -435,7 +434,6 @@ void SEAdenitaVisualModel::prepareInterpolated()
   if (scale_ < (float)ALL_ATOMS_STICKS) {
     //0 - 9
     prepareScale0to1(interpolated);
-    
   }
   else if (scale_ < (float)ALL_ATOMS_BALLS) {
     //10 - 19
@@ -1599,15 +1597,10 @@ void SEAdenitaVisualModel::display() {
 
   if (nanorobot_ == nullptr) return;
 
-  /*glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_DEPTH_TEST);
-*/
-  int iScale = (int)scale_;
 
-  SEConfig& config = SEConfig::GetInstance();
-  ADNLogger& logger = ADNLogger::GetLogger();
   /*
+    int iScale = (int)scale_;
+    
     if (iScale == ALL_ATOMS_LINES) {
 
     }
@@ -1667,13 +1660,6 @@ void SEAdenitaVisualModel::display() {
 
   displayForDebugging();
 
-  //glDisable(GL_DEPTH_TEST);
-  //glDisable(GL_BLEND);
-
-
-  //if (configuration_->display_base_pairing) {
-  //  displayBasePairConnections(scale_);
-  //}
 }
 
 void SEAdenitaVisualModel::displayAtomsLines()
@@ -2007,7 +1993,7 @@ void SEAdenitaVisualModel::preparePlatingBackbone()
   for(auto nucleotides: ntList_) {
     SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
       unsigned int index = ntMap_[nt()];
-      auto ss = nt->getSingleStrand();
+      auto ss = nt->GetStrand();
 
       capData_(index) = 0;
       flags_(index) = nt->getInheritedFlags();
@@ -2028,9 +2014,7 @@ void SEAdenitaVisualModel::preparePlatingBackbone()
       }
 
       if (curColorType_ == REGULAR) {
-        //auto color = curColors->GetColor(ss);
-        //colorsV_.SetRow(index, color);
-        auto color = curColors->GetColor(nt);
+        auto color = curColors->GetColor(ss);
         colorsV_.SetRow(index, color);
       }
       else if (curColorType_ == MELTTEMP || curColorType_ == GIBBS) {
@@ -2261,9 +2245,9 @@ void SEAdenitaVisualModel::displayBaseBairConnections(bool onlySelected)
 void SEAdenitaVisualModel::displayForDebugging()
 {
   SEConfig& config = SEConfig::GetInstance();
-  auto parts = nanorobot_->GetParts();
 
   if (config.debugOptions.display_nucleotide_basis) {
+    auto parts = nanorobot_->GetParts();
 
     SB_FOR(auto part, parts) {
       auto singleStrands = nanorobot_->GetSingleStrands(part);
@@ -2659,7 +2643,7 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
   }
 
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
-    changeScale(scale_, false);
+    changeScaleDiscrete(scale_, false);
   }
 
 

@@ -121,7 +121,7 @@ bool SEAdenitaVisualModelProperties::setup(SBNode* node) {
 
 void SEAdenitaVisualModelProperties::onDiscreteSliderScaleChanged(int val)
 {
-  visualModel->changeDiscreteScale(val, true);
+  visualModel->changeScaleDiscrete(val, true);
   ui.lblScale->setText(QString::number(val));
 }
 

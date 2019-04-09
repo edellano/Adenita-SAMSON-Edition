@@ -71,7 +71,7 @@ public :
 	/// \name Rendering
 	//@{
   float       												getScale();																
-  virtual void												changeDiscreteScale(int scale, bool createIndex = true);																///< Displays the visual model
+  virtual void												changeScaleDiscrete(int scale, bool createIndex = true);																///< Displays the visual model
   virtual void												changeScale(double scale, bool createIndex = true);																///< Displays the visual model
   virtual void												changeDimension(int dimension);																///< Displays the visual model
   virtual void												changeVisibility(double layer);																///< Displays the visual model
