@@ -299,6 +299,7 @@ public:
   */
   std::string GetSequence() const;
   std::string getSequence() const;
+  std::string GetSequenceWithTags() const;
   /**
   * Returns GC content as a % in this strand
   */
