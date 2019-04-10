@@ -25,7 +25,7 @@ namespace ADNDisplayHelper {
   void displayDirectedCylinder(float * start, float * end, float * color, int radius);
   void displayPlane(SBVector3 vec, SBPosition3 shift);
   void displayOrthoPlane(SBVector3 vec, SBPosition3 shift);
-  void displaySphere(SBPosition3 pos, float radius);
+  void displaySphere(SBPosition3 pos, float radius, ADNArray<float> color);
   void displayBasePairConnection(ADNPointer<ADNNucleotide> nt);
   void displayBaseVectors(ADNPointer<ADNNucleotide> nt, int scale);
   void displayText(SBPosition3 pos, std::string text = "");
@@ -39,5 +39,6 @@ namespace ADNDisplayHelper {
     \param ADNPointer to the ADNPart
   */
   void displayPart(ADNPointer<ADNPart> part, float basePairRadius = 1000.0f, float opaqueness = 0.5f);
+  void displayGoldSphere(SBNodeIndexer goldAtoms);
 };
 

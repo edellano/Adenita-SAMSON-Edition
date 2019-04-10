@@ -462,7 +462,7 @@ void SEWireframeEditor::display() {
 
     if (config.preview_editor) {
       tempPart_ = generateWireframe(true);
-      ADNDisplayHelper::displayPart(tempPart_);
+      ADNDisplayHelper::displayPart(tempPart_, 1000.0f, 1.0f);
     }
 
     if (tempPart_ != nullptr) {
