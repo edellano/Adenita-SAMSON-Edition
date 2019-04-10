@@ -681,6 +681,22 @@ std::string ADNSingleStrand::getSequence() const
   return GetSequence();
 }
 
+std::string ADNSingleStrand::GetSequenceWithTags() const
+{
+  std::string seq = "";
+  ADNPointer<ADNNucleotide> nt = fivePrime_;
+  while (nt != nullptr) {
+    std::string totalBase(1, ADNModel::GetResidueName(nt->GetType()));
+    if (nt->hasTag()) {
+      std::string base(1, ADNModel::GetResidueName(nt->GetType()));
+      totalBase = "[" + nt->getTag() + base + "]";
+    }
+    seq += totalBase;
+    nt = nt->GetNext();
+  }
+  return seq;
+}
+
 double ADNSingleStrand::GetGCContent() const
 {
   double gcCont = 0.0;

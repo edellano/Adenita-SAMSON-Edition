@@ -38,7 +38,7 @@ QString SETaggingEditor::getText() const {
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("SETaggingEditor"); 
+	return QObject::tr("Tagging Editor"); 
 
 }
 
@@ -63,8 +63,13 @@ QString SETaggingEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("SAMSON Element generator pro tip: modify me"); 
+	return QObject::tr("Tag nucleotides. The tag will appear when exporting sequences."); 
 
+}
+
+QString SETaggingEditor::getDescription() const
+{
+  return QObject::tr("Adenita | Tagging Editor");
 }
 
 void SETaggingEditor::beginEditing() {
@@ -134,10 +139,10 @@ void SETaggingEditor::mouseReleaseEvent(QMouseEvent* event) {
   if (nt()) {
     bool ok;
     QString text = QInputDialog::getText(this, tr("Enter Nucleotide Tag"),
-      tr("Tag:"), QLineEdit::Normal,
-      QDir::home().dirName(), &ok);
+      tr("Tag:"), QLineEdit::Normal, QString(), &ok);
     if (ok && !text.isEmpty()) {
       nt->setTag(text.toStdString());
+      nt->setSelectionFlag(true);
     }
   }
   
