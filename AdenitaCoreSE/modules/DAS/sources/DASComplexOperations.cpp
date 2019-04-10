@@ -182,6 +182,11 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
         secondStrand = pair1.first;
         firstStrandTwo = pair1.second;
       }
+      else {
+        // leave first strand alone
+        secondStrand = ssLeftOvers.first;
+        ssLeftOvers.first = nullptr;
+      }
       // break second nucleotide in 5'
       if (nt2->GetEnd() != FivePrime) {
         firstPrev = nt2->GetPrev(true);
@@ -189,8 +194,13 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
         firstStrand = pair2.second;
         secondStrandTwo = pair2.first;
       }
+      else {
+        // leave second strand alone
+        firstStrand = ssLeftOvers.second;
+        ssLeftOvers.second = nullptr;
+      }
 
-      /*if (joinStrand1 != nullptr) {
+      if (joinStrand1 != nullptr) {
         auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand1, firstStrand);
         auto ssNN = ADNBasicOperations::MergeSingleStrands(part, secondStrand, ssN);
         part->DeregisterSingleStrand(ssN);
@@ -200,7 +210,7 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
         auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, secondStrand, firstStrand);
       }
 
-      if (two && firstStrandTwo != nullptr && secondStrandTwo != nullptr) {
+      /*if (two && firstStrandTwo != nullptr && secondStrandTwo != nullptr) {
         auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand2, firstStrandTwo);
         auto ssNN = ADNBasicOperations::MergeSingleStrands(part, secondStrandTwo, ssN);
         part->DeregisterSingleStrand(ssN);
@@ -208,8 +218,8 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
       }*/
     }
 
-    if (firstStrand->getNumberOfNucleotides() == 0) ssLeftOvers.third = firstStrand;
-    if (secondStrand->getNumberOfNucleotides() == 0) ssLeftOvers.fourth = secondStrand;
+    if (firstStrand != nullptr && firstStrand->getNumberOfNucleotides() == 0) ssLeftOvers.third = firstStrand;
+    if (secondStrand != nullptr && secondStrand->getNumberOfNucleotides() == 0) ssLeftOvers.fourth = secondStrand;
     if (firstStrandTwo != nullptr && firstStrandTwo->getNumberOfNucleotides() == 0) ssLeftOvers.fifth = firstStrandTwo;
     if (secondStrandTwo != nullptr && secondStrandTwo->getNumberOfNucleotides() == 0) ssLeftOvers.sixth = secondStrandTwo;
   }
