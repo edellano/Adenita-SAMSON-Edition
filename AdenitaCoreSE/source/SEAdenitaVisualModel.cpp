@@ -2491,6 +2491,11 @@ void SEAdenitaVisualModel::highlightNucleotides()
   }
   else if (highlightType_ == TAGGED) {
 
+    colorHighlight[0] = 1.0f;
+    colorHighlight[1] = 0.1f;
+    colorHighlight[2] = 0.2f;
+    colorHighlight[3] = 1.0f;
+
     auto parts = nanorobot_->GetParts();
 
     vector<unsigned int> indicesHighlight;
@@ -2509,8 +2514,9 @@ void SEAdenitaVisualModel::highlightNucleotides()
           auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
           SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
             auto index = ntMap_[nt()];
-            if (index % 10 == 0) {
+            if (nt->hasTag()) {
               indicesHighlight.push_back(index);
+              ADNDisplayHelper::displayText(nt->GetPosition(), nt->getTag());
             }
           }
         }
@@ -2529,14 +2535,14 @@ void SEAdenitaVisualModel::highlightNucleotides()
             auto index = bsMap_[baseSegment];
             auto nts = baseSegment->GetNucleotides();
             SB_FOR(auto nt, nts) {
-              if (nt->getNucleotideType() == DNABlocks::DC || nt->getNucleotideType() == DNABlocks::DG) {
+              if (nt->hasTag()) {
                 indicesHighlight.push_back(index);
+                ADNDisplayHelper::displayText(nt->GetPosition(), nt->getTag());
               }
               else {
                 indicesContext.push_back(index);
               }
             }
-
           }
         }
       }
