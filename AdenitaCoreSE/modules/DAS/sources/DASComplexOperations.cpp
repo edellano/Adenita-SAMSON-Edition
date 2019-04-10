@@ -201,9 +201,9 @@ DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPar
       }
 
       if (joinStrand1 != nullptr) {
-        auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand1, firstStrand);
-        auto ssNN = ADNBasicOperations::MergeSingleStrands(part, secondStrand, ssN);
-        part->DeregisterSingleStrand(ssN);
+        auto ssN = ADNBasicOperations::MergeSingleStrands(part, firstStrand, joinStrand1);
+        //auto ssNN = ADNBasicOperations::MergeSingleStrands(part, secondStrand, ssN);
+        //part->DeregisterSingleStrand(ssN);
         part->DeregisterSingleStrand(joinStrand1);
       }
       else {
