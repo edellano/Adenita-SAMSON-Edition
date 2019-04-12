@@ -453,8 +453,9 @@ void SEAdenitaVisualModel::prepareInterpolated()
 
 void SEAdenitaVisualModel::prepareUninterpolated()
 {
-  if (scale_ > MAX_SCALE) scale_ = MAX_SCALE;
+  SEConfig& config = SEConfig::GetInstance();
 
+  if (scale_ > MAX_SCALE) scale_ = MAX_SCALE;
 
   if (scale_ == ATOMS_STICKS) {
     //prepareSticksToBalls(interpolated);
@@ -464,11 +465,10 @@ void SEAdenitaVisualModel::prepareUninterpolated()
   }
   else if (scale_ == NUCLEOTIDES) {
     prepareNucleotides();
-    if (config.display_base_pairing) displayBasePairConnections(scale_);
+    
   }
   else if (scale_ == SINGLE_STRANDS) {
     prepareSingleStrands();
-    if (config.display_base_pairing) displayBasePairConnections(scale_);
   }
   else if (scale_ == DOUBLE_STRANDS) {
     prepareDoubleStrands();
@@ -1321,6 +1321,7 @@ void SEAdenitaVisualModel::display() {
     colorsV_.GetArray(),
     flags_.GetArray());
 
+  //displayBaseBairConnections(false);
   displayForDebugging();
 
 }
