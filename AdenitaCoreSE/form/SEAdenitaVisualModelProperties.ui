@@ -32,17 +32,20 @@
      <item row="0" column="1">
       <widget class="QLabel" name="lblScale">
        <property name="text">
-        <string>7</string>
+        <string>3</string>
        </property>
       </widget>
      </item>
      <item row="1" column="0" colspan="2">
       <widget class="QSlider" name="hslDiscreteScale">
        <property name="maximum">
-        <number>8</number>
+        <number>4</number>
+       </property>
+       <property name="pageStep">
+        <number>1</number>
        </property>
        <property name="value">
-        <number>7</number>
+        <number>3</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -52,7 +55,7 @@
      <item row="2" column="0" colspan="2">
       <widget class="QSlider" name="hslScale">
        <property name="maximum">
-        <number>80</number>
+        <number>40</number>
        </property>
        <property name="singleStep">
         <number>1</number>
@@ -61,10 +64,10 @@
         <number>10</number>
        </property>
        <property name="value">
-        <number>70</number>
+        <number>30</number>
        </property>
        <property name="sliderPosition">
-        <number>70</number>
+        <number>30</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

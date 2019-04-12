@@ -27,19 +27,14 @@ class SEAdenitaVisualModel : public SBMVisualModel {
 
 public :
 
-  double const MAX_SCALE = 9.0;
+  double const MAX_SCALE = 4.0;
 
   enum Scale {
-    ALL_ATOMS_LINES,
-    ALL_ATOMS_STICKS,
-    ALL_ATOMS_BALLS,
-    NUCLEOTIDES_BACKBONE,
-    NUCLEOTIDES_SIDECHAIN,
-    NUCLEOTIDES_SCAFFOLD,
-    STAPLES_SCAFFOLD_PLAITING_SIDECHAIN,
-    STAPLES_SCAFFOLD_PLAITING_BACKBONE,
-    DOUBLE_STRANDS,
-    OBJECTS
+    ATOMS_STICKS = 0,
+    ATOMS_BALLS = 1,
+    NUCLEOTIDES = 2,
+    SINGLE_STRANDS = 3,
+    DOUBLE_STRANDS = 4
   };
 
 	/// \name Constructors and destructors
@@ -82,15 +77,15 @@ public :
   void                                setupDoubleStrandColors(int index);
 
   virtual void												display();																///< Displays the visual model
-  virtual void												displayAtomsLines();
-  virtual void												displayAtomsSticks();
-  virtual void												displayAtomsBalls();
-  virtual void												displayNucleotideBackbone();
-  virtual void												displayNucleotideSideChain();
-  virtual void												displayNucleotideScaffoldPlaiting();
-  virtual void												displayPlatingSideChain();
-  virtual void												preparePlatingBackbone();
-  virtual void												displayDoubleStrands();
+  virtual void												prepareNucleotides();
+  virtual void												prepareSingleStrands();
+  virtual void												prepareDoubleStrands();
+  void												        prepareInterpolated(); // Prepare the arrays for displaying (this separates the interpolation from display)
+  void												        prepareUninterpolated(); // 
+  void												        prepareSticksToBalls(double iv, bool forSelection = false); 
+  void												        prepareSingleStrandsToDoubleStrands(double iv, bool forSelection = false); 
+
+  
   virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
   virtual void                        displayBaseBairConnections(bool onlySelected);
@@ -120,18 +115,6 @@ private:
   void												initBaseSegmentArraysForDisplay(bool createIndex = true);
   ADNArray<unsigned int>      getNucleotideIndices();
   ADNArray<unsigned int>      getBaseSegmentIndices();
-  void												prepareInterpolated(); // Prepare the arrays for displaying (this separates the interpolation from display)
-  void												prepareUninterpolated(); // 
-  void												prepareScale0to1(double iv, bool forSelection = false); // scale 0 -> 1: depicting licorice to sticks representation
-  void												prepareScale1to2(double iv, bool forSelection = false); // scale 1 -> 2: transition from thick bond to atoms without bonds
-  void												prepareScale2to3(double iv, bool forSelection = false); // scale 2 -> 3: transition from atoms to nucleotides along the backbone (a tube appears along the backbone)
-  void												prepareScale3to4(double iv, bool forSelection = false); // scale 3 -> 4: transition nucleotides from backbone to sidechain
-  void												prepareScale4to5(double iv, bool forSelection = false); // scale 4 -> 5: transition scaffold to single strand representation
-  void												prepareScale5to6(double iv, bool forSelection = false); // scale 5 -> 6: transition staple to single strand representation
-  void												prepareScale6to7(double iv, bool forSelection = false); // scale 6 -> 7: transition single strands to duplex representation
-  void												prepareScale7to8(double iv, bool forSelection = false); // scale 7 -> 8: transition single strands from sidechain to backbone
-  void												prepareScale8to9(double iv, bool forSelection = false); // scale 8 -> 9: transition from duplex to polyhedron
-  void												prepareScale9(bool forSelection = false); //scale 9: display polyhedron 
   void												highlightFlagChanged(); //scale 9: display polyhedron 
   SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
   void                        orderVisibility();
@@ -153,8 +136,6 @@ private:
  
   // current arrays for being displayed (only spheres and cylinders)
 
-
-  vector<CollectionMap<ADNNucleotide>> ntList_;
 
   unsigned int nPositions_;
   unsigned int nCylinders_;
