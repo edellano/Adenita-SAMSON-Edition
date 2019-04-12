@@ -66,26 +66,18 @@ public :
 	/// \name Rendering
 	//@{
   float       												getScale();																
-  virtual void												changeScaleDiscrete(int scale, bool createIndex = true);																///< Displays the visual model
-  virtual void												changeScale(double scale, bool createIndex = true);																///< Displays the visual model
-  virtual void												changeDimension(int dimension);																///< Displays the visual model
-  virtual void												changeVisibility(double layer);																///< Displays the visual model
+  void												        changeScaleDiscrete(int scale, bool createIndex = true);																///< Displays the visual model
+  void												        changeScale(double scale, bool createIndex = true);																///< Displays the visual model
+  void												        changeDimension(int dimension);																///< Displays the visual model
+  void												        changeVisibility(double layer);																///< Displays the visual model
   void                                changePropertyColors(int propertyIdx, int colorSchemeIdx);
   void                                changeHighlight(int highlightIdx);
-  void                                setupSingleStrandColors(int index);
-  void                                setupNucleotideColors(int index);
-  void                                setupDoubleStrandColors(int index);
+  void                                setSingleStrandColors(int index);
+  void                                setNucleotideColors(int index);
+  void                                setDoubleStrandColors(int index);
+  void                                update();
 
   virtual void												display();																///< Displays the visual model
-  virtual void												prepareNucleotides();
-  virtual void												prepareSingleStrands();
-  virtual void												prepareDoubleStrands();
-  void												        prepareInterpolated(); // Prepare the arrays for displaying (this separates the interpolation from display)
-  void												        prepareUninterpolated(); // 
-  void												        prepareSticksToBalls(double iv, bool forSelection = false); 
-  void												        prepareSingleStrandsToDoubleStrands(double iv, bool forSelection = false); 
-
-  
   virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
   virtual void                        displayBasePairConnections(bool onlySelected);
@@ -99,7 +91,6 @@ public :
 
 	//@}
 
-
 	/// \name Events
 	//@{
 
@@ -111,17 +102,27 @@ public :
 	//@}
 
 private:
-  void                        init();
-  void												initNucleotideArraysForDisplay(bool createIndex = true);
-  void												initBaseSegmentArraysForDisplay(bool createIndex = true);
-  ADNArray<unsigned int>      getNucleotideIndices();
-  ADNArray<unsigned int>      getBaseSegmentIndices();
-  void												highlightFlagChanged(); //scale 9: display polyhedron 
-  SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
-  void                        orderVisibility();
-  void                        setupPropertyColors();
-  ADNArray<float>             calcPropertyColor(int colorSchemeIdx, float min, float max, float val);
-  virtual void                displayLoops(ADNNucleotide *nt, unsigned int index);
+  void                                init();
+  void												        initNucleotideArraysForDisplay(bool createIndex = true);
+  void												        initBaseSegmentArraysForDisplay(bool createIndex = true);
+  ADNArray<unsigned int>              getNucleotideIndices();
+  ADNArray<unsigned int>              getBaseSegmentIndices();
+  void												        highlightFlagChanged(); //scale 9: display polyhedron 
+  SEAdenitaCoreSEApp*					        getAdenitaApp() const;															///< Returns a pointer to the app
+  void                                orderVisibility();
+  void                                setupPropertyColors();
+  ADNArray<float>                     calcPropertyColor(int colorSchemeIdx, float min, float max, float val);
+  void                                displayLoops(ADNNucleotide *nt, unsigned int index);
+
+
+  void												        prepareNucleotides();
+  void												        prepareSingleStrands();
+  void												        prepareDoubleStrands();
+  void												        prepareInterpolated(); // Prepare the arrays for displaying (this separates the interpolation from display)
+  void												        prepareUninterpolated(); // 
+  void												        prepareSticksToBalls(double iv, bool forSelection = false);
+  void												        prepareSingleStrandsToDoubleStrands(double iv, bool forSelection = false);
+
 
   // general display properties 
   ADNArray<float> nucleotideEColor_;
@@ -130,12 +131,6 @@ private:
   int dim_ = 3;
 
   ADNNanorobot * nanorobot_;
-
-  map<ADNNucleotide*, float> sortedNucleotidesByDist_;
-  map<ADNSingleStrand*, float> sortedSingleStrandsByDist_;
- 
-  // current arrays for being displayed (only spheres and cylinders)
-
 
   unsigned int nPositions_;
   unsigned int nCylinders_;
@@ -152,8 +147,11 @@ private:
   std::map<ADNNucleotide*, unsigned int> ntMap_;
   std::map<ADNBaseSegment*, unsigned int> bsMap_;
 
-  // new color implementation
-  
+  map<ADNNucleotide*, float> sortedNucleotidesByDist_;
+  map<ADNSingleStrand*, float> sortedSingleStrandsByDist_;
+ 
+  // current arrays for being displayed (only spheres and cylinders)
+
   vector<ADNArray<float>> propertyColorSchemes_;
   
   enum ColorType {

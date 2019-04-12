@@ -170,7 +170,7 @@ void SEAdenitaCoreSEApp::ResetVisualModel() {
   }
 
   if (vmAlreadyExist) {
-    adenitaVm->changeScaleDiscrete(adenitaVm->getScale());
+    adenitaVm->update();
   }
   else {
     SBProxy* vmProxy = SAMSON::getProxy("SEAdenitaVisualModel");
