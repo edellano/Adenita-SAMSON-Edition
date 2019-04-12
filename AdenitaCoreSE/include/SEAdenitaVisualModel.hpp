@@ -80,9 +80,7 @@ public :
   virtual void												display();																///< Displays the visual model
   virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
-  virtual void                        displayBasePairConnections(bool onlySelected);
-  virtual void                        displayForDebugging();
-  virtual void                        displayCircularDNAConnection();
+
   virtual void                        highlightNucleotides();
 
 	virtual void												expandBounds(SBIAPosition3& bounds) const;								///< Expands the bounds to make sure the visual model fits inside them
@@ -113,7 +111,10 @@ private:
   void                                setupPropertyColors();
   ADNArray<float>                     calcPropertyColor(int colorSchemeIdx, float min, float max, float val);
   void                                displayLoops(ADNNucleotide *nt, unsigned int index);
-
+  void                                displayBasePairConnections(bool onlySelected);
+  void                                displayForDebugging();
+  void                                displayCircularDNAConnection();
+  void                                displayTags();
 
   void												        prepareNucleotides();
   void												        prepareSingleStrands();

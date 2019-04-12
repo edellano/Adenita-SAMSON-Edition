@@ -1,7 +1,8 @@
 #include "SEDNATwisterEditor.hpp"
 #include "SAMSON.hpp"
 #include <QOpenGLFunctions_4_3_Core>
-
+#include "SEAdenitaCoreSEApp.hpp"
+#include "SEAdenitaVisualModel.hpp"
 
 SEDNATwisterEditor::SEDNATwisterEditor() {
 
@@ -185,12 +186,10 @@ void SEDNATwisterEditor::mousePressEvent(QMouseEvent* event) {
   if (event->button() == Qt::MouseButton::LeftButton && !altPressed_) {
     untwistingSphereActive_ = true;
     twistingSphereActive_ = false;
-    SAMSON::requestViewportUpdate();
   }
   else if (event->button() == Qt::MouseButton::LeftButton && altPressed_) {
     untwistingSphereActive_ = false;
     twistingSphereActive_ = true;
-    SAMSON::requestViewportUpdate();
   }
 }
 
@@ -201,11 +200,9 @@ void SEDNATwisterEditor::mouseReleaseEvent(QMouseEvent* event) {
 
   if (event->button() == Qt::MouseButton::LeftButton && !altPressed_) {
     untwistingSphereActive_ = false;
-    SAMSON::requestViewportUpdate();
   }
   else if (event->button() == Qt::MouseButton::LeftButton && altPressed_) {
     twistingSphereActive_ = false;
-    SAMSON::requestViewportUpdate();
   }
 }
 
@@ -257,6 +254,9 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
       }
     }
 
+    auto vm = static_cast<SEAdenitaVisualModel*>(getAdenitaApp()->GetVisualModel());
+    vm->update();
+
   }
   else if (twistingSphereActive_) {
     SBDocument* doc = SAMSON::getActiveDocument();
@@ -278,6 +278,10 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
 
       }
     }
+
+    auto vm = static_cast<SEAdenitaVisualModel*>(getAdenitaApp()->GetVisualModel());
+    vm->update();
+
   }
 }
 
