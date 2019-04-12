@@ -315,6 +315,13 @@
        </item>
       </widget>
      </item>
+     <item row="13" column="1">
+      <widget class="QCheckBox" name="chbShowBasePairing">
+       <property name="text">
+        <string>Show Base Pairing</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -497,6 +504,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>chbShowBasePairing</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onShowBasePairing(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>232</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>432</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSliderScaleChanged(int)</slot>
@@ -510,5 +533,6 @@
   <slot>onNucleotideColorSchemeChanged(int)</slot>
   <slot>onDoubleStrandColorSchemeChanged(int)</slot>
   <slot>onHighlightChanged(int)</slot>
+  <slot>onShowBasePairing(bool)</slot>
  </slots>
 </ui>

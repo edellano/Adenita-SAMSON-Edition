@@ -106,6 +106,7 @@ public :
 	virtual void												onBaseEvent(SBBaseEvent* baseEvent);									///< Handles base events
 	virtual void												onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
 	virtual void												onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
+  void                                showBasePairing(bool show);
 
 	//@}
 
@@ -173,6 +174,7 @@ private:
   };
 
   HighlightType highlightType_ = NONE;
+  bool showBasePairing_ = false;
 };
 
 

@@ -187,6 +187,11 @@ void SEAdenitaVisualModelProperties::onDoubleStrandColorSchemeChanged(int index)
   SAMSON::requestViewportUpdate();
 }
 
+void SEAdenitaVisualModelProperties::onShowBasePairing(bool show)
+{
+  visualModel->showBasePairing(show);
+}
+
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
 SEAdenitaVisualModelProperties::Observer::~Observer() {}
 
