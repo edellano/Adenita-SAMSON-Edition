@@ -88,7 +88,7 @@ public :
   
   virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
-  virtual void                        displayBaseBairConnections(bool onlySelected);
+  virtual void                        displayBasePairConnections(bool onlySelected);
   virtual void                        displayForDebugging();
   virtual void                        displayCircularDNAConnection();
   virtual void                        highlightNucleotides();
