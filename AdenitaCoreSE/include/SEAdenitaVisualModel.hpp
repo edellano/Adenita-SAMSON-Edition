@@ -125,8 +125,7 @@ private:
   // general display properties 
   ADNArray<float> nucleotideEColor_;
   
-
-  double scale_ = 7;
+  double scale_ = 3;
   int dim_ = 3;
 
   ADNNanorobot * nanorobot_;
