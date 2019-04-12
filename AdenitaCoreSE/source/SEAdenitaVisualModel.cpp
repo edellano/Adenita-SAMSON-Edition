@@ -88,7 +88,7 @@ void SEAdenitaVisualModel::changeScaleDiscrete(int scale, bool createIndex /*= t
   else if (scale >= (float)DOUBLE_STRANDS) {
     initBaseSegmentArraysForDisplay(createIndex);
   }
-  
+
   prepareUninterpolated();
 
   SAMSON::requestViewportUpdate();
@@ -206,8 +206,6 @@ void SEAdenitaVisualModel::init()
   SEAdenitaCoreSEApp* app = getAdenitaApp();
   nanorobot_ = app->GetNanorobot();
 
-  ADNPointer<ADNPart> part = new ADNPart();
-
   SEConfig& config = SEConfig::GetInstance();
 
   MSVColors * regularColors = new MSVColors();
@@ -224,6 +222,15 @@ void SEAdenitaVisualModel::init()
   nucleotideEColor_(2) = config.nucleotide_E_Color[2];
   nucleotideEColor_(3) = config.nucleotide_E_Color[3];
 
+  update();
+
+  setupPropertyColors();
+
+  //orderVisibility();
+}
+
+void SEAdenitaVisualModel::update()
+{
   auto parts = nanorobot_->GetParts();
 
   SB_FOR(auto part, parts) {
@@ -242,11 +249,8 @@ void SEAdenitaVisualModel::init()
     this,
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
 
-  changeScaleDiscrete(3);
+  changeScaleDiscrete(scale_);
 
-  setupPropertyColors();
-
-  //orderVisibility();
 }
 
 void SEAdenitaVisualModel::initNucleotideArraysForDisplay(bool createIndex /* = true */)
@@ -747,7 +751,7 @@ void SEAdenitaVisualModel::orderVisibility()
   }
 }
 
-void SEAdenitaVisualModel::setupSingleStrandColors(int index)
+void SEAdenitaVisualModel::setSingleStrandColors(int index)
 {
   auto regularColors = colors_[ColorType::REGULAR];
 
@@ -918,7 +922,7 @@ void SEAdenitaVisualModel::setupSingleStrandColors(int index)
   
 }
 
-void SEAdenitaVisualModel::setupNucleotideColors(int index)
+void SEAdenitaVisualModel::setNucleotideColors(int index)
 {
   auto regularColors = colors_[ColorType::REGULAR];
 
@@ -1008,7 +1012,7 @@ void SEAdenitaVisualModel::setupNucleotideColors(int index)
   }
 }
 
-void SEAdenitaVisualModel::setupDoubleStrandColors(int index)
+void SEAdenitaVisualModel::setDoubleStrandColors(int index)
 {
   auto regularColors = colors_[ColorType::REGULAR];
 
@@ -1368,7 +1372,6 @@ void SEAdenitaVisualModel::prepareNucleotides()
 
         auto baseColor = curColors->GetColor(nt);
         colorsV_.SetRow(index, baseColor);
-        
         radiiV_(index) = config.nucleotide_V_radius;
         radiiE_(index) = config.nucleotide_E_radius;
 
@@ -1389,10 +1392,7 @@ void SEAdenitaVisualModel::prepareNucleotides()
           colorsV_(index, 3) = 0.0f;
           colorsE_(index, 3) = 0.0f;
         }
-
-
       }
-
     }
   }
 }
@@ -2064,7 +2064,9 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
     changeScaleDiscrete(scale_, false);
   }
 
-
+  if (baseEvent->getType() == SBBaseEvent::MaterialChanged) {
+    changeScaleDiscrete(scale_, false);
+  }
 
 }
 
