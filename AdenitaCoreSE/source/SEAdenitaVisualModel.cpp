@@ -1321,7 +1321,7 @@ void SEAdenitaVisualModel::display() {
     colorsV_.GetArray(),
     flags_.GetArray());
 
-  displayBasePairConnections(false);
+  if(showBasePairing_) displayBasePairConnections(false);
   displayForDebugging();
 
 }
@@ -2020,6 +2020,11 @@ void SEAdenitaVisualModel::displayLoops(ADNNucleotide *nt, unsigned int index)
   if (type == CellType::LoopPair) {
     radiiV_(index) = radiiV_(index) * 0.7f;;
   }
+}
+
+void SEAdenitaVisualModel::showBasePairing(bool show)
+{
+  showBasePairing_ = show;
 }
 
 void SEAdenitaVisualModel::expandBounds(SBIAPosition3& bounds) const {

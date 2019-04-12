@@ -82,6 +82,7 @@ void                              onPropertyColorSchemeChanged(int colorSchemeId
 void                              onSingleStrandColorSchemeChanged(int index);
 void                              onNucleotideColorSchemeChanged(int index);
 void                              onDoubleStrandColorSchemeChanged(int index);
+void                              onShowBasePairing(bool show);
 
 private:
 
