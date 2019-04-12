@@ -27,19 +27,14 @@ class SEAdenitaVisualModel : public SBMVisualModel {
 
 public :
 
-  double const MAX_SCALE = 9.0;
+  double const MAX_SCALE = 4.0;
 
   enum Scale {
-    ALL_ATOMS_LINES,
-    ALL_ATOMS_STICKS,
-    ALL_ATOMS_BALLS,
-    NUCLEOTIDES_BACKBONE,
-    NUCLEOTIDES_SIDECHAIN,
-    NUCLEOTIDES_SCAFFOLD,
-    STAPLES_SCAFFOLD_PLAITING_SIDECHAIN,
-    STAPLES_SCAFFOLD_PLAITING_BACKBONE,
-    DOUBLE_STRANDS,
-    OBJECTS
+    ATOMS_STICKS = 0,
+    ATOMS_BALLS = 1,
+    NUCLEOTIDES = 2,
+    SINGLE_STRANDS = 3,
+    DOUBLE_STRANDS = 4
   };
 
 	/// \name Constructors and destructors
@@ -71,29 +66,21 @@ public :
 	/// \name Rendering
 	//@{
   float       												getScale();																
-  virtual void												changeDiscreteScale(int scale, bool createIndex = true);																///< Displays the visual model
-  virtual void												changeScale(double scale, bool createIndex = true);																///< Displays the visual model
-  virtual void												changeDimension(int dimension);																///< Displays the visual model
-  virtual void												changeVisibility(double layer);																///< Displays the visual model
+  void												        changeScaleDiscrete(int scale, bool createIndex = true);																///< Displays the visual model
+  void												        changeScale(double scale, bool createIndex = true);																///< Displays the visual model
+  void												        changeDimension(int dimension);																///< Displays the visual model
+  void												        changeVisibility(double layer);																///< Displays the visual model
   void                                changePropertyColors(int propertyIdx, int colorSchemeIdx);
   void                                changeHighlight(int highlightIdx);
-  void                                setupSingleStrandColors(int index);
-  void                                setupNucleotideColors(int index);
-  void                                setupDoubleStrandColors(int index);
+  void                                setSingleStrandColors(int index);
+  void                                setNucleotideColors(int index);
+  void                                setDoubleStrandColors(int index);
+  void                                update();
 
   virtual void												display();																///< Displays the visual model
-  virtual void												displayAtomsLines();
-  virtual void												displayAtomsSticks();
-  virtual void												displayAtomsBalls();
-  virtual void												displayNucleotideBackbone();
-  virtual void												displayNucleotideSideChain();
-  virtual void												displayNucleotideScaffoldPlaiting();
-  virtual void												displayPlatingSideChain();
-  virtual void												displayPlatingBackbone();
-  virtual void												displayDoubleStrands();
   virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
-  virtual void                        displayBaseBairConnections(bool onlySelected);
+  virtual void                        displayBasePairConnections(bool onlySelected);
   virtual void                        displayForDebugging();
   virtual void                        displayCircularDNAConnection();
   virtual void                        highlightNucleotides();
@@ -104,53 +91,47 @@ public :
 
 	//@}
 
-
 	/// \name Events
 	//@{
 
 	virtual void												onBaseEvent(SBBaseEvent* baseEvent);									///< Handles base events
 	virtual void												onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
 	virtual void												onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
+  void                                showBasePairing(bool show);
 
 	//@}
 
 private:
-  void                        init();
-  void												initNucleotideArraysForDisplay(bool createIndex = true);
-  void												initBaseSegmentArraysForDisplay(bool createIndex = true);
-  ADNArray<unsigned int>      getNucleotideIndices();
-  ADNArray<unsigned int>      getBaseSegmentIndices();
-  void												prepareArraysForDisplay(); // Prepare the arrays for displaying (this separates the interpolation from display)
-  void												prepareScale0to1(double iv, bool forSelection = false); // scale 0 -> 1: depicting licorice to sticks representation
-  void												prepareScale1to2(double iv, bool forSelection = false); // scale 1 -> 2: transition from thick bond to atoms without bonds
-  void												prepareScale2to3(double iv, bool forSelection = false); // scale 2 -> 3: transition from atoms to nucleotides along the backbone (a tube appears along the backbone)
-  void												prepareScale3to4(double iv, bool forSelection = false); // scale 3 -> 4: transition nucleotides from backbone to sidechain
-  void												prepareScale4to5(double iv, bool forSelection = false); // scale 4 -> 5: transition scaffold to single strand representation
-  void												prepareScale5to6(double iv, bool forSelection = false); // scale 5 -> 6: transition staple to single strand representation
-  void												prepareScale6to7(double iv, bool forSelection = false); // scale 6 -> 7: transition single strands to duplex representation
-  void												prepareScale7to8(double iv, bool forSelection = false); // scale 7 -> 8: transition single strands from sidechain to backbone
-  void												prepareScale8to9(double iv, bool forSelection = false); // scale 8 -> 9: transition from duplex to polyhedron
-  void												prepareScale9(bool forSelection = false); //scale 9: display polyhedron 
-  void												highlightFlagChanged(); //scale 9: display polyhedron 
-  SEAdenitaCoreSEApp*					getAdenitaApp() const;															///< Returns a pointer to the app
-  void                        orderVisibility();
-  void                        setupPropertyColors();
-  ADNArray<float>             calcPropertyColor(int colorSchemeIdx, float min, float max, float val);
-  virtual void                displayLoops(ADNNucleotide *nt, unsigned int index);
+  void                                init();
+  void												        initNucleotideArraysForDisplay(bool createIndex = true);
+  void												        initBaseSegmentArraysForDisplay(bool createIndex = true);
+  ADNArray<unsigned int>              getNucleotideIndices();
+  ADNArray<unsigned int>              getBaseSegmentIndices();
+  void												        highlightFlagChanged(); //scale 9: display polyhedron 
+  SEAdenitaCoreSEApp*					        getAdenitaApp() const;															///< Returns a pointer to the app
+  void                                orderVisibility();
+  void                                setupPropertyColors();
+  ADNArray<float>                     calcPropertyColor(int colorSchemeIdx, float min, float max, float val);
+  void                                displayLoops(ADNNucleotide *nt, unsigned int index);
+
+
+  void												        prepareNucleotides();
+  void												        prepareSingleStrands();
+  void												        prepareDoubleStrands();
+  void												        prepareInterpolated(); // Prepare the arrays for displaying (this separates the interpolation from display)
+  void												        prepareUninterpolated(); // 
+  void												        prepareSticksToBalls(double iv, bool forSelection = false);
+  void												        prepareSingleStrandsToDoubleStrands(double iv, bool forSelection = false);
+
 
   // general display properties 
   ADNArray<float> nucleotideEColor_;
   
-
-  double scale_ = 7;
+  double scale_ = 3;
   int dim_ = 3;
 
   ADNNanorobot * nanorobot_;
 
-  map<ADNNucleotide*, float> sortedNucleotidesByDist_;
-  map<ADNSingleStrand*, float> sortedSingleStrandsByDist_;
- 
-  // current arrays for being displayed (only spheres and cylinders)
   unsigned int nPositions_;
   unsigned int nCylinders_;
   ADNArray<float> colorsV_;
@@ -166,8 +147,11 @@ private:
   std::map<ADNNucleotide*, unsigned int> ntMap_;
   std::map<ADNBaseSegment*, unsigned int> bsMap_;
 
-  // new color implementation
-  
+  map<ADNNucleotide*, float> sortedNucleotidesByDist_;
+  map<ADNSingleStrand*, float> sortedSingleStrandsByDist_;
+ 
+  // current arrays for being displayed (only spheres and cylinders)
+
   vector<ADNArray<float>> propertyColorSchemes_;
   
   enum ColorType {
@@ -188,6 +172,7 @@ private:
   };
 
   HighlightType highlightType_ = NONE;
+  bool showBasePairing_ = false;
 };
 
 
