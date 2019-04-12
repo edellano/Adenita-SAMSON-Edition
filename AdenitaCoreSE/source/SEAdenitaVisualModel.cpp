@@ -1321,7 +1321,7 @@ void SEAdenitaVisualModel::display() {
     colorsV_.GetArray(),
     flags_.GetArray());
 
-  //displayBaseBairConnections(false);
+  displayBasePairConnections(false);
   displayForDebugging();
 
 }
@@ -1573,8 +1573,10 @@ void SEAdenitaVisualModel::displayForSelection() {
     );
 }
 
-void SEAdenitaVisualModel::displayBaseBairConnections(bool onlySelected)
+void SEAdenitaVisualModel::displayBasePairConnections(bool onlySelected)
 {
+  if (scale_ < NUCLEOTIDES && scale_ > SINGLE_STRANDS) return;
+
   SEConfig& config = SEConfig::GetInstance();
 
   auto baseColors = colors_.at(REGULAR);
@@ -1614,14 +1616,8 @@ void SEAdenitaVisualModel::displayBaseBairConnections(bool onlySelected)
     ADNPointer<ADNNucleotide> pair = nt->GetPair();
     unsigned int index = p.second;
     
-    SBPosition3 pos;
-    if (scale_ == NUCLEOTIDES || scale_ == SINGLE_STRANDS) {
-      pos = nt->GetBackbonePosition();
-    }
-    else if (scale_ < NUCLEOTIDES || scale_ > SINGLE_STRANDS) {
-      pos = nt->GetPosition();
-    }
-
+    SBPosition3 pos = nt->GetBackbonePosition();
+   
     positions(index, 0) = pos[0].getValue();
     positions(index, 1) = pos[1].getValue();
     positions(index, 2) = pos[2].getValue();
@@ -1639,10 +1635,11 @@ void SEAdenitaVisualModel::displayBaseBairConnections(bool onlySelected)
       ++j;
     }
 
-    if (!nt->isSelected() && !pair->isSelected()) {
-      radii(index) = 0;
+    if (onlySelected) {
+      if (!nt->isSelected() && !pair->isSelected()) {
+        radii(index) = 0;
+      }
     }
-
   }
 
   SAMSON::displayCylinders(
@@ -1678,7 +1675,7 @@ void SEAdenitaVisualModel::displayForDebugging()
     }
   }
   if (config.debugOptions.display_base_pairing) {
-    displayBaseBairConnections(true);
+    displayBasePairConnections(true);
   }
 
 }
