@@ -2,6 +2,7 @@
 
 #include "SBGEditor.hpp"
 #include "SEDNATwisterEditorGUI.hpp"
+#include "SEAdenitaCoreSEApp.hpp"
 
 #include "SBBaseEvent.hpp"
 #include "SBDocumentEvent.hpp"
@@ -95,6 +96,10 @@ public :
 	//@{
 
 	SEDNATwisterEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
+
+private:
+  SEAdenitaCoreSEApp*					        getAdenitaApp() const;															///< Returns a pointer to the app
+
 
 	//@}
   bool                                  altPressed_;

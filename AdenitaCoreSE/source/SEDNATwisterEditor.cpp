@@ -34,6 +34,11 @@ SEDNATwisterEditor::~SEDNATwisterEditor() {
 
 SEDNATwisterEditorGUI* SEDNATwisterEditor::getPropertyWidget() const { return static_cast<SEDNATwisterEditorGUI*>(propertyWidget); }
 
+SEAdenitaCoreSEApp* SEDNATwisterEditor::getAdenitaApp() const
+{
+  return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+}
+
 SBCContainerUUID SEDNATwisterEditor::getUUID() const { return SBCContainerUUID("BF86253A-9F66-9F3C-4039-A711891C8670"); }
 
 QString SEDNATwisterEditor::getName() const { 
