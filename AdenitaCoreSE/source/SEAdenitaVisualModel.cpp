@@ -1293,6 +1293,10 @@ void SEAdenitaVisualModel::changeHighlight(int highlightIdx)
   else if (highlightIdx == 3) {
     highlightType_ = HighlightType::TAGGED;
   }
+
+  prepareUninterpolated();
+  highlightNucleotides();
+
 }
 
 void SEAdenitaVisualModel::display() {
@@ -1303,8 +1307,6 @@ void SEAdenitaVisualModel::display() {
   if (nanorobot_ == nullptr) return;
     
   displayCircularDNAConnection();
-
-  highlightNucleotides();
 
   if (nCylinders_ > 0) {
     SAMSON::displayCylinders(
@@ -1325,8 +1327,11 @@ void SEAdenitaVisualModel::display() {
     colorsV_.GetArray(),
     flags_.GetArray());
 
-  if(showBasePairing_) displayBasePairConnections(false);
+  if (showBasePairing_) displayBasePairConnections(false);
+  if (highlightType_ == TAGGED) displayTags(); 
+  
   displayForDebugging();
+
 
 }
 
@@ -1728,6 +1733,22 @@ void SEAdenitaVisualModel::displayCircularDNAConnection()
   }
 }
 
+void SEAdenitaVisualModel::displayTags()
+{
+  //tagged nucleotides should be saved in a list
+  auto parts = nanorobot_->GetParts();
+
+  SB_FOR(auto part, parts) {
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        ADNDisplayHelper::displayText(nt->GetBackbonePosition(), nt->getTag());
+      }
+    }
+  }
+}
+
 void SEAdenitaVisualModel::highlightNucleotides()
 {
   if (scale_ < (float)NUCLEOTIDES) return;
@@ -1928,7 +1949,6 @@ void SEAdenitaVisualModel::highlightNucleotides()
             auto index = ntMap_[nt()];
             if (nt->hasTag()) {
               indicesHighlight.push_back(index);
-              ADNDisplayHelper::displayText(nt->GetPosition(), nt->getTag());
             }
           }
         }
@@ -1949,7 +1969,6 @@ void SEAdenitaVisualModel::highlightNucleotides()
             SB_FOR(auto nt, nts) {
               if (nt->hasTag()) {
                 indicesHighlight.push_back(index);
-                ADNDisplayHelper::displayText(nt->GetPosition(), nt->getTag());
               }
               else {
                 indicesContext.push_back(index);
