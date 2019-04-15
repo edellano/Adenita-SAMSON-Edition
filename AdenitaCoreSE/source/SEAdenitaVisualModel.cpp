@@ -2061,7 +2061,7 @@ void SEAdenitaVisualModel::displayLoops(ADNNucleotide *nt, unsigned int index)
 {
   auto type = nt->GetBaseSegment()->GetCellType();
   if (type == CellType::LoopPair) {
-    radiiV_(index) = radiiV_(index) * 0.7f;;
+    radiiVNt_(index) = radiiVNt_(index) * 0.7f;;
   }
 }
 
