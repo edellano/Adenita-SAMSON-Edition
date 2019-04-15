@@ -219,7 +219,7 @@ void SEAdenitaVisualModel::update()
   initNucleotidesAndSingleStrands(true);
   initDoubleStrands(true);
 
-  prepareNoTransition();
+  prepareDiscreteScales();
 
   changeScale(scale_);
 
@@ -424,36 +424,7 @@ void SEAdenitaVisualModel::prepareTransition()
 
 }
 
-void SEAdenitaVisualModel::displayNoTransition(bool forSelection)
-{
-
-  if (nanorobot_ == nullptr) return;
-
-
-  if (scale_ == ATOMS_STICKS) {
-  }
-  else if (scale_ == ATOMS_BALLS) {
-  }
-  else if (scale_ == NUCLEOTIDES) {
-    displayNucleotides(forSelection);
-  }
-  else if (scale_ == SINGLE_STRANDS) {
-    displaySingleStrands(forSelection);
-  }
-  else if (scale_ == DOUBLE_STRANDS) {
-    displayDoubleStrands(forSelection);
-  }
-  else {
-  }
-
-  displayCircularDNAConnection();
-  if (showBasePairing_) displayBasePairConnections(false);
-  if (highlightType_ == TAGGED) displayTags();
-  displayForDebugging();
-
-}
-
-void SEAdenitaVisualModel::prepareNoTransition()
+void SEAdenitaVisualModel::prepareDiscreteScales()
 {
 
   //prepareSticksToBalls(interpolated);
@@ -543,6 +514,7 @@ void SEAdenitaVisualModel::prepareNucleotidesToSingleStrands(double iv, bool for
     colorsV_(index, 1) = colorsVNt_(index, 1) + iv * (colorsVSS_(index, 1) - colorsVNt_(index, 1));
     colorsV_(index, 2) = colorsVNt_(index, 2) + iv * (colorsVSS_(index, 2) - colorsVNt_(index, 2));
     colorsV_(index, 3) = colorsVNt_(index, 3) + iv * (colorsVSS_(index, 3) - colorsVNt_(index, 3));
+
   }
 
   colorsE_ = colorsV_;
@@ -664,7 +636,7 @@ void SEAdenitaVisualModel::highlightFlagChanged()
         auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
         SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
           auto index = ntMap_[nt()];
-          flagsNt_(index) = nt->getInheritedFlags();
+          flags_(index) = nt->getInheritedFlags();
         }
       }
     }
@@ -677,7 +649,7 @@ void SEAdenitaVisualModel::highlightFlagChanged()
         auto baseSegments = doubleStrand->GetBaseSegments();
         SB_FOR(auto baseSegment, baseSegments) {
           auto index = bsMap_[baseSegment];
-          flagsNt_(index) = baseSegment->getInheritedFlags();
+          flags_(index) = baseSegment->getInheritedFlags();
           ++index;
         }
       }
@@ -1354,7 +1326,7 @@ void SEAdenitaVisualModel::changeHighlight(int highlightIdx)
     highlightType_ = HighlightType::TAGGED;
   }
 
-  prepareNoTransition();
+  prepareDiscreteScales();
   prepareTransition();
   highlightNucleotides();
   SAMSON::requestViewportUpdate();
@@ -1371,7 +1343,7 @@ void SEAdenitaVisualModel::display() {
   auto ed = SAMSON::getActiveEditor();
   /*logger.Log(ed->getName());*/
   if (ed->getName() == "SEERotation" || ed->getName() == "SEETranslation") {
-    prepareNoTransition();
+    prepareDiscreteScales();
   }
 
   displayTransition(false);
@@ -1853,7 +1825,6 @@ void SEAdenitaVisualModel::displayTags()
     }
   }
 }
-
 
 void SEAdenitaVisualModel::highlightNucleotides()
 {
