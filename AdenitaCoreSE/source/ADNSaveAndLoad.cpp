@@ -1277,7 +1277,7 @@ void ADNLoader::OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std
   SB_FOR(ADNPointer<ADNPart> part, parts) {
     auto singleStrands = part->GetSingleStrands();
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto seq = ss->GetSequence();
+      auto seq = ss->GetSequenceWithTags();
       out << std::to_string(num) + " " + ss->GetName() + " | length: " + std::to_string(seq.size());
       out << ",";
       out << seq;

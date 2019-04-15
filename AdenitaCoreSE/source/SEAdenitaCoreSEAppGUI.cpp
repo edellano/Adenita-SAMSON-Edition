@@ -168,13 +168,9 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
 
       //add the visual model
       if (loadVM) { 
-        t->ResetVisualModel(); 
-        
+        t->ResetVisualModel();
       }
-
-
     }
-
     SAMSON::getActiveCamera()->center();
   }
   

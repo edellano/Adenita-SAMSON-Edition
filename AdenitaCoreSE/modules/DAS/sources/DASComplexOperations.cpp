@@ -1,259 +1,169 @@
 #include "DASComplexOperations.hpp"
 #include "DASBackToTheAtom.hpp"
 
-DASOperations::SixSingleStrands DASOperations::CreateCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2, bool two, std::string seq)
+DASOperations::Connections DASOperations::PrepareStrandsForConnection(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2, 
+  ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2)
 {
-  SixSingleStrands ssLeftOvers;
+  Connections conn;
 
-  ADNPointer<ADNSingleStrand> firstStrand = nt1->GetStrand();
-  ADNPointer<ADNSingleStrand> secondStrand = nt2->GetStrand();
+  if (nt1->GetEnd() == ThreePrime && nt2->GetEnd() == ThreePrime) return conn;
 
+  // nt1 will be left as 3' while nt2 will be left as 5'
+  if (nt1->GetEnd() == FivePrime) {
+    if (nt2->GetEnd() == FivePrime) return conn;
+    ADNPointer<ADNNucleotide> tmp = nt1;
+    nt1 = nt2;
+    nt2 = tmp;
+    ADNPointer<ADNPart> tmpPart = part1;
+    part1 = part2;
+    part2 = tmpPart;
+  }
+
+  if (nt1->IsEnd() && nt2->IsEnd()) {
+    // we merge in the order they are now
+    MergePair pair;
+    pair.first = nt1->GetStrand();
+    pair.second = nt2->GetStrand();
+    pair.firstPart = part1;
+    pair.secondPart = part2;
+    conn.stringPair = pair;
+  }
+  else {
+    MergePair pair;
+    MergePair compPair;
+
+    ADNPointer<ADNNucleotide> firstNext = nullptr;
+    ADNPointer<ADNNucleotide> secondPrev = nullptr;
+
+    // break first nucleotide in 3'
+    if (nt1->GetEnd() != ThreePrime) {
+      firstNext = nt1->GetNext(true);
+      auto p = ADNBasicOperations::BreakSingleStrand(part1, firstNext);
+    }
+
+    // break second nucleotide in 5'
+    if (nt2->GetEnd() != FivePrime) {
+      secondPrev = nt2->GetPrev();
+      auto p = ADNBasicOperations::BreakSingleStrand(part2, nt2);
+    }
+
+    pair.first = nt1->GetStrand();
+    if (firstNext != nullptr) compPair.second = firstNext->GetStrand();
+    pair.second = nt2->GetStrand();
+    if (secondPrev != nullptr) compPair.first = secondPrev->GetStrand();
+
+    pair.firstPart = part1;
+    pair.secondPart = part2;
+    compPair.firstPart = part2;
+    compPair.secondPart = part1;
+    conn.stringPair = pair;
+    conn.compStringPair = compPair;
+  }
+
+  return conn;
+}
+
+void DASOperations::CreateCrossover(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2, 
+  ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2, bool two, std::string seq)
+{
+  auto conn = PrepareStrandsForConnection(part1, part2, nt1, nt2);
+  auto pair = conn.stringPair;
+  auto compPair = conn.compStringPair;
+
+  // create joint strands if necessary
   ADNPointer<ADNSingleStrand> joinStrand1 = nullptr;
   ADNPointer<ADNSingleStrand> joinStrand2 = nullptr;
-
   if (!seq.empty()) {
-    int length = boost::numeric_cast<int>(seq.size());
-
-    SBVector3 direction = (nt1->GetPosition() - nt2->GetPosition()).normalizedVersion();
-    SBQuantity::length expectedLength = SBQuantity::nanometer(ADNConstants::BP_RISE) * (length + 1);  // we need to accomodate space for distance between the ends
-    SBPosition3 startPos = (nt2->GetPosition() + nt1->GetPosition())*0.5 - expectedLength * 0.5 * direction;
-
+    int seqLength = boost::numeric_cast<int>(seq.size());
+    
+    ADNPointer<ADNBaseSegment> bs1 = pair.first->GetThreePrime()->GetBaseSegment();
+    ADNPointer<ADNBaseSegment> bs2 = pair.second->GetFivePrime()->GetBaseSegment();
+    SBVector3 direction = (bs2->GetPosition() - bs1->GetPosition()).normalizedVersion();
+    SBQuantity::length expectedLength = SBQuantity::nanometer(ADNConstants::BP_RISE) * (seqLength + 1);  // we need to accomodate space for distance between the ends
+    // we are measuring from helix center. 1nm approx 3.5nt
+    SBPosition3 startPos = bs1->GetPosition() + SBQuantity::nanometer(ADNConstants::BP_RISE)*3.5*direction;
     if (two) {
-      auto res = DASCreator::AddDoubleStrandToADNPart(part, length, startPos, direction);
+      auto res = DASCreator::AddDoubleStrandToADNPart(pair.firstPart, seqLength, startPos, direction);
       joinStrand1 = res.ss1;
       joinStrand2 = res.ss2;
 
       joinStrand1->SetSequence(seq);
       DASBackToTheAtom* btta = new DASBackToTheAtom();
-      btta->SetPositionsForNewNucleotides(part, joinStrand1->GetNucleotides());
+      btta->SetPositionsForNewNucleotides(pair.firstPart, joinStrand1->GetNucleotides());
 
+      // since we are modifying created parts, we need to call samson creator
+      // after generating atoms
       res.ds->create();
-      part->DeregisterDoubleStrand(res.ds);
-      part->RegisterDoubleStrand(res.ds);
+      pair.firstPart->DeregisterDoubleStrand(res.ds);
+      pair.firstPart->RegisterDoubleStrand(res.ds);
 
       joinStrand1->create();
-      part->DeregisterSingleStrand(joinStrand1);
-      part->RegisterSingleStrand(joinStrand1);
+      pair.firstPart->DeregisterSingleStrand(joinStrand1);
+      pair.firstPart->RegisterSingleStrand(joinStrand1);
       joinStrand2->create();
-      part->DeregisterSingleStrand(joinStrand2);
-      part->RegisterSingleStrand(joinStrand2);
+      pair.firstPart->DeregisterSingleStrand(joinStrand2);
+      pair.firstPart->RegisterSingleStrand(joinStrand2);
     }
     else {
-      auto res = DASCreator::AddSingleStrandToADNPart(part, length, startPos, direction);
+      auto res = DASCreator::AddSingleStrandToADNPart(pair.firstPart, seqLength, startPos, direction);
       joinStrand1 = res.ss1;
       joinStrand1->SetSequence(seq);
 
       DASBackToTheAtom* btta = new DASBackToTheAtom();
-      btta->SetPositionsForNewNucleotides(part, joinStrand1->GetNucleotides());
-      
+      btta->SetPositionsForNewNucleotides(pair.firstPart, joinStrand1->GetNucleotides());
+          
       res.ds->create();
-      part->DeregisterDoubleStrand(res.ds);
-      part->RegisterDoubleStrand(res.ds);
+      pair.firstPart->DeregisterDoubleStrand(res.ds);  // we need to register after creation
+      pair.firstPart->RegisterDoubleStrand(res.ds);
       joinStrand1->create();
-      part->DeregisterSingleStrand(joinStrand1);
-      part->RegisterSingleStrand(joinStrand1);
+      pair.firstPart->DeregisterSingleStrand(joinStrand1);
+      pair.firstPart->RegisterSingleStrand(joinStrand1);
     }
   }
 
-  bool sameStrand = firstStrand == secondStrand;
-
-  if (nt1->IsEnd() && nt2->IsEnd()) {
-    if (sameStrand) {
-      // todo: join
-      firstStrand->IsCircular(true);
+  if (pair.first != nullptr && pair.second != nullptr) {
+    // connect
+    if (pair.first != pair.second) {
+      if (joinStrand1 == nullptr) {
+        ADNBasicOperations::MergeSingleStrands(pair.firstPart, pair.secondPart, pair.first, pair.second);
+      }
+      else {
+        auto ss = ADNBasicOperations::MergeSingleStrands(pair.firstPart, pair.firstPart, pair.first, joinStrand1);
+        ADNBasicOperations::MergeSingleStrands(pair.firstPart, pair.secondPart, ss, pair.second);
+      }
     }
     else {
-      ADNPointer<ADNNucleotide> fPrime = nt1;
-      ADNPointer<ADNNucleotide> tPrime = nt2;
-
-      if (fPrime->GetEnd() == ThreePrime && tPrime->GetEnd() == FivePrime) {
-        fPrime = nt2;
-        tPrime = nt1;
-      }
-      auto fPrimeStrand = fPrime->GetStrand();
-      auto tPrimeStrand = tPrime->GetStrand();
-
       if (joinStrand1 != nullptr) {
-        auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand1, fPrimeStrand);
-        auto ssNN = ADNBasicOperations::MergeSingleStrands(part, tPrimeStrand, ssN);
-        part->DeregisterSingleStrand(ssN);
-        part->DeregisterSingleStrand(joinStrand1);
+        auto ss = ADNBasicOperations::MergeSingleStrands(pair.firstPart, pair.firstPart, pair.first, joinStrand1);
+        ss->IsCircular(true);
       }
       else {
-        auto resSs = ADNBasicOperations::MergeSingleStrands(part, tPrimeStrand, fPrimeStrand);
+        pair.first->IsCircular(true);
       }
-      ssLeftOvers.first = tPrimeStrand;
-      ssLeftOvers.second = fPrimeStrand;
-    }    
+    }
   }
-  else {
-      
-    ADNPointer<ADNNucleotide> firstPrev = nullptr;
-    ADNPointer<ADNNucleotide> secondNext = nullptr;
-    ADNPointer<ADNSingleStrand> firstStrandTwo = nullptr;
-    ADNPointer<ADNSingleStrand> secondStrandTwo = nullptr;
 
-    ssLeftOvers.first = firstStrand;
-
-    // order nucleotides
-    if (sameStrand) {
-      bool circ = firstStrand->IsCircular();
-      // break first nucleotide in 5'
-      if (nt1->GetEnd() != FivePrime) {
-        firstPrev = nt1->GetPrev(true);
-        auto pair1 = ADNBasicOperations::BreakSingleStrand(part, nt1);
-        firstStrand = pair1.second;
-        secondStrandTwo = pair1.first;
-      }
-      // break second nucleotide in 3'
-      if (nt2->GetEnd() != ThreePrime) {
-        secondNext = nt2->GetNext(true);
-        auto pair2 = ADNBasicOperations::BreakSingleStrand(part, secondNext);
-        secondStrand = pair2.first;
-        firstStrandTwo = pair2.second;
-      }
-
-      // connect strands
-      if (nt2->GetStrand() != nt1->GetStrand()) {
-
-        if (joinStrand1 != nullptr) {
-          auto ssN = ADNBasicOperations::MergeSingleStrands(part, nt2->GetStrand(), joinStrand1);
-          auto ssNN = ADNBasicOperations::MergeSingleStrands(part, ssN, nt1->GetStrand());
-          part->DeregisterSingleStrand(ssN);
-          part->DeregisterSingleStrand(joinStrand1);
+  if (two) {
+    if (compPair.first != nullptr && compPair.second != nullptr) {
+      // connect
+      if (compPair.first != compPair.second) {
+        if (joinStrand2 == nullptr) {
+          ADNBasicOperations::MergeSingleStrands(compPair.firstPart, compPair.secondPart, compPair.first, compPair.second);
         }
         else {
-          auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, nt1->GetStrand(), nt2->GetStrand());
-        }
-
-        if (two) {
-          auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand2, secondNext->GetStrand());
-          part->DeregisterSingleStrand(joinStrand2);
-          ssN->IsCircular(true);
-          if (firstPrev->GetStrand() != secondNext->GetStrand()) {
-            auto ssNN = ADNBasicOperations::MergeSingleStrands(part, firstPrev->GetStrand(), ssN);
-            part->DeregisterSingleStrand(ssN);
-            ssNN->IsCircular(true);
-          }
+          auto ss = ADNBasicOperations::MergeSingleStrands(compPair.firstPart, pair.firstPart, compPair.first, joinStrand2);
+          ADNBasicOperations::MergeSingleStrands(compPair.firstPart, compPair.secondPart, ss, compPair.second);
         }
       }
-      else
-      {
-        if (joinStrand1 != nullptr) {
-          auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand1, nt2->GetStrand());
-          part->DeregisterSingleStrand(joinStrand1);
-        }
-        nt2->GetStrand()->IsCircular(true);
-        if (circ) {
-          // left over strands need to be attached if they are not
-          firstStrandTwo = firstPrev->GetStrand();
-          secondStrandTwo = secondNext->GetStrand();
-          auto ssConnectTwo = ADNBasicOperations::MergeSingleStrands(part, firstStrandTwo, secondStrandTwo);
-          if (two) {
-            if (joinStrand2 != nullptr) {
-              auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand2, secondStrandTwo);
-              auto ssNN = ADNBasicOperations::MergeSingleStrands(part, firstStrandTwo, ssN);
-              part->DeregisterSingleStrand(ssN);
-              part->DeregisterSingleStrand(joinStrand2);
-            }
-            ssConnectTwo->IsCircular(true);
-          }
+      else {
+        if (joinStrand2 != nullptr) {
+          auto ss = ADNBasicOperations::MergeSingleStrands(compPair.firstPart, pair.firstPart, compPair.first, joinStrand1);
+          ss->IsCircular(true);
         }
         else {
-          if (two) {
-            firstStrandTwo = firstPrev->GetStrand();
-            secondStrandTwo = secondNext->GetStrand();
-            auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand2, secondStrandTwo);
-            auto ssNN = ADNBasicOperations::MergeSingleStrands(part, firstStrandTwo, ssN);
-            part->DeregisterSingleStrand(ssN);
-            part->DeregisterSingleStrand(joinStrand2);
-          }
+          compPair.first->IsCircular(true);
         }
       }
     }
-    else {
-      ssLeftOvers.first = firstStrand;
-      ssLeftOvers.second = secondStrand;
-
-      // break first nucleotide in 3'
-      if (nt1->GetEnd() != ThreePrime) {
-        secondNext = nt1->GetNext(true);
-        auto pair1 = ADNBasicOperations::BreakSingleStrand(part, secondNext);
-        secondStrand = pair1.first;
-        firstStrandTwo = pair1.second;
-      }
-      // break second nucleotide in 5'
-      if (nt2->GetEnd() != FivePrime) {
-        firstPrev = nt2->GetPrev(true);
-        auto pair2 = ADNBasicOperations::BreakSingleStrand(part, firstPrev);
-        firstStrand = pair2.second;
-        secondStrandTwo = pair2.first;
-      }
-
-      /*if (joinStrand1 != nullptr) {
-        auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand1, firstStrand);
-        auto ssNN = ADNBasicOperations::MergeSingleStrands(part, secondStrand, ssN);
-        part->DeregisterSingleStrand(ssN);
-        part->DeregisterSingleStrand(joinStrand1);
-      }
-      else {
-        auto ssConnect = ADNBasicOperations::MergeSingleStrands(part, secondStrand, firstStrand);
-      }
-
-      if (two && firstStrandTwo != nullptr && secondStrandTwo != nullptr) {
-        auto ssN = ADNBasicOperations::MergeSingleStrands(part, joinStrand2, firstStrandTwo);
-        auto ssNN = ADNBasicOperations::MergeSingleStrands(part, secondStrandTwo, ssN);
-        part->DeregisterSingleStrand(ssN);
-        part->DeregisterSingleStrand(joinStrand2);
-      }*/
-    }
-
-    if (firstStrand->getNumberOfNucleotides() == 0) ssLeftOvers.third = firstStrand;
-    if (secondStrand->getNumberOfNucleotides() == 0) ssLeftOvers.fourth = secondStrand;
-    if (firstStrandTwo != nullptr && firstStrandTwo->getNumberOfNucleotides() == 0) ssLeftOvers.fifth = firstStrandTwo;
-    if (secondStrandTwo != nullptr && secondStrandTwo->getNumberOfNucleotides() == 0) ssLeftOvers.sixth = secondStrandTwo;
-  }
-
-  return ssLeftOvers;
-}
-
-void DASOperations::CreateDoubleCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt11, ADNPointer<ADNNucleotide> nt12, 
-  ADNPointer<ADNNucleotide> nt21, ADNPointer<ADNNucleotide> nt22, std::string seq)
-{
-  auto ssLeftOvers = CreateCrossover(part, nt11, nt12, true, seq);
-  if (ssLeftOvers.first != nullptr) part->DeregisterSingleStrand(ssLeftOvers.first);
-  if (ssLeftOvers.second != nullptr) part->DeregisterSingleStrand(ssLeftOvers.second);
-  if (ssLeftOvers.third != nullptr) part->DeregisterSingleStrand(ssLeftOvers.third);
-  if (ssLeftOvers.fourth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fourth);
-  if (ssLeftOvers.fifth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fifth);
-  if (ssLeftOvers.sixth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.sixth);
-
-  ssLeftOvers = CreateCrossover(part, nt21, nt22, true, seq);
-  if (ssLeftOvers.first != nullptr) part->DeregisterSingleStrand(ssLeftOvers.first);
-  if (ssLeftOvers.second != nullptr) part->DeregisterSingleStrand(ssLeftOvers.second);
-  if (ssLeftOvers.third != nullptr) part->DeregisterSingleStrand(ssLeftOvers.third);
-  if (ssLeftOvers.fourth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fourth);
-  if (ssLeftOvers.fifth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fifth);
-  if (ssLeftOvers.sixth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.sixth);
-
-  // create crossover
-  int dist = 6;
-  ADNPointer<ADNNucleotide> ntXO1 = nt11;
-  ADNPointer<ADNNucleotide> ntXO2 = nt21;
-
-  for (int i = 0; i < dist; ++i) {
-    ntXO1 = ntXO1->GetNext();
-    ntXO2 = ntXO2->GetPrev();
-  }
-  ntXO2 = ntXO2->GetPair();
-
-  if (ntXO2 != nullptr) {
-    /*ssLeftOvers = CreateCrossover(part, ntXO1, ntXO2, true);
-    if (ssLeftOvers.first != nullptr) part->DeregisterSingleStrand(ssLeftOvers.first);
-    if (ssLeftOvers.second != nullptr) part->DeregisterSingleStrand(ssLeftOvers.second);
-    if (ssLeftOvers.third != nullptr) part->DeregisterSingleStrand(ssLeftOvers.third);
-    if (ssLeftOvers.fourth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fourth);
-    if (ssLeftOvers.fifth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.fifth);
-    if (ssLeftOvers.sixth != nullptr) part->DeregisterSingleStrand(ssLeftOvers.sixth);*/
   }
 }

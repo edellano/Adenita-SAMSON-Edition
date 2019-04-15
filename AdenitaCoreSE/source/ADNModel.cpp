@@ -76,12 +76,8 @@ void ADNNucleotide::serialize(SBCSerializer * serializer, const SBNodeIndexer & 
 
   serializer->writeIntElement("end", end_);
 
-  SBPosition3 pos = GetPosition();
-  serializer->writeStartElement("position");
-  serializer->writeFloatElement("x", pos[0].getValue());
-  serializer->writeFloatElement("y", pos[1].getValue());
-  serializer->writeFloatElement("z", pos[2].getValue());
-  serializer->writeEndElement();
+  ADNPointer<ADNAtom> at = GetCenterAtom();
+  serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
 
   serializer->writeUnsignedIntElement("pair", nodeIndexer.getIndex(pair_()));
   serializer->writeUnsignedIntElement("base_segment", nodeIndexer.getIndex(bs_()));
@@ -93,13 +89,9 @@ void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer 
 
   SetEnd(End(serializer->readIntElement()));
 
-  SBPosition3 pos;
-  serializer->readStartElement();
-  pos[0] = SBQuantity::picometer(serializer->readFloatElement());
-  pos[1] = SBQuantity::picometer(serializer->readFloatElement());
-  pos[2] = SBQuantity::picometer(serializer->readFloatElement());
-  serializer->readEndElement();
-  SetPosition(pos);
+  unsigned int idx = serializer->readUnsignedIntElement();
+  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  SetCenterAtom(at);
 
   unsigned int pIdx = serializer->readUnsignedIntElement();
   unsigned int bsIdx = serializer->readUnsignedIntElement();
@@ -681,6 +673,22 @@ std::string ADNSingleStrand::getSequence() const
   return GetSequence();
 }
 
+std::string ADNSingleStrand::GetSequenceWithTags() const
+{
+  std::string seq = "";
+  ADNPointer<ADNNucleotide> nt = fivePrime_;
+  while (nt != nullptr) {
+    std::string totalBase(1, ADNModel::GetResidueName(nt->GetType()));
+    if (nt->hasTag()) {
+      std::string base(1, ADNModel::GetResidueName(nt->GetType()));
+      totalBase = "[" + nt->getTag() + base + "]";
+    }
+    seq += totalBase;
+    nt = nt->GetNext();
+  }
+  return seq;
+}
+
 double ADNSingleStrand::GetGCContent() const
 {
   double gcCont = 0.0;
@@ -991,6 +999,9 @@ void ADNBaseSegment::serialize(SBCSerializer * serializer, const SBNodeIndexer &
 {
   SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
   
+  ADNPointer<ADNAtom> at = GetCenterAtom();
+  serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
+
   serializer->writeIntElement("number", GetNumber());
   serializer->writeUnsignedIntElement("cell", nodeIndexer.getIndex(cell_()));
 }
@@ -999,6 +1010,10 @@ void ADNBaseSegment::unserialize(SBCSerializer * serializer, const SBNodeIndexer
 {
   SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
   
+  unsigned int idx = serializer->readUnsignedIntElement();
+  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  SetCenterAtom(at);
+
   SetNumber(serializer->readIntElement());
   SBNode* cNode = nodeIndexer.getNode(serializer->readUnsignedIntElement());
   ADNPointer<ADNCell> cell = static_cast<ADNCell*>(cNode);
