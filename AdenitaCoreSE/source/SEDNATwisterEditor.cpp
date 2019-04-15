@@ -1,7 +1,8 @@
 #include "SEDNATwisterEditor.hpp"
 #include "SAMSON.hpp"
 #include <QOpenGLFunctions_4_3_Core>
-
+#include "SEAdenitaCoreSEApp.hpp"
+#include "SEAdenitaVisualModel.hpp"
 
 SEDNATwisterEditor::SEDNATwisterEditor() {
 
@@ -33,6 +34,11 @@ SEDNATwisterEditor::~SEDNATwisterEditor() {
 }
 
 SEDNATwisterEditorGUI* SEDNATwisterEditor::getPropertyWidget() const { return static_cast<SEDNATwisterEditorGUI*>(propertyWidget); }
+
+SEAdenitaCoreSEApp* SEDNATwisterEditor::getAdenitaApp() const
+{
+  return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+}
 
 SBCContainerUUID SEDNATwisterEditor::getUUID() const { return SBCContainerUUID("BF86253A-9F66-9F3C-4039-A711891C8670"); }
 
@@ -180,12 +186,10 @@ void SEDNATwisterEditor::mousePressEvent(QMouseEvent* event) {
   if (event->button() == Qt::MouseButton::LeftButton && !altPressed_) {
     untwistingSphereActive_ = true;
     twistingSphereActive_ = false;
-    SAMSON::requestViewportUpdate();
   }
   else if (event->button() == Qt::MouseButton::LeftButton && altPressed_) {
     untwistingSphereActive_ = false;
     twistingSphereActive_ = true;
-    SAMSON::requestViewportUpdate();
   }
 }
 
@@ -196,11 +200,9 @@ void SEDNATwisterEditor::mouseReleaseEvent(QMouseEvent* event) {
 
   if (event->button() == Qt::MouseButton::LeftButton && !altPressed_) {
     untwistingSphereActive_ = false;
-    SAMSON::requestViewportUpdate();
   }
   else if (event->button() == Qt::MouseButton::LeftButton && altPressed_) {
     twistingSphereActive_ = false;
-    SAMSON::requestViewportUpdate();
   }
 }
 
@@ -252,6 +254,9 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
       }
     }
 
+    auto vm = static_cast<SEAdenitaVisualModel*>(getAdenitaApp()->GetVisualModel());
+    vm->update();
+
   }
   else if (twistingSphereActive_) {
     SBDocument* doc = SAMSON::getActiveDocument();
@@ -273,6 +278,10 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
 
       }
     }
+
+    auto vm = static_cast<SEAdenitaVisualModel*>(getAdenitaApp()->GetVisualModel());
+    vm->update();
+
   }
 }
 
