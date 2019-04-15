@@ -76,12 +76,8 @@ void ADNNucleotide::serialize(SBCSerializer * serializer, const SBNodeIndexer & 
 
   serializer->writeIntElement("end", end_);
 
-  SBPosition3 pos = GetPosition();
-  serializer->writeStartElement("position");
-  serializer->writeFloatElement("x", pos[0].getValue());
-  serializer->writeFloatElement("y", pos[1].getValue());
-  serializer->writeFloatElement("z", pos[2].getValue());
-  serializer->writeEndElement();
+  ADNPointer<ADNAtom> at = GetCenterAtom();
+  serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
 
   serializer->writeUnsignedIntElement("pair", nodeIndexer.getIndex(pair_()));
   serializer->writeUnsignedIntElement("base_segment", nodeIndexer.getIndex(bs_()));
@@ -93,13 +89,9 @@ void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer 
 
   SetEnd(End(serializer->readIntElement()));
 
-  SBPosition3 pos;
-  serializer->readStartElement();
-  pos[0] = SBQuantity::picometer(serializer->readFloatElement());
-  pos[1] = SBQuantity::picometer(serializer->readFloatElement());
-  pos[2] = SBQuantity::picometer(serializer->readFloatElement());
-  serializer->readEndElement();
-  SetPosition(pos);
+  unsigned int idx = serializer->readUnsignedIntElement();
+  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  SetCenterAtom(at);
 
   unsigned int pIdx = serializer->readUnsignedIntElement();
   unsigned int bsIdx = serializer->readUnsignedIntElement();
@@ -1007,6 +999,9 @@ void ADNBaseSegment::serialize(SBCSerializer * serializer, const SBNodeIndexer &
 {
   SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
   
+  ADNPointer<ADNAtom> at = GetCenterAtom();
+  serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
+
   serializer->writeIntElement("number", GetNumber());
   serializer->writeUnsignedIntElement("cell", nodeIndexer.getIndex(cell_()));
 }
@@ -1015,6 +1010,10 @@ void ADNBaseSegment::unserialize(SBCSerializer * serializer, const SBNodeIndexer
 {
   SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
   
+  unsigned int idx = serializer->readUnsignedIntElement();
+  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  SetCenterAtom(at);
+
   SetNumber(serializer->readIntElement());
   SBNode* cNode = nodeIndexer.getNode(serializer->readUnsignedIntElement());
   ADNPointer<ADNCell> cell = static_cast<ADNCell*>(cNode);
