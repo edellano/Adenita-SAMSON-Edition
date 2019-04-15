@@ -101,8 +101,8 @@ public :
 
 private:
   void                                init();
-  void												        initNucleotideArraysForDisplay(bool createIndex = true);
-  void												        initBaseSegmentArraysForDisplay(bool createIndex = true);
+  void												        initNucleotidesAndSingleStrands(bool createIndex = true);
+  void												        initDoubleStrands(bool createIndex = true);
   ADNArray<unsigned int>              getNucleotideIndices();
   ADNArray<unsigned int>              getBaseSegmentIndices();
   void												        highlightFlagChanged(); //scale 9: display polyhedron 
@@ -119,8 +119,13 @@ private:
   void												        prepareNucleotides();
   void												        prepareSingleStrands();
   void												        prepareDoubleStrands();
-  void												        prepareInterpolated(); // Prepare the arrays for displaying (this separates the interpolation from display)
-  void												        prepareUninterpolated(); // 
+  void												        displayNucleotides(bool forSelection = false);
+  void												        displaySingleStrands(bool forSelection = false);
+  void												        displayDoubleStrands(bool forSelection = false);
+  void												        prepareArraysTransition(); // Prepare the arrays for displaying (this separates the interpolation from display)
+  void												        displayNoTransition(bool forSelection = false);
+  void												        prepareArraysNoTranstion();
+  void												        displayTransition(); 
   void												        prepareSticksToBalls(double iv, bool forSelection = false);
   void												        prepareSingleStrandsToDoubleStrands(double iv, bool forSelection = false);
 
@@ -133,17 +138,32 @@ private:
 
   ADNNanorobot * nanorobot_;
 
-  unsigned int nPositions_;
-  unsigned int nCylinders_;
-  ADNArray<float> colorsV_;
-  ADNArray<float> colorsE_;
-  ADNArray<float> positions_;
-  ADNArray<float> radiiV_;
-  ADNArray<float> radiiE_;
-  ADNArray<unsigned int> capData_;
-  ADNArray<unsigned int> flags_;
-  ADNArray<unsigned int> nodeIndices_;
-  ADNArray<unsigned int> indices_;
+  //nucleotide scale
+  unsigned int nPositionsNt_;
+  unsigned int nCylindersNt_;
+  ADNArray<float> colorsVNt_;
+  ADNArray<float> colorsENt_;
+  ADNArray<float> positionsNt_;
+  ADNArray<float> radiiVNt_;
+  ADNArray<float> radiiENt_;
+  ADNArray<unsigned int> flagsNt_;
+  ADNArray<unsigned int> nodeIndicesNt_;
+  ADNArray<unsigned int> indicesNt_;
+
+  //single strand scale
+  ADNArray<float> colorsVSS_;
+  ADNArray<float> colorsESS_;
+  ADNArray<float> radiiVSS_;
+  ADNArray<float> radiiESS_;
+
+  //double strand scale
+  unsigned int nPositionsDS_;
+  unsigned int nCylindersDS_;
+  ADNArray<float> colorsVDS_;
+  ADNArray<float> positionsDS_;
+  ADNArray<float> radiiVDS_;
+  ADNArray<unsigned int> flagsDS_;
+  ADNArray<unsigned int> nodeIndicesDS_;
 
   std::map<ADNNucleotide*, unsigned int> ntMap_;
   std::map<ADNBaseSegment*, unsigned int> bsMap_;

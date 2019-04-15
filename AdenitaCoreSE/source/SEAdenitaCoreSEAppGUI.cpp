@@ -108,6 +108,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
     //t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/inner_ring_and_sheet/inner ring.json");
     //t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/samples/skip.json");
     //t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/samples/loop.json");
+    //t->ImportFromCadnano("C:/Development/Data_DNA_Nanomodeling/cadnano/robot_bent/robot_v1.9_bent.json");
 
     t->ResetVisualModel();
     SAMSON::getActiveCamera()->center();
