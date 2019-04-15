@@ -115,6 +115,7 @@ private:
   void                                displayForDebugging();
   void                                displayCircularDNAConnection();
   void                                displayTags();
+  void                                updateStructuralEvents();
 
   void												        prepareNucleotides();
   void												        prepareSingleStrands();
