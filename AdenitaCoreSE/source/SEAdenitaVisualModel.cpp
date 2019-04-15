@@ -524,103 +524,50 @@ void SEAdenitaVisualModel::prepareNucleotidesToSingleStrands(double iv, bool for
 
 void SEAdenitaVisualModel::prepareSingleStrandsToDoubleStrands(double iv, bool forSelection)
 {
-  //SEConfig& config = SEConfig::GetInstance();
-  //ADNLogger& logger = ADNLogger::GetLogger();
 
-  //auto parts = nanorobot_->GetParts();
+  nPositions_ = nPositionsNt_;
+  nCylinders_ = nCylindersNt_;
 
-  //SB_FOR(auto part, parts) {
-
-  //  auto singleStrands = nanorobot_->GetSingleStrands(part);
-
-  //  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-
-  //    auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-
-  //    SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-
-  //      auto index = ntMap_[nt()];
-  //      flagsNt_(index) = nt->getInheritedFlags();
-  //      nodeIndicesNt_(index) = nt->getNodeIndex();
-
-  //      SBPosition3 min = nanorobot_->GetNucleotideSidechainPosition(nt);
-  //      SBPosition3 max = nanorobot_->GetNucleotideBackbonePosition(nt);
-
-  //      SBPosition3 iPos = min + iv * (max - min);
-
-  //      positionsNt_(index, 0) = iPos[0].getValue();
-  //      positionsNt_(index, 1) = iPos[1].getValue();
-  //      positionsNt_(index, 2) = iPos[2].getValue();
-
-  //      float minVColorR;
-  //      float minVColorG;
-  //      float minVColorB;
-  //      float minVColorA;
-
-  //      int stapleColorNum = ss->getNodeIndex() % config.num_staple_colors;
-
-  //      float maxVColorR = config.staple_colors[stapleColorNum * 4 + 0];
-  //      float maxVColorG = config.staple_colors[stapleColorNum * 4 + 1];
-  //      float maxVColorB = config.staple_colors[stapleColorNum * 4 + 2];
-  //      float maxVColorA = config.staple_colors[stapleColorNum * 4 + 3];
-
-  //      if (nanorobot_->IsScaffold(ss))
-  //      {
-  //        minVColorR = config.nucleotide_E_Color[0];
-  //        minVColorG = config.nucleotide_E_Color[1];
-  //        minVColorB = config.nucleotide_E_Color[2];
-  //        minVColorA = config.nucleotide_E_Color[3];
-
-  //        maxVColorR = config.nucleotide_E_Color[0];
-  //        maxVColorG = config.nucleotide_E_Color[1];
-  //        maxVColorB = config.nucleotide_E_Color[2];
-  //        maxVColorA = config.nucleotide_E_Color[3];
-
-  //        colorsENt_(index, 0) = config.nucleotide_E_Color[0];
-  //        colorsENt_(index, 1) = config.nucleotide_E_Color[1];
-  //        colorsENt_(index, 2) = config.nucleotide_E_Color[2];
-  //        colorsENt_(index, 3) = config.nucleotide_E_Color[3];
-
-  //      }
-  //      else
-  //      {
-  //        minVColorR = maxVColorR;
-  //        minVColorG = maxVColorG;
-  //        minVColorB = maxVColorB;
-  //        minVColorA = maxVColorA;
-
-  //        colorsENt_(index, 0) = maxVColorR;
-  //        colorsENt_(index, 1) = maxVColorG;
-  //        colorsENt_(index, 2) = maxVColorB;
-  //        colorsENt_(index, 3) = maxVColorA;
-  //      }
-
-  //      colorsVNt_(index, 0) = minVColorR + iv * (maxVColorR - minVColorR);
-  //      colorsVNt_(index, 1) = minVColorG + iv * (maxVColorG - minVColorG);
-  //      colorsVNt_(index, 2) = minVColorB + iv * (maxVColorB - minVColorB);
-  //      colorsVNt_(index, 3) = minVColorA + iv * (maxVColorA - minVColorA);
-
-  //      radiiVNt_(index) = config.nucleotide_V_radius;
-  //      radiiENt_(index) = config.nucleotide_V_radius;
+  positions_ = ADNArray<float>(3, nPositions_);
+  radiiV_ = ADNArray<float>(nPositions_);
+  radiiE_ = ADNArray<float>(nPositions_);
+  colorsV_ = ADNArray<float>(4, nPositions_);
+  //colorsE_ = ADNArray<float>(4, nPositions_);
+  //flags_ = ADNArray<unsigned int>(nPositions_);
+  //nodeIndices_ = ADNArray<unsigned int>(nPositions_);
+  //indices_ = ADNArray<unsigned int>(nCylinders_ * 2);
 
 
-  //      //strand direction
-  //      if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
-  //        radiiENt_(index) = config.nucleotide_E_radius;
-  //      }
+  //positions_ = positionsNt_;
+  //radiiV_ = radiiVSS_;
+  //radiie_ = radiiESS_;
+  flags_ = flagsNt_;
+  nodeIndices_ = nodeIndicesNt_;
+  indices_ = indicesNt_;
+  //colorsV_ = colorsVNt_;
+  colorsE_ = colorsESS_;
 
-  //      if (!ss->isVisible()) {
-  //        colorsVNt_(index, 3) = 0.0f;
-  //        radiiVNt_(index) = 0.0f;
-  //        radiiENt_(index) = 0.0f;
-  //        colorsENt_(index, 3) = 0.0f;
-  //      } else if (!nt->isVisible()) {
-  //        colorsVNt_(index, 3) = 0.0f;
-  //        colorsENt_(index, 3) = 0.0f;
-  //      }
-  //    }
-  //  }
-  //}
+  for (auto it = ntMap_.begin(); it != ntMap_.end(); it++)
+  {
+    auto nt = it->first;
+    auto bs = nt->GetBaseSegment();
+    auto indexSS = it->second;
+    auto indexDS = bsMap_[bs()];
+
+    radiiV_(indexSS) = radiiVSS_(indexSS) + iv * (radiiVDS_(indexDS) - radiiVSS_(indexSS));
+    radiiE_(indexSS) = radiiESS_(indexSS) - iv * radiiESS_(indexSS);
+
+    positions_(indexSS, 0) = positionsNt_(indexSS, 0) + iv * (positionsDS_(indexDS, 0) - positionsNt_(indexSS, 0));
+    positions_(indexSS, 1) = positionsNt_(indexSS, 1) + iv * (positionsDS_(indexDS, 1) - positionsNt_(indexSS, 1));
+    positions_(indexSS, 2) = positionsNt_(indexSS, 2) + iv * (positionsDS_(indexDS, 2) - positionsNt_(indexSS, 2));
+
+    colorsV_(indexSS, 0) = colorsVSS_(indexSS, 0) + iv * (colorsVDS_(indexDS, 0) - colorsVSS_(indexSS, 0));
+    colorsV_(indexSS, 1) = colorsVSS_(indexSS, 1) + iv * (colorsVDS_(indexDS, 1) - colorsVSS_(indexSS, 1));
+    colorsV_(indexSS, 2) = colorsVSS_(indexSS, 2) + iv * (colorsVDS_(indexDS, 2) - colorsVSS_(indexSS, 2));
+    colorsV_(indexSS, 3) = colorsVSS_(indexSS, 3) + iv * (colorsVDS_(indexDS, 3) - colorsVSS_(indexSS, 3));
+
+  }
+
 }
 
 void SEAdenitaVisualModel::highlightFlagChanged()
