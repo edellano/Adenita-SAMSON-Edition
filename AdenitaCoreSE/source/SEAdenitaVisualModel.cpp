@@ -245,9 +245,9 @@ void SEAdenitaVisualModel::update()
   //    SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent));
   //}
 
-  SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
-    this,
-    SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
+  //SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
+  //  this,
+  //  SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
 
   changeScaleDiscrete(scale_);
 
@@ -493,8 +493,6 @@ void SEAdenitaVisualModel::displayNoTransition(bool forSelection)
 void SEAdenitaVisualModel::prepareArraysNoTranstion()
 {
   SEConfig& config = SEConfig::GetInstance();
-
-  if (scale_ > MAX_SCALE) scale_ = MAX_SCALE;
 
   if (scale_ == ATOMS_STICKS) {
     //prepareSticksToBalls(interpolated);
@@ -1343,7 +1341,17 @@ void SEAdenitaVisualModel::display() {
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. This is the main function of your visual model. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
 
+  ADNLogger& logger = ADNLogger::GetLogger();
+
+  auto ed = SAMSON::getActiveEditor();
+  logger.Log(ed->getName());
+
+  if (ed->getName() == "SEERotation" || ed->getName() == "SEETranslation") {
+    prepareArraysNoTranstion();
+  }
+
   displayNoTransition(false);
+
 }
 
 
@@ -2180,7 +2188,6 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
 
   if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged) {
     highlightFlagChanged();
-    updateStructuralEvents();
   }
 
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
@@ -2208,11 +2215,11 @@ void SEAdenitaVisualModel::onStructuralEvent(SBStructuralEvent* structuralEvent)
 	//// SAMSON Element generator pro tip: implement this function if you need to handle structural events (e.g. when a structural node for which you provide a visual representation is updated)
   //ADNLogger& logger = ADNLogger::GetLogger();
   //logger.Log(QString("onStructuralEvent"));
-  if (structuralEvent->getType() == SBStructuralEvent::MobilityFlagChanged) {
-    prepareArraysNoTranstion();
-    ADNLogger& logger = ADNLogger::GetLogger();
-    logger.Log(QString("MobilityFlagChanged"));
-  }
+  //if (structuralEvent->getType() == SBStructuralEvent::MobilityFlagChanged) {
+  //  prepareArraysNoTranstion();
+  //  //ADNLogger& logger = ADNLogger::GetLogger();
+  //  //logger.Log(QString("MobilityFlagChanged"));
+  //}
 
  //logger.Log(structuralEvent->getTypeString(structuralEvent->getType()));
 }
