@@ -390,7 +390,7 @@ void SEDSDNACreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
     ADNPointer<ADNPart> part = nullptr;
     if (!circular_) part = generateStrand();
     else part = generateCircularStrand();
-
+    int test3 = part->GetNumberOfSingleStrands();
     sendPartToAdenita(part);
     DASCreatorEditors::resetPositions(positions_);
     display_ = false;

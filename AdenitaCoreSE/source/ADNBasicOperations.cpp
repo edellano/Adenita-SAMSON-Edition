@@ -3,19 +3,20 @@
 #include "ADNBasicOperations.hpp"
 
 
-ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand)
+ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2, 
+  ADNPointer<ADNSingleStrand> first_strand, ADNPointer<ADNSingleStrand> second_strand)
 {
   ADNPointer<ADNSingleStrand> ss = ADNPointer<ADNSingleStrand>(new ADNSingleStrand());
   ss->SetName("Merged Strand");
   ss->create();
-  part->RegisterSingleStrand(ss);
+  part1->RegisterSingleStrand(ss);
 
   auto fivePrimeF = first_strand->GetFivePrime();
   ADNPointer<ADNNucleotide> nt = fivePrimeF;
   while (nt != nullptr) {
     ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
-    part->DeregisterNucleotide(nt, true, false);
-    part->RegisterNucleotideThreePrime(ss, nt);
+    part1->DeregisterNucleotide(nt, true, false);
+    part1->RegisterNucleotideThreePrime(ss, nt);
     nt = ntNext;
   }
 
@@ -23,8 +24,8 @@ ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<AD
   nt = fivePrimeS;
   while (nt != nullptr) {
     ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
-    part->DeregisterNucleotide(nt, true, false);
-    part->RegisterNucleotideThreePrime(ss, nt);
+    part2->DeregisterNucleotide(nt, true, false);
+    part1->RegisterNucleotideThreePrime(ss, nt);
     nt = ntNext;
   }
 
@@ -38,6 +39,11 @@ ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<AD
     std::string msg = "Possible error when merging strands inside part";
     ADNLogger& logger = ADNLogger::GetLogger();
     logger.LogDebug(msg);
+  }
+  else {
+    // deregister single strands
+    part1->DeregisterSingleStrand(first_strand);
+    part2->DeregisterSingleStrand(second_strand);
   }
 
   return ss;
@@ -220,6 +226,10 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
     ADNLogger& logger = ADNLogger::GetLogger();
     logger.LogDebug(msg);
   }
+  else {
+    // Deregister old strand
+    part->DeregisterSingleStrand(ss);
+  }
 
   std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ssPair = std::make_pair(ssFP, ssTP);
   return ssPair;
@@ -302,7 +312,6 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
     auto ssPair = BreakSingleStrand(part, nt);
     res.first = ssPair.first;
     part->RegisterSingleStrand(res.first);  // register new strand
-    part->DeregisterSingleStrand(ss);  // deregister old one
 
     if (e == ThreePrime) {
       part->DeregisterSingleStrand(ssPair.second);
@@ -312,7 +321,6 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
       auto ssPair2 = BreakSingleStrand(part, nt->GetNext());
       res.second = ssPair2.second;
       part->RegisterSingleStrand(res.second);
-      part->DeregisterSingleStrand(ssPair.second);  // deregister second strand from first break
       part->DeregisterSingleStrand(ssPair2.first);  // deregister strand containing only the nt we want to delete
     }
 

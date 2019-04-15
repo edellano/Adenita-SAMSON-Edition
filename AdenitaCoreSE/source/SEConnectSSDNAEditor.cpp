@@ -206,14 +206,9 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
     
     if (highlightedNucleotides.size() == 1) {
       auto start = start_;
+      ADNPointer<ADNPart> part1 = nanorobot->GetPart(start->GetStrand());
       ADNPointer<ADNNucleotide> end = highlightedNucleotides[0];
-      if (!end->IsEnd()) end = end->GetNext();
-      ADNPointer<ADNPart> part = nanorobot->GetPart(end->GetStrand());
-      if (start->GetEnd() == ThreePrime) {
-        auto store = start;
-        start = end;
-        end = store;
-      }
+      ADNPointer<ADNPart> part2 = nanorobot->GetPart(end->GetStrand());
 
       bool two = false;
       if (mode_ == Double) two = true;
@@ -225,7 +220,7 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
         }
         else {
           auto dist = (end->GetPosition() - start->GetPosition()).norm();
-          int length = round( (dist / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue() ) - 1;
+          int length = round( (dist / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue() ) - 3;
           
           for (int i = 0; i < length; ++i) {
             seq += "N";
@@ -233,15 +228,8 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
         }
       }
 
-      auto ssLeftOvers = DASOperations::CreateCrossover(part, start, end, two, seq);
-      if (ssLeftOvers.first != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.first);
-      if (ssLeftOvers.second != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.second);
-      if (ssLeftOvers.third != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.third);
-      if (ssLeftOvers.fourth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fourth);
-      if (ssLeftOvers.fifth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.fifth);
-      if (ssLeftOvers.sixth != nullptr) nanorobot->RemoveSingleStrand(ssLeftOvers.sixth);
+      DASOperations::CreateCrossover(part1, part2, start, end, two, seq);
       app->ResetVisualModel();
-
     }
   }
 
