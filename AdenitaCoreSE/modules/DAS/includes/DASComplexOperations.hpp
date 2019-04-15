@@ -5,23 +5,19 @@
 
 
 namespace DASOperations {
-  // return structures
-  struct SixSingleStrands {
+  struct MergePair {
     ADNPointer<ADNSingleStrand> first = nullptr;
     ADNPointer<ADNSingleStrand> second = nullptr;
-    ADNPointer<ADNSingleStrand> third = nullptr;
-    ADNPointer<ADNSingleStrand> fourth = nullptr;
-    ADNPointer<ADNSingleStrand> fifth = nullptr;
-    ADNPointer<ADNSingleStrand> sixth = nullptr;
+    ADNPointer<ADNPart> firstPart = nullptr;
+    ADNPointer<ADNPart> secondPart = nullptr;
   };
-  struct FourDoubleStrands {
-    ADNPointer<ADNDoubleStrand> first = nullptr;
-    ADNPointer<ADNDoubleStrand> second = nullptr;
-    ADNPointer<ADNDoubleStrand> third = nullptr;
-    ADNPointer<ADNDoubleStrand> fourth = nullptr;
+  struct Connections {
+    MergePair stringPair;
+    MergePair compStringPair;
   };
 
-  SixSingleStrands CreateCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2, bool two = false, std::string seq = "");
-  void CreateDoubleCrossover(ADNPointer<ADNPart> part, ADNPointer<ADNNucleotide> nt11, ADNPointer<ADNNucleotide> nt12, 
-    ADNPointer<ADNNucleotide> nt21, ADNPointer<ADNNucleotide> nt22, std::string seq = "");
+  Connections PrepareStrandsForConnection(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2, ADNPointer<ADNNucleotide> nt1, ADNPointer<ADNNucleotide> nt2);
+
+  void CreateCrossover(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2, ADNPointer<ADNNucleotide> nt1, 
+    ADNPointer<ADNNucleotide> nt2, bool two = false, std::string seq = "");
 }

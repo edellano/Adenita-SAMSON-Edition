@@ -221,12 +221,9 @@ void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
       else breakNt = nt->GetNext(true);
       if (breakNt != nullptr) {
         auto newStrands = ADNBasicOperations::BreakSingleStrand(part, breakNt);
-        GetNanorobot()->RemoveSingleStrand(ss);
 
         if (circ) {
-          ADNBasicOperations::MergeSingleStrands(part, newStrands.second, newStrands.first);
-          part->DeregisterSingleStrand(newStrands.first);
-          part->DeregisterSingleStrand(newStrands.second);
+          ADNBasicOperations::MergeSingleStrands(part, part, newStrands.second, newStrands.first);
         }
 
         ResetVisualModel();
