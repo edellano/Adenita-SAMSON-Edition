@@ -293,9 +293,24 @@ void SEAdenitaVisualModel::initDoubleStrands(bool createIndex /*= true*/)
   flagsDS_ = ADNArray<unsigned int>(nPositions);
   nodeIndicesDS_ = ADNArray<unsigned int>(nPositions);
 
-  //if (createIndex) {
-  //  indicesNt_ = getBaseSegmentIndices();
-  //}
+  auto parts = nanorobot_->GetParts();
+
+  unsigned int index = 0;
+
+  SB_FOR(auto part, parts) {
+    auto doubleStrands = nanorobot_->GetDoubleStrands(part);
+    SB_FOR(ADNPointer<ADNDoubleStrand> ds, doubleStrands) {
+      auto baseSegments = ds->GetBaseSegments();
+      SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
+        bsMap_.insert(make_pair(bs(), index));
+        ++index;
+      }
+    }
+  }
+  /*
+    if (createIndex) {
+      indicesDS_ = getBaseSegmentIndices();
+    }*/
 }
 
 ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
@@ -387,37 +402,21 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getBaseSegmentIndices()
   //not clear yet whether the indices are needed
   //for now this function is just used to construct the bsMap_
 
-  /*ADNLogger& logger = ADNLogger::GetLogger();
+  ADNLogger& logger = ADNLogger::GetLogger();
   auto parts = nanorobot_->GetParts();
 
   bsMap_.clear();
-  unsigned int index = 0;
 
-  unsigned int nDs = 0;
-  SB_FOR(auto part, parts) {
-    auto doubleStrands = nanorobot_->GetDoubleStrands(part);
-    nDs += doubleStrands.size();
-    SB_FOR(ADNPointer<ADNDoubleStrand> ds, doubleStrands) {
-      auto baseSegments = ds->GetBaseSegments();
-      SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
-        bsMap_.insert(make_pair(bs(), index));
-        ++index;
-      }
-    }
-  }
-
+  unsigned int nDs = bsMap_.size();
+  
   unsigned int nPositions = nanorobot_->GetNumberOfBaseSegments();
   unsigned int nCylinders = boost::numeric_cast<unsigned int>(nPositions - nDs);
  
   ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
 
   return indices;
-  */
+  
 
-  //delete this when the previous code is uncommented
-  ADNArray<unsigned int> indices = ADNArray<unsigned int>(0);
-
-  return indices;
 }
 
 
@@ -472,13 +471,13 @@ void SEAdenitaVisualModel::displayNoTransition(bool forSelection)
   else if (scale_ == ATOMS_BALLS) {
   }
   else if (scale_ == NUCLEOTIDES) {
-    displayNucleotides();
+    displayNucleotides(forSelection);
   }
   else if (scale_ == SINGLE_STRANDS) {
-    displaySingleStrands();
+    displaySingleStrands(forSelection);
   }
   else if (scale_ == DOUBLE_STRANDS) {
-    displayDoubleStrands();
+    displayDoubleStrands(forSelection);
   }
   else {
   }
