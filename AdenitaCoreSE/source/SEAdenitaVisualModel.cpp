@@ -239,17 +239,18 @@ void SEAdenitaVisualModel::update()
       SB_SLOT(&SEAdenitaVisualModel::onBaseEvent));
   }
 
-  SB_FOR(auto part, parts) {
-    part->connectStructuralSignalToSlot(
-      this,
-      SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent));
-  }
+  //SB_FOR(auto part, parts) {
+  //  part->connectStructuralSignalToSlot(
+  //    this,
+  //    SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent));
+  //}
 
   SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
     this,
     SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
 
   changeScaleDiscrete(scale_);
+
 
 }
 
@@ -1821,6 +1822,32 @@ void SEAdenitaVisualModel::displayTags()
   }
 }
 
+void SEAdenitaVisualModel::updateStructuralEvents()
+{
+  auto parts = nanorobot_->GetParts();
+
+  //SB_FOR(auto part, parts) {
+  //  part->disconnectStructuralSignalFromSlot(
+  //    this,
+  //    SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent));
+  //}
+
+  SB_FOR(auto part, parts) {
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        if (nt->isSelected()) {
+          nt->GetSidechainCenterAtom()->connectStructuralSignalToSlot(
+            this,
+            SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent));
+          return;
+        }
+      }
+    }
+  }
+}
+
 void SEAdenitaVisualModel::highlightNucleotides()
 {
   if (scale_ < (float)NUCLEOTIDES) return;
@@ -2147,8 +2174,13 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle base events (e.g. when a node for which you provide a visual representation emits a base signal, such as when it is erased)
 
-  if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged || baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged){
+  if (baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged){
     highlightFlagChanged();
+  }
+
+  if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged) {
+    highlightFlagChanged();
+    updateStructuralEvents();
   }
 
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
@@ -2159,11 +2191,15 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
     changeScaleDiscrete(scale_, false);
   }
 
+  //ADNLogger& logger = ADNLogger::GetLogger();
+  //logger.Log(QString("onBaseEvent"));
+
 }
 
 void SEAdenitaVisualModel::onDocumentEvent(SBDocumentEvent* documentEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle document events 
+
 
 }
 
@@ -2171,10 +2207,13 @@ void SEAdenitaVisualModel::onStructuralEvent(SBStructuralEvent* structuralEvent)
 	
 	//// SAMSON Element generator pro tip: implement this function if you need to handle structural events (e.g. when a structural node for which you provide a visual representation is updated)
   //ADNLogger& logger = ADNLogger::GetLogger();
-  // changeScale(scale_);
-  //if (structuralEvent->getType() == SBStructuralEvent::MobilityFlagChanged) {
-  //  SAMSON::requestViewportUpdate();
-  //}
+  //logger.Log(QString("onStructuralEvent"));
+  if (structuralEvent->getType() == SBStructuralEvent::MobilityFlagChanged) {
+    prepareArraysNoTranstion();
+    ADNLogger& logger = ADNLogger::GetLogger();
+    logger.Log(QString("MobilityFlagChanged"));
+  }
 
+ //logger.Log(structuralEvent->getTypeString(structuralEvent->getType()));
 }
 
