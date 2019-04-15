@@ -123,8 +123,7 @@ private:
   void												        displaySingleStrands(bool forSelection = false);
   void												        displayDoubleStrands(bool forSelection = false);
   void												        prepareTransition(); // Prepare the arrays for displaying (this separates the interpolation from display)
-  void												        displayNoTransition(bool forSelection = false);
-  void												        prepareNoTransition();
+  void												        prepareDiscreteScales();
   void												        displayTransition(bool forSelection); 
   void												        prepareSticksToBalls(double iv, bool forSelection = false);
   void												        prepareNucleotidesToSingleStrands(double iv, bool forSelection = false);
