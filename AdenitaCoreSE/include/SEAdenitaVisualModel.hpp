@@ -115,7 +115,6 @@ private:
   void                                displayForDebugging();
   void                                displayCircularDNAConnection();
   void                                displayTags();
-  void                                updateStructuralEvents();
 
   void												        prepareNucleotides();
   void												        prepareSingleStrands();
@@ -123,11 +122,12 @@ private:
   void												        displayNucleotides(bool forSelection = false);
   void												        displaySingleStrands(bool forSelection = false);
   void												        displayDoubleStrands(bool forSelection = false);
-  void												        prepareArraysTransition(); // Prepare the arrays for displaying (this separates the interpolation from display)
+  void												        prepareTransition(); // Prepare the arrays for displaying (this separates the interpolation from display)
   void												        displayNoTransition(bool forSelection = false);
-  void												        prepareArraysNoTranstion();
-  void												        displayTransition(); 
+  void												        prepareNoTranstion();
+  void												        displayTransition(bool forSelection); 
   void												        prepareSticksToBalls(double iv, bool forSelection = false);
+  void												        prepareNucleotidesToSingleStrands(double iv, bool forSelection = false);
   void												        prepareSingleStrandsToDoubleStrands(double iv, bool forSelection = false);
 
 
@@ -138,6 +138,18 @@ private:
   int dim_ = 3;
 
   ADNNanorobot * nanorobot_;
+
+  //transitional scale
+  unsigned int nPositions_;
+  unsigned int nCylinders_;
+  ADNArray<float> colorsV_;
+  ADNArray<float> colorsE_;
+  ADNArray<float> positions_;
+  ADNArray<float> radiiV_;
+  ADNArray<float> radiiE_;
+  ADNArray<unsigned int> flags_;
+  ADNArray<unsigned int> nodeIndices_;
+  ADNArray<unsigned int> indices_;
 
   //nucleotide scale
   unsigned int nPositionsNt_;

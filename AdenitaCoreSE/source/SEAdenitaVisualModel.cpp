@@ -76,39 +76,11 @@ float SEAdenitaVisualModel::getScale()
   return scale_;
 }
 
-void SEAdenitaVisualModel::changeScaleDiscrete(int scale, bool createIndex /*= true*/)
-{
-  scale_ = scale;
-
-  if (scale < (float)NUCLEOTIDES) {
-  }
-  else if (scale >= (float)NUCLEOTIDES && scale < (float)DOUBLE_STRANDS) {
-    initNucleotidesAndSingleStrands(createIndex);
-  }
-  else if (scale >= (float)DOUBLE_STRANDS) {
-    initDoubleStrands(createIndex);
-  }
-
-  prepareArraysNoTranstion();
-
-  SAMSON::requestViewportUpdate();
-
-}
-
 void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/)
 {
   scale_ = scale;
-  if (scale < (float)NUCLEOTIDES) {
-  }
-  else if (scale >= (float)NUCLEOTIDES && scale < (float)DOUBLE_STRANDS) {
-    initNucleotidesAndSingleStrands(createIndex);
-  }
-  else if(scale >= (float)DOUBLE_STRANDS) {
-    initDoubleStrands(createIndex);
-  }
 
-  prepareArraysTransition();
-
+  prepareTransition();
 
   SAMSON::requestViewportUpdate();
 }
@@ -249,8 +221,12 @@ void SEAdenitaVisualModel::update()
   //  this,
   //  SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
 
-  changeScaleDiscrete(scale_);
+  initNucleotidesAndSingleStrands(true);
+  initDoubleStrands(true);
 
+  prepareNoTranstion();
+
+  changeScale(scale_);
 
 }
 
@@ -421,7 +397,7 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getBaseSegmentIndices()
 }
 
 
-void SEAdenitaVisualModel::prepareArraysTransition()
+void SEAdenitaVisualModel::prepareTransition()
 {
 
   SEConfig& config = SEConfig::GetInstance();
@@ -432,7 +408,7 @@ void SEAdenitaVisualModel::prepareArraysTransition()
 
   float interpolated = 1.0f - (floor(scale_ + 1) - scale_);
 
-  if (scale_ < (float)ATOMS_STICKS) {
+  if (scale_ == (float)ATOMS_STICKS) {
     //0 - 9
     //prepareSticksToBalls(interpolated);
   }
@@ -443,19 +419,19 @@ void SEAdenitaVisualModel::prepareArraysTransition()
   else if (scale_ < (float)NUCLEOTIDES) {
     //20 - 29
     //if (config.show_atomic_scales) {
-    //  prepareNucleotidesToScaffold(interpolated);
     //}
   }
   else if (scale_ < (float)SINGLE_STRANDS) {
     //30 - 39
-    prepareSingleStrandsToDoubleStrands(interpolated);
     //if (config.display_base_pairing) displayBasePairConnections(scale_);
+    prepareNucleotidesToSingleStrands(interpolated);
   }
   else if (scale_ < (float)DOUBLE_STRANDS) {
     //40 - 49
-    prepareDoubleStrands();
+    prepareSingleStrandsToDoubleStrands(interpolated);
   }
   else {
+    prepareDoubleStrands();
   }
 
 }
@@ -490,39 +466,91 @@ void SEAdenitaVisualModel::displayNoTransition(bool forSelection)
 
 }
 
-void SEAdenitaVisualModel::prepareArraysNoTranstion()
+void SEAdenitaVisualModel::prepareNoTranstion()
 {
-  SEConfig& config = SEConfig::GetInstance();
 
-  if (scale_ == ATOMS_STICKS) {
-    //prepareSticksToBalls(interpolated);
-  }
-  else if (scale_ == ATOMS_BALLS) {
-    //prepareBallsToNucleotides(interpolated);
-  }
-  else if (scale_ == NUCLEOTIDES) {
-    prepareNucleotides();
-  }
-  else if (scale_ == SINGLE_STRANDS) {
-    prepareNucleotides();
-    prepareSingleStrands();
-  }
-  else if (scale_ == DOUBLE_STRANDS) {
-    prepareDoubleStrands();
-  }
-  else {
-  }
+  //prepareSticksToBalls(interpolated);
+  //prepareBallsToNucleotides(interpolated);
+  prepareNucleotides();
+  prepareSingleStrands();
+  prepareDoubleStrands();
 
 }
 
-void SEAdenitaVisualModel::displayTransition()
+void SEAdenitaVisualModel::displayTransition(bool forSelection)
 {
+  if (forSelection) {
+    if (nCylinders_ > 0) {
+      SAMSON::displayCylindersSelection(
+        nCylinders_,
+        nPositions_,
+        indices_.GetArray(),
+        positions_.GetArray(),
+        radiiE_.GetArray(),
+        nullptr,
+        nodeIndices_.GetArray());
+    }
 
+    SAMSON::displaySpheresSelection(
+      nPositions_,
+      positions_.GetArray(),
+      radiiV_.GetArray(),
+      nodeIndices_.GetArray()
+    );
+  }
+  else {
+    if (nCylinders_ > 0) {
+      SAMSON::displayCylinders(
+        nCylinders_,
+        nPositions_,
+        indices_.GetArray(),
+        positions_.GetArray(),
+        radiiE_.GetArray(),
+        nullptr,
+        colorsE_.GetArray(),
+        flags_.GetArray());
+    }
+
+    SAMSON::displaySpheres(
+      nPositions_,
+      positions_.GetArray(),
+      radiiV_.GetArray(),
+      colorsV_.GetArray(),
+      flags_.GetArray());
+  }
 }
 
 void SEAdenitaVisualModel::prepareSticksToBalls(double iv, bool forSelection /*= false*/)
 {
   
+}
+
+void SEAdenitaVisualModel::prepareNucleotidesToSingleStrands(double iv, bool forSelection /*= false*/)
+{
+  nPositions_ = nPositionsNt_;
+  nCylinders_ = nCylindersNt_;
+
+  //positions_ = ADNArray<float>(3, nPositions_);
+  //radiiV_ = ADNArray<float>(nPositions_);
+  radiiE_ = ADNArray<float>(nPositions_);
+  //colorsV_ = ADNArray<float>(4, nPositions_);
+  //colorsE_ = ADNArray<float>(4, nPositions_);
+  //flags_ = ADNArray<unsigned int>(nPositions_);
+  //nodeIndices_ = ADNArray<unsigned int>(nPositions_);
+  //indices_ = ADNArray<unsigned int>(nCylinders_ * 2);
+
+  positions_ = positionsNt_;
+  radiiV_ = radiiVNt_;
+  flags_ = flagsNt_;
+  nodeIndices_ = nodeIndicesNt_;
+  indices_ = indicesNt_;
+  
+  colorsV_ = colorsVNt_;
+  colorsE_ = colorsENt_;
+
+  for (int index = 0; index < nPositions_; ++index) {
+    radiiE_(index) = radiiENt_(index) + iv * (radiiESS_(index) - radiiENt_(index));
+  }
 }
 
 void SEAdenitaVisualModel::prepareSingleStrandsToDoubleStrands(double iv, bool forSelection)
@@ -658,8 +686,6 @@ void SEAdenitaVisualModel::highlightFlagChanged()
       }
     }
   }
-
-
 
   SAMSON::requestViewportUpdate();
 
@@ -1331,7 +1357,7 @@ void SEAdenitaVisualModel::changeHighlight(int highlightIdx)
     highlightType_ = HighlightType::TAGGED;
   }
 
-  prepareArraysNoTranstion();
+  prepareNoTranstion();
   highlightNucleotides();
 
 }
@@ -1341,17 +1367,17 @@ void SEAdenitaVisualModel::display() {
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. This is the main function of your visual model. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
 
-  ADNLogger& logger = ADNLogger::GetLogger();
+  //ADNLogger& logger = ADNLogger::GetLogger();
 
   auto ed = SAMSON::getActiveEditor();
-  logger.Log(ed->getName());
-
+  /*logger.Log(ed->getName());*/
   if (ed->getName() == "SEERotation" || ed->getName() == "SEETranslation") {
-    prepareArraysNoTranstion();
+    prepareNoTranstion();
   }
 
-  displayNoTransition(false);
-
+  
+  displayTransition(false);
+  
 }
 
 
@@ -1830,31 +1856,6 @@ void SEAdenitaVisualModel::displayTags()
   }
 }
 
-void SEAdenitaVisualModel::updateStructuralEvents()
-{
-  auto parts = nanorobot_->GetParts();
-
-  //SB_FOR(auto part, parts) {
-  //  part->disconnectStructuralSignalFromSlot(
-  //    this,
-  //    SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent));
-  //}
-
-  SB_FOR(auto part, parts) {
-    auto singleStrands = nanorobot_->GetSingleStrands(part);
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        if (nt->isSelected()) {
-          nt->GetSidechainCenterAtom()->connectStructuralSignalToSlot(
-            this,
-            SB_SLOT(&SEAdenitaVisualModel::onStructuralEvent));
-          return;
-        }
-      }
-    }
-  }
-}
 
 void SEAdenitaVisualModel::highlightNucleotides()
 {
@@ -2191,11 +2192,11 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
   }
 
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
-    changeScaleDiscrete(scale_, false);
+    changeScale(scale_, false);
   }
 
   if (baseEvent->getType() == SBBaseEvent::MaterialChanged) {
-    changeScaleDiscrete(scale_, false);
+    changeScale(scale_, false);
   }
 
   //ADNLogger& logger = ADNLogger::GetLogger();
