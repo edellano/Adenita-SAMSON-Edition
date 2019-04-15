@@ -104,7 +104,7 @@ public :
 private:
   SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
 
-  double twistAngle_ = 0.0;
+  double twistAngle_ = 34.3;
 };
 
 
