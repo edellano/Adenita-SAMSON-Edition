@@ -85,8 +85,6 @@ void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/
   SAMSON::requestViewportUpdate();
 }
 
-
-
 void SEAdenitaVisualModel::changeDimension(int dimension)
 {
   dim_ = dimension;
@@ -117,13 +115,10 @@ void SEAdenitaVisualModel::changeDimension(int dimension)
     }*/
 
   SAMSON::requestViewportUpdate();
-
 }
-
 
 void SEAdenitaVisualModel::changeVisibility(double layer)
 {
-
   auto parts = nanorobot_->GetParts();
   SEConfig& config = SEConfig::GetInstance();
 
@@ -138,31 +133,31 @@ void SEAdenitaVisualModel::changeVisibility(double layer)
 
         auto index = ntMap_[nt()];
 
-        if (index >= nPositionsNt_) return;
+        if (index >= nPositions_) return;
         auto ntDist = sortedNucleotidesByDist_[nt()];
         if (ssDist > layer) {
-          radiiVNt_(index) = 0;
-          radiiENt_(index) = 0;
+          radiiV_(index) = 0;
+          radiiE_(index) = 0;
         }
         else {
-          radiiVNt_(index) = config.nucleotide_V_radius;
-          radiiENt_(index) = config.nucleotide_V_radius;
+          radiiV_(index) = config.nucleotide_V_radius;
+          radiiE_(index) = config.nucleotide_V_radius;
         }
         if (ntDist > layer) {
           //nt->setVisibilityFlag(false);
-          colorsVNt_(index, 3) = 0.0f;
-          colorsENt_(index, 3) = 0.0f;
+          colorsV_(index, 3) = 0.0f;
+          colorsE_(index, 3) = 0.0f;
           if (true) {
             if (ss->IsScaffold()) {
-              radiiVNt_(index) = 0;
-              radiiENt_(index) = 0;
+              radiiV_(index) = 0;
+              radiiE_(index) = 0;
             }
           }
         }
         else {
           //nt->setVisibilityFlag(true);
-          colorsVNt_(index, 3) = 1.0f;
-          colorsENt_(index, 3) = 1.0f;
+          colorsV_(index, 3) = 1.0f;
+          colorsE_(index, 3) = 1.0f;
         }
         
       }
@@ -224,7 +219,7 @@ void SEAdenitaVisualModel::update()
   initNucleotidesAndSingleStrands(true);
   initDoubleStrands(true);
 
-  prepareNoTranstion();
+  prepareNoTransition();
 
   changeScale(scale_);
 
@@ -434,7 +429,6 @@ void SEAdenitaVisualModel::displayNoTransition(bool forSelection)
 
   if (nanorobot_ == nullptr) return;
 
-  displayCircularDNAConnection();
 
   if (scale_ == ATOMS_STICKS) {
   }
@@ -451,15 +445,15 @@ void SEAdenitaVisualModel::displayNoTransition(bool forSelection)
   }
   else {
   }
-  
+
+  displayCircularDNAConnection();
   if (showBasePairing_) displayBasePairConnections(false);
   if (highlightType_ == TAGGED) displayTags();
-
   displayForDebugging();
 
 }
 
-void SEAdenitaVisualModel::prepareNoTranstion()
+void SEAdenitaVisualModel::prepareNoTransition()
 {
 
   //prepareSticksToBalls(interpolated);
@@ -510,6 +504,11 @@ void SEAdenitaVisualModel::displayTransition(bool forSelection)
       radiiV_.GetArray(),
       colorsV_.GetArray(),
       flags_.GetArray());
+
+    displayCircularDNAConnection();
+    if (showBasePairing_) displayBasePairConnections(false);
+    if (highlightType_ == TAGGED) displayTags();
+    displayForDebugging();
   }
 }
 
@@ -1355,8 +1354,10 @@ void SEAdenitaVisualModel::changeHighlight(int highlightIdx)
     highlightType_ = HighlightType::TAGGED;
   }
 
-  prepareNoTranstion();
+  prepareNoTransition();
+  prepareTransition();
   highlightNucleotides();
+  SAMSON::requestViewportUpdate();
 
 }
 
@@ -1370,10 +1371,9 @@ void SEAdenitaVisualModel::display() {
   auto ed = SAMSON::getActiveEditor();
   /*logger.Log(ed->getName());*/
   if (ed->getName() == "SEERotation" || ed->getName() == "SEETranslation") {
-    prepareNoTranstion();
+    prepareNoTransition();
   }
 
-  
   displayTransition(false);
   
 }
@@ -1678,7 +1678,7 @@ void SEAdenitaVisualModel::displayForSelection() {
 	// Implement this function so that your visual model can be selected (if you render its own index) or can be used to select other objects (if you render 
 	// the other objects' indices), for example thanks to the utility functions provided by SAMSON (e.g. displaySpheresSelection, displayTrianglesSelection, etc.)
 
-  displayNoTransition(true);
+  displayTransition(true);
 
 }
 
@@ -1810,22 +1810,22 @@ void SEAdenitaVisualModel::displayCircularDNAConnection()
         int endIdx = ntMap_[endNt()];
 
         float * startPos = new float[3];
-        startPos[0] = positionsNt_(startIdx, 0);
-        startPos[1] = positionsNt_(startIdx, 1);
-        startPos[2] = positionsNt_(startIdx, 2);
+        startPos[0] = positions_(startIdx, 0);
+        startPos[1] = positions_(startIdx, 1);
+        startPos[2] = positions_(startIdx, 2);
         
         float * endPos = new float[3];
-        endPos[0] = positionsNt_(endIdx, 0);
-        endPos[1] = positionsNt_(endIdx, 1);
-        endPos[2] = positionsNt_(endIdx, 2);
+        endPos[0] = positions_(endIdx, 0);
+        endPos[1] = positions_(endIdx, 1);
+        endPos[2] = positions_(endIdx, 2);
 
         float * color = new float[4];
-        color[0] = colorsENt_(endIdx, 0);
-        color[1] = colorsENt_(endIdx, 1);
-        color[2] = colorsENt_(endIdx, 2);
-        color[3] = colorsENt_(endIdx, 3);
+        color[0] = colorsE_(endIdx, 0);
+        color[1] = colorsE_(endIdx, 1);
+        color[2] = colorsE_(endIdx, 2);
+        color[3] = colorsE_(endIdx, 3);
         
-        auto radius = radiiENt_(startIdx);
+        auto radius = radiiE_(startIdx);
 
         ADNDisplayHelper::displayDirectedCylinder(startPos, endPos, color, radius);
         
@@ -1919,10 +1919,10 @@ void SEAdenitaVisualModel::highlightNucleotides()
         }
       }
     }
-    ADNDisplayHelper::deemphasizeCylinderColors(colorsVNt_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-    ADNDisplayHelper::deemphasizeCylinderColors(colorsENt_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-    ADNDisplayHelper::replaceCylinderColors(colorsVNt_, indicesHighlight, colorHighlight);
-    ADNDisplayHelper::replaceCylinderColors(colorsENt_, indicesHighlight, colorHighlight);
+    ADNDisplayHelper::deemphasizeCylinderColors(colorsV_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
+    ADNDisplayHelper::deemphasizeCylinderColors(colorsE_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
+    ADNDisplayHelper::replaceCylinderColors(colorsV_, indicesHighlight, colorHighlight);
+    ADNDisplayHelper::replaceCylinderColors(colorsE_, indicesHighlight, colorHighlight);
 
     delete[] colorHighlight;
   }
@@ -2018,11 +2018,11 @@ void SEAdenitaVisualModel::highlightNucleotides()
           }
         }
       }
-      ADNDisplayHelper::deemphasizeCylinderColors(colorsVNt_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-      ADNDisplayHelper::deemphasizeCylinderColors(colorsENt_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
+      ADNDisplayHelper::deemphasizeCylinderColors(colorsV_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
+      ADNDisplayHelper::deemphasizeCylinderColors(colorsE_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
 
-      ADNDisplayHelper::replaceCylinderColors(colorsVNt_, indicesHighlight, colorHighlight);
-      ADNDisplayHelper::replaceCylinderColors(colorsENt_, indicesHighlight, colorHighlight);
+      ADNDisplayHelper::replaceCylinderColors(colorsV_, indicesHighlight, colorHighlight);
+      ADNDisplayHelper::replaceCylinderColors(colorsE_, indicesHighlight, colorHighlight);
 
       delete[] colorHighlight;
     }
@@ -2084,10 +2084,10 @@ void SEAdenitaVisualModel::highlightNucleotides()
         }
       }
     }
-    ADNDisplayHelper::deemphasizeCylinderColors(colorsVNt_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-    ADNDisplayHelper::deemphasizeCylinderColors(colorsENt_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-    ADNDisplayHelper::replaceCylinderColors(colorsVNt_, indicesHighlight, colorHighlight);
-    ADNDisplayHelper::replaceCylinderColors(colorsENt_, indicesHighlight, colorHighlight);
+    ADNDisplayHelper::deemphasizeCylinderColors(colorsV_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
+    ADNDisplayHelper::deemphasizeCylinderColors(colorsE_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
+    ADNDisplayHelper::replaceCylinderColors(colorsV_, indicesHighlight, colorHighlight);
+    ADNDisplayHelper::replaceCylinderColors(colorsE_, indicesHighlight, colorHighlight);
 
     delete[] colorHighlight;
   }
@@ -2143,7 +2143,7 @@ void SEAdenitaVisualModel::displayLoops(ADNNucleotide *nt, unsigned int index)
 {
   auto type = nt->GetBaseSegment()->GetCellType();
   if (type == CellType::LoopPair) {
-    radiiVNt_(index) = radiiVNt_(index) * 0.7f;;
+    radiiV_(index) = radiiV_(index) * 0.7f;;
   }
 }
 
