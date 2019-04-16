@@ -100,8 +100,10 @@ public :
 
 private:
   void                                init();
+  void												        initAtoms(bool createIndex = true);
   void												        initNucleotidesAndSingleStrands(bool createIndex = true);
   void												        initDoubleStrands(bool createIndex = true);
+  ADNArray<unsigned int>              getAtomIndices();
   ADNArray<unsigned int>              getNucleotideIndices();
   ADNArray<unsigned int>              getBaseSegmentIndices();
   void												        highlightFlagChanged(); //scale 9: display polyhedron 
@@ -109,12 +111,12 @@ private:
   void                                orderVisibility();
   void                                setupPropertyColors();
   ADNArray<float>                     calcPropertyColor(int colorSchemeIdx, float min, float max, float val);
-  void                                displayLoops(ADNNucleotide *nt, unsigned int index);
   void                                displayBasePairConnections(bool onlySelected);
   void                                displayForDebugging();
   void                                displayCircularDNAConnection();
   void                                displayTags();
 
+  void												        prepareAtoms();
   void												        prepareNucleotides();
   void												        prepareSingleStrands();
   void												        prepareDoubleStrands();
@@ -125,10 +127,10 @@ private:
   void												        prepareDiscreteScales();
   void												        displayTransition(bool forSelection); 
   void												        prepareSticksToBalls(double iv);
+  void												        prepareBallsToNucleotides(double iv);
   void												        prepareNucleotidesToSingleStrands(double iv);
   void												        prepareSingleStrandsToDoubleStrands(double iv);
   void												        prepareDoubleStrandsToObjects(double iv);
-
 
   // general display properties 
   ADNArray<float> nucleotideEColor_;
@@ -149,6 +151,18 @@ private:
   ADNArray<unsigned int> flags_;
   ADNArray<unsigned int> nodeIndices_;
   ADNArray<unsigned int> indices_;
+
+  //atom scale
+  unsigned int nPositionsAtom_;
+  unsigned int nCylindersAtom_;
+  ADNArray<float> colorsVAtom_;
+  ADNArray<float> colorsEAtom_;
+  ADNArray<float> positionsAtom_;
+  ADNArray<float> radiiVAtom_;
+  ADNArray<float> radiiEAtom_;
+  ADNArray<unsigned int> flagsAtom_;
+  ADNArray<unsigned int> nodeIndicesAtom_;
+  ADNArray<unsigned int> indicesAtom_;
 
   //nucleotide scale
   unsigned int nPositionsNt_;
@@ -177,6 +191,7 @@ private:
   ADNArray<unsigned int> flagsDS_;
   ADNArray<unsigned int> nodeIndicesDS_;
 
+  std::map<ADNAtom*, unsigned int> atomMap_;
   std::map<ADNNucleotide*, unsigned int> ntMap_;
   std::map<ADNBaseSegment*, unsigned int> bsMap_;
 
