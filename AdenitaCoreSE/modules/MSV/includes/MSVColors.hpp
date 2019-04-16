@@ -5,6 +5,8 @@
 #include "ADNArray.hpp"
 
 
+  
+
 class MSVColors {
 public:
   MSVColors();
@@ -27,6 +29,8 @@ public:
   void SetNucleotideColorScheme(ADNArray<float> colorScheme);
   void SetSingleStrandColorScheme(ADNArray<float> colorScheme);
   void SetDoubleStrandColorScheme(ADNArray<float> colorScheme);
+
+  ADNArray<float> GetMaterialColor(SBNode* node);
 
 private:
 
@@ -54,9 +58,6 @@ private:
   }
   
   ADNArray<float> GenerateRandomColor();
-
-  ADNArray<float> GetMaterialColor(SBNode* node);
-
 
   ADNArray<float> defaultbssColor_;
 
