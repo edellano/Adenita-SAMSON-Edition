@@ -331,7 +331,6 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getAtomIndices()
         auto atoms = nt->GetAtoms();
         SB_FOR(ADNPointer<ADNAtom> a, atoms) {
           atomMap_.insert(make_pair(a(), index));
-
           ++index;
         }
       }
@@ -465,9 +464,9 @@ void SEAdenitaVisualModel::prepareTransition()
     //prepareSticksToBalls(interpolated);
   }
   else if (scale_ < (float)ATOMS_BALLS) {
-    prepareBallsToNucleotides(interpolated);
   }
   else if (scale_ < (float)NUCLEOTIDES) {
+    prepareBallsToNucleotides(interpolated);
   }
   else if (scale_ < (float)SINGLE_STRANDS) {
     prepareNucleotidesToSingleStrands(interpolated);
@@ -544,31 +543,47 @@ void SEAdenitaVisualModel::prepareSticksToBalls(double iv)
 
 void SEAdenitaVisualModel::prepareBallsToNucleotides(double iv)
 {
-
   nPositions_ = nPositionsAtom_;
   nCylinders_ = nCylindersAtom_;
 
-  //positions_ = ADNArray<float>(3, nPositions_);
-  //radiiV_ = ADNArray<float>(nPositions_);
-  //radiiE_ = ADNArray<float>(nPositions_);
-  //colorsV_ = ADNArray<float>(4, nPositions_);
+  positions_ = ADNArray<float>(3, nPositions_);
+  radiiV_ = ADNArray<float>(nPositions_);
+  radiiE_ = ADNArray<float>(nPositions_);
+  colorsV_ = ADNArray<float>(4, nPositions_);
   //colorsE_ = ADNArray<float>(4, nPositions_);
   //flags_ = ADNArray<unsigned int>(nPositions_);
   //nodeIndices_ = ADNArray<unsigned int>(nPositions_);
   //indices_ = ADNArray<unsigned int>(nCylinders_ * 2);
 
-  positions_ = positionsAtom_;
-  radiiV_ = radiiVSS_;
-  radiiE_ = radiiESS_;
+  //positions_ = positionsAtom_;
+  //radiiV_ = radiiVAtom_;
+  //radiiE_ = radiiEAtom_;
   flags_ = flagsAtom_;
   nodeIndices_ = nodeIndicesAtom_;
   indices_ = indicesAtom_;
-  colorsV_ = colorsVAtom_;
+  //colorsV_ = colorsVAtom_;
   colorsE_ = colorsEAtom_;
 
-  for (auto it = atomMap_.begin(); it != atomMap_.end(); it++)
+  for (auto it = ntMap_.begin(); it != ntMap_.end(); it++)
   {
-    
+    auto nt = it->first;
+    auto atoms = nt->GetAtoms();
+    SB_FOR(ADNPointer<ADNAtom> a, atoms) {
+      auto indexAtom = atomMap_[a()];
+      auto indexNt = it->second;
+
+      positions_(indexAtom, 0) = positionsAtom_(indexAtom, 0) + iv * (positionsNt_(indexNt, 0) - positionsAtom_(indexAtom, 0));
+      positions_(indexAtom, 1) = positionsAtom_(indexAtom, 1) + iv * (positionsNt_(indexNt, 1) - positionsAtom_(indexAtom, 1));
+      positions_(indexAtom, 2) = positionsAtom_(indexAtom, 2) + iv * (positionsNt_(indexNt, 2) - positionsAtom_(indexAtom, 2));
+      
+      colorsV_(indexAtom, 0) = colorsVAtom_(indexAtom, 0) + iv * (colorsVNt_(indexNt, 0) - colorsVAtom_(indexAtom, 0));
+      colorsV_(indexAtom, 1) = colorsVAtom_(indexAtom, 1) + iv * (colorsVNt_(indexNt, 1) - colorsVAtom_(indexAtom, 1));
+      colorsV_(indexAtom, 2) = colorsVAtom_(indexAtom, 2) + iv * (colorsVNt_(indexNt, 2) - colorsVAtom_(indexAtom, 2));
+      colorsV_(indexAtom, 3) = colorsVAtom_(indexAtom, 3) + iv * (colorsVNt_(indexNt, 3) - colorsVAtom_(indexAtom, 3));
+
+      radiiV_(indexAtom) = radiiVAtom_(indexAtom) + iv * (radiiVNt_(indexNt) - radiiVAtom_(indexAtom));
+      radiiE_(indexAtom) = radiiEAtom_(indexAtom) + iv * (radiiENt_(indexNt) - radiiEAtom_(indexAtom));
+    }
   }
 }
 
@@ -598,7 +613,6 @@ void SEAdenitaVisualModel::prepareNucleotidesToSingleStrands(double iv)
     colorsV_(index, 1) = colorsVNt_(index, 1) + iv * (colorsVSS_(index, 1) - colorsVNt_(index, 1));
     colorsV_(index, 2) = colorsVNt_(index, 2) + iv * (colorsVSS_(index, 2) - colorsVNt_(index, 2));
     colorsV_(index, 3) = colorsVNt_(index, 3) + iv * (colorsVSS_(index, 3) - colorsVNt_(index, 3));
-
   }
 
   colorsE_ = colorsV_;
@@ -664,6 +678,11 @@ void SEAdenitaVisualModel::prepareDoubleStrandsToObjects(double iv)
   flags_ = flagsDS_;
   nodeIndices_ = nodeIndicesDS_;
   colorsV_ = colorsVDS_;
+}
+
+void SEAdenitaVisualModel::interpolate(float & result, float & max, float & min, double & iv)
+{
+  result = min + iv * (max - min);
 }
 
 void SEAdenitaVisualModel::highlightFlagChanged()
@@ -1880,8 +1899,7 @@ void SEAdenitaVisualModel::prepareAtoms()
           positionsAtom_(index, 1) = a->GetPosition()[1].getValue();
           positionsAtom_(index, 2) = a->GetPosition()[2].getValue();
 
-          auto color = curColors->GetMaterialColor(a());
-
+          auto color = curColors->GetColor(a);
           colorsVAtom_.SetRow(index, color);
 
           nodeIndicesAtom_(index) = a->getNodeIndex();
@@ -1897,10 +1915,10 @@ void SEAdenitaVisualModel::prepareAtoms()
             radiiVAtom_(index) = 0.0f;
             colorsVAtom_(index, 3) = 0.0f;
           }
-          else if (!a->isVisible()) {
+          /*else if (!a->isVisible()) {
             colorsVAtom_(index, 3) = 0.0f;
             radiiVAtom_(index) = 0.0f;
-          }
+          }*/
         }
       }
     }

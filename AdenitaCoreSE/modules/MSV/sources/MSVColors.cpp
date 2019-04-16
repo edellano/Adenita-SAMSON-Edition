@@ -3,11 +3,53 @@
 
 MSVColors::MSVColors()
 {
+  SetStandardAtomColorScheme();
   SetStandardNucleotideColorScheme();
   SetStandardSingleStrandColorScheme();
   SetStandardDoubleStrandColorScheme();
 
 }
+
+ADNArray<float> MSVColors::GetColor(ADNPointer<ADNAtom> a)
+{
+  auto res = GetColor(a(), atomColors_);
+  auto color = res.second;
+  if (res.first == false) {
+    SEConfig& config = SEConfig::GetInstance();
+
+    color = ADNArray<float>(4);
+    if (a->getElementSymbol() == "O") {
+      color(0) = atomColorScheme_(0, 0);
+      color(1) = atomColorScheme_(0, 1);
+      color(2) = atomColorScheme_(0, 2);
+      color(3) = atomColorScheme_(0, 3);
+    }
+    else if (a->getElementSymbol() == "C") {
+      color(0) = atomColorScheme_(1, 0);
+      color(1) = atomColorScheme_(1, 1);
+      color(2) = atomColorScheme_(1, 2);
+      color(3) = atomColorScheme_(1, 3);
+    }
+    else if (a->getElementSymbol() == "N") {
+      color(0) = atomColorScheme_(2, 0);
+      color(1) = atomColorScheme_(2, 1);
+      color(2) = atomColorScheme_(2, 2);
+      color(3) = atomColorScheme_(2, 3);
+    }
+    else if (a->getElementSymbol() == "P") {
+      color(0) = atomColorScheme_(3, 0);
+      color(1) = atomColorScheme_(3, 1);
+      color(2) = atomColorScheme_(3, 2);
+      color(3) = atomColorScheme_(3, 3);
+    }
+
+    SBNodeMaterial* material = a()->getMaterial();
+    if (material) color = GetMaterialColor(a());
+  }
+
+  return color;
+}
+
 
 ADNArray<float> MSVColors::GetColor(ADNPointer<ADNNucleotide> nt)
 {
@@ -115,6 +157,11 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNDoubleStrand> ds)
   return color;
 }
 
+void MSVColors::SetColor(ADNArray<float> color, ADNPointer<ADNAtom> a)
+{
+  SetColor(color, a(), atomColors_);
+}
+
 void MSVColors::SetColor(ADNArray<float> color, ADNPointer<ADNNucleotide> nt)
 {
   SetColor(color, nt(), ntsColors_);
@@ -135,6 +182,8 @@ void MSVColors::SetColor(ADNArray<float> color, ADNPointer<ADNDoubleStrand> ds)
   SetColor(color, ds(), dssColors_);
 }
 
+
+
 void MSVColors::SetStandardDoubleStrandColorScheme()
 {
   SEConfig& config = SEConfig::GetInstance();
@@ -145,6 +194,11 @@ void MSVColors::SetStandardDoubleStrandColorScheme()
   doubleStrandColorScheme_(0, 2) = config.double_helix_V_color[2];
   doubleStrandColorScheme_(0, 3) = config.double_helix_V_color[3];
 
+}
+
+void MSVColors::SetAtomColorScheme(ADNArray<float> colorScheme)
+{
+  atomColorScheme_ = colorScheme;
 }
 
 void MSVColors::SetStandardSingleStrandColorScheme()
@@ -166,6 +220,40 @@ void MSVColors::SetStandardSingleStrandColorScheme()
   singleStrandColorScheme_(scaffoldColorNum, 1) = config.nucleotide_E_Color[1];
   singleStrandColorScheme_(scaffoldColorNum, 2) = config.nucleotide_E_Color[2];
   singleStrandColorScheme_(scaffoldColorNum, 3) = config.nucleotide_E_Color[3];
+}
+
+void MSVColors::SetStandardAtomColorScheme()
+{
+  SEConfig& config = SEConfig::GetInstance();
+
+  int numAtomTypes = 4;
+
+  atomColorScheme_ = ADNArray<float>(4, numAtomTypes);
+
+  //O
+  atomColorScheme_(0, 0) = 0.9f;
+  atomColorScheme_(0, 1) = 0.1f;
+  atomColorScheme_(0, 2) = 0.0f;
+  atomColorScheme_(0, 3) = 1.0f;
+
+  //C
+  atomColorScheme_(1, 0) = 0.15f;
+  atomColorScheme_(1, 1) = 0.15f;
+  atomColorScheme_(1, 2) = 0.15f;
+  atomColorScheme_(1, 3) = 1.0f;
+
+  //N
+  atomColorScheme_(2, 0) = 0.1f;
+  atomColorScheme_(2, 1) = 0.1f;
+  atomColorScheme_(2, 2) = 0.9f;
+  atomColorScheme_(2, 3) = 1.0f;
+
+  //P
+  atomColorScheme_(3, 0) = 0.9f;
+  atomColorScheme_(3, 1) = 0.5f;
+  atomColorScheme_(3, 2) = 0.0f;
+  atomColorScheme_(3, 3) = 1.0f;
+
 }
 
 void MSVColors::SetStandardNucleotideColorScheme()
