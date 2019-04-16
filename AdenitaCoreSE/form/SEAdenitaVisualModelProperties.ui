@@ -39,7 +39,7 @@
      <item row="1" column="0" colspan="2">
       <widget class="QSlider" name="hslScale">
        <property name="maximum">
-        <number>40</number>
+        <number>50</number>
        </property>
        <property name="singleStep">
         <number>1</number>

@@ -27,14 +27,13 @@ class SEAdenitaVisualModel : public SBMVisualModel {
 
 public :
 
-  double const MAX_SCALE = 4.0;
-
   enum Scale {
     ATOMS_STICKS = 0,
     ATOMS_BALLS = 1,
     NUCLEOTIDES = 2,
     SINGLE_STRANDS = 3,
-    DOUBLE_STRANDS = 4
+    DOUBLE_STRANDS = 4,
+    OBJECTS = 5
   };
 
 	/// \name Constructors and destructors
@@ -125,9 +124,10 @@ private:
   void												        prepareTransition(); // Prepare the arrays for displaying (this separates the interpolation from display)
   void												        prepareDiscreteScales();
   void												        displayTransition(bool forSelection); 
-  void												        prepareSticksToBalls(double iv, bool forSelection = false);
-  void												        prepareNucleotidesToSingleStrands(double iv, bool forSelection = false);
-  void												        prepareSingleStrandsToDoubleStrands(double iv, bool forSelection = false);
+  void												        prepareSticksToBalls(double iv);
+  void												        prepareNucleotidesToSingleStrands(double iv);
+  void												        prepareSingleStrandsToDoubleStrands(double iv);
+  void												        prepareDoubleStrandsToObjects(double iv);
 
 
   // general display properties 
