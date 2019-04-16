@@ -49,9 +49,6 @@ void SEAdenitaVisualModel::serialize(SBCSerializer* serializer, const SBNodeInde
 	// Please refer to the SDK documentation for more information.
 	// Complete this function to serialize your visual model.
 
-
-
-
 }
 
 void SEAdenitaVisualModel::unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber, const SBVersionNumber& classVersionNumber) {
@@ -400,27 +397,27 @@ void SEAdenitaVisualModel::prepareTransition()
 
   if (nanorobot_ == nullptr) return;
   
-  if (scale_ > MAX_SCALE) scale_ = MAX_SCALE;
+  if (scale_ > OBJECTS) scale_ = OBJECTS;
 
   float interpolated = 1.0f - (floor(scale_ + 1) - scale_);
 
-  if (scale_ < (float)ATOMS_STICKS + 0.01) {
+  if (scale_ < (float)ATOMS_STICKS) {
     //prepareSticksToBalls(interpolated);
   }
-  else if (scale_ < (float)ATOMS_BALLS + 0.01) {
+  else if (scale_ < (float)ATOMS_BALLS) {
     //prepareBallsToNucleotides(interpolated);
   }
-  else if (scale_ < (float)NUCLEOTIDES + 0.01) {
+  else if (scale_ < (float)NUCLEOTIDES) {
   }
-  else if (scale_ < (float)SINGLE_STRANDS + 0.01) {
+  else if (scale_ < (float)SINGLE_STRANDS) {
     prepareNucleotidesToSingleStrands(interpolated);
   }
-  else if (scale_ < (float)DOUBLE_STRANDS + 0.01) {
+  else if (scale_ < (float)DOUBLE_STRANDS) {
     prepareSingleStrandsToDoubleStrands(interpolated);
   }
-  else {
-    prepareDoubleStrands();
-  }
+  else if (scale_ < (float)OBJECTS) {
+    prepareDoubleStrandsToObjects(interpolated);
+  } 
 
 }
 
@@ -483,12 +480,12 @@ void SEAdenitaVisualModel::displayTransition(bool forSelection)
   }
 }
 
-void SEAdenitaVisualModel::prepareSticksToBalls(double iv, bool forSelection /*= false*/)
+void SEAdenitaVisualModel::prepareSticksToBalls(double iv)
 {
   
 }
 
-void SEAdenitaVisualModel::prepareNucleotidesToSingleStrands(double iv, bool forSelection /*= false*/)
+void SEAdenitaVisualModel::prepareNucleotidesToSingleStrands(double iv)
 {
   nPositions_ = nPositionsNt_;
   nCylinders_ = nCylindersNt_;
@@ -522,7 +519,7 @@ void SEAdenitaVisualModel::prepareNucleotidesToSingleStrands(double iv, bool for
 
 }
 
-void SEAdenitaVisualModel::prepareSingleStrandsToDoubleStrands(double iv, bool forSelection)
+void SEAdenitaVisualModel::prepareSingleStrandsToDoubleStrands(double iv)
 {
 
   nPositions_ = nPositionsNt_;
@@ -568,6 +565,18 @@ void SEAdenitaVisualModel::prepareSingleStrandsToDoubleStrands(double iv, bool f
 
   }
 
+}
+
+void SEAdenitaVisualModel::prepareDoubleStrandsToObjects(double iv)
+{
+  nPositions_ = nPositionsDS_;
+  nCylinders_ = 0;
+
+  positions_ = positionsDS_;
+  radiiV_ = radiiVDS_;
+  flags_ = flagsDS_;
+  nodeIndices_ = nodeIndicesDS_;
+  colorsV_ = colorsVDS_;
 }
 
 void SEAdenitaVisualModel::highlightFlagChanged()
@@ -2112,6 +2121,7 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
   }
 
   if (baseEvent->getType() == SBBaseEvent::MaterialChanged) {
+    prepareDiscreteScales();
     changeScale(scale_, false);
   }
 
