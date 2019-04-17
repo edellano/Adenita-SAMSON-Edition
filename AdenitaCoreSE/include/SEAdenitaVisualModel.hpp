@@ -103,6 +103,7 @@ private:
   void												        initAtoms(bool createIndex = true);
   void												        initNucleotidesAndSingleStrands(bool createIndex = true);
   void												        initDoubleStrands(bool createIndex = true);
+  void                                initDisplayIndices();
   ADNArray<unsigned int>              getAtomIndices();
   ADNArray<unsigned int>              getNucleotideIndices();
   ADNArray<unsigned int>              getBaseSegmentIndices();
@@ -194,7 +195,8 @@ private:
   std::map<ADNAtom*, unsigned int> atomMap_;
   std::map<ADNNucleotide*, unsigned int> ntMap_;
   std::map<ADNBaseSegment*, unsigned int> bsMap_;
-  boost::bimap<unsigned int, unsigned int> atomNtIndexMap_;
+  map<unsigned int, unsigned> atomNtIndexMap_;
+  map<unsigned int, unsigned> ntBsIndexMap_;
 
   map<ADNNucleotide*, float> sortedNucleotidesByDist_;
   map<ADNSingleStrand*, float> sortedSingleStrandsByDist_;
