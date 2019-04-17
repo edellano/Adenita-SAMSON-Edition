@@ -73,45 +73,54 @@ float SEAdenitaVisualModel::getScale()
   return scale_;
 }
 
-void SEAdenitaVisualModel::changeScale(double scale, bool createIndex/* = true*/)
+void SEAdenitaVisualModel::changeScale(float scale, bool createIndex/* = true*/)
 {
   scale_ = scale;
 
-  prepareTransition();
+  if (nanorobot_ == nullptr) return;
 
-  SAMSON::requestViewportUpdate();
+  if (scale_ > OBJECTS) scale_ = OBJECTS;
+
+  float interpolated = 1.0f - (floor(scale_ + 1) - scale_);
+
+  if (scale_ < (float)ATOMS_STICKS) {
+    //prepareSticksToBalls(interpolated);
+  }
+  else if (scale_ < (float)ATOMS_BALLS) {
+  }
+  else if (scale_ < (float)NUCLEOTIDES) {
+    prepareBallsToNucleotides(interpolated);
+  }
+  else if (scale_ < (float)SINGLE_STRANDS) {
+    prepareNucleotidesToSingleStrands(interpolated);
+  }
+  else if (scale_ < (float)DOUBLE_STRANDS) {
+    prepareSingleStrandsToDoubleStrands(interpolated);
+  }
+  else if (scale_ < (float)OBJECTS) {
+    prepareDoubleStrandsToObjects(interpolated);
+  }
+
 }
 
-void SEAdenitaVisualModel::changeDimension(int dimension)
+void SEAdenitaVisualModel::changeDimension(float dimension)
 {
   dim_ = dimension;
-  ADNLogger& logger = ADNLogger::GetLogger();
-  /*
-    auto parts = nanorobot_->GetParts();
-    auto conformations = nanorobot_->GetConformations();
-    logger.Log(QString("num conformations"));
-    logger.Log(QString::number(conformations.size()));
+ 
+  if (nanorobot_ == nullptr) return;
 
-    auto conformation = conformations[dim_ - 1];
-    SB_FOR(auto part, parts) {
+  float interpolated = 1.0f - (floor(dimension + 1) - dimension);
 
-      auto singleStrands = nanorobot_->GetSingleStrands(part);
-      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-          auto index = ntMap_[nt()];
+  if (dim_ < 2.0f) {
+    prepare1Dto2D(interpolated);
+  }
+  else if (dim_ < 3.0f) {
+    prepare2Dto3D(interpolated);
+  } 
+  else if (dim_ >= 3.0f) {
+    prepare3D(interpolated);
+  }
 
-          SBPosition3 pos;
-          conformation->getPosition(index, pos);
-
-          positions_(index, 0) = pos[0].getValue();
-          positions_(index, 1) = pos[1].getValue();
-          positions_(index, 2) = pos[2].getValue();
-        }
-      }
-    }*/
-
-  SAMSON::requestViewportUpdate();
 }
 
 void SEAdenitaVisualModel::changeVisibility(double layer)
@@ -245,7 +254,7 @@ void SEAdenitaVisualModel::update()
   initNucleotidesAndSingleStrands(true);
   initDoubleStrands(true);
 
-  prepareDiscreteScales();
+  prepareDiscreteScalesDim();
 
   changeScale(scale_);
 
@@ -273,6 +282,10 @@ void SEAdenitaVisualModel::initNucleotidesAndSingleStrands(bool createIndex /* =
   radiiVSS_ = ADNArray<float>(nPositions);
   radiiESS_ = ADNArray<float>(nPositions);
   
+  positionsNt2D_ = ADNArray<float>(3, nPositions);
+  positionsNt1D_ = ADNArray<float>(3, nPositions);
+
+
   if (createIndex) {
     indicesNt_ = getNucleotideIndices();
   }
@@ -369,8 +382,6 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 
   auto parts = nanorobot_->GetParts();
 
-  
-
   size_t sumNumEdges = 0;
 
   SB_FOR(auto part, parts) {
@@ -398,19 +409,6 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 
         cur = nanorobot_->GetNucleotideNext(cur);
       }
-
-      //for (int j = 0; j < nucleotides.size() - 1; ++j) {
-      //  auto cur = nucleotides[j];
-      //  unsigned int curIndex;
-      //  curIndex = ntMap[cur];
-      //  unsigned int nextIndex;
-      //  auto next = nucleotides[j + 1];
-      //  nextIndex = ntMap[next];
-
-      //  curIndices(2 * j) = curIndex;
-      //  curIndices(2 * j + 1) = nextIndex;
-
-      //}
 
       for (int k = 0; k < curNCylinders * 2; ++k) {
         indices(sumNumEdges + k) = curIndices(k);
@@ -440,54 +438,49 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getBaseSegmentIndices()
   unsigned int nPositions = nanorobot_->GetNumberOfBaseSegments();
   unsigned int nCylinders = boost::numeric_cast<unsigned int>(nPositions - nDs);
  
-
-
-
   ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
 
   return indices;
-  
-
 }
 
-
-void SEAdenitaVisualModel::prepareTransition()
-{
-
-  SEConfig& config = SEConfig::GetInstance();
-
-  if (nanorobot_ == nullptr) return;
-  
-  if (scale_ > OBJECTS) scale_ = OBJECTS;
-
-  float interpolated = 1.0f - (floor(scale_ + 1) - scale_);
-
-  if (scale_ < (float)ATOMS_STICKS) {
-    //prepareSticksToBalls(interpolated);
-  }
-  else if (scale_ < (float)ATOMS_BALLS) {
-  }
-  else if (scale_ < (float)NUCLEOTIDES) {
-    prepareBallsToNucleotides(interpolated);
-  }
-  else if (scale_ < (float)SINGLE_STRANDS) {
-    prepareNucleotidesToSingleStrands(interpolated);
-  }
-  else if (scale_ < (float)DOUBLE_STRANDS) {
-    prepareSingleStrandsToDoubleStrands(interpolated);
-  }
-  else if (scale_ < (float)OBJECTS) {
-    prepareDoubleStrandsToObjects(interpolated);
-  } 
-
-}
-
-void SEAdenitaVisualModel::prepareDiscreteScales()
+void SEAdenitaVisualModel::prepareDiscreteScalesDim()
 {
   prepareAtoms();
   prepareNucleotides();
   prepareSingleStrands();
   prepareDoubleStrands();
+  prepareDimensions();
+}
+
+void SEAdenitaVisualModel::prepareDimensions()
+{
+  auto parts = nanorobot_->GetParts();
+  auto conformations = nanorobot_->GetConformations();
+
+  if (conformations.size() <= 1) return;
+
+  auto conf2D = conformations[1];
+  auto conf1D = conformations[2];
+
+  for (auto it = ntMap_.begin(); it != ntMap_.end(); it++) {
+    auto nt = it->first;
+    auto index = it->second;
+
+    SBPosition3 pos2D;
+    conf2D->getPosition(nt->GetBackboneCenterAtom()(), pos2D);
+
+    positionsNt2D_(index, 0) = pos2D[0].getValue();
+    positionsNt2D_(index, 1) = pos2D[1].getValue();
+    positionsNt2D_(index, 2) = pos2D[2].getValue();
+
+    SBPosition3 pos1D;
+    conf1D->getPosition(nt->GetBackboneCenterAtom()(), pos1D);
+
+    positionsNt1D_(index, 0) = pos1D[0].getValue();
+    positionsNt1D_(index, 1) = pos1D[1].getValue();
+    positionsNt1D_(index, 2) = pos1D[2].getValue();
+
+  }
 }
 
 void SEAdenitaVisualModel::displayTransition(bool forSelection)
@@ -678,6 +671,40 @@ void SEAdenitaVisualModel::prepareDoubleStrandsToObjects(double iv)
   colorsV_ = colorsVDS_;
 }
 
+void SEAdenitaVisualModel::prepare1Dto2D(double iv)
+{
+  for (auto it = ntMap_.begin(); it != ntMap_.end(); it++)
+  {
+    auto nt = it->first;
+    auto index = it->second;
+
+    positions_(index, 0) = positionsNt1D_(index, 0) + iv * (positionsNt2D_(index, 0) - positionsNt1D_(index, 0));
+    positions_(index, 1) = positionsNt1D_(index, 1) + iv * (positionsNt2D_(index, 1) - positionsNt1D_(index, 1));
+    positions_(index, 2) = positionsNt1D_(index, 2) + iv * (positionsNt2D_(index, 2) - positionsNt1D_(index, 2));
+
+  }
+}
+
+void SEAdenitaVisualModel::prepare2Dto3D(double iv)
+{
+  for (auto it = ntMap_.begin(); it != ntMap_.end(); it++)
+  {
+    auto nt = it->first;
+    auto index = it->second;
+    
+    positions_(index, 0) = positionsNt2D_(index, 0) + iv * (positionsNt_(index, 0) - positionsNt2D_(index, 0));
+    positions_(index, 1) = positionsNt2D_(index, 1) + iv * (positionsNt_(index, 1) - positionsNt2D_(index, 1));
+    positions_(index, 2) = positionsNt2D_(index, 2) + iv * (positionsNt_(index, 2) - positionsNt2D_(index, 2));
+
+  }
+
+}
+
+void SEAdenitaVisualModel::prepare3D(double iv)
+{
+  positions_ = positionsNt_;
+}
+
 void SEAdenitaVisualModel::emphasizeColors(ADNArray<float> & colors, vector<unsigned int> & indices, float r, float g, float b, float a)
 {
   for (int i = 0; i < indices.size(); i++) {
@@ -705,7 +732,6 @@ void SEAdenitaVisualModel::replaceColors(ADNArray<float> & colors, vector<unsign
     colors(index, 2) = color[2];
     colors(index, 3) = color[3];
     
-
   }
 }
 
@@ -1034,7 +1060,7 @@ void SEAdenitaVisualModel::setSingleStrandColors(int index)
 
   }
 
-  prepareDiscreteScales();
+  prepareDiscreteScalesDim();
   changeScale(scale_, false);
 }
 
@@ -1126,7 +1152,7 @@ void SEAdenitaVisualModel::setNucleotideColors(int index)
     regularColors->SetNucleotideColorScheme(pastel2);
 
   }
-  prepareDiscreteScales();
+  prepareDiscreteScalesDim();
   changeScale(scale_, false);
 }
 
@@ -1282,7 +1308,7 @@ void SEAdenitaVisualModel::setDoubleStrandColors(int index)
 
   }
 
-  prepareDiscreteScales();
+  prepareDiscreteScalesDim();
   changeScale(scale_, false);
 }
 
@@ -1430,7 +1456,8 @@ void SEAdenitaVisualModel::display() {
   auto ed = SAMSON::getActiveEditor();
   /*logger.Log(ed->getName());*/
   if (ed->getName() == "SEERotation" || ed->getName() == "SEETranslation") {
-    prepareDiscreteScales();
+    prepareDiscreteScalesDim();
+    changeScale(scale_);
   }
 
   displayTransition(false);
@@ -1953,7 +1980,7 @@ void SEAdenitaVisualModel::prepareAtoms()
 
 void SEAdenitaVisualModel::highlightNucleotides()
 {
-  prepareDiscreteScales();
+  prepareDiscreteScalesDim();
 
   float * colorHighlight = new float[4];
   colorHighlight[0] = 0.2f;
@@ -2167,11 +2194,12 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
   }
 
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
+    prepareDiscreteScalesDim();
     changeScale(scale_, false);
   }
 
   if (baseEvent->getType() == SBBaseEvent::MaterialChanged) {
-    prepareDiscreteScales();
+    prepareDiscreteScalesDim();
     changeScale(scale_, false);
   }
 

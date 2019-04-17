@@ -66,8 +66,8 @@ public :
 	//@{
   float       												getScale();																
   void												        changeScaleDiscrete(int scale, bool createIndex = true);																///< Displays the visual model
-  void												        changeScale(double scale, bool createIndex = true);																///< Displays the visual model
-  void												        changeDimension(int dimension);																///< Displays the visual model
+  void												        changeScale(float scale, bool createIndex = true);																///< Displays the visual model
+  void												        changeDimension(float dimension);																///< Displays the visual model
   void												        changeVisibility(double layer);																///< Displays the visual model
   void                                changePropertyColors(int propertyIdx, int colorSchemeIdx);
   void                                changeHighlight(int highlightIdx);
@@ -124,21 +124,24 @@ private:
   void												        displayNucleotides(bool forSelection = false);
   void												        displaySingleStrands(bool forSelection = false);
   void												        displayDoubleStrands(bool forSelection = false);
-  void												        prepareTransition(); // Prepare the arrays for displaying (this separates the interpolation from display)
-  void												        prepareDiscreteScales();
+  void												        prepareDiscreteScalesDim();
+  void												        prepareDimensions();
   void												        displayTransition(bool forSelection); 
   void												        prepareSticksToBalls(double iv);
   void												        prepareBallsToNucleotides(double iv);
   void												        prepareNucleotidesToSingleStrands(double iv);
   void												        prepareSingleStrandsToDoubleStrands(double iv);
   void												        prepareDoubleStrandsToObjects(double iv);
+  void                                prepare1Dto2D(double iv);
+  void                                prepare2Dto3D(double iv);
+  void                                prepare3D(double iv);
   void                                emphasizeColors(ADNArray<float> & colors, vector<unsigned int> & indices, float r, float g, float b, float a);
   void                                replaceColors(ADNArray<float> & colors, vector<unsigned int> & indices, float * color);
   // general display properties 
   ADNArray<float> nucleotideEColor_;
   
-  double scale_ = 3;
-  int dim_ = 3;
+  float scale_ = 3.0f;
+  float dim_ = 3.0f;
 
   ADNNanorobot * nanorobot_;
 
@@ -192,6 +195,10 @@ private:
   ADNArray<float> radiiVDS_;
   ADNArray<unsigned int> flagsDS_;
   ADNArray<unsigned int> nodeIndicesDS_;
+
+  //2D
+  ADNArray<float> positionsNt2D_;
+  ADNArray<float> positionsNt1D_;
 
   std::map<ADNAtom*, unsigned int> atomMap_;
   std::map<ADNNucleotide*, unsigned int> ntMap_;
