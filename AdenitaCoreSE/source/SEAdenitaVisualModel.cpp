@@ -548,21 +548,21 @@ void SEAdenitaVisualModel::prepareBallsToNucleotides(double iv)
 
   positions_ = ADNArray<float>(3, nPositions_);
   radiiV_ = ADNArray<float>(nPositions_);
-  radiiE_ = ADNArray<float>(nPositions_);
+  radiiE_ = ADNArray<float>(0);
   colorsV_ = ADNArray<float>(4, nPositions_);
-  //colorsE_ = ADNArray<float>(4, nPositions_);
+  colorsE_ = ADNArray<float>(0);
   //flags_ = ADNArray<unsigned int>(nPositions_);
   //nodeIndices_ = ADNArray<unsigned int>(nPositions_);
-  //indices_ = ADNArray<unsigned int>(nCylinders_ * 2);
+  indices_ = ADNArray<unsigned int>(0);
 
   //positions_ = positionsAtom_;
   //radiiV_ = radiiVAtom_;
   //radiiE_ = radiiEAtom_;
   flags_ = flagsAtom_;
   nodeIndices_ = nodeIndicesAtom_;
-  indices_ = indicesAtom_;
+  //indices_ = indicesAtom_;
   //colorsV_ = colorsVAtom_;
-  colorsE_ = colorsEAtom_;
+  //colorsE_ = colorsEAtom_;
 
   for (auto it = ntMap_.begin(); it != ntMap_.end(); it++)
   {
@@ -582,7 +582,6 @@ void SEAdenitaVisualModel::prepareBallsToNucleotides(double iv)
       colorsV_(indexAtom, 3) = colorsVAtom_(indexAtom, 3) + iv * (colorsVNt_(indexNt, 3) - colorsVAtom_(indexAtom, 3));
 
       radiiV_(indexAtom) = radiiVAtom_(indexAtom) + iv * (radiiVNt_(indexNt) - radiiVAtom_(indexAtom));
-      radiiE_(indexAtom) = radiiEAtom_(indexAtom) + iv * (radiiENt_(indexNt) - radiiEAtom_(indexAtom));
     }
   }
 }
