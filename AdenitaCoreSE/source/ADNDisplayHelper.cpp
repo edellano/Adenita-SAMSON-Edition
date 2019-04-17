@@ -811,30 +811,6 @@ void ADNDisplayHelper::displayTriangleMesh(DASPolyhedron * p)
   );
 }
 
-void ADNDisplayHelper::replaceCylinderColors(ADNArray<float> & colors, vector<unsigned int> indices, float * color)
-{
-
-  for (int i = 0; i < indices.size(); i++) {
-    auto index = indices[i];
-
-    colors(index, 0) = color[0];
-    colors(index, 1) = color[1];
-    colors(index, 2) = color[2];
-    colors(index, 3) = color[3];
-  }
-}
-
-void ADNDisplayHelper::deemphasizeCylinderColors(ADNArray<float> & colors, vector<unsigned int> indices, float r, float g, float b, float a)
-{
-  for (int i = 0; i < indices.size(); i++) {
-    auto index = indices[i];
-
-    colors(index, 0) *= r;
-    colors(index, 1) *= g;
-    colors(index, 2) *= b;
-    colors(index, 3) *= a;
-  }
-}
 
 void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part, float basePairRadius, float opaqueness)
 {
