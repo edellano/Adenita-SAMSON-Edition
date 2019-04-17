@@ -716,32 +716,24 @@ void SEAdenitaVisualModel::highlightFlagChanged()
   if (scale_ < (float)NUCLEOTIDES) {
   }
   else if (scale_ >= (float)NUCLEOTIDES && scale_ < (float)DOUBLE_STRANDS) {
-    SB_FOR(auto part, parts) {
-      auto singleStrands = nanorobot_->GetSingleStrands(part);
-      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-          auto index = ntMap_[nt()];
-          flags_(index) = nt->getInheritedFlags();
-        }
-      }
+    for (auto it = ntMap_.begin(); it != ntMap_.end(); it++) {
+      auto nt = it->first;
+      auto index = it->second;
+
+      flagsNt_(index) = nt->getInheritedFlags();
     }
+
   }
   else if (scale_ >= (float)DOUBLE_STRANDS) {
-    SB_FOR(auto part, parts) {
-      auto doubleStrands = part->GetDoubleStrands();
-      SB_FOR(auto doubleStrand, doubleStrands) {
-        auto baseSegments = doubleStrand->GetBaseSegments();
-        SB_FOR(auto baseSegment, baseSegments) {
-          auto index = bsMap_[baseSegment];
-          flags_(index) = baseSegment->getInheritedFlags();
-          ++index;
-        }
-      }
+    for (auto it = bsMap_.begin(); it != bsMap_.end(); it++) {
+      auto bs = it->first;
+      auto index = it->second;
+
+      flagsDS_(index) = bs->getInheritedFlags();
     }
   }
 
-  SAMSON::requestViewportUpdate();
+  changeScale(scale_);
 
 }
 
