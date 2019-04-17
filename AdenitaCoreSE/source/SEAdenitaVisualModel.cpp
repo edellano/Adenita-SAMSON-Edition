@@ -460,7 +460,7 @@ void SEAdenitaVisualModel::prepareDimensions()
   if (conformations.size() <= 1) return;
 
   auto conf2D = conformations[1];
-  auto conf1D = conformations[0];
+  auto conf1D = conformations[2];
 
   for (auto it = ntMap_.begin(); it != ntMap_.end(); it++) {
     auto nt = it->first;
@@ -1457,6 +1457,7 @@ void SEAdenitaVisualModel::display() {
   /*logger.Log(ed->getName());*/
   if (ed->getName() == "SEERotation" || ed->getName() == "SEETranslation") {
     prepareDiscreteScalesDim();
+    changeScale(scale_);
   }
 
   displayTransition(false);
