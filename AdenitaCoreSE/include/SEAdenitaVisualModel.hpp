@@ -107,7 +107,7 @@ private:
   ADNArray<unsigned int>              getAtomIndices();
   ADNArray<unsigned int>              getNucleotideIndices();
   ADNArray<unsigned int>              getBaseSegmentIndices();
-  void												        highlightFlagChanged(); //scale 9: display polyhedron 
+  void												        changeHighlightFlag(); //scale 9: display polyhedron 
   SEAdenitaCoreSEApp*					        getAdenitaApp() const;															///< Returns a pointer to the app
   void                                orderVisibility();
   void                                setupPropertyColors();

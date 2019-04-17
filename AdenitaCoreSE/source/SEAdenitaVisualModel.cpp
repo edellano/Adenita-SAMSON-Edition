@@ -709,11 +709,17 @@ void SEAdenitaVisualModel::replaceColors(ADNArray<float> & colors, vector<unsign
   }
 }
 
-void SEAdenitaVisualModel::highlightFlagChanged()
+void SEAdenitaVisualModel::changeHighlightFlag()
 {
   auto parts = nanorobot_->GetParts();
 
   if (scale_ < (float)NUCLEOTIDES) {
+    for (auto it = atomMap_.begin(); it != atomMap_.end(); it++) {
+      auto a = it->first;
+      auto index = it->second;
+
+      flagsAtom_(index) = a->getInheritedFlags();
+    }
   }
   else if (scale_ >= (float)NUCLEOTIDES && scale_ < (float)DOUBLE_STRANDS) {
     for (auto it = ntMap_.begin(); it != ntMap_.end(); it++) {
@@ -1028,7 +1034,8 @@ void SEAdenitaVisualModel::setSingleStrandColors(int index)
 
   }
 
-  
+  prepareDiscreteScales();
+  changeScale(scale_, false);
 }
 
 void SEAdenitaVisualModel::setNucleotideColors(int index)
@@ -1119,6 +1126,8 @@ void SEAdenitaVisualModel::setNucleotideColors(int index)
     regularColors->SetNucleotideColorScheme(pastel2);
 
   }
+  prepareDiscreteScales();
+  changeScale(scale_, false);
 }
 
 void SEAdenitaVisualModel::setDoubleStrandColors(int index)
@@ -1273,6 +1282,8 @@ void SEAdenitaVisualModel::setDoubleStrandColors(int index)
 
   }
 
+  prepareDiscreteScales();
+  changeScale(scale_, false);
 }
 
 void SEAdenitaVisualModel::setupPropertyColors()
@@ -2148,11 +2159,11 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
 	// SAMSON Element generator pro tip: implement this function if you need to handle base events (e.g. when a node for which you provide a visual representation emits a base signal, such as when it is erased)
 
   if (baseEvent->getType() == SBBaseEvent::HighlightingFlagChanged){
-    highlightFlagChanged();
+    changeHighlightFlag();
   }
 
   if (baseEvent->getType() == SBBaseEvent::SelectionFlagChanged) {
-    highlightFlagChanged();
+    changeHighlightFlag();
   }
 
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
