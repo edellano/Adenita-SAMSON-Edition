@@ -680,11 +680,6 @@ void SEAdenitaVisualModel::prepareDoubleStrandsToObjects(double iv)
   colorsV_ = colorsVDS_;
 }
 
-void SEAdenitaVisualModel::interpolate(float & result, float & max, float & min, double & iv)
-{
-  result = min + iv * (max - min);
-}
-
 void SEAdenitaVisualModel::highlightFlagChanged()
 {
   auto parts = nanorobot_->GetParts();
@@ -704,7 +699,6 @@ void SEAdenitaVisualModel::highlightFlagChanged()
     }
   }
   else if (scale_ >= (float)DOUBLE_STRANDS) {
-
     SB_FOR(auto part, parts) {
       auto doubleStrands = part->GetDoubleStrands();
       SB_FOR(auto doubleStrand, doubleStrands) {
@@ -1816,7 +1810,7 @@ void SEAdenitaVisualModel::displayForDebugging()
 void SEAdenitaVisualModel::displayCircularDNAConnection()
 {
 
-  if (scale_ < (float)NUCLEOTIDES && scale_ > (float)SINGLE_STRANDS) return;
+  if (scale_ < (float)NUCLEOTIDES || scale_ > (float)SINGLE_STRANDS) return;
 
   auto parts = nanorobot_->GetParts();
 
