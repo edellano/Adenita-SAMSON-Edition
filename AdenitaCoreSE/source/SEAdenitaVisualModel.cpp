@@ -1950,6 +1950,8 @@ void SEAdenitaVisualModel::prepareAtoms()
 
 void SEAdenitaVisualModel::highlightNucleotides()
 {
+  prepareDiscreteScales();
+
   float * colorHighlight = new float[4];
   colorHighlight[0] = 0.2f;
   colorHighlight[1] = 0.8f;
@@ -1963,7 +1965,7 @@ void SEAdenitaVisualModel::highlightNucleotides()
   vector<unsigned int> bsContext;
 
   if (highlightType_ == HighlightType::NONE) {
-    prepareDiscreteScales();
+    
   }
   else if (highlightType_ == HighlightType::CROSSOVERS) {
 
