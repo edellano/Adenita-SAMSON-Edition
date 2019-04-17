@@ -239,6 +239,7 @@ void SEAdenitaVisualModel::update()
   //SAMSON::getActiveDocument()->connectDocumentSignalToSlot(
   //  this,
   //  SB_SLOT(&SEAdenitaVisualModel::onDocumentEvent));
+  initDisplayIndices();
 
   initAtoms(true);
   initNucleotidesAndSingleStrands(true);
@@ -278,6 +279,56 @@ void SEAdenitaVisualModel::initNucleotidesAndSingleStrands(bool createIndex /* =
 
 }
 
+void SEAdenitaVisualModel::initDisplayIndices() {
+
+  auto parts = nanorobot_->GetParts();
+
+  bsMap_.clear();
+
+  unsigned int indexDS = 0;
+
+  SB_FOR(auto part, parts) {
+    auto doubleStrands = nanorobot_->GetDoubleStrands(part);
+    SB_FOR(ADNPointer<ADNDoubleStrand> ds, doubleStrands) {
+      auto baseSegments = ds->GetBaseSegments();
+      SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
+        bsMap_.insert(make_pair(bs(), indexDS));
+        ++indexDS;
+      }
+    }
+  }
+
+  unsigned int indexAtom = 0;
+  unsigned int indexNt = 0;
+
+  ntMap_.clear();
+  atomMap_.clear();
+  SB_FOR(auto part, parts) {
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        ntMap_.insert(make_pair(nt(), indexNt));
+        auto atoms = nt->GetAtoms();
+        SB_FOR(ADNPointer<ADNAtom> a, atoms) {
+          atomMap_.insert(make_pair(a(), indexAtom));
+
+          //associate atom to nt index
+          atomNtIndexMap_.insert(make_pair(indexAtom, indexNt));
+          
+          ++indexAtom;
+        }
+
+        //associate nt to bs index
+        auto bs = nt->GetBaseSegment();
+        ntBsIndexMap_.insert(make_pair(indexNt, bsMap_[bs()]));
+
+        ++indexNt;
+      }
+    }
+  }
+}
+
 void SEAdenitaVisualModel::initDoubleStrands(bool createIndex /*= true*/)
 {
 
@@ -290,25 +341,7 @@ void SEAdenitaVisualModel::initDoubleStrands(bool createIndex /*= true*/)
   flagsDS_ = ADNArray<unsigned int>(nPositions);
   nodeIndicesDS_ = ADNArray<unsigned int>(nPositions);
 
-  bsMap_.clear();
-
-  auto parts = nanorobot_->GetParts();
-
-  unsigned int index = 0;
-
-  SB_FOR(auto part, parts) {
-    auto doubleStrands = nanorobot_->GetDoubleStrands(part);
-    SB_FOR(ADNPointer<ADNDoubleStrand> ds, doubleStrands) {
-      auto baseSegments = ds->GetBaseSegments();
-      SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
-        bsMap_.insert(make_pair(bs(), index));
-        ++index;
-      }
-    }
-  }
-  
   if (createIndex) {
-    /*indicesDS_ = getBaseSegmentIndices();*/
   }
 }
 
@@ -316,27 +349,7 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getAtomIndices()
 {
 
   ADNArray<unsigned int> indices = ADNArray<unsigned int>(0);
-
-  ntMap_.clear();
-
-  unsigned int index = 0;
-
-  auto parts = nanorobot_->GetParts();
-
-  SB_FOR(auto part, parts) {
-    auto singleStrands = nanorobot_->GetSingleStrands(part);
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        auto atoms = nt->GetAtoms();
-        SB_FOR(ADNPointer<ADNAtom> a, atoms) {
-          atomMap_.insert(make_pair(a(), index));
-          ++index;
-        }
-      }
-    }
-  }
-
+  
   return indices;
 }
 
@@ -351,23 +364,12 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 
   ADNArray<unsigned int> indices = ADNArray<unsigned int>(nCylinders * 2);
   
-  ntMap_.clear();
 
-  unsigned int index = 0;
   //this init can be optimized in the future
 
   auto parts = nanorobot_->GetParts();
 
-  SB_FOR(auto part, parts) {
-    auto signelStrands = nanorobot_->GetSingleStrands(part);
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        ntMap_.insert(make_pair(nt(), index));
-        ++index;
-      }
-    }
-  }
+  
 
   size_t sumNumEdges = 0;
 
@@ -564,25 +566,22 @@ void SEAdenitaVisualModel::prepareBallsToNucleotides(double iv)
   //colorsV_ = colorsVAtom_;
   //colorsE_ = colorsEAtom_;
 
-  for (auto it = ntMap_.begin(); it != ntMap_.end(); it++)
+  for (auto it = atomMap_.begin(); it != atomMap_.end(); it++)
   {
-    auto nt = it->first;
-    auto atoms = nt->GetAtoms();
-    SB_FOR(ADNPointer<ADNAtom> a, atoms) {
-      auto indexAtom = atomMap_[a()];
-      auto indexNt = it->second;
+    auto indexAtom = it->second;
+    auto indexNt = atomNtIndexMap_[indexAtom];
 
-      positions_(indexAtom, 0) = positionsAtom_(indexAtom, 0) + iv * (positionsNt_(indexNt, 0) - positionsAtom_(indexAtom, 0));
-      positions_(indexAtom, 1) = positionsAtom_(indexAtom, 1) + iv * (positionsNt_(indexNt, 1) - positionsAtom_(indexAtom, 1));
-      positions_(indexAtom, 2) = positionsAtom_(indexAtom, 2) + iv * (positionsNt_(indexNt, 2) - positionsAtom_(indexAtom, 2));
-      
-      colorsV_(indexAtom, 0) = colorsVAtom_(indexAtom, 0) + iv * (colorsVNt_(indexNt, 0) - colorsVAtom_(indexAtom, 0));
-      colorsV_(indexAtom, 1) = colorsVAtom_(indexAtom, 1) + iv * (colorsVNt_(indexNt, 1) - colorsVAtom_(indexAtom, 1));
-      colorsV_(indexAtom, 2) = colorsVAtom_(indexAtom, 2) + iv * (colorsVNt_(indexNt, 2) - colorsVAtom_(indexAtom, 2));
-      colorsV_(indexAtom, 3) = colorsVAtom_(indexAtom, 3) + iv * (colorsVNt_(indexNt, 3) - colorsVAtom_(indexAtom, 3));
+    positions_(indexAtom, 0) = positionsAtom_(indexAtom, 0) + iv * (positionsNt_(indexNt, 0) - positionsAtom_(indexAtom, 0));
+    positions_(indexAtom, 1) = positionsAtom_(indexAtom, 1) + iv * (positionsNt_(indexNt, 1) - positionsAtom_(indexAtom, 1));
+    positions_(indexAtom, 2) = positionsAtom_(indexAtom, 2) + iv * (positionsNt_(indexNt, 2) - positionsAtom_(indexAtom, 2));
 
-      radiiV_(indexAtom) = radiiVAtom_(indexAtom) + iv * (radiiVNt_(indexNt) - radiiVAtom_(indexAtom));
-    }
+    colorsV_(indexAtom, 0) = colorsVAtom_(indexAtom, 0) + iv * (colorsVNt_(indexNt, 0) - colorsVAtom_(indexAtom, 0));
+    colorsV_(indexAtom, 1) = colorsVAtom_(indexAtom, 1) + iv * (colorsVNt_(indexNt, 1) - colorsVAtom_(indexAtom, 1));
+    colorsV_(indexAtom, 2) = colorsVAtom_(indexAtom, 2) + iv * (colorsVNt_(indexNt, 2) - colorsVAtom_(indexAtom, 2));
+    colorsV_(indexAtom, 3) = colorsVAtom_(indexAtom, 3) + iv * (colorsVNt_(indexNt, 3) - colorsVAtom_(indexAtom, 3));
+
+    radiiV_(indexAtom) = radiiVAtom_(indexAtom) + iv * (radiiVNt_(indexNt) - radiiVAtom_(indexAtom));
+
   }
 }
 
@@ -606,7 +605,9 @@ void SEAdenitaVisualModel::prepareNucleotidesToSingleStrands(double iv)
   nodeIndices_ = nodeIndicesNt_;
   indices_ = indicesNt_;
   
-  for (int index = 0; index < nPositions_; ++index) {
+  for (auto it = ntMap_.begin(); it != ntMap_.end(); it++) {
+    auto index = it->second;
+
     radiiE_(index) = radiiENt_(index) + iv * (radiiESS_(index) - radiiENt_(index));
     colorsV_(index, 0) = colorsVNt_(index, 0) + iv * (colorsVSS_(index, 0) - colorsVNt_(index, 0));
     colorsV_(index, 1) = colorsVNt_(index, 1) + iv * (colorsVSS_(index, 1) - colorsVNt_(index, 1));
@@ -615,7 +616,6 @@ void SEAdenitaVisualModel::prepareNucleotidesToSingleStrands(double iv)
   }
 
   colorsE_ = colorsV_;
-
 
 }
 
@@ -647,9 +647,8 @@ void SEAdenitaVisualModel::prepareSingleStrandsToDoubleStrands(double iv)
   for (auto it = ntMap_.begin(); it != ntMap_.end(); it++)
   {
     auto nt = it->first;
-    auto bs = nt->GetBaseSegment();
     auto indexSS = it->second;
-    auto indexDS = bsMap_[bs()];
+    auto indexDS = ntBsIndexMap_[indexSS];
 
     radiiV_(indexSS) = radiiVSS_(indexSS) + iv * (radiiVDS_(indexDS) - radiiVSS_(indexSS));
     radiiE_(indexSS) = radiiESS_(indexSS) - iv * radiiESS_(indexSS);
