@@ -132,7 +132,8 @@ private:
   void												        prepareNucleotidesToSingleStrands(double iv);
   void												        prepareSingleStrandsToDoubleStrands(double iv);
   void												        prepareDoubleStrandsToObjects(double iv);
-
+  void                                emphasizeColors(ADNArray<float> & colors, vector<unsigned int> & indices, float r, float g, float b, float a);
+  void                                replaceColors(ADNArray<float> & colors, vector<unsigned int> & indices, float * color);
   // general display properties 
   ADNArray<float> nucleotideEColor_;
   

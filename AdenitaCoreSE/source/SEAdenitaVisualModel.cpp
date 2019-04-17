@@ -678,6 +678,37 @@ void SEAdenitaVisualModel::prepareDoubleStrandsToObjects(double iv)
   colorsV_ = colorsVDS_;
 }
 
+void SEAdenitaVisualModel::emphasizeColors(ADNArray<float> & colors, vector<unsigned int> & indices, float r, float g, float b, float a)
+{
+  for (int i = 0; i < indices.size(); i++) {
+    auto index = indices[i];
+
+    colors(index, 0) *= r;
+    colors(index, 1) *= g;
+    colors(index, 2) *= b;
+    colors(index, 3) *= a;
+
+    if (colors(index, 0) > 1.0f) colors(index, 0) = 1.0f;
+    if (colors(index, 1) > 1.0f) colors(index, 1) = 1.0f;
+    if (colors(index, 2) > 1.0f) colors(index, 2) = 1.0f;
+    if (colors(index, 3) > 1.0f) colors(index, 3) = 1.0f;
+  }
+}
+
+void SEAdenitaVisualModel::replaceColors(ADNArray<float> & colors, vector<unsigned int> & indices, float * color)
+{
+  for (int i = 0; i < indices.size(); i++) {
+    auto index = indices[i];
+
+    colors(index, 0) = color[0];
+    colors(index, 1) = color[1];
+    colors(index, 2) = color[2];
+    colors(index, 3) = color[3];
+    
+
+  }
+}
+
 void SEAdenitaVisualModel::highlightFlagChanged()
 {
   auto parts = nanorobot_->GetParts();
@@ -1380,9 +1411,8 @@ void SEAdenitaVisualModel::changeHighlight(int highlightIdx)
     highlightType_ = HighlightType::TAGGED;
   }
 
-  prepareDiscreteScales();
-  prepareTransition();
   highlightNucleotides();
+  changeScale(scale_);
   SAMSON::requestViewportUpdate();
 
 }
@@ -1438,7 +1468,7 @@ void SEAdenitaVisualModel::prepareNucleotides()
         if (type == CellType::LoopPair) {
           radiiVNt_(index) = radiiVNt_(index) * 0.7f;;
         }
-
+        
         //strand direction
         if (nanorobot_->GetNucleotideEnd(nt) == End::ThreePrime) {
           radiiENt_(index) = config.nucleotide_E_radius;
@@ -1920,240 +1950,126 @@ void SEAdenitaVisualModel::prepareAtoms()
 
 void SEAdenitaVisualModel::highlightNucleotides()
 {
-  if (scale_ < (float)NUCLEOTIDES) return;
-  if (highlightType_ == NONE) return;
-
   float * colorHighlight = new float[4];
   colorHighlight[0] = 0.2f;
   colorHighlight[1] = 0.8f;
   colorHighlight[2] = 0.2f;
   colorHighlight[3] = 1.0f;
 
-  if (highlightType_ == GC) {
+  auto parts = nanorobot_->GetParts();
+  vector<unsigned int> ntHighlight;
+  vector<unsigned int> ntContext;
+  vector<unsigned int> bsHighlight;
+  vector<unsigned int> bsContext;
 
-    auto parts = nanorobot_->GetParts();
-
-    vector<unsigned int> indicesHighlight;
-    vector<unsigned int> indicesContext;
-
-    if (scale_ >= (float)NUCLEOTIDES && scale_ <= (float)SINGLE_STRANDS) {
-      //deemphasize the context with grey color
-
-      for (auto p : ntMap_) {
-        auto index = p.second;
-        indicesContext.push_back(index);
-      }
-
-      SB_FOR(auto part, parts) {
-        auto singleStrands = nanorobot_->GetSingleStrands(part);
-        SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-          auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-          SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-            auto index = ntMap_[nt()];
-            if (nt->getNucleotideType() == DNABlocks::DC || nt->getNucleotideType() == DNABlocks::DG) {
-              indicesHighlight.push_back(index);
-            }
-          }
-        }
-      }
-    }
-    else if (scale_ == (float)DOUBLE_STRANDS) {
-      for (auto p : bsMap_) {
-        auto index = p.second;
-        indicesContext.push_back(index);
-      }
-      SB_FOR(auto part, parts) {
-        auto doubleStrands = part->GetDoubleStrands();
-        SB_FOR(auto doubleStrand, doubleStrands) {
-          auto baseSegments = doubleStrand->GetBaseSegments();
-          SB_FOR(auto baseSegment, baseSegments) {
-            auto index = bsMap_[baseSegment];
-            auto nts = baseSegment->GetNucleotides();
-            SB_FOR(auto nt, nts) {
-              if (nt->getNucleotideType() == DNABlocks::DC || nt->getNucleotideType() == DNABlocks::DG) {
-                indicesHighlight.push_back(index);
-              }
-              else {
-                indicesContext.push_back(index);
-              }
-            }
-
-          }
-        }
-      }
-    }
-    ADNDisplayHelper::deemphasizeCylinderColors(colorsV_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-    ADNDisplayHelper::deemphasizeCylinderColors(colorsE_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-    ADNDisplayHelper::replaceCylinderColors(colorsV_, indicesHighlight, colorHighlight);
-    ADNDisplayHelper::replaceCylinderColors(colorsE_, indicesHighlight, colorHighlight);
-
-    delete[] colorHighlight;
+  if (highlightType_ == HighlightType::NONE) {
+    prepareDiscreteScales();
   }
   else if (highlightType_ == HighlightType::CROSSOVERS) {
-    auto parts = nanorobot_->GetParts();
-    vector<unsigned int> indicesHighlight;
-    vector<unsigned int> indicesContext;
 
-    if (scale_ >= (float)NUCLEOTIDES && scale_ <= (float)SINGLE_STRANDS) {
-      for (auto p : ntMap_) {
-        auto index = p.second;
-        indicesContext.push_back(index);
-      }
-      SB_FOR(auto part, parts) {
-        auto xos = PICrossovers::GetCrossovers(part);
-        for (auto xo : xos) {
-          auto startNt = xo.first;
-          auto endNt = xo.second;
-
-          auto startIdx = ntMap_[startNt()];
-          auto endIdx = ntMap_[endNt()];
-
-          indicesHighlight.push_back(startIdx);
-          indicesHighlight.push_back(endIdx);
-        }
-
-      }
-    }
-    else if (scale_ == (float)DOUBLE_STRANDS) {
-      for (auto p : bsMap_) {
-        auto index = p.second;
-        indicesContext.push_back(index);
-      }
-      SB_FOR(auto part, parts) {
-        auto xos = PICrossovers::GetCrossovers(part);
-        for (auto xo : xos) {
-          auto startNt = xo.first;
-          auto endNt = xo.second;
-          auto startBs = startNt->GetBaseSegment();
-          auto endBs = endNt->GetBaseSegment();
-
-          auto startIdx = bsMap_[startBs()];
-          auto endIdx = bsMap_[endBs()];
-
-          indicesHighlight.push_back(startIdx);
-          indicesHighlight.push_back(endIdx);
-        }
-      }
-    }
-    else if (highlightType_ == HighlightType::CROSSOVERS) {
-      auto parts = nanorobot_->GetParts();
-      vector<unsigned int> indicesHighlight;
-      vector<unsigned int> indicesContext;
-
-      if (scale_ >= (float)NUCLEOTIDES && scale_ <= (float)SINGLE_STRANDS) {
-        for (auto p : ntMap_) {
-          auto index = p.second;
-          indicesContext.push_back(index);
-        }
-        SB_FOR(auto part, parts) {
-          auto xos = PICrossovers::GetCrossovers(part);
-          for (auto xo : xos) {
-            auto startNt = xo.first;
-            auto endNt = xo.second;
-
-            auto startIdx = ntMap_[startNt()];
-            auto endIdx = ntMap_[endNt()];
-
-            indicesHighlight.push_back(startIdx);
-            indicesHighlight.push_back(endIdx);
-          }
-
-        }
-      }
-      else if (scale_ == (float)DOUBLE_STRANDS) {
-        for (auto p : bsMap_) {
-          auto index = p.second;
-          indicesContext.push_back(index);
-        }
-        SB_FOR(auto part, parts) {
-          auto xos = PICrossovers::GetCrossovers(part);
-          for (auto xo : xos) {
-            auto startNt = xo.first;
-            auto endNt = xo.second;
-            auto startBs = startNt->GetBaseSegment();
-            auto endBs = endNt->GetBaseSegment();
-
-            auto startIdx = bsMap_[startBs()];
-            auto endIdx = bsMap_[endBs()];
-
-            indicesHighlight.push_back(startIdx);
-            indicesHighlight.push_back(endIdx);
-          }
-        }
-      }
-      ADNDisplayHelper::deemphasizeCylinderColors(colorsV_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-      ADNDisplayHelper::deemphasizeCylinderColors(colorsE_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-
-      ADNDisplayHelper::replaceCylinderColors(colorsV_, indicesHighlight, colorHighlight);
-      ADNDisplayHelper::replaceCylinderColors(colorsE_, indicesHighlight, colorHighlight);
-
-      delete[] colorHighlight;
+    for (auto p : ntMap_) {
+      auto index = p.second;
+      ntContext.push_back(index);
     }
 
+    for (auto p : bsMap_) {
+      auto index = p.second;
+      bsContext.push_back(index);
+    }
+
+    SB_FOR(auto part, parts) {
+      auto xos = PICrossovers::GetCrossovers(part);
+      for (auto xo : xos) {
+        auto startNt = xo.first;
+        auto endNt = xo.second;
+        auto startBs = startNt->GetBaseSegment();
+        auto endBs = endNt->GetBaseSegment();
+
+        auto startNtIdx = ntMap_[startNt()];
+        auto endNtIdx = ntMap_[endNt()];
+        auto startBsIdx = bsMap_[startBs()];
+        auto endBsIdx = bsMap_[endBs()];
+
+        ntHighlight.push_back(startNtIdx);
+        ntHighlight.push_back(endNtIdx);
+        bsHighlight.push_back(startBsIdx);
+        bsHighlight.push_back(endBsIdx);
+      }
+    }
   }
-  else if (highlightType_ == TAGGED) {
+  else if (highlightType_ == HighlightType::GC) {
 
-    colorHighlight[0] = 1.0f;
-    colorHighlight[1] = 0.1f;
-    colorHighlight[2] = 0.2f;
-    colorHighlight[3] = 1.0f;
+    for (auto p : ntMap_) {
+      auto index = p.second;
+      ntContext.push_back(index);
+    }
 
-    auto parts = nanorobot_->GetParts();
+    for (auto p : bsMap_) {
+      auto index = p.second;
+      bsContext.push_back(index);
+    }
 
-    vector<unsigned int> indicesHighlight;
-    vector<unsigned int> indicesContext;
+    SB_FOR(auto part, parts) {
+      auto singleStrands = nanorobot_->GetSingleStrands(part);
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+          auto indexNt = ntMap_[nt()];
+          if (nt->getNucleotideType() == DNABlocks::DC || nt->getNucleotideType() == DNABlocks::DG) {
+            ntHighlight.push_back(indexNt);
 
-    if (scale_ >= (float)NUCLEOTIDES && scale_ <= (float)SINGLE_STRANDS) {
-
-      for (auto p : ntMap_) {
-        auto index = p.second;
-        indicesContext.push_back(index);
-      }
-
-      SB_FOR(auto part, parts) {
-        auto singleStrands = nanorobot_->GetSingleStrands(part);
-        SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-          auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-          SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-            auto index = ntMap_[nt()];
-            if (nt->hasTag()) {
-              indicesHighlight.push_back(index);
-            }
+            auto bs = nt->GetBaseSegment();
+            auto indexDs = bsMap_[bs()];
+            bsHighlight.push_back(indexDs);
           }
         }
       }
     }
-    else if (scale_ == (float)DOUBLE_STRANDS) {
-      for (auto p : bsMap_) {
-        auto index = p.second;
-        indicesContext.push_back(index);
-      }
-      SB_FOR(auto part, parts) {
-        auto doubleStrands = part->GetDoubleStrands();
-        SB_FOR(auto doubleStrand, doubleStrands) {
-          auto baseSegments = doubleStrand->GetBaseSegments();
-          SB_FOR(auto baseSegment, baseSegments) {
-            auto index = bsMap_[baseSegment];
-            auto nts = baseSegment->GetNucleotides();
-            SB_FOR(auto nt, nts) {
-              if (nt->hasTag()) {
-                indicesHighlight.push_back(index);
-              }
-              else {
-                indicesContext.push_back(index);
-              }
-            }
-          }
-        }
-      }
-    }
-    ADNDisplayHelper::deemphasizeCylinderColors(colorsV_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-    ADNDisplayHelper::deemphasizeCylinderColors(colorsE_, indicesContext, 0.5f, 0.5f, 0.5f, 1.0f);
-    ADNDisplayHelper::replaceCylinderColors(colorsV_, indicesHighlight, colorHighlight);
-    ADNDisplayHelper::replaceCylinderColors(colorsE_, indicesHighlight, colorHighlight);
-
-    delete[] colorHighlight;
   }
+  else if (highlightType_ == HighlightType::TAGGED) {
+
+    for (auto p : ntMap_) {
+      auto index = p.second;
+      ntContext.push_back(index);
+    }
+
+    for (auto p : bsMap_) {
+      auto index = p.second;
+      bsContext.push_back(index);
+    }
+
+    SB_FOR(auto part, parts) {
+      auto singleStrands = nanorobot_->GetSingleStrands(part);
+      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+          auto indexNt = ntMap_[nt()];
+          if (nt->hasTag()) {
+            ntHighlight.push_back(indexNt);
+            auto bs = nt->GetBaseSegment();
+            auto indexDs = bsMap_[bs()];
+            bsHighlight.push_back(indexDs);
+          }
+
+        }
+      }
+    }
+  }
+
+  emphasizeColors(colorsVNt_, ntContext, 0.4f, 0.4f, 0.4f, 1.0f);
+  emphasizeColors(colorsENt_, ntContext, 0.4f, 0.4f, 0.4f, 1.0f);
+  emphasizeColors(colorsVSS_, ntContext, 0.4f, 0.4f, 0.4f, 1.0f);
+  emphasizeColors(colorsESS_, ntContext, 0.4f, 0.4f, 0.4f, 1.0f);
+  emphasizeColors(colorsVDS_, bsContext, 0.4f, 0.4f, 0.4f, 1.0f);
+
+  replaceColors(colorsVNt_, ntHighlight, colorHighlight);
+  replaceColors(colorsENt_, ntHighlight, colorHighlight);
+  replaceColors(colorsVSS_, ntHighlight, colorHighlight);
+  replaceColors(colorsESS_, ntHighlight, colorHighlight);
+  replaceColors(colorsVDS_, bsHighlight, colorHighlight);
+
+  delete[] colorHighlight;
+
 }
 
 ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(int colorSchemeIdx, float min, float max, float val) {
