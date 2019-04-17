@@ -249,26 +249,26 @@ void MSVColors::SetStandardAtomColorScheme()
   atomColorScheme_ = ADNArray<float>(4, numAtomTypes);
 
   //O
-  atomColorScheme_(0, 0) = 0.9f;
+  atomColorScheme_(0, 0) = 0.6f;
   atomColorScheme_(0, 1) = 0.1f;
   atomColorScheme_(0, 2) = 0.0f;
   atomColorScheme_(0, 3) = 1.0f;
 
   //C
-  atomColorScheme_(1, 0) = 0.15f;
-  atomColorScheme_(1, 1) = 0.15f;
-  atomColorScheme_(1, 2) = 0.15f;
+  atomColorScheme_(1, 0) = 0.35f;
+  atomColorScheme_(1, 1) = 0.35f;
+  atomColorScheme_(1, 2) = 0.35f;
   atomColorScheme_(1, 3) = 1.0f;
 
   //N
   atomColorScheme_(2, 0) = 0.1f;
   atomColorScheme_(2, 1) = 0.1f;
-  atomColorScheme_(2, 2) = 0.9f;
+  atomColorScheme_(2, 2) = 0.6f;
   atomColorScheme_(2, 3) = 1.0f;
 
   //P
-  atomColorScheme_(3, 0) = 0.9f;
-  atomColorScheme_(3, 1) = 0.5f;
+  atomColorScheme_(3, 0) = 0.7f;
+  atomColorScheme_(3, 1) = 0.3f;
   atomColorScheme_(3, 2) = 0.0f;
   atomColorScheme_(3, 3) = 1.0f;
 
