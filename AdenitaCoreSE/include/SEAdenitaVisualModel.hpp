@@ -27,14 +27,13 @@ class SEAdenitaVisualModel : public SBMVisualModel {
 
 public :
 
-  double const MAX_SCALE = 4.0;
-
   enum Scale {
     ATOMS_STICKS = 0,
     ATOMS_BALLS = 1,
     NUCLEOTIDES = 2,
     SINGLE_STRANDS = 3,
-    DOUBLE_STRANDS = 4
+    DOUBLE_STRANDS = 4,
+    OBJECTS = 5
   };
 
 	/// \name Constructors and destructors
@@ -101,36 +100,40 @@ public :
 
 private:
   void                                init();
+  void												        initAtoms(bool createIndex = true);
   void												        initNucleotidesAndSingleStrands(bool createIndex = true);
   void												        initDoubleStrands(bool createIndex = true);
+  void                                initDisplayIndices();
+  ADNArray<unsigned int>              getAtomIndices();
   ADNArray<unsigned int>              getNucleotideIndices();
   ADNArray<unsigned int>              getBaseSegmentIndices();
-  void												        highlightFlagChanged(); //scale 9: display polyhedron 
+  void												        changeHighlightFlag(); //scale 9: display polyhedron 
   SEAdenitaCoreSEApp*					        getAdenitaApp() const;															///< Returns a pointer to the app
   void                                orderVisibility();
   void                                setupPropertyColors();
   ADNArray<float>                     calcPropertyColor(int colorSchemeIdx, float min, float max, float val);
-  void                                displayLoops(ADNNucleotide *nt, unsigned int index);
   void                                displayBasePairConnections(bool onlySelected);
   void                                displayForDebugging();
   void                                displayCircularDNAConnection();
   void                                displayTags();
-  void                                updateStructuralEvents();
 
+  void												        prepareAtoms();
   void												        prepareNucleotides();
   void												        prepareSingleStrands();
   void												        prepareDoubleStrands();
   void												        displayNucleotides(bool forSelection = false);
   void												        displaySingleStrands(bool forSelection = false);
   void												        displayDoubleStrands(bool forSelection = false);
-  void												        prepareArraysTransition(); // Prepare the arrays for displaying (this separates the interpolation from display)
-  void												        displayNoTransition(bool forSelection = false);
-  void												        prepareArraysNoTranstion();
-  void												        displayTransition(); 
-  void												        prepareSticksToBalls(double iv, bool forSelection = false);
-  void												        prepareSingleStrandsToDoubleStrands(double iv, bool forSelection = false);
-
-
+  void												        prepareTransition(); // Prepare the arrays for displaying (this separates the interpolation from display)
+  void												        prepareDiscreteScales();
+  void												        displayTransition(bool forSelection); 
+  void												        prepareSticksToBalls(double iv);
+  void												        prepareBallsToNucleotides(double iv);
+  void												        prepareNucleotidesToSingleStrands(double iv);
+  void												        prepareSingleStrandsToDoubleStrands(double iv);
+  void												        prepareDoubleStrandsToObjects(double iv);
+  void                                emphasizeColors(ADNArray<float> & colors, vector<unsigned int> & indices, float r, float g, float b, float a);
+  void                                replaceColors(ADNArray<float> & colors, vector<unsigned int> & indices, float * color);
   // general display properties 
   ADNArray<float> nucleotideEColor_;
   
@@ -138,6 +141,30 @@ private:
   int dim_ = 3;
 
   ADNNanorobot * nanorobot_;
+
+  //transitional scale
+  unsigned int nPositions_;
+  unsigned int nCylinders_;
+  ADNArray<float> colorsV_;
+  ADNArray<float> colorsE_;
+  ADNArray<float> positions_;
+  ADNArray<float> radiiV_;
+  ADNArray<float> radiiE_;
+  ADNArray<unsigned int> flags_;
+  ADNArray<unsigned int> nodeIndices_;
+  ADNArray<unsigned int> indices_;
+
+  //atom scale
+  unsigned int nPositionsAtom_;
+  unsigned int nCylindersAtom_;
+  ADNArray<float> colorsVAtom_;
+  ADNArray<float> colorsEAtom_;
+  ADNArray<float> positionsAtom_;
+  ADNArray<float> radiiVAtom_;
+  ADNArray<float> radiiEAtom_;
+  ADNArray<unsigned int> flagsAtom_;
+  ADNArray<unsigned int> nodeIndicesAtom_;
+  ADNArray<unsigned int> indicesAtom_;
 
   //nucleotide scale
   unsigned int nPositionsNt_;
@@ -166,8 +193,11 @@ private:
   ADNArray<unsigned int> flagsDS_;
   ADNArray<unsigned int> nodeIndicesDS_;
 
+  std::map<ADNAtom*, unsigned int> atomMap_;
   std::map<ADNNucleotide*, unsigned int> ntMap_;
   std::map<ADNBaseSegment*, unsigned int> bsMap_;
+  map<unsigned int, unsigned> atomNtIndexMap_;
+  map<unsigned int, unsigned> ntBsIndexMap_;
 
   map<ADNNucleotide*, float> sortedNucleotidesByDist_;
   map<ADNSingleStrand*, float> sortedSingleStrandsByDist_;
