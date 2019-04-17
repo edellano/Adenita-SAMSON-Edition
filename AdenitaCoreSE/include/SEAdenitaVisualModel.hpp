@@ -194,6 +194,7 @@ private:
   std::map<ADNAtom*, unsigned int> atomMap_;
   std::map<ADNNucleotide*, unsigned int> ntMap_;
   std::map<ADNBaseSegment*, unsigned int> bsMap_;
+  boost::bimap<unsigned int, unsigned int> atomNtIndexMap_;
 
   map<ADNNucleotide*, float> sortedNucleotidesByDist_;
   map<ADNSingleStrand*, float> sortedSingleStrandsByDist_;
