@@ -200,7 +200,6 @@ private:
   ADNArray<float> positionsNt2D_;
   ADNArray<float> positionsNt1D_;
 
-
   std::map<ADNAtom*, unsigned int> atomMap_;
   std::map<ADNNucleotide*, unsigned int> ntMap_;
   std::map<ADNBaseSegment*, unsigned int> bsMap_;

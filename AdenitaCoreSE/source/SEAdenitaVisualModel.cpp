@@ -457,6 +457,8 @@ void SEAdenitaVisualModel::prepareDimensions()
   auto parts = nanorobot_->GetParts();
   auto conformations = nanorobot_->GetConformations();
 
+  if (conformations.size() <= 1) return;
+
   auto conf2D = conformations[1];
   auto conf1D = conformations[0];
 
