@@ -2193,6 +2193,7 @@ void SEAdenitaVisualModel::onBaseEvent(SBBaseEvent* baseEvent) {
   }
 
   if (baseEvent->getType() == SBBaseEvent::VisibilityFlagChanged) {
+    prepareDiscreteScalesDim();
     changeScale(scale_, false);
   }
 
