@@ -107,6 +107,8 @@ void SEAdenitaVisualModel::changeDimension(float dimension)
 {
   dim_ = dimension;
  
+  if (scale_ < (float)NUCLEOTIDES || scale_ >(float)SINGLE_STRANDS) return;
+
   if (nanorobot_ == nullptr) return;
 
   float interpolated = 1.0f - (floor(dimension + 1) - dimension);
