@@ -32,6 +32,18 @@ void SELatticeCreatorEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+void SELatticeCreatorEditorGUI::setHoneycomb()
+{
+  SELatticeCreatorEditor* t = getEditor();
+  t->setLatticeType(LatticeType::Honeycomb);
+}
+
+void SELatticeCreatorEditorGUI::setSquare()
+{
+  SELatticeCreatorEditor* t = getEditor();
+  t->setLatticeType(LatticeType::Square);
+}
+
 SBCContainerUUID SELatticeCreatorEditorGUI::getUUID() const { return SBCContainerUUID( "A9C48A6E-8BD1-B387-6A63-1CB8A19C1948" );}
 
 QPixmap SELatticeCreatorEditorGUI::getLogo() const { 
