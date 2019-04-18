@@ -77,8 +77,17 @@ void SELatticeCreatorEditor::displayLattice()
 void SELatticeCreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> lattice)
 {
   if (lattice != nullptr) {
+    lattice->SetName("Lattice Structure");
+
     SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
     adenita->AddPartToActiveLayer(lattice);
+
+    //DASCadnano cad = DASCadnano();
+    //cad.CreateConformations(lattice);
+    //adenita->AddConformationToActiveLayer(cad.Get3DConformation());
+    //adenita->AddConformationToActiveLayer(cad.Get2DConformation());
+    //adenita->AddConformationToActiveLayer(cad.Get1DConformation());
+
     adenita->ResetVisualModel();
   }
 }
@@ -227,8 +236,8 @@ void SELatticeCreatorEditor::mousePressEvent(QMouseEvent* event) {
     display_ = false;
     tempPart_ == nullptr;
 
-    SBCamera * camera = SAMSON::getActiveCamera();
-    camera->rightView();
+    /*SBCamera * camera = SAMSON::getActiveCamera();
+    camera->rightView();*/
   }
 }
 
@@ -240,8 +249,8 @@ void SELatticeCreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
   if (positions_.positionsCounter == 1) {
     positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
-    SBCamera * camera = SAMSON::getActiveCamera();
-    camera->topView();
+    /*SBCamera * camera = SAMSON::getActiveCamera();
+    camera->topView();*/
   }
 
 }
