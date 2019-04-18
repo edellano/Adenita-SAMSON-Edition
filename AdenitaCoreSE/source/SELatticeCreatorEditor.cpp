@@ -1,18 +1,18 @@
-#include "SENanotubeCreatorEditor.hpp"
+#include "SELatticeCreatorEditor.hpp"
 #include "SAMSON.hpp"
 
 
-SENanotubeCreatorEditor::SENanotubeCreatorEditor() {
+SELatticeCreatorEditor::SELatticeCreatorEditor() {
 
 	// SAMSON Element generator pro tip: this default constructor is called when unserializing the node, so it should perform all default initializations.
 
-	propertyWidget = new SENanotubeCreatorEditorGUI(this);
+	propertyWidget = new SELatticeCreatorEditorGUI(this);
 	propertyWidget->loadDefaultSettings();
 	SAMSON::addWidget(propertyWidget);
 
 }
 
-SENanotubeCreatorEditor::~SENanotubeCreatorEditor() {
+SELatticeCreatorEditor::~SELatticeCreatorEditor() {
 
 	// SAMSON Element generator pro tip: disconnect from signals you might have connected to.
 
@@ -21,124 +21,88 @@ SENanotubeCreatorEditor::~SENanotubeCreatorEditor() {
 
 }
 
-SENanotubeCreatorEditorGUI* SENanotubeCreatorEditor::getPropertyWidget() const { return static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget); }
+SELatticeCreatorEditorGUI* SELatticeCreatorEditor::getPropertyWidget() const { return static_cast<SELatticeCreatorEditorGUI*>(propertyWidget); }
 
-void SENanotubeCreatorEditor::SetRouting(RoutingType t)
+ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*/)
 {
-  routing_ = t;
-}
+  //ADNLogger& logger = ADNLogger::GetLogger();
 
-void SENanotubeCreatorEditor::SetPredefined(bool predefined, double radius, int numBp)
-{
-  predefined_ = false;
-  if (radius > 0.0 && numBp > 0) {
-    predefined_ = predefined;
-    numBp_ = numBp;
-    radius_ = radius;
-  }
-}
-
-void SENanotubeCreatorEditor::SetRadius(double radius)
-{
-  radius_ = radius;
-}
-
-void SENanotubeCreatorEditor::SetBp(int bp)
-{
-  numBp_ = bp;
-}
-
-ADNPointer<ADNPart> SENanotubeCreatorEditor::generateNanotube(bool mock)
-{
   ADNPointer<ADNPart> part = nullptr;
 
-  auto radius = (positions_.ThirdPosition - positions_.SecondPosition).norm();
-  auto roundHeight = (positions_.SecondPosition - positions_.FirstPosition).norm();
-  auto numNucleotides = round((roundHeight / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
-  SBVector3 dir = (positions_.SecondPosition - positions_.FirstPosition).normalizedVersion();
-  if (predefined_) {
-    numNucleotides = numBp_;
-    radius = SBQuantity::nanometer(radius_);
-  }
+  SBPosition3 xPos = positions_.SecondPosition;
+  xPos[2].setValue(0);
+  SBPosition3 yPos = positions_.SecondPosition;
+  yPos[1].setValue(0);
 
-  if (numNucleotides > 0) {
-    if (mock) {
-      if (positions_.positionsCounter == 1 && !predefined_) {
-        radius = SBQuantity::picometer(1);
-        part = DASCreator::CreateMockNanotube(radius, positions_.FirstPosition, dir, numNucleotides);
-      }
-      else if (positions_.positionsCounter == 2 || predefined_) {
-        part = DASCreator::CreateMockNanotube(radius, positions_.FirstPosition, dir, numNucleotides);
+  auto x = (positions_.FirstPosition - xPos).norm();
+  auto y = (positions_.FirstPosition - yPos).norm();
+  auto z = SBQuantity::nanometer(3.4);
+  //auto z = (positions_.ThirdPosition - positions_.SecondPosition).norm();
+  
+  auto xNumStrands = round((x / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
+  auto yNumStrands = round((y / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
+  auto numNucleotides = round((z / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
+
+  if (numNucleotides > 0 && (xNumStrands > 0 || yNumStrands > 0)) {
+    part = new ADNPart();
+    
+    SBVector3 dir = SBVector3(1, 0, 0);
+
+    for (int xt = 0; xt < xNumStrands; xt++) {
+      for (int yt = 0; yt < yNumStrands; yt++) {
+        auto pos = vGrid_.GetGridCellPos3D(0, yt, xt);
+        pos += positions_.FirstPosition;
+        auto ds = DASCreator::CreateDoubleStrand(part, numNucleotides, pos, dir, mock);
       }
     }
-    else {
-      part = DASCreator::CreateNanotube(radius, positions_.FirstPosition, dir, numNucleotides);
-    }
-    updateGUI(radius, numNucleotides);
+    
   }
 
   return part;
 }
 
-void SENanotubeCreatorEditor::displayNanotube()
+void SELatticeCreatorEditor::displayLattice()
 {
   ADNDisplayHelper::displayPart(tempPart_);
 }
 
-void SENanotubeCreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> nanotube)
+void SELatticeCreatorEditor::sendPartToAdenita(ADNPointer<ADNPart> lattice)
 {
-  if (nanotube != nullptr) {
+  if (lattice != nullptr) {
     SEAdenitaCoreSEApp* adenita = static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-    adenita->AddPartToActiveLayer(nanotube);
+    adenita->AddPartToActiveLayer(lattice);
     adenita->ResetVisualModel();
   }
 }
 
-void SENanotubeCreatorEditor::updateGUI(SBQuantity::length radius, int numBp, bool clear)
-{
-  if (numBp < 1) numBp = 0;
+SBCContainerUUID SELatticeCreatorEditor::getUUID() const { return SBCContainerUUID("7297F9AE-9237-0720-03B1-B4BDF45D33F9"); }
 
-  int minNumDs = 3;
-  SBQuantity::length minRadius = ADNVectorMath::CalculateNanotubeRadius(minNumDs);
-
-  int numDs = ADNVectorMath::CalculateNanotubeDoubleStrands(radius);
-  if (numDs < minNumDs || radius < minRadius) {
-    numDs = minNumDs;
-    radius = minRadius;
-  }
-
-  SENanotubeCreatorEditorGUI* gui = static_cast<SENanotubeCreatorEditorGUI*>(propertyWidget);
-  gui->updateInfo(radius, numDs, numBp, clear);
-}
-
-SBCContainerUUID SENanotubeCreatorEditor::getUUID() const { return SBCContainerUUID("F9068FA3-69DE-B6FA-2B42-C80DA5302A0D"); }
-
-QString SENanotubeCreatorEditor::getName() const { 
+QString SELatticeCreatorEditor::getName() const { 
 
 	// SAMSON Element generator pro tip: this name should not be changed
 
-	return "SENanotubeCreatorEditor"; 
+	return "SELatticeCreatorEditor"; 
 
 }
 
-QString SENanotubeCreatorEditor::getText() const { 
+QString SELatticeCreatorEditor::getText() const { 
 	
 	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
 
-	return QObject::tr("DNA Nanotube Creator"); 
+	return QObject::tr("SELatticeCreatorEditor"); 
 
 }
 
-QPixmap SENanotubeCreatorEditor::getLogo() const {
+QPixmap SELatticeCreatorEditor::getLogo() const {
 
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
 	// Modify it to better reflect the purpose of your editor.
 
-	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/SENanotubeCreatorEditorIcon.png"));
+	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/SELatticeCreatorEditorIcon.png"));
 
 }
 
-QKeySequence SENanotubeCreatorEditor::getShortcut() const { 
+QKeySequence SELatticeCreatorEditor::getShortcut() const { 
 	
 	// SAMSON Element generator pro tip: modify this function to associate a tentative shortcut to your editor
 
@@ -146,36 +110,32 @@ QKeySequence SENanotubeCreatorEditor::getShortcut() const {
 
 }
 
-QString SENanotubeCreatorEditor::getToolTip() const { 
+QString SELatticeCreatorEditor::getToolTip() const { 
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("DNA Nanotube Creator"); 
+	return QObject::tr("SAMSON Element generator pro tip: modify me"); 
 
 }
 
-QString SENanotubeCreatorEditor::getDescription() const
-{
-  return QObject::tr("Adenita | DNA Nanotube Editor");
-}
-
-void SENanotubeCreatorEditor::beginEditing() {
+void SELatticeCreatorEditor::beginEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 
 	// Implement this function if you need to prepare some data structures in order to be able to handle GUI or SAMSON events.
-  string iconPath = SB_ELEMENT_PATH + "/Resource/icons/nanotubeCreator.png";
-  SAMSON::setViewportCursor(QCursor(QPixmap(iconPath.c_str())));
+  SBCamera * camera = SAMSON::getActiveCamera();
+  camera->leftView();
 
+  setLatticeType(LatticeType::Square);
 }
 
-void SENanotubeCreatorEditor::endEditing() {
+void SELatticeCreatorEditor::endEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function immediately before your editor becomes inactive (for example when another editor becomes active). 
 	// Implement this function if you need to clean some data structures.
-  SAMSON::unsetViewportCursor();
+
 }
 
-void SENanotubeCreatorEditor::getActions(SBVector<SBAction*>& actionVector) {
+void SELatticeCreatorEditor::getActions(SBVector<SBAction*>& actionVector) {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function to show the user actions associated to your editor in context menus.
 	// Append actions to the actionVector if necessary.
@@ -183,7 +143,7 @@ void SENanotubeCreatorEditor::getActions(SBVector<SBAction*>& actionVector) {
 
 }
 
-void SENanotubeCreatorEditor::display() {
+void SELatticeCreatorEditor::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
@@ -204,7 +164,7 @@ void SENanotubeCreatorEditor::display() {
       positions_.ThirdPosition = currentPosition;
     }
 
-    if (config.preview_editor) tempPart_ = generateNanotube(true);
+    tempPart_ = generateLattice(true);
 
     if (tempPart_ != nullptr) {
 
@@ -212,7 +172,7 @@ void SENanotubeCreatorEditor::display() {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      displayNanotube();
+      displayLattice();
 
       glDisable(GL_BLEND);
       glDisable(GL_DEPTH_TEST);
@@ -222,7 +182,7 @@ void SENanotubeCreatorEditor::display() {
 
 }
 
-void SENanotubeCreatorEditor::displayForShadow() {
+void SELatticeCreatorEditor::displayForShadow() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to compute shadows. 
 	// Implement this function if your editor displays things in viewports, so that your editor can cast shadows
@@ -231,7 +191,7 @@ void SENanotubeCreatorEditor::displayForShadow() {
 
 }
 
-void SENanotubeCreatorEditor::displayInterface() {
+void SELatticeCreatorEditor::displayInterface() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop in order to display the editor 2D interface in viewports. 
 	// Implement this function if your editor displays a 2D user interface. For example, a rectangle selection editor would display a 2D rectangle in the active viewport. 
@@ -239,26 +199,26 @@ void SENanotubeCreatorEditor::displayInterface() {
 
 }
 
-void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
+void SELatticeCreatorEditor::mousePressEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
   if (positions_.positionsCounter == 0) {
-    updateGUI(SBQuantity::nanometer(0.0), 0, true);
-
+    //SBCamera * camera = SAMSON::getActiveCamera();
+    //camera->leftView();
     positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
+    
   }
   else if (positions_.positionsCounter == 2) {
+   
     positions_.ThirdPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
-    
+
     auto radius = (positions_.ThirdPosition - positions_.SecondPosition).norm();
 
-    ADNPointer<ADNPart> part = generateNanotube();
-    //DASRouter* router = DASRouter::GetRouter(routing_);
-    //router->Route(part);
+    ADNPointer<ADNPart> part = generateLattice();
     sendPartToAdenita(part);
 
     DASCreatorEditors::resetPositions(positions_);
@@ -267,76 +227,93 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
   }
 }
 
-void SENanotubeCreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
+void SELatticeCreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
+
   if (positions_.positionsCounter == 1) {
+    //SBCamera * camera = SAMSON::getActiveCamera();
+    //camera->bottomView();
     positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
+    
   }
+
 }
 
-void SENanotubeCreatorEditor::mouseMoveEvent(QMouseEvent* event) {
+void SELatticeCreatorEditor::mouseMoveEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
-
   if (event->buttons() == Qt::LeftButton) {
     display_ = true;
+
+    if (positions_.positionsCounter == 1) {
+      //SBCamera * camera = SAMSON::getActiveCamera();
+      //camera->leftView();
+      positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+
+    }
+
     //SAMSON::requestViewportUpdate();
   }
   SAMSON::requestViewportUpdate();
 }
 
-void SENanotubeCreatorEditor::mouseDoubleClickEvent(QMouseEvent* event) {
+void SELatticeCreatorEditor::mouseDoubleClickEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SENanotubeCreatorEditor::wheelEvent(QWheelEvent* event) {
+void SELatticeCreatorEditor::wheelEvent(QWheelEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SENanotubeCreatorEditor::keyPressEvent(QKeyEvent* event) {
+void SELatticeCreatorEditor::keyPressEvent(QKeyEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SENanotubeCreatorEditor::keyReleaseEvent(QKeyEvent* event) {
+void SELatticeCreatorEditor::keyReleaseEvent(QKeyEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
 }
 
-void SENanotubeCreatorEditor::onBaseEvent(SBBaseEvent* baseEvent) {
+void SELatticeCreatorEditor::onBaseEvent(SBBaseEvent* baseEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle base events
 
 }
 
-void SENanotubeCreatorEditor::onDocumentEvent(SBDocumentEvent* documentEvent) {
+void SELatticeCreatorEditor::onDocumentEvent(SBDocumentEvent* documentEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle document events 
 
 }
 
-void SENanotubeCreatorEditor::onDynamicalEvent(SBDynamicalEvent* dynamicalEvent) {
+void SELatticeCreatorEditor::onDynamicalEvent(SBDynamicalEvent* dynamicalEvent) {
 
 	// SAMSON Element generator pro tip: implement this function if you need to handle dynamical events 
 
 }
 
-void SENanotubeCreatorEditor::onStructuralEvent(SBStructuralEvent* documentEvent) {
+void SELatticeCreatorEditor::onStructuralEvent(SBStructuralEvent* documentEvent) {
 	
 	// SAMSON Element generator pro tip: implement this function if you need to handle structural events
 
+}
+
+void SELatticeCreatorEditor::setLatticeType(LatticeType type)
+{
+  vGrid_.CreateLattice(type);
 }
