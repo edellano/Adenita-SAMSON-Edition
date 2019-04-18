@@ -93,6 +93,7 @@ void SEAdenitaVisualModel::changeScale(float scale, bool createIndex/* = true*/)
   }
   else if (scale_ < (float)SINGLE_STRANDS) {
     prepareNucleotidesToSingleStrands(interpolated);
+    changeDimension(dim_);
   }
   else if (scale_ < (float)DOUBLE_STRANDS) {
     prepareSingleStrandsToDoubleStrands(interpolated);
@@ -106,8 +107,9 @@ void SEAdenitaVisualModel::changeScale(float scale, bool createIndex/* = true*/)
 void SEAdenitaVisualModel::changeDimension(float dimension)
 {
   dim_ = dimension;
- 
   if (nanorobot_ == nullptr) return;
+
+  if (scale_ < (float)NUCLEOTIDES || scale_ >(float)SINGLE_STRANDS) return;
 
   float interpolated = 1.0f - (floor(dimension + 1) - dimension);
 
@@ -116,7 +118,7 @@ void SEAdenitaVisualModel::changeDimension(float dimension)
   }
   else if (dim_ < 3.0f) {
     prepare2Dto3D(interpolated);
-  } 
+  }
   else if (dim_ >= 3.0f) {
     prepare3D(interpolated);
   }
@@ -208,10 +210,17 @@ void SEAdenitaVisualModel::initAtoms(bool createIndex /*= true*/)
   unsigned int nPositions = 0;
 
   auto parts = nanorobot_->GetParts();
-  SB_FOR(auto part, parts) {
-    nPositions += part->GetNumberOfAtoms();
-  }
 
+  SB_FOR(auto part, parts) {
+    auto singleStrands = nanorobot_->GetSingleStrands(part);
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+      auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        auto atoms = nt->GetAtoms();
+        nPositions += atoms.size();
+      }
+    }
+  }
   unsigned int nCylinders = 0;
 
   nPositionsAtom_ = nPositions;
@@ -654,7 +663,6 @@ void SEAdenitaVisualModel::prepareSingleStrandsToDoubleStrands(double iv)
     colorsV_(indexSS, 1) = colorsVSS_(indexSS, 1) + iv * (colorsVDS_(indexDS, 1) - colorsVSS_(indexSS, 1));
     colorsV_(indexSS, 2) = colorsVSS_(indexSS, 2) + iv * (colorsVDS_(indexDS, 2) - colorsVSS_(indexSS, 2));
     colorsV_(indexSS, 3) = colorsVSS_(indexSS, 3) + iv * (colorsVDS_(indexDS, 3) - colorsVSS_(indexSS, 3));
-
   }
 
 }
