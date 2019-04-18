@@ -29,11 +29,14 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
 
   ADNPointer<ADNPart> part = nullptr;
 
-  SBPosition3 xPos = positions_.SecondPosition;
-  xPos[2].setValue(0);
-  SBPosition3 yPos = positions_.SecondPosition;
-  yPos[1].setValue(0);
+  SBPosition3 firstPos = positions_.FirstPosition;
+  SBPosition3 secondPos = positions_.SecondPosition;
 
+  SBPosition3 xPos = positions_.SecondPosition;
+  xPos[1].setValue(0);
+  SBPosition3 yPos = positions_.SecondPosition;
+  yPos[2].setValue(0);
+  
   auto x = (positions_.FirstPosition - xPos).norm();
   auto y = (positions_.FirstPosition - yPos).norm();
   auto z = SBQuantity::nanometer(3.4);
@@ -50,7 +53,7 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
 
     for (int xt = 0; xt < xNumStrands; xt++) {
       for (int yt = 0; yt < yNumStrands; yt++) {
-        auto pos = vGrid_.GetGridCellPos3D(0, yt, xt);
+        auto pos = vGrid_.GetGridCellPos3D(0, xt, yt);
         pos += positions_.FirstPosition;
         auto ds = DASCreator::CreateDoubleStrand(part, numNucleotides, pos, dir, mock);
       }
@@ -123,7 +126,7 @@ void SELatticeCreatorEditor::beginEditing() {
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 
 	// Implement this function if you need to prepare some data structures in order to be able to handle GUI or SAMSON events.
   SBCamera * camera = SAMSON::getActiveCamera();
-  camera->leftView();
+  camera->rightView();
 
   setLatticeType(LatticeType::Square);
 }
@@ -155,7 +158,6 @@ void SELatticeCreatorEditor::display() {
 
     if (positions_.positionsCounter == 1) {
       ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
-      positions_.SecondPosition = currentPosition;
     }
     else if (positions_.positionsCounter == 2) {
       ADNDisplayHelper::displayLine(positions_.FirstPosition, positions_.SecondPosition);
@@ -209,13 +211,11 @@ void SELatticeCreatorEditor::mousePressEvent(QMouseEvent* event) {
     //camera->leftView();
     positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
-    
   }
   else if (positions_.positionsCounter == 2) {
    
     positions_.ThirdPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
-
     auto radius = (positions_.ThirdPosition - positions_.SecondPosition).norm();
 
     ADNPointer<ADNPart> part = generateLattice();
@@ -250,10 +250,7 @@ void SELatticeCreatorEditor::mouseMoveEvent(QMouseEvent* event) {
     display_ = true;
 
     if (positions_.positionsCounter == 1) {
-      //SBCamera * camera = SAMSON::getActiveCamera();
-      //camera->leftView();
       positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
-
     }
 
     //SAMSON::requestViewportUpdate();
