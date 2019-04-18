@@ -50,6 +50,10 @@ public:
 	void														saveSettings(SBGSettings* settings);										///< Save GUI settings
 
 	//@}
+  public slots:
+  
+  void                            setHoneycomb();
+  void                            setSquare();
 
 private:
 

@@ -30,17 +30,24 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
   ADNPointer<ADNPart> part = nullptr;
 
   SBPosition3 firstPos = positions_.FirstPosition;
-  SBPosition3 secondPos = positions_.SecondPosition;
+  SBPosition3 currentPos = positions_.SecondPosition - firstPos;
 
-  SBPosition3 xPos = positions_.SecondPosition;
+  SBPosition3 xPos = currentPos;
   xPos[1].setValue(0);
-  SBPosition3 yPos = positions_.SecondPosition;
+  SBPosition3 yPos = currentPos;
   yPos[2].setValue(0);
   
-  auto x = (positions_.FirstPosition - xPos).norm();
-  auto y = (positions_.FirstPosition - yPos).norm();
+  auto x = (xPos).norm();
+  auto y = (yPos).norm();
   auto z = SBQuantity::nanometer(3.4);
-  //auto z = (positions_.ThirdPosition - positions_.SecondPosition).norm();
+
+  if (positions_.positionsCounter == 2) {
+    SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    z = (currentPosition - firstPos).norm();
+  }
+  else if (positions_.positionsCounter == 3) {
+    z = (positions_.ThirdPosition - firstPos).norm();
+  }
   
   auto xNumStrands = round((x / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
   auto yNumStrands = round((y / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
@@ -50,7 +57,6 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
     part = new ADNPart();
     
     SBVector3 dir = SBVector3(1, 0, 0);
-
     for (int xt = 0; xt < xNumStrands; xt++) {
       for (int yt = 0; yt < yNumStrands; yt++) {
         auto pos = vGrid_.GetGridCellPos3D(0, xt, yt);
@@ -58,7 +64,6 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
         auto ds = DASCreator::CreateDoubleStrand(part, numNucleotides, pos, dir, mock);
       }
     }
-    
   }
 
   return part;
@@ -117,7 +122,7 @@ QString SELatticeCreatorEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("SAMSON Element generator pro tip: modify me"); 
+	return QObject::tr("Created dsDNA on a square or honeycomb lattice"); 
 
 }
 
@@ -128,7 +133,7 @@ void SELatticeCreatorEditor::beginEditing() {
   SBCamera * camera = SAMSON::getActiveCamera();
   camera->rightView();
 
-  setLatticeType(LatticeType::Square);
+  setLatticeType(LatticeType::Honeycomb);
 }
 
 void SELatticeCreatorEditor::endEditing() {
@@ -161,9 +166,8 @@ void SELatticeCreatorEditor::display() {
     }
     else if (positions_.positionsCounter == 2) {
       ADNDisplayHelper::displayLine(positions_.FirstPosition, positions_.SecondPosition);
-      ADNDisplayHelper::displayLine(positions_.SecondPosition, currentPosition);
+      ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
 
-      positions_.ThirdPosition = currentPosition;
     }
 
     tempPart_ = generateLattice(true);
@@ -207,23 +211,24 @@ void SELatticeCreatorEditor::mousePressEvent(QMouseEvent* event) {
 	// Implement this function to handle this event with your editor.
 
   if (positions_.positionsCounter == 0) {
-    //SBCamera * camera = SAMSON::getActiveCamera();
-    //camera->leftView();
+    SBCamera * camera = SAMSON::getActiveCamera();
+    camera->rightView();
     positions_.FirstPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
   }
   else if (positions_.positionsCounter == 2) {
-   
     positions_.ThirdPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
-    auto radius = (positions_.ThirdPosition - positions_.SecondPosition).norm();
-
+    
     ADNPointer<ADNPart> part = generateLattice();
     sendPartToAdenita(part);
 
     DASCreatorEditors::resetPositions(positions_);
     display_ = false;
     tempPart_ == nullptr;
+
+    SBCamera * camera = SAMSON::getActiveCamera();
+    camera->rightView();
   }
 }
 
@@ -233,11 +238,10 @@ void SELatticeCreatorEditor::mouseReleaseEvent(QMouseEvent* event) {
 	// Implement this function to handle this event with your editor.
 
   if (positions_.positionsCounter == 1) {
-    //SBCamera * camera = SAMSON::getActiveCamera();
-    //camera->bottomView();
     positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
-    
+    SBCamera * camera = SAMSON::getActiveCamera();
+    camera->topView();
   }
 
 }
@@ -251,6 +255,9 @@ void SELatticeCreatorEditor::mouseMoveEvent(QMouseEvent* event) {
 
     if (positions_.positionsCounter == 1) {
       positions_.SecondPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    }
+    else if (positions_.positionsCounter == 2) {
+      positions_.ThirdPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     }
 
     //SAMSON::requestViewportUpdate();
@@ -277,6 +284,11 @@ void SELatticeCreatorEditor::keyPressEvent(QKeyEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  if (event->key() == Qt::Key::Key_Escape) {
+    display_ = false;
+    DASCreatorEditors::resetPositions(positions_);
+    SAMSON::requestViewportUpdate();
+  }
 }
 
 void SELatticeCreatorEditor::keyReleaseEvent(QKeyEvent* event) {
@@ -313,4 +325,6 @@ void SELatticeCreatorEditor::onStructuralEvent(SBStructuralEvent* documentEvent)
 void SELatticeCreatorEditor::setLatticeType(LatticeType type)
 {
   vGrid_.CreateLattice(type);
+  SBCamera * camera = SAMSON::getActiveCamera();
+  camera->rightView();
 }
