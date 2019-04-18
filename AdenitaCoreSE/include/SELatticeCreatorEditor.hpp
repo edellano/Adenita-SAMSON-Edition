@@ -14,6 +14,12 @@
 
 /// This class implements an editor
 
+enum ZLatticePattern {
+  ALLZ,
+  TRIANGLE,
+  CIRCLE
+};
+
 class SELatticeCreatorEditor : public SBGEditor {
 
 	SB_CLASS
@@ -91,6 +97,7 @@ public :
 	//@}
 
   void                                setLatticeType(LatticeType type);
+  void                                setZPattern(ZLatticePattern pattern);
 	/// \name GUI
 	//@{
 
@@ -98,6 +105,7 @@ public :
 
 	//@}
 private:
+
   ADNPointer<ADNPart> generateLattice(bool mock = false);
   void displayLattice();
   void sendPartToAdenita(ADNPointer<ADNPart> lattice);
@@ -107,6 +115,8 @@ private:
   DASCreatorEditors::UIData positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
+
+  ZLatticePattern zPattern_ = ZLatticePattern::ALLZ;
 
 };
 

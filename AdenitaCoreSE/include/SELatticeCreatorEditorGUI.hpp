@@ -4,6 +4,8 @@
 #include "SBGWindowWidget.hpp" 
 #include "ui_SELatticeCreatorEditorGUI.h"
 
+
+
 class SELatticeCreatorEditor;
 
 /// This class implements the GUI of the editor
@@ -54,6 +56,9 @@ public:
   
   void                            setHoneycomb();
   void                            setSquare();
+
+
+  void                            onZPatternChanged(int index);
 
 private:
 

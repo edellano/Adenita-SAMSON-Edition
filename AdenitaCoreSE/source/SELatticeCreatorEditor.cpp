@@ -61,7 +61,17 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
       for (int yt = 0; yt < yNumStrands; yt++) {
         auto pos = vGrid_.GetGridCellPos3D(0, xt, yt);
         pos += positions_.FirstPosition;
-        auto ds = DASCreator::CreateDoubleStrand(part, numNucleotides, pos, dir, mock);
+
+        int zLength = numNucleotides;
+        if (zPattern_ == TRIANGLE) {
+          zLength = (xt / xNumStrands) * numNucleotides;
+          //if (xt < xNumStrands / 2) { 
+          //}
+          //else {
+          //  zLength = (1 - xt / xNumStrands) * numNucleotides;
+          //}
+        }
+        if (zLength > 0) auto ds = DASCreator::CreateDoubleStrand(part, zLength, pos, dir, mock);
       }
     }
   }
@@ -336,4 +346,9 @@ void SELatticeCreatorEditor::setLatticeType(LatticeType type)
   vGrid_.CreateLattice(type);
   SBCamera * camera = SAMSON::getActiveCamera();
   camera->rightView();
+}
+
+void SELatticeCreatorEditor::setZPattern(ZLatticePattern pattern)
+{
+  zPattern_ = pattern;
 }

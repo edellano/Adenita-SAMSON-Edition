@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>100</height>
+    <height>257</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,29 +19,88 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="1" column="0">
-      <widget class="QRadioButton" name="rdbSquare">
+  <widget class="QWidget" name="formLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>9</x>
+     <y>9</y>
+     <width>281</width>
+     <height>231</height>
+    </rect>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <item row="1" column="0" colspan="2">
+     <widget class="QRadioButton" name="rdbHoneycomb">
+      <property name="text">
+       <string>Honeycomb Lattice</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="2">
+     <widget class="QRadioButton" name="rdbSquare">
+      <property name="text">
+       <string>Square Lattice</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Patterns</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>  x (Strands)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="comboBox"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>  y (Strands)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QComboBox" name="comboBox_2"/>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>  z (Nucleotides)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QComboBox" name="cbbZPattern">
+      <item>
        <property name="text">
-        <string>Square Lattice</string>
+        <string>ALL</string>
        </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QRadioButton" name="rdbHoneycomb">
+      </item>
+      <item>
        <property name="text">
-        <string>Honeycomb Lattice</string>
+        <string>Triangle</string>
        </property>
-       <property name="checked">
-        <bool>true</bool>
+      </item>
+      <item>
+       <property name="text">
+        <string>Circle</string>
        </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-  </layout>
+      </item>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <resources/>
  <connections>
@@ -52,8 +111,8 @@
    <slot>setHoneycomb()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>104</x>
-     <y>24</y>
+     <x>114</x>
+     <y>56</y>
     </hint>
     <hint type="destinationlabel">
      <x>296</x>
@@ -68,8 +127,8 @@
    <slot>setSquare()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>74</x>
-     <y>40</y>
+     <x>84</x>
+     <y>29</y>
     </hint>
     <hint type="destinationlabel">
      <x>296</x>
@@ -77,9 +136,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbbZPattern</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SELatticeCreatorEditorGUIClass</receiver>
+   <slot>onZPatternChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>152</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>177</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>setHoneycomb()</slot>
   <slot>setSquare()</slot>
+  <slot>onZPatternChanged(int)</slot>
+  <slot>onXPatternChanged(int)</slot>
+  <slot>onYPatternChanged(int)</slot>
  </slots>
 </ui>
