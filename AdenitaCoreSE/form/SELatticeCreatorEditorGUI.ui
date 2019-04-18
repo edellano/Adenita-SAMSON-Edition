@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SELatticeCreatorEditorGUIClass</class>
+ <widget class="QWidget" name="SELatticeCreatorEditorGUIClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>300</width>
+    <height>100</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>300</width>
+    <height>100</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="rdbSquare">
+       <property name="text">
+        <string>Square Lattice</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QRadioButton" name="rdbHoneycomb">
+       <property name="text">
+        <string>Honeycomb Lattice</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>rdbHoneycomb</sender>
+   <signal>clicked()</signal>
+   <receiver>SELatticeCreatorEditorGUIClass</receiver>
+   <slot>setHoneycomb()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbSquare</sender>
+   <signal>clicked()</signal>
+   <receiver>SELatticeCreatorEditorGUIClass</receiver>
+   <slot>setSquare()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>74</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>setHoneycomb()</slot>
+  <slot>setSquare()</slot>
+ </slots>
+</ui>
