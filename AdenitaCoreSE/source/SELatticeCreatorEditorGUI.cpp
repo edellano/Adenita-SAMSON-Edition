@@ -44,6 +44,24 @@ void SELatticeCreatorEditorGUI::setSquare()
   t->setLatticeType(LatticeType::Square);
 }
 
+void SELatticeCreatorEditorGUI::onZPatternChanged(int index)
+{
+  SELatticeCreatorEditor* t = getEditor();
+  if (index == 0)
+  {
+    t->setZPattern(ZLatticePattern::ALLZ);
+  }
+  else if (index == 1)
+  {
+    t->setZPattern(ZLatticePattern::TRIANGLE);
+  }
+  else if (index == 2)
+  {
+    t->setZPattern(ZLatticePattern::CIRCLE);
+  }
+
+}
+
 SBCContainerUUID SELatticeCreatorEditorGUI::getUUID() const { return SBCContainerUUID( "A9C48A6E-8BD1-B387-6A63-1CB8A19C1948" );}
 
 QPixmap SELatticeCreatorEditorGUI::getLogo() const { 

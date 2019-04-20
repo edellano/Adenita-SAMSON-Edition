@@ -398,7 +398,7 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
       auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
       ADNPointer<ADNNucleotide> cur = nanorobot_->GetSingleStrandFivePrime(ss);
-      size_t curNCylinders = nucleotides.size() - 1;
+      size_t curNCylinders = nucleotides.size() - 1; //todo fix this
       ADNArray<unsigned int> curIndices = ADNArray<unsigned int>(2 * curNCylinders);
 
       //looping using the next_ member variable of nucleotides
