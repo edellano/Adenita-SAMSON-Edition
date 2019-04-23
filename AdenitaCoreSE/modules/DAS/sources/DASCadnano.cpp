@@ -397,6 +397,18 @@ void DASCadnano::CreateConformations(ADNPointer<ADNPart> nanorobot)
   conformation2D_ = new SBMStructuralModelConformation(name + " 2D", nodeIndexer);
   conformation1D_ = new SBMStructuralModelConformation(name + " 1D", nodeIndexer);
 
+  SBPosition3 center3D = SBPosition3();
+  //SB_FOR(SBNode* n, nodeIndexer) {
+  //  SBAtom* atom = static_cast<SBAtom*>(n);
+  //  center3D += atom->getPosition();
+  //}
+  //center3D /= nodeIndexer.size();
+
+  SBPosition3 center2D = SBPosition3();
+  SBPosition3 center1D = SBPosition3();
+
+  int n1D = 0;
+  int n3D = 0;
   for (auto it = cellBsMap_.begin(); it != cellBsMap_.end(); ++it) {
     Vstrand* vs = it->first;
     int vStrandId = vs->num_;
@@ -413,17 +425,82 @@ void DASCadnano::CreateConformations(ADNPointer<ADNPart> nanorobot)
         SBPosition3 pos1D = vGrid_.GetGridCellPos1D(ssId_[ss()], ntPositions_[nt()]);
         auto ats = nt->GetBackbone()->GetAtoms();
         SB_FOR(ADNPointer<ADNAtom> at, ats) {
+          if (!ss->IsScaffold()) {
+            center1D += pos1D;
+            n1D++;
+          }
+          center2D += pos2D;
+          center3D += nt->GetBackbonePosition();
+          n3D++;
           conformation2D_->setPosition(at(), pos2D);
           conformation1D_->setPosition(at(), pos1D);
         }
         ats = nt->GetSidechain()->GetAtoms();
         SB_FOR(ADNPointer<ADNAtom> at, ats) {
+          if (!ss->IsScaffold()) {
+            center1D += pos1D;
+            n1D++;
+          }
+          center2D += pos2D;
+          center3D += nt->GetSidechainPosition();
+          n3D++;
           conformation2D_->setPosition(at(), pos2D);
           conformation1D_->setPosition(at(), pos1D);
         }
       }
     }
   }
+
+  center1D /= n1D;
+  center2D /= n3D;
+  center3D /= n3D;
+
+  for (auto it = cellBsMap_.begin(); it != cellBsMap_.end(); ++it) {
+    std::map<std::pair<int, int>, ADNPointer<ADNBaseSegment>> values = it->second;
+    for (auto jt = values.begin(); jt != values.end(); ++jt) {
+      ADNPointer<ADNBaseSegment> bs = jt->second;
+      auto nts = bs->GetNucleotides();
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nts) {
+        auto ats = nt->GetBackbone()->GetAtoms();
+        SB_FOR(ADNPointer<ADNAtom> at, ats) {
+          SBPosition3 pos2D;
+          conformation2D_->getPosition(at(), pos2D);
+          pos2D -= center2D;
+          pos2D += center3D;
+          conformation2D_->setPosition(at(), pos2D);
+          SBPosition3 pos1D;
+          conformation1D_->getPosition(at(), pos1D);
+          pos1D -= center1D;
+          pos1D += center3D;
+          conformation1D_->setPosition(at(), pos1D);
+        }
+        ats = nt->GetSidechain()->GetAtoms();
+        SB_FOR(ADNPointer<ADNAtom> at, ats) {
+          SBPosition3 pos2D;
+          conformation2D_->getPosition(at(), pos2D);
+          pos2D -= center2D;
+          pos2D += center3D;
+          conformation2D_->setPosition(at(), pos2D);
+          SBPosition3 pos1D;
+          conformation1D_->getPosition(at(), pos1D);
+          pos1D -= center1D;
+          pos1D += center3D;
+          conformation1D_->setPosition(at(), pos1D);
+        }
+      }
+    }
+  }
+
+  //shift 2D and 1D position to center of 3D
+  //for (unsigned int i = 0; i < n; i++) {
+  //  SBPosition3 pos2D;
+  //  conformation2D_->getPosition(i, pos2D);
+  //  pos2D -= center2D;
+  //  pos2D += center3D;
+  //  conformation2D_->setPosition(i, pos2D);
+  //}
+
+
 }
 
 SBPointer<SBMStructuralModelConformation> DASCadnano::Get3DConformation()
@@ -516,7 +593,7 @@ SBPosition3 VGrid::GetGridCellPos1D(int ssId, int ntNum)
 {
   SBPosition3 pos;
 
-  double x = ssId * ADNConstants::DH_DIAMETER;
+  double x = ssId * ADNConstants::DH_DIAMETER * 0.25f;
   double y = -ntNum / 2.0f;
 
   pos[0] = SBQuantity::nanometer(x);
