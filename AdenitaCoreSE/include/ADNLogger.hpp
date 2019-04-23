@@ -50,6 +50,7 @@ public:
   void Log(std::string name, ublas::vector<double> v);
   void Log(ublas::matrix<double> m);
   void Log(quintptr ptr);
+  void Log(SBPosition3 pos);
 
   // time logs
   time_t LogPassedSeconds(time_t time1, std::string text);

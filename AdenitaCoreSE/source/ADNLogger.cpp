@@ -161,6 +161,16 @@ void ADNLogger::Log(ublas::matrix<double> m)
   Log(endLine);
 }
 
+void ADNLogger::Log(SBPosition3 pos)
+{
+  auto x = pos[0].getValue();
+  auto y = pos[1].getValue();
+  auto z = pos[2].getValue();
+
+  Log(QString("\t pos ") + QString::number(x) + QString(", ") + QString::number(y) + QString(", ") + QString::number(z));
+
+}
+
 time_t ADNLogger::LogPassedSeconds(time_t time1, std::string text)
 {
   double seconds_since_start = difftime(time(0), time1);

@@ -587,6 +587,7 @@ void SEWireframeEditor::keyPressEvent(QKeyEvent* event) {
 
   if (event->key() == Qt::Key_Escape) {
     display_ = false;
+    DASCreatorEditors::resetPositions(positions_);
     SAMSON::requestViewportUpdate();
   }
 }

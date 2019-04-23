@@ -119,17 +119,13 @@ bool SEAdenitaVisualModelProperties::setup(SBNode* node) {
 
 }
 
-void SEAdenitaVisualModelProperties::onDiscreteSliderScaleChanged(int val)
-{
-  visualModel->changeScaleDiscrete(val, true);
-  ui.lblScale->setText(QString::number(val));
-}
-
 void SEAdenitaVisualModelProperties::onSliderScaleChanged(int val)
 {
   double scale = (double)val / 10.0f;
-  visualModel->changeScale(scale, true); //todo this should depend on the previous scale
+  visualModel->changeScale(scale, true);
   ui.lblScale->setText(QString::number(scale));
+  SAMSON::requestViewportUpdate();
+
 }
 
 void SEAdenitaVisualModelProperties::onSliderVisibilityChanged(int val)
@@ -147,8 +143,11 @@ void SEAdenitaVisualModelProperties::onSpinboxVisibilityChanged(double val)
 
 void SEAdenitaVisualModelProperties::onSliderDimensionChanged(int val)
 {
-  visualModel->changeDimension(val); //todo this should depend on the previous scale
-  ui.lblDimension->setText(QString::number(val));
+  float dim = (float)val / 100.0f;
+  visualModel->changeDimension(dim);
+  ui.lblDimension->setText(QString::number(dim));
+  SAMSON::requestViewportUpdate();
+
 }
 
 void SEAdenitaVisualModelProperties::onPropertyColorsChanged(int propertyIdx)
