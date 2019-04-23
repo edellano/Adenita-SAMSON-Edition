@@ -34,7 +34,6 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron &
   // Set edge lengths in base pairs and generate the scaffold
   SetEdgeBps(min_edge_length_, daedalus_part, fig);
   SetVerticesPositions(daedalus_part, fig, center);
-  // origami.LogPolyhedron();
   CreateLinkGraphFromMesh(daedalus_part, fig);
   InitEdgeMap(daedalus_part, fig);
 
@@ -948,13 +947,13 @@ void DASDaedalus::SetVerticesPositions(ADNPointer<ADNPart> origami, DASPolyhedro
   }
   cm /= vertices.size();
   // center
-  if (center) {
+  /*if (center) {
     for (auto vit = vertices.begin(); vit != vertices.end(); ++vit) {
       SBPosition3 c = vit->second->GetSBPosition();
       c = c - cm;
       vit->second->SetCoordinates(c);
     }
-  }
+  }*/
 }
 
 void DASDaedalus::LogEdgeMap(ADNPointer<ADNPart> origami) {
@@ -1063,48 +1062,78 @@ std::map<DASHalfEdge*, SBPosition3> DASDaedalus::GetVertexPositions(DASPolyhedro
   std::iota(facesList.begin(), facesList.end(), 1);
 
   SBPosition3 cm = fig.GetCenter();
-  SBQuantity::length inc = SBQuantity::angstrom(dh_dist * 0.2);
+  SBQuantity::length start = SBQuantity::angstrom(dh_dist * 0.2);
+  SBQuantity::length inc = SBQuantity::angstrom(dh_dist * 0.1);
   SBQuantity::length dist = SBQuantity::angstrom(dh_dist);
-  SBQuantity::length tol = dist * 0.1;
+  SBQuantity::length tol = dist * 0.08;
   while (!facesList.empty()) {
-    for (int fit : facesList) {
-      auto face = faces[fit-1];
+    for (auto it = facesList.begin(); it != facesList.end();) {
+      auto face = faces[*it-1];
       SBPosition3 faceCM = face->GetCenter();
       SBVector3 n = (faceCM - cm).normalizedVersion();
+      int total_count = 0;
+      int count = 0;
       DASHalfEdge* begin = face->halfEdge_;
       DASHalfEdge* he = begin;
       do {
         auto pos = he->source_->GetSBPosition();
+
         if (vertexPositions.find(he) == vertexPositions.end()) {
-          vertexPositions[he] = pos + inc * n;
+          vertexPositions[he] = pos;
         }
         else {
-          vertexPositions[he] += inc * n;
+          // check distance before updating
+          if (vertexPositions.find(he->pair_->next_) != vertexPositions.end()) {
+            auto v = vertexPositions[he];
+            auto w = vertexPositions[he->pair_->next_];
+            SBQuantity::length d = (w - v).norm();
+            if (ADNVectorMath::IsNearlyZero(abs((d - dist).getValue()), tol.getValue())) {
+              ++count;
+            }
+            else {
+              if (d > dist) {
+                vertexPositions[he] -= inc * n;
+                count++;
+              }
+              else {
+                vertexPositions[he] += inc * n;
+              }
+            }
+          }
         }
-        he = he->next_;
-      } while (he != begin);
-    }
-    // calculate distances
-    for (auto it = facesList.begin(); it != facesList.end();) {
-      auto face = faces[*it-1];
-      DASHalfEdge* begin = face->halfEdge_;
-      DASHalfEdge* he = begin;
-      int total_count = 0;
-      int count = 0;
-      do {
-        auto v = vertexPositions[he];
-        auto w = vertexPositions[he->pair_->next_];
-        SBQuantity::length d = (w - v).norm();
-        if (ADNVectorMath::IsNearlyZero(abs((d - dist).getValue()), tol.getValue())) ++count;
+        
         he = he->next_;
         ++total_count;
       } while (he != begin);
+      // delete if face is set
       if (count > total_count*0.5) {
-        it = facesList.erase(it); 
+        it = facesList.erase(it);
       }
       else {
         ++it;
       }
+    //}
+    //// calculate distances
+    //for (auto it = facesList.begin(); it != facesList.end();) {
+    //  auto face = faces[*it-1];
+    //  DASHalfEdge* begin = face->halfEdge_;
+    //  DASHalfEdge* he = begin;
+    //  int total_count = 0;
+    //  int count = 0;
+    //  do {
+    //    auto v = vertexPositions[he];
+    //    auto w = vertexPositions[he->pair_->next_];
+    //    SBQuantity::length d = (w - v).norm();
+    //    if (ADNVectorMath::IsNearlyZero(abs((d - dist).getValue()), tol.getValue())) ++count;
+    //    he = he->next_;
+    //    ++total_count;
+    //  } while (he != begin);
+    //  if (count > total_count*0.5) {
+    //    it = facesList.erase(it); 
+    //  }
+    //  else {
+    //    ++it;
+    //  }
     }
   }
   
