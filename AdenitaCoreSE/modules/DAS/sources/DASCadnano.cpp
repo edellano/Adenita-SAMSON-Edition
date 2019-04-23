@@ -389,7 +389,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
 
 void DASCadnano::CreateConformations(ADNPointer<ADNPart> nanorobot)
 {
-  std::string name = json_.name_;
+  std::string name = nanorobot->GetName();
   SBNodeIndexer nodeIndexer;
   nanorobot->getNodes(nodeIndexer, (SBNode::GetClass() == std::string("ADNAtom")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
 
