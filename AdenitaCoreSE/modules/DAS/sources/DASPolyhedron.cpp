@@ -106,6 +106,22 @@ DASPolygon & DASPolygon::operator=(const DASPolygon & other) {
   return *this;
 }
 
+SBPosition3 DASPolygon::GetCenter()
+{
+  SBPosition3 cm;
+  int c = 0;
+  DASHalfEdge* begin = halfEdge_;
+  DASHalfEdge* he = begin;
+  do {
+    cm += he->source_->GetSBPosition();
+    ++c;
+    he = he->next_;
+  } while (he != begin);
+  cm /= c;
+
+  return cm;
+}
+
 std::vector<double> DASVertex::GetVectorCoordinates() const {
   std::vector<double> coords = {
     position_[0].getValue() * 0.01,
@@ -698,4 +714,16 @@ void DASPolyhedron::Center(SBPosition3 center) {
     SBPosition3 pos = originalVertice.second->GetSBPosition();
     originalVertice.second->SetCoordinates(pos + R);
   }
+}
+
+SBPosition3 DASPolyhedron::GetCenter()
+{
+  SBPosition3 cm;
+  auto numVertices = vertices_.size();
+  for (auto v : vertices_) {
+    auto vertex = v.second;
+    cm += vertex->GetSBPosition();
+  }
+  cm /= numVertices;
+  return cm;
 }

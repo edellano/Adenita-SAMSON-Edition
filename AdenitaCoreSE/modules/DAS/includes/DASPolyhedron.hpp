@@ -86,6 +86,8 @@ public:
 
   DASPolygon& operator=(const DASPolygon& p);
   
+  SBPosition3 GetCenter();
+
   int id_;
   DASHalfEdge* halfEdge_ = nullptr;
 };
@@ -136,6 +138,7 @@ public:
   static DASHalfEdge* GetHalfEdge(DASVertex* v, DASVertex* w);
   void Scale(double scalingFactor);
   void Center(SBPosition3 center);
+  SBPosition3 GetCenter();
 
 protected:
   int FetchNumber(std::string st, std::string tok);
