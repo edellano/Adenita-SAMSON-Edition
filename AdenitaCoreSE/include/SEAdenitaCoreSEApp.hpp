@@ -68,7 +68,6 @@ public :
   void FromDatagraph();
   void HighlightXOs();
   void HighlightPosXOs();
-  void TestPolyhedron(QString filename);
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
