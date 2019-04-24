@@ -88,6 +88,7 @@ public slots:
   void onFromDatagraph();
   void onHighlightXOs();
   void onHighlightPosXOs();
+  void onTestPolyhedron();
 
 private slots:
   void CheckForLoadedParts();

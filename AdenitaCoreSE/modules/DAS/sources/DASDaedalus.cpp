@@ -565,10 +565,11 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
       SBVector3 dir = (t->GetSBPosition() - s->GetSBPosition()).normalizedVersion();
       SBVector3 u = SBCrossProduct(dir, norm);
       auto coords = vertexPositions[he];
+      //auto coords = he->source_->GetSBPosition();
 
       int l = bpLengths_.at(he->edge_) + 1; // +1 since we have apolyT region at the end
 
-      coords += SBQuantity::angstrom(BP_RISE)*dir;
+      //coords += SBQuantity::angstrom(BP_RISE)*dir;
 
       ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
       ds->SetInitialTwistAngle(7 * ADNConstants::BP_ROT);  // necessary to fix crossovers
@@ -909,12 +910,13 @@ void DASDaedalus::SetVerticesPositions(ADNPointer<ADNPart> origami, DASPolyhedro
   Vertices vertices = fig.GetVertices();
   Vertices originalVertices = fig.GetOriginalVertices();
   SBPosition3 cm = SBPosition3();
+  DASVertex* orig_v = nullptr;
   DASVertex* v = vertices.begin()->second;
-  DASVertex* orig_v = originalVertices.at(v->id_);
-  done_vertex.push_back(orig_v);
-  cm += v->GetSBPosition();
-  for (auto vit = vertices.begin(); vit != vertices.end(); ++vit) {
-    v = vit->second;
+  int count = 0;
+  //DASVertex* orig_v = originalVertices.at(v->id_);
+  //done_vertex.push_back(orig_v);
+  //cm += v->GetSBPosition();
+  while (done_vertex.size() < originalVertices.size()) {
     orig_v = originalVertices.at(v->id_);
     DASHalfEdge* begin = v->halfEdge_;
     DASHalfEdge* he = begin;
@@ -933,7 +935,7 @@ void DASDaedalus::SetVerticesPositions(ADNPointer<ADNPart> origami, DASPolyhedro
         SBVector3 dir = (orig_c_next - orig_c_v).normalizedVersion();
         SBQuantity::angstrom l(length);
 
-        SBPosition3 new_c_next = c_v + l*dir;
+        SBPosition3 new_c_next = c_v + l * dir;
 
         next_v->SetCoordinates(new_c_next);
         cm += new_c_next;
@@ -941,19 +943,22 @@ void DASDaedalus::SetVerticesPositions(ADNPointer<ADNPart> origami, DASPolyhedro
       }
 
       he = he->pair_->next_;
-      v = he->source_;
-      orig_v = originalVertices.at(v->id_);
+      //v = he->source_;
+      //orig_v = originalVertices.at(v->id_);
     } while (he != begin);
+    int nId = done_vertex.at(count)->id_;
+    v = vertices.at(nId);
+    ++count;
   }
   cm /= vertices.size();
   // center
-  /*if (center) {
+  if (center) {
     for (auto vit = vertices.begin(); vit != vertices.end(); ++vit) {
       SBPosition3 c = vit->second->GetSBPosition();
       c = c - cm;
       vit->second->SetCoordinates(c);
     }
-  }*/
+  }
 }
 
 void DASDaedalus::LogEdgeMap(ADNPointer<ADNPart> origami) {
@@ -1112,7 +1117,7 @@ std::map<DASHalfEdge*, SBPosition3> DASDaedalus::GetVertexPositions(DASPolyhedro
       else {
         ++it;
       }
-    //}
+    }
     //// calculate distances
     //for (auto it = facesList.begin(); it != facesList.end();) {
     //  auto face = faces[*it-1];
@@ -1134,7 +1139,7 @@ std::map<DASHalfEdge*, SBPosition3> DASDaedalus::GetVertexPositions(DASPolyhedro
     //  else {
     //    ++it;
     //  }
-    }
+    //}
   }
   
   return vertexPositions;

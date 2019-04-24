@@ -613,6 +613,25 @@ void SEAdenitaCoreSEAppGUI::onHighlightPosXOs()
   t->HighlightPosXOs();
 }
 
+void SEAdenitaCoreSEAppGUI::onTestPolyhedron()
+{
+  SEConfig& config = SEConfig::GetInstance();
+
+  QString filename;
+  if (config.mode == SEConfigMode::ELISA) {
+
+  SEAdenitaCoreSEApp* t = getApp();
+  filename = QString("C:/Users/DeLlanoE/Documents/thesis/designs/daedalus/rotor_designs/rotor_designs/christ_rotor/round1.ply");
+  
+  }
+  else {
+    filename = QFileDialog::getOpenFileName(this, tr("Open document: mesh (ply)"), QDir::currentPath(), tr("(Documents *.ply)"));
+  }
+
+  SEAdenitaCoreSEApp* t = getApp();
+  t->TestPolyhedron(filename);
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";
