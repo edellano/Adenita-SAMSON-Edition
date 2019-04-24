@@ -411,34 +411,6 @@ void SEAdenitaCoreSEApp::HighlightPosXOs()
   ResetVisualModel();
 }
 
-void SEAdenitaCoreSEApp::TestPolyhedron(QString filename)
-{
-  DASPolyhedron& poly = DASPolyhedron(filename.toStdString());
-
-  DASDaedalus *alg = new DASDaedalus();
-  alg->SetMinEdgeLength(31);
-  std::string seq = "";
-  auto dpart = alg->ApplyAlgorithm(seq, poly, false);
-  AddPartToActiveLayer(dpart);
-
-  SBPointer<SBStructuralModel> part = new SBStructuralModel();
-
-  auto faces = poly.GetFaces();
-  for (auto f : faces) {
-    auto begin = f->halfEdge_;
-    auto he = begin;
-    do {
-      SBPointer<SBAtom> at = new SBAtom();
-      at->setElementType(SBMElement::Carbon);
-      at->setPosition(he->source_->GetSBPosition());
-      part->getStructuralRoot()->addChild(at());
-      he = he->next_;
-    } while (he != begin);
-  }
-  part->create();
-  SAMSON::getActiveLayer()->addChild(part());
-}
-
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   //auto t = documentEvent->getType();

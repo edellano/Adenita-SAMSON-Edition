@@ -318,45 +318,10 @@
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="1" column="2">
-           <widget class="QPushButton" name="btnKinetoplast">
-            <property name="text">
-             <string>Kinetoplast</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="btnHighlightCrossovers">
-            <property name="text">
-             <string>Highlight Crossovers</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="btnCenterPart">
-            <property name="text">
-             <string>Center Part</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="2">
            <widget class="QPushButton" name="btnTestNeighbors">
             <property name="text">
              <string>Test Neighbors</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QPushButton" name="btnAddNtThreeP">
-            <property name="text">
-             <string>Add nt 3'</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="btnCatenanes">
-            <property name="text">
-             <string>Catenanes</string>
             </property>
            </widget>
           </item>
@@ -374,6 +339,20 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="btnCenterPart">
+            <property name="text">
+             <string>Center Part</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="btnKinetoplast">
+            <property name="text">
+             <string>Kinetoplast</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QPushButton" name="btnDataGraph">
             <property name="text">
@@ -381,10 +360,24 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QPushButton" name="btnTestPolyhedron">
+          <item row="2" column="2">
+           <widget class="QPushButton" name="btnAddNtThreeP">
             <property name="text">
-             <string>Test Polyhedron</string>
+             <string>Add nt 3'</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="btnCatenanes">
+            <property name="text">
+             <string>Catenanes</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="btnHighlightCrossovers">
+            <property name="text">
+             <string>Highlight Crossovers</string>
             </property>
            </widget>
           </item>
@@ -751,22 +744,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>btnTestPolyhedron</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onTestPolyhedron()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>87</x>
-     <y>194</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>262</x>
-     <y>148</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -792,6 +769,5 @@
   <slot>onAddNtThreeP()</slot>
   <slot>onSetPathNtthal()</slot>
   <slot>onSaveSelection()</slot>
-  <slot>onTestPolyhedron()</slot>
  </slots>
 </ui>

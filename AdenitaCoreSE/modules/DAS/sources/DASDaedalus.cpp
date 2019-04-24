@@ -1118,28 +1118,6 @@ std::map<DASHalfEdge*, SBPosition3> DASDaedalus::GetVertexPositions(DASPolyhedro
         ++it;
       }
     }
-    //// calculate distances
-    //for (auto it = facesList.begin(); it != facesList.end();) {
-    //  auto face = faces[*it-1];
-    //  DASHalfEdge* begin = face->halfEdge_;
-    //  DASHalfEdge* he = begin;
-    //  int total_count = 0;
-    //  int count = 0;
-    //  do {
-    //    auto v = vertexPositions[he];
-    //    auto w = vertexPositions[he->pair_->next_];
-    //    SBQuantity::length d = (w - v).norm();
-    //    if (ADNVectorMath::IsNearlyZero(abs((d - dist).getValue()), tol.getValue())) ++count;
-    //    he = he->next_;
-    //    ++total_count;
-    //  } while (he != begin);
-    //  if (count > total_count*0.5) {
-    //    it = facesList.erase(it); 
-    //  }
-    //  else {
-    //    ++it;
-    //  }
-    //}
   }
   
   return vertexPositions;
