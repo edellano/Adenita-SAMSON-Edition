@@ -55,10 +55,10 @@ ADNArray<float> MSVColors::GetColor(ADNPointer<ADNAtom> a)
       color(3) = atomColorScheme_(5, 3);
     }
     else {
-      color(0) = 0.3;
-      color(1) = 0.3;
-      color(2) = 0.3;
-      color(3) = 1.0;
+      color(0) = 0.3f;
+      color(1) = 0.3f;
+      color(2) = 0.3f;
+      color(3) = 1.0f;
     }
 
     SBNodeMaterial* material = a()->getMaterial();

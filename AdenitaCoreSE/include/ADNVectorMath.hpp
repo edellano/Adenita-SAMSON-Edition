@@ -36,7 +36,7 @@ namespace ADNVectorMath {
   ublas::matrix<double> FindOrthogonalSubspace(ublas::vector<double> z);
   ublas::matrix<double> InvertMatrix(const ublas::matrix<double>& input);
   double Determinant(ublas::matrix<double> mat);
-  bool IsNearlyZero(double n);
+  bool IsNearlyZero(double n, double tol = 0.000000001);
   double CalculateVectorNorm(ublas::vector<double> v);
   /*!
     * Applies the transformation given by t_mat to a set of points

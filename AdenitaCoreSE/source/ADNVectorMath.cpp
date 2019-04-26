@@ -257,10 +257,9 @@ namespace ADNVectorMath {
     return sol;
   }
 
-  bool IsNearlyZero(double n) {
+  bool IsNearlyZero(double n, double tol) {
     bool sol = false;
 
-    double tol = 0.000000001;
     if (abs(n) < tol) {
       sol = true;
     }
