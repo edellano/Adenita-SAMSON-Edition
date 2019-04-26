@@ -34,7 +34,6 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron &
   // Set edge lengths in base pairs and generate the scaffold
   SetEdgeBps(min_edge_length_, daedalus_part, fig);
   SetVerticesPositions(daedalus_part, fig, center);
-  // origami.LogPolyhedron();
   CreateLinkGraphFromMesh(daedalus_part, fig);
   InitEdgeMap(daedalus_part, fig);
 
@@ -553,6 +552,8 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
   SEConfig& config = SEConfig::GetInstance();
   double dh_dist = config.dh_dist + ADNConstants::DH_DIAMETER * 10;  // angstroms
 
+  std::map<DASHalfEdge*, SBPosition3> vertexPositions = GetVertexPositions(fig);
+
   for (auto fit = faces.begin(); fit != faces.end(); ++fit) {
     DASHalfEdge* begin = (*fit)->halfEdge_;
     DASHalfEdge* he = begin;
@@ -561,23 +562,14 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
       // iterate over face edges
       DASVertex* s = he->source_;
       DASVertex* t = he->pair_->source_;
-      SBPosition3 coords = s->GetSBPosition();
-      SBVector3 dir = (t->GetSBPosition() - coords).normalizedVersion();
-      // calculate v = -dir x normal to add padding
+      SBVector3 dir = (t->GetSBPosition() - s->GetSBPosition()).normalizedVersion();
       SBVector3 u = SBCrossProduct(dir, norm);
-      // calculate rise along the normal
-      DASPolygon* adj_face = he->pair_->left_;
-      SBVector3 adj_norm = GetPolygonNorm(adj_face);
-      double cos_theta = SBInnerProduct(norm, adj_norm);
-      double theta = acos(cos_theta);
-      double sn = sin(theta * 0.5);
-      double separation = dh_dist * 0.5 / sn;
-      coords += SBQuantity::angstrom(separation)*norm;
+      auto coords = vertexPositions[he];
+      //auto coords = he->source_->GetSBPosition();
 
       int l = bpLengths_.at(he->edge_) + 1; // +1 since we have apolyT region at the end
 
-      //coords += SBQuantity::angstrom(SS_PADDING * 0.5)*u.normalizedVersion();
-      coords += SBQuantity::angstrom(BP_RISE)*dir;
+      //coords += SBQuantity::angstrom(BP_RISE)*dir;
 
       ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
       ds->SetInitialTwistAngle(7 * ADNConstants::BP_ROT);  // necessary to fix crossovers
@@ -918,12 +910,13 @@ void DASDaedalus::SetVerticesPositions(ADNPointer<ADNPart> origami, DASPolyhedro
   Vertices vertices = fig.GetVertices();
   Vertices originalVertices = fig.GetOriginalVertices();
   SBPosition3 cm = SBPosition3();
+  DASVertex* orig_v = nullptr;
   DASVertex* v = vertices.begin()->second;
-  DASVertex* orig_v = originalVertices.at(v->id_);
-  done_vertex.push_back(orig_v);
-  cm += v->GetSBPosition();
-  for (auto vit = vertices.begin(); vit != vertices.end(); ++vit) {
-    v = vit->second;
+  int count = 0;
+  //DASVertex* orig_v = originalVertices.at(v->id_);
+  //done_vertex.push_back(orig_v);
+  //cm += v->GetSBPosition();
+  while (done_vertex.size() < originalVertices.size()) {
     orig_v = originalVertices.at(v->id_);
     DASHalfEdge* begin = v->halfEdge_;
     DASHalfEdge* he = begin;
@@ -942,7 +935,7 @@ void DASDaedalus::SetVerticesPositions(ADNPointer<ADNPart> origami, DASPolyhedro
         SBVector3 dir = (orig_c_next - orig_c_v).normalizedVersion();
         SBQuantity::angstrom l(length);
 
-        SBPosition3 new_c_next = c_v + l*dir;
+        SBPosition3 new_c_next = c_v + l * dir;
 
         next_v->SetCoordinates(new_c_next);
         cm += new_c_next;
@@ -950,9 +943,12 @@ void DASDaedalus::SetVerticesPositions(ADNPointer<ADNPart> origami, DASPolyhedro
       }
 
       he = he->pair_->next_;
-      v = he->source_;
-      orig_v = originalVertices.at(v->id_);
+      //v = he->source_;
+      //orig_v = originalVertices.at(v->id_);
     } while (he != begin);
+    int nId = done_vertex.at(count)->id_;
+    v = vertices.at(nId);
+    ++count;
   }
   cm /= vertices.size();
   // center
@@ -1056,6 +1052,75 @@ ADNPointer<ADNBaseSegment> DASDaedalus::FindBaseSegmentPair(ADNPointer<ADNPart> 
   auto bases = origami->GetBaseSegments();
 
   return bases[pairIdx];
+}
+
+std::map<DASHalfEdge*, SBPosition3> DASDaedalus::GetVertexPositions(DASPolyhedron & fig)
+{
+  std::map<DASHalfEdge*, SBPosition3> vertexPositions;
+
+  Faces faces = fig.GetFaces();
+
+  SEConfig& config = SEConfig::GetInstance();
+  double dh_dist = config.dh_dist + ADNConstants::DH_DIAMETER * 10;  // angstroms  
+
+  std::vector<int> facesList(faces.size());
+  std::iota(facesList.begin(), facesList.end(), 1);
+
+  SBPosition3 cm = fig.GetCenter();
+  SBQuantity::length start = SBQuantity::angstrom(dh_dist * 0.2);
+  SBQuantity::length inc = SBQuantity::angstrom(dh_dist * 0.1);
+  SBQuantity::length dist = SBQuantity::angstrom(dh_dist);
+  SBQuantity::length tol = dist * 0.08;
+  while (!facesList.empty()) {
+    for (auto it = facesList.begin(); it != facesList.end();) {
+      auto face = faces[*it-1];
+      SBPosition3 faceCM = face->GetCenter();
+      SBVector3 n = (faceCM - cm).normalizedVersion();
+      int total_count = 0;
+      int count = 0;
+      DASHalfEdge* begin = face->halfEdge_;
+      DASHalfEdge* he = begin;
+      do {
+        auto pos = he->source_->GetSBPosition();
+
+        if (vertexPositions.find(he) == vertexPositions.end()) {
+          vertexPositions[he] = pos;
+        }
+        else {
+          // check distance before updating
+          if (vertexPositions.find(he->pair_->next_) != vertexPositions.end()) {
+            auto v = vertexPositions[he];
+            auto w = vertexPositions[he->pair_->next_];
+            SBQuantity::length d = (w - v).norm();
+            if (ADNVectorMath::IsNearlyZero(abs((d - dist).getValue()), tol.getValue())) {
+              ++count;
+            }
+            else {
+              if (d > dist) {
+                vertexPositions[he] -= inc * n;
+                count++;
+              }
+              else {
+                vertexPositions[he] += inc * n;
+              }
+            }
+          }
+        }
+        
+        he = he->next_;
+        ++total_count;
+      } while (he != begin);
+      // delete if face is set
+      if (count > total_count*0.5) {
+        it = facesList.erase(it);
+      }
+      else {
+        ++it;
+      }
+    }
+  }
+  
+  return vertexPositions;
 }
 
 int DASDaedalus::CalculateEdgeSize(SBQuantity::length nmLength) {

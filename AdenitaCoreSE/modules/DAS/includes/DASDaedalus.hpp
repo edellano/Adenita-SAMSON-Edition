@@ -260,6 +260,7 @@ private:
   static void OutputGraph(T g, std::string filename);
   SBVector3 GetPolygonNorm(DASPolygon* face);
   ADNPointer<ADNBaseSegment> FindBaseSegmentPair(ADNPointer<ADNPart> origami, ADNPointer<ADNBaseSegment> bs);
+  std::map<DASHalfEdge*, SBPosition3> GetVertexPositions(DASPolyhedron &fig);
 };
 
 #endif

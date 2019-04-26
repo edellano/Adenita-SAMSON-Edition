@@ -253,7 +253,7 @@ void SENanotubeCreatorEditor::mousePressEvent(QMouseEvent* event) {
   else if (positions_.positionsCounter == 2) {
     positions_.ThirdPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
     positions_.positionsCounter++;
-    
+
     auto radius = (positions_.ThirdPosition - positions_.SecondPosition).norm();
 
     ADNPointer<ADNPart> part = generateNanotube();

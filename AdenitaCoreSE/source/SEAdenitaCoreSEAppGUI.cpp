@@ -119,7 +119,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
   else if (config.mode == SEConfigMode::ELISA) {
 
     SEAdenitaCoreSEApp* t = getApp();
-    t->LoadPartWithDaedalus("C:/Users/DeLlanoE/Documents/code/Data_DNA_Nanomodeling/daedalus_samples/01_tetrahedron.ply", 42);
+    t->LoadPartWithDaedalus("C:/Users/DeLlanoE/Documents/code/Data_DNA_Nanomodeling/daedalus_samples/46_reinforced_cube.ply", 42);
 
     t->ResetVisualModel();
     SAMSON::getActiveCamera()->center();
