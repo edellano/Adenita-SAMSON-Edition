@@ -10,6 +10,8 @@ SELatticeCreatorEditor::SELatticeCreatorEditor() {
 	propertyWidget->loadDefaultSettings();
 	SAMSON::addWidget(propertyWidget);
 
+  setLatticeType(LatticeType::Honeycomb);
+
 }
 
 SELatticeCreatorEditor::~SELatticeCreatorEditor() {
@@ -53,7 +55,9 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
   auto yNumStrands = round((y / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
   auto numNucleotides = round((z / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
 
-  if (numNucleotides > 0 && (xNumStrands > 0 || yNumStrands > 0)) {
+  yNumStrands < 1 ? 1 : yNumStrands;
+
+  if (numNucleotides > 0 && xNumStrands > 0) {
     part = new ADNPart();
     
     SBVector3 dir = SBVector3(1, 0, 0);
@@ -152,7 +156,6 @@ void SELatticeCreatorEditor::beginEditing() {
   SBCamera * camera = SAMSON::getActiveCamera();
   camera->rightView();
 
-  setLatticeType(LatticeType::Honeycomb);
 }
 
 void SELatticeCreatorEditor::endEditing() {
