@@ -55,11 +55,12 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
   auto yNumStrands = round((y / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
   auto numNucleotides = round((z / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
 
-  yNumStrands < 1 ? 1 : yNumStrands;
+  if (xNumStrands < 1) xNumStrands = 1;
+  if (yNumStrands < 1) yNumStrands = 1;
 
-  if (numNucleotides > 0 && xNumStrands > 0) {
+  if (numNucleotides > 0) {
     part = new ADNPart();
-    
+
     SBVector3 dir = SBVector3(1, 0, 0);
     for (int xt = 0; xt < xNumStrands; xt++) {
       for (int yt = 0; yt < yNumStrands; yt++) {
@@ -69,11 +70,6 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
         int zLength = numNucleotides;
         if (zPattern_ == TRIANGLE) {
           zLength = (xt / xNumStrands) * numNucleotides;
-          //if (xt < xNumStrands / 2) { 
-          //}
-          //else {
-          //  zLength = (1 - xt / xNumStrands) * numNucleotides;
-          //}
         }
         if (zLength > 0) auto ds = DASCreator::CreateDoubleStrand(part, zLength, pos, dir, mock);
       }
@@ -310,7 +306,31 @@ void SELatticeCreatorEditor::keyPressEvent(QKeyEvent* event) {
     display_ = false;
     DASCreatorEditors::resetPositions(positions_);
     SAMSON::requestViewportUpdate();
+  } else if (event->key() == Qt::Key::Key_1) {
+    SBCamera * camera = SAMSON::getActiveCamera();
+    camera->leftView();
   }
+  else if (event->key() == Qt::Key::Key_2) {
+    SBCamera * camera = SAMSON::getActiveCamera();
+    camera->rightView();
+  }
+  else if (event->key() == Qt::Key::Key_3) {
+    SBCamera * camera = SAMSON::getActiveCamera();
+    camera->frontView();
+  }
+  else if (event->key() == Qt::Key::Key_4) {
+    SBCamera * camera = SAMSON::getActiveCamera();
+    camera->backView();
+  }
+  else if (event->key() == Qt::Key::Key_5) {
+    SBCamera * camera = SAMSON::getActiveCamera();
+    camera->topView();
+  }
+  else if (event->key() == Qt::Key::Key_6) {
+    SBCamera * camera = SAMSON::getActiveCamera();
+    camera->bottomView();
+  }
+
 }
 
 void SELatticeCreatorEditor::keyReleaseEvent(QKeyEvent* event) {
