@@ -293,3 +293,14 @@ bool ADNAuxiliary::ValidateSequence(std::string seq)
   }
   return val;
 }
+
+QString ADNAuxiliary::AdenitaCitation()
+{
+  return
+    "If you use this Adenita in your work, please cite: <br/>"
+    "<br/>"
+    "[1] <br />"
+    "You can also cite the visual model as: <br />"
+    "[2] <br />"
+    "[3] ";
+}
