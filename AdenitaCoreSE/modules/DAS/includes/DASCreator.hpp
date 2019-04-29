@@ -160,5 +160,4 @@ namespace DASCreatorEditors {
   };
 
   void resetPositions(UIData& pos);
-  void sendPartToAdenita(ADNPointer<ADNPart> nanotube);
 };

@@ -1,26 +1,19 @@
 #pragma once 
 
 #include "SBGEditor.hpp"
-#include "SELatticeCreatorEditorGUI.hpp"
+#include "SEBottomUpEditorGUI.hpp"
 
 #include "SBBaseEvent.hpp"
 #include "SBDocumentEvent.hpp"
 #include "SBDynamicalEvent.hpp"
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
-#include "ADNPart.hpp"
+
 #include "SEAdenitaCoreSEApp.hpp"
-#include "ADNDisplayHelper.hpp"
 
 /// This class implements an editor
 
-enum ZLatticePattern {
-  ALLZ,
-  TRIANGLE,
-  CIRCLE
-};
-
-class SELatticeCreatorEditor : public SBGEditor {
+class SEBottomUpEditor : public SBGEditor {
 
 	SB_CLASS
 	Q_OBJECT
@@ -30,8 +23,8 @@ public :
 	/// \name Constructors and destructors
 	//@{
 
-	SELatticeCreatorEditor();																													///< Builds an editor					
-	virtual ~SELatticeCreatorEditor();																											///< Destructs the editor
+  SEBottomUpEditor();																													///< Builds an editor					
+	virtual ~SEBottomUpEditor();																											///< Destructs the editor
 
 	//@}
 
@@ -44,7 +37,7 @@ public :
 	virtual QPixmap												getLogo() const;														///< Returns the pixmap logo
 	virtual QKeySequence										getShortcut() const;													///< Returns the shorcut
 	virtual QString												getToolTip() const;														///< Returns the tool tip
-  virtual QString getDescription() const;
+  virtual QString	getDescription() const;	///< Returns the menu item text
 
 	//@}
 
@@ -97,30 +90,32 @@ public :
 
 	//@}
 
-  void                                setLatticeType(LatticeType type);
-  void                                setZPattern(ZLatticePattern pattern);
 	/// \name GUI
 	//@{
 
-	SELatticeCreatorEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
+  SEBottomUpEditorGUI*								getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
+
+  std::map<int, SBPointer<SBNode>> getPartsList();
+  void SetSelected(int idx);
+
+  //! Builds a model for a indexed component
+  ADNPointer<ADNPart> Build(double minCutOff, double maxCutOff, double maxAngle);
+
+  void sendPartToAdenita(ADNPointer<ADNPart> part);
+
 private:
+  bool preview_ = false;
+  int selected_ = 0;
+  std::map<int, SBPointer<SBNode>> indexParts_;
 
-  ADNPointer<ADNPart> generateLattice(bool mock = false);
-  void displayLattice();
-  void sendPartToAdenita(ADNPointer<ADNPart> lattice);
-
-  VGrid vGrid_;
-
-  DASCreatorEditors::UIData positions_;
-  bool display_ = false;
-  ADNPointer<ADNPart> tempPart_ = nullptr;
-
-  ZLatticePattern zPattern_ = ZLatticePattern::ALLZ;
-
+  ADNPointer<ADNPart> part_;
+  SBQuantity::length maxCutOff_;
+  SBQuantity::length minCutOff_;
+  SBQuantity::length maxAngle_;
 };
 
 
-SB_REGISTER_TYPE(SELatticeCreatorEditor, "SELatticeCreatorEditor", "EA67625E-89B5-2EEA-156D-FC836214B0E4");
-SB_DECLARE_BASE_TYPE(SELatticeCreatorEditor, SBGEditor);
+SB_REGISTER_TYPE(SEBottomUpEditor, "SEBottomUpEditor", "1D465936-DCE4-E228-B110-8FA4FFF5F291");
+SB_DECLARE_BASE_TYPE(SEBottomUpEditor, SBGEditor);
