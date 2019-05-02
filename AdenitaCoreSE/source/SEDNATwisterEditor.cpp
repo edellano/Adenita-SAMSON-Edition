@@ -355,7 +355,14 @@ void SEDNATwisterEditor::keyPressEvent(QKeyEvent* event) {
 
   if (event->key() == Qt::Key::Key_Alt) {
     altPressed_ = true;
-    text_ = "Twisting";
+    if (bendingType_ == BendingType::UNTWIST) {
+      text_ = "Twisting";
+    }
+    else if (bendingType_ == BendingType::SPHEREVISIBILITY) {
+      text_ = "Visible";
+    }
+
+
     SAMSON::requestViewportUpdate();
   }
 }
@@ -366,7 +373,13 @@ void SEDNATwisterEditor::keyReleaseEvent(QKeyEvent* event) {
 	// Implement this function to handle this event with your editor.
   if (event->key() == Qt::Key::Key_Alt) {
     altPressed_ = false;
-    text_ = "Untwisting";
+    if (bendingType_ == BendingType::UNTWIST) {
+      text_ = "Untwisting";
+    }
+    else if (bendingType_ == BendingType::SPHEREVISIBILITY) {
+      text_ = "Invisible";
+    }
+
     SAMSON::requestViewportUpdate();
   }
 }
