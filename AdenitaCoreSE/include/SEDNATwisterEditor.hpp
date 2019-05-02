@@ -15,6 +15,11 @@
 
 /// This class implements an editor
 
+enum BendingType {
+  UNTWIST,
+  SPHEREVISIBILITY
+};
+
 class SEDNATwisterEditor : public SBGEditor {
 
 	SB_CLASS
@@ -96,10 +101,12 @@ public :
 	//@{
 
 	SEDNATwisterEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
+  void                                setBendingType(BendingType type);
 
 private:
   SEAdenitaCoreSEApp*					        getAdenitaApp() const;															///< Returns a pointer to the app
-
+  void                                untwisting();
+  void                                makeInvisible();
 
 	//@}
   bool                                  altPressed_;
@@ -107,8 +114,10 @@ private:
   SBPosition3														textPosition_;
   string                                text_;
   SBQuantity::length										sphereRadius_;
-  bool															    untwistingSphereActive_;
-  bool															    twistingSphereActive_;
+  bool															    forwardActionSphereActive_;
+  bool															    reverseActionSphereActive_;
+
+  BendingType                           bendingType_ = BendingType::UNTWIST;
 };
 
 
