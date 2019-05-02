@@ -19,6 +19,10 @@ SEDNATwisterEditor::SEDNATwisterEditor() {
   textPosition_ = SBPosition3();
   altPressed_ = false;
   text_ = "Untwisting";
+
+  auto app = getAdenitaApp();
+  nanorobot_ = app->GetNanorobot();
+
   SAMSON::requestViewportUpdate();
 
 
@@ -38,6 +42,13 @@ SEDNATwisterEditorGUI* SEDNATwisterEditor::getPropertyWidget() const { return st
 void SEDNATwisterEditor::setBendingType(BendingType type)
 {
   bendingType_ = type;
+
+  if (bendingType_ == BendingType::UNTWIST) {
+    text_ = "Untwisting";
+  }
+  else if (bendingType_ == BendingType::SPHEREVISIBILITY) {
+    text_ = "Invisible";
+  }
 }
 
 SEAdenitaCoreSEApp* SEDNATwisterEditor::getAdenitaApp() const
@@ -105,6 +116,29 @@ void SEDNATwisterEditor::makeInvisible()
   auto vm = static_cast<SEAdenitaVisualModel*>(getAdenitaApp()->GetVisualModel());
   vm->update();
 
+}
+
+SBPosition3 SEDNATwisterEditor::GetSnappedPosition()
+{
+  SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+
+  if (snappingActive_) {
+    auto highlightedBaseSegments = nanorobot_->GetHighlightedBaseSegments();
+    auto highlightedBaseSegmentsFromNucleotides = nanorobot_->GetHighlightedBaseSegmentsFromNucleotides();
+    auto highlightedAtoms = nanorobot_->GetHighlightedAtoms();
+
+    if (highlightedAtoms.size() == 1) {
+      currentPosition = highlightedAtoms[0]->getPosition();
+    }
+    else if (highlightedBaseSegments.size() == 1) {
+      currentPosition = highlightedBaseSegments[0]->GetPosition();
+    }
+    else if (highlightedBaseSegmentsFromNucleotides.size() == 1) {
+      currentPosition = highlightedBaseSegmentsFromNucleotides[0]->GetPosition();
+    }
+  }
+
+  return currentPosition;
 }
 
 SBCContainerUUID SEDNATwisterEditor::getUUID() const { return SBCContainerUUID("BF86253A-9F66-9F3C-4039-A711891C8670"); }
@@ -259,16 +293,7 @@ void SEDNATwisterEditor::mousePressEvent(QMouseEvent* event) {
     reverseActionSphereActive_ = true;
   }
 
-
-  SBPosition3 nodePosition;
-  SBNode* pickedNode = SAMSON::getNode(event->pos(), nodePosition);
-
-  if (pickedNode == NULL) {
-    spherePosition_ = SAMSON::getWorldPositionFromViewportPosition(event->pos());
-  }
-  else {
-    spherePosition_ = SAMSON::getWorldPositionFromViewportPosition(event->pos(), nodePosition);
-  }
+  spherePosition_ = GetSnappedPosition();
 
   if (bendingType_ == BendingType::UNTWIST) {
     untwisting();
@@ -298,15 +323,7 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
-  SBPosition3 nodePosition;
-  SBNode* pickedNode = SAMSON::getNode(event->pos(), nodePosition);
-
-  if (pickedNode == NULL) {
-    spherePosition_ = SAMSON::getWorldPositionFromViewportPosition(event->pos());
-  }
-  else {
-    spherePosition_ = SAMSON::getWorldPositionFromViewportPosition(event->pos(), nodePosition);
-  }
+  spherePosition_ = GetSnappedPosition();
 
   textPosition_ = spherePosition_;
 

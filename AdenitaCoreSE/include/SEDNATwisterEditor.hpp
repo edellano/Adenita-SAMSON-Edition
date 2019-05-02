@@ -107,6 +107,7 @@ private:
   SEAdenitaCoreSEApp*					        getAdenitaApp() const;															///< Returns a pointer to the app
   void                                untwisting();
   void                                makeInvisible();
+  SBPosition3                         GetSnappedPosition();
 
 	//@}
   bool                                  altPressed_;
@@ -116,8 +117,11 @@ private:
   SBQuantity::length										sphereRadius_;
   bool															    forwardActionSphereActive_;
   bool															    reverseActionSphereActive_;
+  bool snappingActive_ = true;
 
   BendingType                           bendingType_ = BendingType::UNTWIST;
+  ADNNanorobot * nanorobot_;
+
 };
 
 
