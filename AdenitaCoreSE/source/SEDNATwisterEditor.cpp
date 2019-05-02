@@ -12,8 +12,8 @@ SEDNATwisterEditor::SEDNATwisterEditor() {
 	propertyWidget->loadDefaultSettings();
 	SAMSON::addWidget(propertyWidget);
 
-  untwistingSphereActive_ = false;
-  twistingSphereActive_ = false;
+  forwardActionSphereActive_ = false;
+  reverseActionSphereActive_ = false;
   sphereRadius_ = SBQuantity::angstrom(20.0f);
   spherePosition_ = SBPosition3();
   textPosition_ = SBPosition3();
@@ -35,9 +35,76 @@ SEDNATwisterEditor::~SEDNATwisterEditor() {
 
 SEDNATwisterEditorGUI* SEDNATwisterEditor::getPropertyWidget() const { return static_cast<SEDNATwisterEditorGUI*>(propertyWidget); }
 
+void SEDNATwisterEditor::setBendingType(BendingType type)
+{
+  bendingType_ = type;
+}
+
 SEAdenitaCoreSEApp* SEDNATwisterEditor::getAdenitaApp() const
 {
   return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+}
+
+void SEDNATwisterEditor::untwisting()
+{
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  DASBackToTheAtom btta;
+
+  SB_FOR(SBNode* node, nodes) {
+
+    ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
+    SBPosition3 pos = bs->GetPosition();
+    SBPosition3 vectorFromSphereCenter = pos - spherePosition_;
+
+    if (vectorFromSphereCenter.norm() < sphereRadius_) {
+      vectorFromSphereCenter = vectorFromSphereCenter * (sphereRadius_ / vectorFromSphereCenter.norm());
+      if (forwardActionSphereActive_) {
+        btta.UntwistNucleotidesPosition(bs);
+      }
+      else if (reverseActionSphereActive_) {
+        btta.SetNucleotidePosition(bs, true);
+      }
+    }
+  }
+
+  auto vm = static_cast<SEAdenitaVisualModel*>(getAdenitaApp()->GetVisualModel());
+  vm->update();
+
+}
+
+void SEDNATwisterEditor::makeInvisible()
+{
+
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nts;
+  doc->getNodes(nts, (SBNode::GetClass() == std::string("ADNNucleotide")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+
+  SB_FOR(SBNode* node, nts) {
+
+    ADNPointer<ADNNucleotide> nt = static_cast<ADNNucleotide*>(node);
+
+    SBPosition3 pos = nt->GetPosition();
+    SBPosition3 vectorFromSphereCenter = pos - spherePosition_;
+
+    if (vectorFromSphereCenter.norm() < sphereRadius_) {
+
+      if (forwardActionSphereActive_) {
+        nt->setVisibilityFlag(false);
+      } else if (reverseActionSphereActive_) {
+        nt->setVisibilityFlag(true);
+
+      }
+
+    }
+  }
+
+  auto vm = static_cast<SEAdenitaVisualModel*>(getAdenitaApp()->GetVisualModel());
+  vm->update();
+
 }
 
 SBCContainerUUID SEDNATwisterEditor::getUUID() const { return SBCContainerUUID("BF86253A-9F66-9F3C-4039-A711891C8670"); }
@@ -128,13 +195,13 @@ void SEDNATwisterEditor::display() {
 
   radius[0] = sphereRadius_.getValue();
 
-  if (untwistingSphereActive_) {
+  if (forwardActionSphereActive_) {
     color[0] = 0.f;
     color[1] = 1.f;
     color[2] = 0.f;
     color[3] = 0.3f;
   }
-  else if (twistingSphereActive_) {
+  else if (reverseActionSphereActive_) {
     color[0] = 0.f;
     color[1] = 0.f;
     color[2] = 1.f;
@@ -184,13 +251,33 @@ void SEDNATwisterEditor::mousePressEvent(QMouseEvent* event) {
 	// Implement this function to handle this event with your editor.
 
   if (event->button() == Qt::MouseButton::LeftButton && !altPressed_) {
-    untwistingSphereActive_ = true;
-    twistingSphereActive_ = false;
+    forwardActionSphereActive_ = true;
+    reverseActionSphereActive_ = false;
   }
   else if (event->button() == Qt::MouseButton::LeftButton && altPressed_) {
-    untwistingSphereActive_ = false;
-    twistingSphereActive_ = true;
+    forwardActionSphereActive_ = false;
+    reverseActionSphereActive_ = true;
   }
+
+
+  SBPosition3 nodePosition;
+  SBNode* pickedNode = SAMSON::getNode(event->pos(), nodePosition);
+
+  if (pickedNode == NULL) {
+    spherePosition_ = SAMSON::getWorldPositionFromViewportPosition(event->pos());
+  }
+  else {
+    spherePosition_ = SAMSON::getWorldPositionFromViewportPosition(event->pos(), nodePosition);
+  }
+
+  if (bendingType_ == BendingType::UNTWIST) {
+    untwisting();
+  }
+  else if (bendingType_ == BendingType::SPHEREVISIBILITY) {
+    makeInvisible();
+  }
+  
+
 }
 
 void SEDNATwisterEditor::mouseReleaseEvent(QMouseEvent* event) {
@@ -199,10 +286,10 @@ void SEDNATwisterEditor::mouseReleaseEvent(QMouseEvent* event) {
 	// Implement this function to handle this event with your editor.
 
   if (event->button() == Qt::MouseButton::LeftButton && !altPressed_) {
-    untwistingSphereActive_ = false;
+    forwardActionSphereActive_ = false;
   }
   else if (event->button() == Qt::MouseButton::LeftButton && altPressed_) {
-    twistingSphereActive_ = false;
+    reverseActionSphereActive_ = false;
   }
 }
 
@@ -210,7 +297,6 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
-
 
   SBPosition3 nodePosition;
   SBNode* pickedNode = SAMSON::getNode(event->pos(), nodePosition);
@@ -231,58 +317,17 @@ void SEDNATwisterEditor::mouseMoveEvent(QMouseEvent* event) {
 
   textPosition_ -= offset;
 
+  if (forwardActionSphereActive_ || reverseActionSphereActive_) {
+    if (bendingType_ == BendingType::UNTWIST) {
+      untwisting();
+    }
+    else if (bendingType_ == BendingType::SPHEREVISIBILITY) {
+      makeInvisible();
+    }
+  }
+
   SAMSON::requestViewportUpdate();
 
-  if (untwistingSphereActive_) {
-    SBDocument* doc = SAMSON::getActiveDocument();
-    SBNodeIndexer nodes;
-    doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-
-    DASBackToTheAtom btta;
-
-    SB_FOR(SBNode* node, nodes) {
-
-      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
-      SBPosition3 pos = bs->GetPosition();
-      SBPosition3 vectorFromSphereCenter = pos - spherePosition_;
-     
-      if (vectorFromSphereCenter.norm() < sphereRadius_) {
-        vectorFromSphereCenter = vectorFromSphereCenter * (sphereRadius_ / vectorFromSphereCenter.norm());
-        btta.UntwistNucleotidesPosition(bs);
-        SAMSON::requestViewportUpdate();
-
-      }
-    }
-
-    auto vm = static_cast<SEAdenitaVisualModel*>(getAdenitaApp()->GetVisualModel());
-    vm->update();
-
-  }
-  else if (twistingSphereActive_) {
-    SBDocument* doc = SAMSON::getActiveDocument();
-    SBNodeIndexer nodes;
-    doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNBaseSegment")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-
-    DASBackToTheAtom btta;
-
-    SB_FOR(SBNode* node, nodes) {
-
-      ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(node);
-      SBPosition3 pos = bs->GetPosition();
-      SBPosition3 vectorFromSphereCenter = pos - spherePosition_;
-
-      if (vectorFromSphereCenter.norm() < sphereRadius_) {
-        vectorFromSphereCenter = vectorFromSphereCenter * (sphereRadius_ / vectorFromSphereCenter.norm());
-        btta.SetNucleotidePosition(bs, true);
-        SAMSON::requestViewportUpdate();
-
-      }
-    }
-
-    auto vm = static_cast<SEAdenitaVisualModel*>(getAdenitaApp()->GetVisualModel());
-    vm->update();
-
-  }
 }
 
 void SEDNATwisterEditor::mouseDoubleClickEvent(QMouseEvent* event) {

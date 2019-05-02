@@ -32,6 +32,29 @@ void SEDNATwisterEditorGUI::saveSettings( SBGSettings *settings ) {
 
 }
 
+void SEDNATwisterEditorGUI::setUntwistTwist()
+{
+  SEDNATwisterEditor* t = getEditor();
+  t->setBendingType(BendingType::UNTWIST);
+}
+
+void SEDNATwisterEditorGUI::setInvisibleVisible()
+{
+  SEDNATwisterEditor* t = getEditor();
+  t->setBendingType(BendingType::SPHEREVISIBILITY);
+
+}
+
+void SEDNATwisterEditorGUI::resetUntwist()
+{
+
+}
+
+void SEDNATwisterEditorGUI::resetInvisible()
+{
+
+}
+
 SBCContainerUUID SEDNATwisterEditorGUI::getUUID() const { return SBCContainerUUID( "B2208669-EAE5-DEC5-00EB-A241BBA72C29" );}
 
 QPixmap SEDNATwisterEditorGUI::getLogo() const { 
