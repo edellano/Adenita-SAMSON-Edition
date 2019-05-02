@@ -190,6 +190,9 @@
             <property name="text">
              <string>Set 5'</string>
             </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
            </widget>
           </item>
          </layout>
