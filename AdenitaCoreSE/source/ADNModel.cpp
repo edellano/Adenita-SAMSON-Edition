@@ -76,8 +76,12 @@ void ADNNucleotide::serialize(SBCSerializer * serializer, const SBNodeIndexer & 
 
   serializer->writeIntElement("end", end_);
 
-  ADNPointer<ADNAtom> at = GetCenterAtom();
-  serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
+  //ADNPointer<ADNAtom> at = GetCenterAtom();
+  SBPosition3 pos = GetPosition();
+  serializer->writeDoubleElement("x", pos[0].getValue());
+  serializer->writeDoubleElement("y", pos[1].getValue());
+  serializer->writeDoubleElement("z", pos[2].getValue());
+  //serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
 
   serializer->writeUnsignedIntElement("pair", nodeIndexer.getIndex(pair_()));
   serializer->writeUnsignedIntElement("base_segment", nodeIndexer.getIndex(bs_()));
@@ -89,9 +93,14 @@ void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer 
 
   SetEnd(End(serializer->readIntElement()));
 
-  unsigned int idx = serializer->readUnsignedIntElement();
-  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
-  SetCenterAtom(at);
+  //unsigned int idx = serializer->readUnsignedIntElement();
+  //ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  //SetCenterAtom(at);
+  double x = serializer->readDoubleElement();
+  double y = serializer->readDoubleElement();
+  double z = serializer->readDoubleElement();
+  SBPosition3 pos = SBPosition3(SBQuantity::picometer(x), SBQuantity::picometer(y), SBQuantity::picometer(z));
+  SetPosition(pos);
 
   unsigned int pIdx = serializer->readUnsignedIntElement();
   unsigned int bsIdx = serializer->readUnsignedIntElement();
