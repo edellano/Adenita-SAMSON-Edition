@@ -219,8 +219,8 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
           seq = sequence_;
         }
         else {
-          auto dist = (end->GetPosition() - start->GetPosition()).norm();
-          int length = round( (dist / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue() ) - 3;
+          auto dist = (end->GetBaseSegment()->GetPosition() - start->GetBaseSegment()->GetPosition()).norm();
+          int length = round( (dist / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue() ) - 6;
           
           for (int i = 0; i < length; ++i) {
             seq += "N";
