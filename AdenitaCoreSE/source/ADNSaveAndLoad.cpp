@@ -1094,6 +1094,8 @@ void ADNLoader::SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrand
 
       // topology file info
       std::string base(1, ADNModel::GetResidueName(nt->GetType()));
+      if (base == "N") base = "R";  // oxDNA uses R for random
+
       std::string threePrime = "-1";
       auto ntPrev = nt->GetPrev(true);
       if (ntPrev != nullptr) {
