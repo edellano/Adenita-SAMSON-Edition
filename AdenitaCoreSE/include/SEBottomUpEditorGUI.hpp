@@ -56,6 +56,10 @@ public:
     void onRefreshPartList();
     void onSelectNode(int s);
     void onMinSliderChanged(int val);
+    void onMaxSliderChanged(int val);
+    void onAngleSliderChanged(int val);
+    void onPreview(bool val);
+
 
 private:
 

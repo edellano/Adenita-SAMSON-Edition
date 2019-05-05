@@ -29,6 +29,13 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="0" colspan="3">
+      <widget class="QPushButton" name="btnGenerate">
+       <property name="text">
+        <string>Generate</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="2">
       <widget class="QPushButton" name="btnRefresh">
        <property name="text">
@@ -39,12 +46,19 @@
      <item row="0" column="1">
       <widget class="QComboBox" name="cmbStructuralModel"/>
      </item>
+     <item row="1" column="0" colspan="3">
+      <widget class="QCheckBox" name="chkPreview">
+       <property name="text">
+        <string>Preview</string>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="0" colspan="3">
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
         <string>Parameters</string>
        </property>
-       <widget class="QWidget" name="formLayoutWidget">
+       <widget class="QWidget" name="gridLayoutWidget_2">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -53,24 +67,7 @@
           <height>91</height>
          </rect>
         </property>
-        <layout class="QFormLayout" name="formLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Maximum Cut-off</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSlider" name="sldMax">
-           <property name="maximum">
-            <number>300</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
+        <layout class="QGridLayout" name="gridLayout_2">
          <item row="1" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
@@ -78,10 +75,17 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Maximum Cut-off</string>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="1">
           <widget class="QSlider" name="sldMin">
            <property name="maximum">
-            <number>300</number>
+            <number>40</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -95,6 +99,13 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="2">
+          <widget class="QDoubleSpinBox" name="spnMin">
+           <property name="maximum">
+            <double>40.000000000000000</double>
+           </property>
+          </widget>
+         </item>
          <item row="2" column="1">
           <widget class="QSlider" name="sldAngle">
            <property name="maximum">
@@ -105,22 +116,49 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="QSlider" name="sldMax">
+           <property name="maximum">
+            <number>40</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QDoubleSpinBox" name="spnMax">
+           <property name="maximum">
+            <double>40.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QDoubleSpinBox" name="spnAngle"/>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>nm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>nm</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>deg</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="3">
-      <widget class="QCheckBox" name="chkPreview">
-       <property name="text">
-        <string>Preview</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="3">
-      <widget class="QPushButton" name="btnGenerate">
-       <property name="text">
-        <string>Generate</string>
-       </property>
       </widget>
      </item>
     </layout>
@@ -193,11 +231,62 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>chkPreview</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEBottomUpEditorGUIClass</receiver>
+   <slot>onPreview(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>196</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>196</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sldMax</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>SEBottomUpEditorGUIClass</receiver>
+   <slot>onMaxSliderChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>270</x>
+     <y>105</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>196</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sldAngle</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>SEBottomUpEditorGUIClass</receiver>
+   <slot>onAngleSliderChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>270</x>
+     <y>163</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>196</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onRefreshPartList()</slot>
   <slot>onGenerateModel()</slot>
   <slot>onSelectNode(int)</slot>
   <slot>onMinSliderChanged(int)</slot>
+  <slot>onMaxSliderChanged(int)</slot>
+  <slot>onAngleSliderChanged(int)</slot>
+  <slot>onPreview(bool)</slot>
  </slots>
 </ui>

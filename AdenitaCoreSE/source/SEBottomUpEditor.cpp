@@ -1,6 +1,8 @@
 #include "SEBottomUpEditor.hpp"
 #include "SAMSON.hpp"
 
+#include "ADNSaveAndLoad.hpp"
+
 
 SEBottomUpEditor::SEBottomUpEditor() {
 
@@ -28,16 +30,41 @@ void SEBottomUpEditor::SetSelected(int idx)
   selected_ = idx;
 }
 
+void SEBottomUpEditor::SetMaxCutOff(SBQuantity::length val)
+{
+  maxCutOff_ = val;
+  changed_ = true;
+}
+
+void SEBottomUpEditor::SetMinCutOff(SBQuantity::length val)
+{
+  minCutOff_ = val;
+  changed_ = true;
+}
+
+void SEBottomUpEditor::SetAngleCutOff(double val)
+{
+  maxAngle_ = val;
+  changed_ = true;
+}
+
+void SEBottomUpEditor::SetPreview(bool val)
+{
+  preview_ = val;
+}
+
+void SEBottomUpEditor::ResetPart()
+{
+  part_ = nullptr;
+}
+
 ADNPointer<ADNPart> SEBottomUpEditor::Build(double maxCutOff, double minCutOff, double maxAngle)
 {
   if (selected_ == 0) return nullptr;
 
   auto node = indexParts_[selected_];
-
-  SBQuantity::length maxc = SBQuantity::angstrom(maxCutOff);
-  SBQuantity::length minc = SBQuantity::angstrom(maxCutOff);
   
-  ADNPointer<ADNPart> part = ADNLoader::GenerateModelFromDatagraphParametrized(node(), maxc, minc, maxAngle);
+  ADNPointer<ADNPart> part = ADNLoader::GenerateModelFromDatagraphParametrized(node(), maxCutOff_, minCutOff_, maxAngle_);
 
   return part;
 }
@@ -147,11 +174,12 @@ void SEBottomUpEditor::display() {
 
   if (!preview_ || selected_ == 0) return;
 
-  //auto sn = indexParts_[selected_];
-  //if (changed_) {
-  //  part_ = GenerateModelFromDatagraphParametrized(sn, maxCuttOff_, minCutOff_, maxAngle_);
-  //}
-  //if (part_ != nullptr) ADNDisplayHelper::displayPart(part_);
+  auto sn = indexParts_[selected_];
+  if (changed_) {
+    part_ = ADNLoader::GenerateModelFromDatagraphParametrized(sn(), maxCutOff_, minCutOff_, maxAngle_);
+    changed_ = false;
+  }
+  if (part_ != nullptr) ADNDisplayHelper::displayPart(part_, 300.0f, 1.0f);
 }
 
 void SEBottomUpEditor::displayForShadow() {
