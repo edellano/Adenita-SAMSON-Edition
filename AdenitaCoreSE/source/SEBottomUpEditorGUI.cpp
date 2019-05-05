@@ -13,9 +13,12 @@ SEBottomUpEditorGUI::SEBottomUpEditorGUI(SEBottomUpEditor* editor) {
   SBQuantity::length minCutOff = dh_radius - SBQuantity::nanometer(0.1);
   double maxAngle = 49.0;
 
-  ui.sldMax->setValue(int( maxCutOff.getValue() / 10 ));
-  ui.sldMin->setValue(int( minCutOff.getValue() / 10 ));
+  ui.sldMax->setValue(int( maxCutOff.getValue() / 100 ));
+  ui.sldMin->setValue(int( minCutOff.getValue() / 100 ));
   ui.sldAngle->setValue(int(maxAngle*10));
+  ui.spnMax->setValue(maxCutOff.getValue() / 1000);
+  ui.spnMin->setValue(minCutOff.getValue() / 1000);
+  ui.spnAngle->setValue(maxAngle);
 }
 
 SEBottomUpEditorGUI::~SEBottomUpEditorGUI() {
@@ -51,6 +54,7 @@ void SEBottomUpEditorGUI::onGenerateModel()
 
   auto part = editor->Build(maxCutOff, minCutOff, maxAngle);
   if (part != nullptr) editor->sendPartToAdenita(part);
+  editor->ResetPart();
 }
 
 void SEBottomUpEditorGUI::onRefreshPartList()
@@ -83,6 +87,32 @@ void SEBottomUpEditorGUI::onMinSliderChanged(int val)
 {
   int w = ui.sldMax->value();
   if (w < val) ui.sldMax->setValue(val);
+  ui.spnMin->setValue(val * 0.1);
+
+  SEBottomUpEditor* editor = getEditor();
+  editor->SetMinCutOff(SBQuantity::nanometer(val * 0.1));
+}
+
+void SEBottomUpEditorGUI::onMaxSliderChanged(int val)
+{
+  ui.spnMax->setValue(val * 0.1);
+
+  SEBottomUpEditor* editor = getEditor();
+  editor->SetMaxCutOff(SBQuantity::nanometer(val * 0.1));
+}
+
+void SEBottomUpEditorGUI::onAngleSliderChanged(int val)
+{
+  ui.spnAngle->setValue(val * 0.1);
+
+  SEBottomUpEditor* editor = getEditor();
+  editor->SetAngleCutOff(val * 0.1);
+}
+
+void SEBottomUpEditorGUI::onPreview(bool val)
+{
+  SEBottomUpEditor* editor = getEditor();
+  editor->SetPreview(val);
 }
 
 SBCContainerUUID SEBottomUpEditorGUI::getUUID() const { return SBCContainerUUID( "CEDFA9EB-32FA-0A21-6216-C053116FCA36" );}

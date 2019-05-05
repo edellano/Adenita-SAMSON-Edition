@@ -99,6 +99,11 @@ public :
 
   std::map<int, SBPointer<SBNode>> getPartsList();
   void SetSelected(int idx);
+  void SetMaxCutOff(SBQuantity::length val);
+  void SetMinCutOff(SBQuantity::length val);
+  void SetAngleCutOff(double val);
+  void SetPreview(bool val);
+  void ResetPart();
 
   //! Builds a model for a indexed component
   ADNPointer<ADNPart> Build(double minCutOff, double maxCutOff, double maxAngle);
@@ -110,10 +115,11 @@ private:
   int selected_ = 0;
   std::map<int, SBPointer<SBNode>> indexParts_;
 
-  ADNPointer<ADNPart> part_;
+  ADNPointer<ADNPart> part_ = nullptr;
   SBQuantity::length maxCutOff_;
   SBQuantity::length minCutOff_;
-  SBQuantity::length maxAngle_;
+  double maxAngle_;
+  bool changed_ = false;
 };
 
 
