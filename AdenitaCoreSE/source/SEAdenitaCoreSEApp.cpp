@@ -507,6 +507,17 @@ QStringList SEAdenitaCoreSEApp::GetPartsNameList()
 
 void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions, bool positionsFromNucleotides)
 {
+  SEConfig& c = SEConfig::GetInstance();
+  if (c.auto_set_scaffold_sequence) {
+    SEAdenitaCoreSEAppGUI* gui = getGUI();
+    std::string fname = gui->GetScaffoldFilename();
+    std::string seq = ReadScaffoldFilename(fname);
+    auto scafs = part->GetScaffolds();
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, scafs) {
+      ADNBasicOperations::SetSingleStrandSequence(ss, seq);
+    }
+  }
+
   DASBackToTheAtom btta = DASBackToTheAtom();
   btta.PopulateWithMockAtoms(part, positionsFromNucleotides);
   if (calculatePositions) {
@@ -519,17 +530,6 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool cal
   }
 
   GetNanorobot()->RegisterPart(part);
-
-  SEConfig& c = SEConfig::GetInstance();
-  if (c.auto_set_scaffold_sequence) {
-    SEAdenitaCoreSEAppGUI* gui = getGUI();
-    std::string fname = gui->GetScaffoldFilename();
-    std::string seq = ReadScaffoldFilename(fname);
-    auto scafs = part->GetScaffolds();
-    SB_FOR(ADNPointer<ADNSingleStrand> ss, scafs) {
-      ADNBasicOperations::SetSingleStrandSequence(ss, seq);
-    }
-  }
 
   //events
   ConnectStructuralSignalSlots(part);
