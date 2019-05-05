@@ -411,6 +411,32 @@ void SEAdenitaCoreSEApp::HighlightPosXOs()
   ResetVisualModel();
 }
 
+void SEAdenitaCoreSEApp::ExportToCanDo(QString filename)
+{
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, SBNode::IsType(SBNode::StructuralModel));
+
+  CollectionMap<ADNPart> parts;
+
+  SB_FOR(auto node, nodes) {
+    if (node->isSelected()) {
+      ADNPointer<ADNPart> part = static_cast<ADNPart*>(node);
+      parts.addReferenceTarget(part());
+    }
+  }
+
+  if (nodes.size() == 1) {
+    ADNPointer<ADNPart> part = parts[0];
+    ADNLoader::OutputToCanDo(part, filename.toStdString());
+  }
+  else {
+    auto nanorobot = GetNanorobot();
+    ADNLoader::OutputToCanDo(nanorobot, filename.toStdString());
+  }
+  
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   //auto t = documentEvent->getType();

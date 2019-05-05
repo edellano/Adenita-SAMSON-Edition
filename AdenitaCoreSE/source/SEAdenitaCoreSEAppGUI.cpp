@@ -613,6 +613,15 @@ void SEAdenitaCoreSEAppGUI::onHighlightPosXOs()
   t->HighlightPosXOs();
 }
 
+void SEAdenitaCoreSEAppGUI::onExportToCanDo()
+{
+  QString filename = QFileDialog::getSaveFileName(this, tr("Choose a filename"), QDir::currentPath(), tr("(CanDo .cndo)"));
+  if (!filename.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->ExportToCanDo(filename);
+  }
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";
