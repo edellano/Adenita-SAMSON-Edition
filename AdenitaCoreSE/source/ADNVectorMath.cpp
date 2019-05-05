@@ -401,8 +401,17 @@ namespace ADNVectorMath {
       x[2] = (-z[0] - z[1]) / z[2];
     }
     x /= ublas::norm_2(x);
+    double test1 = z[0];
+    double test2 = z[1];
+    double test3 = z[2];
+    double test4 = x[0];
+    double test5 = x[1];
+    double test6 = x[2];
     ublas::vector<double> y = CrossProduct(x, z);
     y /= ublas::norm_2(y);
+    double test7 = y[0];
+    double test8 = y[1];
+    double test9 = y[2];
 
     ublas::matrix<double> subspace(2, 3, 0.0);
     ublas::row(subspace, 0) = x;

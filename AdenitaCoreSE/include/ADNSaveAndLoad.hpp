@@ -36,8 +36,8 @@ namespace ADNLoader {
   std::pair<bool, ADNPointer<ADNPart>> InputFromOxDNA(std::string topoFile, std::string configFile);
 
   // CanDo
-  void OutputToCanDo(ADNPointer<ADNPart> part, std::string folder);
-  void OutputToCanDo(ADNNanorobot* nanorobot, std::string folder);
+  void OutputToCanDo(ADNPointer<ADNPart> part, std::string filename);
+  void OutputToCanDo(ADNNanorobot* nanorobot, std::string filename);
 
   // sequence list
   void OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std::string folder);

@@ -1267,10 +1267,100 @@ std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoF
   return std::make_pair(error, part);
 }
 
-void ADNLoader::OutputToCanDo(ADNPointer<ADNPart> part, std::string folder)
+void ADNLoader::OutputToCanDo(ADNNanorobot * nanorobot, std::string filename)
 {
-  std::string candoOut = part->GetName() + ".cndo";
-  std::ofstream file = CreateOutputFile(candoOut, folder);
+  std::ofstream file(filename);
+  std::string header = "\"CanDo (.cndo) file format version 1.0, Keyao Pan, Laboratory for Computational Biology "
+    "and Biophysics, Massachusetts Institute of Technology, November 2015\"";
+  file << header << std::endl;
+
+  // set nucleotide indices
+  std::map<ADNNucleotide*, int> nucleotidesId;
+  auto singleStrands = nanorobot->GetSingleStrands();
+  int ntId = 1;
+  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+    auto nt = ss->GetFivePrime();
+    while (nt != nullptr) {
+      nucleotidesId.insert(std::make_pair(nt(), ntId));
+      ++ntId;
+    }
+  }
+
+  std::string line = "dnaTop,id,up,down,across,seq";
+  file << line << std::endl;
+  for (auto& p : nucleotidesId) {
+    int idx = p.second;
+    ADNNucleotide* nt = p.first;
+    ADNNucleotide* prevNt = nt->GetPrev(true)();
+    ADNNucleotide* nextNt = nt->GetNext(true)();
+    ADNNucleotide* pairNt = nt->GetPair()();
+    int prevIdx = -1;
+    if (prevNt != nullptr) prevIdx = nucleotidesId[prevNt];
+    int nextIdx = -1;
+    if (nextNt != nullptr) nextIdx = nucleotidesId[nextNt];
+    int pairIdx = -1;
+    if (pairNt != nullptr) prevIdx = nucleotidesId[pairNt];
+
+    std::string line = std::to_string(idx) + "," + std::to_string(prevIdx) + "," + std::to_string(nextIdx) + "," + std::to_string(pairIdx) + ADNModel::GetResidueName(nt->GetType());
+    file << line << std::endl;
+  }
+  file << line << std::endl;
+
+  auto parts = nanorobot->GetParts();
+
+  line = "dNode, \"e0(1)\", \"e0(2)\", \"e0(3)\"";
+  file << line << std::endl;
+
+  std::vector<std::string> triads;
+  std::vector<std::string> basePairs;
+  int bsId = 1;
+  SB_FOR(ADNPointer<ADNPart> part, parts) {
+    auto baseSegments = part->GetBaseSegments();
+    SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
+      auto pos = bs->GetPosition();
+      std::string line = std::to_string(bsId) + "," + std::to_string(pos[0].getValue() / 1000) + "," + std::to_string(pos[1].getValue() / 1000) + "," + std::to_string(pos[2].getValue() / 1000);
+      file << line << std::endl;
+
+      auto e3 = bs->GetE3();
+      auto e2 = -1.0 * bs->GetE2();
+      auto e1 = ADNVectorMath::CrossProduct(e2, e3);
+      std::string t = std::to_string(bsId) + "," + std::to_string(e1[0]) + "," + std::to_string(e1[1]) + "," + std::to_string(e1[2]) + ","
+        + std::to_string(e2[0]) + "," + std::to_string(e2[1]) + "," + std::to_string(e2[2]) + ","
+        + std::to_string(e3[0]) + "," + std::to_string(e3[1]) + "," + std::to_string(e3[2]);
+      triads.push_back(t);
+
+      auto cell = bs->GetCell();
+      if (bs->GetCellType() == BasePair) {
+        ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(cell());
+        int id1 = nucleotidesId[bp->GetLeftNucleotide()()];
+        int id2 = nucleotidesId[bp->GetRightNucleotide()()];
+        std::string s = std::to_string(bsId) + "," + std::to_string(id1) + "," + std::to_string(id2);
+        file << s << std::endl;
+      }
+      ++bsId;
+    }
+  }
+  file << std::endl;
+
+  line = "triad,\"e1(1)\",\"e1(2)\",\"e1(3)\",\"e2(1)\",\"e2(2)\",\"e2(3)\",\"e3(1)\",\"e3(2)\",\"e3(3)\"";
+  file << line << std::endl;
+  for (auto s : triads) {
+    file << s << std::endl;
+  }
+
+  line = "id_nt,id1,id2";
+  file << line << std::endl;
+  for (auto bp : basePairs) {
+    file << bp << std::endl;
+  }
+}
+
+void ADNLoader::OutputToCanDo(ADNPointer<ADNPart> part, std::string filename)
+{
+  std::ofstream file(filename);
+  std::string header = "\"CanDo (.cndo) file format version 1.0, Keyao Pan, Laboratory for Computational Biology "
+    "and Biophysics, Massachusetts Institute of Technology, November 2015\"";
+  file << header << std::endl;
 
   // set nucleotide indices
   std::map<ADNNucleotide*, int> nucleotidesId;
@@ -1281,6 +1371,7 @@ void ADNLoader::OutputToCanDo(ADNPointer<ADNPart> part, std::string folder)
     while (nt != nullptr) {
       nucleotidesId.insert(std::make_pair(nt(), ntId));
       ++ntId;
+      nt = nt->GetNext();
     }
   }
   
@@ -1316,7 +1407,13 @@ void ADNLoader::OutputToCanDo(ADNPointer<ADNPart> part, std::string folder)
     file << line << std::endl;
 
     auto e3 = bs->GetE3();
+    double test1 = e3[0];
+    double test2 = e3[1];
+    double test3 = e3[2];
     auto e2 = -1.0 * bs->GetE2();
+    double test4 = e3[0];
+    double test5 = e3[1];
+    double test6 = e3[2];
     auto e1 = ADNVectorMath::CrossProduct(e2, e3);
     std::string t = std::to_string(bsId) + "," + std::to_string(e1[0]) + "," + std::to_string(e1[1]) + "," + std::to_string(e1[2]) + ","
       + std::to_string(e2[0]) + "," + std::to_string(e2[1]) + "," + std::to_string(e2[2]) + ","
