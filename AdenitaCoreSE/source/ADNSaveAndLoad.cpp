@@ -1388,7 +1388,7 @@ void ADNLoader::OutputToCanDo(ADNPointer<ADNPart> part, std::string filename)
     int nextIdx = -1;
     if (nextNt != nullptr) nextIdx = nucleotidesId[nextNt];
     int pairIdx = -1;
-    if (pairNt != nullptr) prevIdx = nucleotidesId[pairNt];
+    if (pairNt != nullptr) pairIdx = nucleotidesId[pairNt];
 
     std::string line = std::to_string(idx) + "," + std::to_string(prevIdx) + "," + std::to_string(nextIdx) + "," + std::to_string(pairIdx) + ADNModel::GetResidueName(nt->GetType());
     file << line << std::endl;
@@ -1407,13 +1407,8 @@ void ADNLoader::OutputToCanDo(ADNPointer<ADNPart> part, std::string filename)
     file << line << std::endl;
 
     auto e3 = bs->GetE3();
-    double test1 = e3[0];
-    double test2 = e3[1];
-    double test3 = e3[2];
-    auto e2 = -1.0 * bs->GetE2();
-    double test4 = e3[0];
-    double test5 = e3[1];
-    double test6 = e3[2];
+    auto e2 = bs->GetE2();
+    e2 *= -1.0;
     auto e1 = ADNVectorMath::CrossProduct(e2, e3);
     std::string t = std::to_string(bsId) + "," + std::to_string(e1[0]) + "," + std::to_string(e1[1]) + "," + std::to_string(e1[2]) + ","
       + std::to_string(e2[0]) + "," + std::to_string(e2[1]) + "," + std::to_string(e2[2]) + ","
