@@ -53,7 +53,7 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
 
   QTimer *timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(CheckForLoadedParts()));
-  timer->start();
+  //timer->start();
 }
 
 SEAdenitaCoreSEAppGUI::~SEAdenitaCoreSEAppGUI() {
@@ -620,6 +620,12 @@ void SEAdenitaCoreSEAppGUI::onExportToCanDo()
     SEAdenitaCoreSEApp* t = getApp();
     t->ExportToCanDo(filename);
   }
+}
+
+void SEAdenitaCoreSEAppGUI::onFixDesigns()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->FixDesigns();
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
