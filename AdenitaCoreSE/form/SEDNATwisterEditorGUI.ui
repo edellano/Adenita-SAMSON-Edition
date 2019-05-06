@@ -21,14 +21,113 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>SAMSON Element generator pro tip: modify me</string>
-     </property>
-    </widget>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QRadioButton" name="rdbUntwist">
+       <property name="text">
+        <string>Untwist / Twist</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="btnResetUntwist">
+       <property name="text">
+        <string>Reset</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="rdbInvisible">
+       <property name="text">
+        <string>Invisible / Visible</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="btnResetInvisible">
+       <property name="text">
+        <string>Reset</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>rdbUntwist</sender>
+   <signal>clicked()</signal>
+   <receiver>SEDNATwisterEditorGUIClass</receiver>
+   <slot>setUntwistTwist()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>62</x>
+     <y>26</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>294</x>
+     <y>66</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rdbInvisible</sender>
+   <signal>clicked()</signal>
+   <receiver>SEDNATwisterEditorGUIClass</receiver>
+   <slot>setInvisibleVisible()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>42</x>
+     <y>62</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnResetUntwist</sender>
+   <signal>clicked()</signal>
+   <receiver>SEDNATwisterEditorGUIClass</receiver>
+   <slot>resetUntwist()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>209</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnResetInvisible</sender>
+   <signal>clicked()</signal>
+   <receiver>SEDNATwisterEditorGUIClass</receiver>
+   <slot>resetInvisible()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>212</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>298</x>
+     <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>resetUntwist()</slot>
+  <slot>resetInvisible()</slot>
+  <slot>setUntwistTwist()</slot>
+  <slot>setInvisibleVisible()</slot>
+ </slots>
 </ui>
