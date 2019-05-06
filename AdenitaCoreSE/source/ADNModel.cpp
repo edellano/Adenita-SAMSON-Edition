@@ -76,8 +76,42 @@ void ADNNucleotide::serialize(SBCSerializer * serializer, const SBNodeIndexer & 
 
   serializer->writeIntElement("end", end_);
 
-  ADNPointer<ADNAtom> at = GetCenterAtom();
-  serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
+  //ADNPointer<ADNAtom> at = GetCenterAtom();
+  SBPosition3 pos = GetPosition();
+  serializer->writeDoubleElement("x", pos[0].getValue());
+  serializer->writeDoubleElement("y", pos[1].getValue());
+  serializer->writeDoubleElement("z", pos[2].getValue());
+  //serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
+
+  serializer->writeStartElement("e3");
+  auto e3 = GetE3();
+  double e3x = e3[0];
+  double e3y = e3[1];
+  double e3z = e3[2];
+  serializer->writeDoubleElement("x", e3x);
+  serializer->writeDoubleElement("y", e3y);
+  serializer->writeDoubleElement("z", e3z);
+  serializer->writeEndElement();
+
+  serializer->writeStartElement("e2");
+  auto e2 = GetE2();
+  double e2x = e2[0];
+  double e2y = e2[1];
+  double e2z = e2[2];
+  serializer->writeDoubleElement("x", e2x);
+  serializer->writeDoubleElement("y", e2y);
+  serializer->writeDoubleElement("z", e2z);
+  serializer->writeEndElement();
+
+  serializer->writeStartElement("e1");
+  auto e1 = GetE1();
+  double e1x = e1[0];
+  double e1y = e1[1];
+  double e1z = e1[2];
+  serializer->writeDoubleElement("x", e1x);
+  serializer->writeDoubleElement("y", e1y);
+  serializer->writeDoubleElement("z", e1z);
+  serializer->writeEndElement();
 
   serializer->writeUnsignedIntElement("pair", nodeIndexer.getIndex(pair_()));
   serializer->writeUnsignedIntElement("base_segment", nodeIndexer.getIndex(bs_()));
@@ -89,9 +123,47 @@ void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer 
 
   SetEnd(End(serializer->readIntElement()));
 
-  unsigned int idx = serializer->readUnsignedIntElement();
-  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
-  SetCenterAtom(at);
+  //unsigned int idx = serializer->readUnsignedIntElement();
+  //ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  //SetCenterAtom(at);
+  double x = serializer->readDoubleElement();
+  double y = serializer->readDoubleElement();
+  double z = serializer->readDoubleElement();
+  SBPosition3 pos = SBPosition3(SBQuantity::picometer(x), SBQuantity::picometer(y), SBQuantity::picometer(z));
+  SetPosition(pos);
+
+  serializer->readStartElement();
+  double e3x = serializer->readDoubleElement();
+  double e3y = serializer->readDoubleElement();
+  double e3z = serializer->readDoubleElement();
+  ublas::vector<double> e3(3, 0.0);
+  e3[0] = e3x;
+  e3[1] = e3y;
+  e3[2] = e3z;
+  SetE3(e3);
+  serializer->readEndElement();
+
+  serializer->readStartElement();
+  double e2x = serializer->readDoubleElement();
+  double e2y = serializer->readDoubleElement();
+  double e2z = serializer->readDoubleElement();
+  ublas::vector<double> e2(3, 0.0);
+  e2[0] = e2x;
+  e2[1] = e2y;
+  e2[2] = e2z;
+  SetE2(e2);
+  serializer->readEndElement();
+
+  serializer->readStartElement();
+  double e1x = serializer->readDoubleElement();
+  double e1y = serializer->readDoubleElement();
+  double e1z = serializer->readDoubleElement();
+  ublas::vector<double> e1(3, 0.0);
+  e1[0] = e1x;
+  e1[1] = e1y;
+  e1[2] = e1z;
+  SetE1(e1);
+  serializer->readEndElement();
 
   unsigned int pIdx = serializer->readUnsignedIntElement();
   unsigned int bsIdx = serializer->readUnsignedIntElement();
@@ -999,8 +1071,42 @@ void ADNBaseSegment::serialize(SBCSerializer * serializer, const SBNodeIndexer &
 {
   SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
   
-  ADNPointer<ADNAtom> at = GetCenterAtom();
-  serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
+  //ADNPointer<ADNAtom> at = GetCenterAtom();
+  SBPosition3 pos = GetPosition();
+  serializer->writeDoubleElement("x", pos[0].getValue());
+  serializer->writeDoubleElement("y", pos[1].getValue());
+  serializer->writeDoubleElement("z", pos[2].getValue());
+  //serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
+
+  serializer->writeStartElement("e3");
+  auto e3 = GetE3();
+  double e3x = e3[0];
+  double e3y = e3[1];
+  double e3z = e3[2];
+  serializer->writeDoubleElement("x", e3x);
+  serializer->writeDoubleElement("y", e3y);
+  serializer->writeDoubleElement("z", e3z);
+  serializer->writeEndElement();
+
+  serializer->writeStartElement("e2");
+  auto e2 = GetE2();
+  double e2x = e2[0];
+  double e2y = e2[1];
+  double e2z = e2[2];
+  serializer->writeDoubleElement("x", e2x);
+  serializer->writeDoubleElement("y", e2y);
+  serializer->writeDoubleElement("z", e2z);
+  serializer->writeEndElement();
+
+  serializer->writeStartElement("e1");
+  auto e1 = GetE1();
+  double e1x = e1[0];
+  double e1y = e1[1];
+  double e1z = e1[2];
+  serializer->writeDoubleElement("x", e1x);
+  serializer->writeDoubleElement("y", e1y);
+  serializer->writeDoubleElement("z", e1z);
+  serializer->writeEndElement();
 
   serializer->writeIntElement("number", GetNumber());
   serializer->writeUnsignedIntElement("cell", nodeIndexer.getIndex(cell_()));
@@ -1010,9 +1116,47 @@ void ADNBaseSegment::unserialize(SBCSerializer * serializer, const SBNodeIndexer
 {
   SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
   
-  unsigned int idx = serializer->readUnsignedIntElement();
-  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
-  SetCenterAtom(at);
+  //unsigned int idx = serializer->readUnsignedIntElement();
+  //ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  //SetCenterAtom(at);
+  double x = serializer->readDoubleElement();
+  double y = serializer->readDoubleElement();
+  double z = serializer->readDoubleElement();
+  SBPosition3 pos = SBPosition3(SBQuantity::picometer(x), SBQuantity::picometer(y), SBQuantity::picometer(z));
+  SetPosition(pos);
+
+  serializer->readStartElement();
+  double e3x = serializer->readDoubleElement();
+  double e3y = serializer->readDoubleElement();
+  double e3z = serializer->readDoubleElement();
+  ublas::vector<double> e3(3, 0.0);
+  e3[0] = e3x;
+  e3[1] = e3y;
+  e3[2] = e3z;
+  SetE3(e3);
+  serializer->readEndElement();
+
+  serializer->readStartElement();
+  double e2x = serializer->readDoubleElement();
+  double e2y = serializer->readDoubleElement();
+  double e2z = serializer->readDoubleElement();
+  ublas::vector<double> e2(3, 0.0);
+  e2[0] = e2x;
+  e2[1] = e2y;
+  e2[2] = e2z;
+  SetE2(e2);
+  serializer->readEndElement();
+
+  serializer->readStartElement();
+  double e1x = serializer->readDoubleElement();
+  double e1y = serializer->readDoubleElement();
+  double e1z = serializer->readDoubleElement();
+  ublas::vector<double> e1(3, 0.0);
+  e1[0] = e1x;
+  e1[1] = e1y;
+  e1[2] = e1z;
+  SetE1(e1);
+  serializer->readEndElement();
 
   SetNumber(serializer->readIntElement());
   SBNode* cNode = nodeIndexer.getNode(serializer->readUnsignedIntElement());

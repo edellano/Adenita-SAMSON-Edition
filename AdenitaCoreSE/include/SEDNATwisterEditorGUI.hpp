@@ -50,6 +50,13 @@ public:
 	void														saveSettings(SBGSettings* settings);										///< Save GUI settings
 
 	//@}
+  public slots:
+
+  void                            setUntwistTwist();
+  void                            setInvisibleVisible();
+  void                            resetUntwist();
+  void                            resetInvisible();
+
 
 private:
 

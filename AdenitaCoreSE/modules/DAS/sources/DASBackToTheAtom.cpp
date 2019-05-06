@@ -98,6 +98,7 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
   // to calculate untwisted positions
   ublas::matrix<double> new_basisNoTwist = subspace;
   // apply rotation to basis (rotation has to be negative)
+  // if number is too big, reset it
   double angle = -ADNVectorMath::DegToRad(initialAngleDegrees) - ADNVectorMath::DegToRad(bs->GetNumber() * ADNConstants::BP_ROT);
   ublas::matrix<double> rot_mat = ADNVectorMath::MakeRotationMatrix(bs->GetE3(), angle);
   ublas::matrix<double> new_basis = ADNVectorMath::ApplyTransformation(rot_mat, subspace);

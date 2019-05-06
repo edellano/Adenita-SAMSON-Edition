@@ -134,6 +134,7 @@ private:
   SBQuantity::length boxWidth_;
   SBQuantity::length boxDepth_;
   bool setSequence_ = false;
+  bool snappingActive_ = true;
 
   float opaqueness_ = 0.5f;
   float basePairRadius_ = 1000.0f;

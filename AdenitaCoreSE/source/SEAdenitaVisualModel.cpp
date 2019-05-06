@@ -1521,6 +1521,8 @@ void SEAdenitaVisualModel::prepareNucleotides()
         else if (!nt->isVisible()) {
           colorsVNt_(index, 3) = 0.0f;
           colorsENt_(index, 3) = 0.0f;
+          radiiVNt_(index) = 0.0f;
+          radiiENt_(index) = 0.0f;
         }
       }
     }
@@ -1566,6 +1568,12 @@ void SEAdenitaVisualModel::prepareSingleStrands()
         }
 
         if (!ss->isVisible()) {
+          radiiVSS_(index) = 0.0f;
+          radiiESS_(index) = 0.0f;
+        }
+        else if (!nt->isVisible()) {
+          colorsVSS_(index, 3) = 0.0f;
+          colorsESS_(index, 3) = 0.0f;
           radiiVSS_(index) = 0.0f;
           radiiESS_(index) = 0.0f;
         }

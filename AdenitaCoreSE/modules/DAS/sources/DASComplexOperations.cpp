@@ -79,9 +79,10 @@ void DASOperations::CreateCrossover(ADNPointer<ADNPart> part1, ADNPointer<ADNPar
     ADNPointer<ADNBaseSegment> bs1 = pair.first->GetThreePrime()->GetBaseSegment();
     ADNPointer<ADNBaseSegment> bs2 = pair.second->GetFivePrime()->GetBaseSegment();
     SBVector3 direction = (bs2->GetPosition() - bs1->GetPosition()).normalizedVersion();
+    SBQuantity::length availLength = (bs2->GetPosition() - bs1->GetPosition()).norm();
     SBQuantity::length expectedLength = SBQuantity::nanometer(ADNConstants::BP_RISE) * (seqLength + 1);  // we need to accomodate space for distance between the ends
-    // we are measuring from helix center. 1nm approx 3.5nt
-    SBPosition3 startPos = bs1->GetPosition() + SBQuantity::nanometer(ADNConstants::BP_RISE)*3.5*direction;
+    SBQuantity::length offset = (availLength - expectedLength)*0.5;
+    SBPosition3 startPos = bs1->GetPosition() + (SBQuantity::nanometer(ADNConstants::BP_RISE) + offset)*direction;
     if (two) {
       auto res = DASCreator::AddDoubleStrandToADNPart(pair.firstPart, seqLength, startPos, direction);
       joinStrand1 = res.ss1;
