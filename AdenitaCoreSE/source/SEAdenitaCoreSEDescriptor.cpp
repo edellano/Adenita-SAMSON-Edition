@@ -19,7 +19,6 @@
 #include "SETaggingVisualModelPropertiesDescriptor.hpp"
 #include "SETaggingVisualModelDescriptor.hpp"
 #include "SELatticeCreatorEditorDescriptor.hpp"
-#include "SEBottomUpEditorDescriptor.hpp"
 
 // Describe the SAMSON Element
 
@@ -63,7 +62,6 @@ SB_ELEMENT_CLASSES_BEGIN;
   SB_ELEMENT_CLASS(SETaggingVisualModel);
   SB_ELEMENT_CLASS(SETaggingVisualModelProperties);
   SB_ELEMENT_CLASS(SELatticeCreatorEditor);
-  SB_ELEMENT_CLASS(SEBottomUpEditor);
 
 SB_ELEMENT_CLASSES_END;
 
