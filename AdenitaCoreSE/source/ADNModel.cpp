@@ -1116,14 +1116,14 @@ void ADNBaseSegment::unserialize(SBCSerializer * serializer, const SBNodeIndexer
 {
   SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
   
-  unsigned int idx = serializer->readUnsignedIntElement();
-  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
-  SetCenterAtom(at);
-  //double x = serializer->readDoubleElement();
-  //double y = serializer->readDoubleElement();
-  //double z = serializer->readDoubleElement();
-  //SBPosition3 pos = SBPosition3(SBQuantity::picometer(x), SBQuantity::picometer(y), SBQuantity::picometer(z));
-  //SetPosition(pos);
+  //unsigned int idx = serializer->readUnsignedIntElement();
+  //ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  //SetCenterAtom(at);
+  double x = serializer->readDoubleElement();
+  double y = serializer->readDoubleElement();
+  double z = serializer->readDoubleElement();
+  SBPosition3 pos = SBPosition3(SBQuantity::picometer(x), SBQuantity::picometer(y), SBQuantity::picometer(z));
+  SetPosition(pos);
 
   serializer->readStartElement();
   double e3x = serializer->readDoubleElement();
