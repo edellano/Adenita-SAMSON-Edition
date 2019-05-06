@@ -788,14 +788,16 @@
    <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
    <slot>onFixDesigns()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>254</x>
-     <y>194</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>262</x>
-     <y>148</y>
+    <hints>
+      <hint type="sourcelabel">
+        <x>254</x>
+        <y>194</y>
+      </hint>
+      <hint type="destinationlabel">
+        <x>262</x>
+        <y>148</y>
+      </hint>
+    </hints>
   </connection>
   <connection>
    <sender>btnSetStart</sender>
