@@ -437,6 +437,42 @@ void SEAdenitaCoreSEApp::ExportToCanDo(QString filename)
   
 }
 
+void SEAdenitaCoreSEApp::FixDesigns()
+{
+  SBDocument* doc = SAMSON::getActiveDocument();
+  SBNodeIndexer nodes;
+  doc->getNodes(nodes, SBNode::IsType(SBNode::StructuralModel));
+
+  CollectionMap<ADNPart> parts;
+
+  SB_FOR(auto node, nodes) {
+    ADNPointer<ADNPart> part = static_cast<ADNPart*>(node);
+
+    auto baseSegments = part->GetBaseSegments();
+    SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
+      auto nucleotides = bs->GetNucleotides();
+      SBPosition3 pos;
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        pos += nt->GetPosition();
+      }
+      pos /= nucleotides.size();
+
+      auto at = bs->GetCenterAtom();
+      if (at == nullptr) at = new ADNAtom();
+      at->setElementType(SBElement::Meitnerium);
+      bs->SetCenterAtom(at);
+      part->RegisterAtom(bs, at, true);
+      // hiding atoms here cause when they are created is too slow
+      bs->HideCenterAtom();
+
+      bs->SetPosition(pos);
+    }
+    AddLoadedPartToNanorobot(part);
+  }
+
+  ResetVisualModel();
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
   //auto t = documentEvent->getType();

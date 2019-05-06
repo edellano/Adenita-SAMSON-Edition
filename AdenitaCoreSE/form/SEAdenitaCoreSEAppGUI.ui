@@ -388,6 +388,13 @@
             </property>
            </widget>
           </item>
+          <item row="3" column="1">
+           <widget class="QPushButton" name="btnFix">
+            <property name="text">
+             <string>Fix designs</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </widget>
@@ -767,6 +774,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnFix</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onFixDesigns()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -793,5 +816,6 @@
   <slot>onSetPathNtthal()</slot>
   <slot>onSaveSelection()</slot>
   <slot>onExportToCanDo()</slot>
+  <slot>onFixDesigns()</slot>
  </slots>
 </ui>
