@@ -404,6 +404,7 @@ namespace ADNVectorMath {
     ublas::vector<double> y = CrossProduct(z, x);
     y /= ublas::norm_2(y);
 
+
     ublas::matrix<double> subspace(2, 3, 0.0);
     ublas::row(subspace, 0) = x;
     ublas::row(subspace, 1) = y;

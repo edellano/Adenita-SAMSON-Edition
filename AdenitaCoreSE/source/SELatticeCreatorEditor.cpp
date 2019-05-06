@@ -145,6 +145,11 @@ QString SELatticeCreatorEditor::getToolTip() const {
 
 }
 
+QString SELatticeCreatorEditor::getDescription() const
+{
+  return QObject::tr("Adenita | Lattice Editor");
+}
+
 void SELatticeCreatorEditor::beginEditing() {
 
 	// SAMSON Element generator pro tip: SAMSON calls this function when your editor becomes active. 

@@ -42,6 +42,10 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   calcProperties.addFile(string(iconsPath + "calculate.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnCalculateBindingProperties->setIcon(calcProperties);
 
+  QIcon setStart;
+  setStart.addFile(string(iconsPath + "set5Prime.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnSetStart->setIcon(setStart);
+
   // disable debug menu if compiling in release mode
   #if NDEBUG
   ui.tabWidget->removeTab(2);
@@ -611,6 +615,21 @@ void SEAdenitaCoreSEAppGUI::onHighlightPosXOs()
 {
   SEAdenitaCoreSEApp* t = getApp();
   t->HighlightPosXOs();
+}
+
+void SEAdenitaCoreSEAppGUI::onExportToCanDo()
+{
+  QString filename = QFileDialog::getSaveFileName(this, tr("Choose a filename"), QDir::currentPath(), tr("(CanDo .cndo)"));
+  if (!filename.isEmpty()) {
+    SEAdenitaCoreSEApp* t = getApp();
+    t->ExportToCanDo(filename);
+  }
+}
+
+void SEAdenitaCoreSEAppGUI::onFixDesigns()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->FixDesigns();
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)

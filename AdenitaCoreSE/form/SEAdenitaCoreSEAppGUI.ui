@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>526</width>
+    <width>700</width>
     <height>297</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
@@ -18,7 +24,7 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>526</width>
+    <width>700</width>
     <height>297</height>
    </size>
   </property>
@@ -37,7 +43,7 @@
         <bool>true</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -50,12 +56,12 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>502</width>
+         <width>700</width>
          <height>273</height>
         </size>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -66,7 +72,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>603</width>
+           <width>658</width>
            <height>51</height>
           </rect>
          </property>
@@ -180,9 +186,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="btnSetStart">
+           <widget class="QToolButton" name="btnSetStart">
             <property name="text">
              <string>Set 5'</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
            </widget>
           </item>
@@ -318,6 +327,13 @@
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="btnDataGraph">
+            <property name="text">
+             <string>From Datagraph</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="2">
            <widget class="QPushButton" name="btnTestNeighbors">
             <property name="text">
@@ -332,13 +348,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="btnOxDNAImport">
-            <property name="text">
-             <string>Import from oxDNA</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="btnCenterPart">
             <property name="text">
@@ -346,24 +355,10 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="btnKinetoplast">
+          <item row="0" column="1">
+           <widget class="QPushButton" name="btnOxDNAImport">
             <property name="text">
-             <string>Kinetoplast</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="btnDataGraph">
-            <property name="text">
-             <string>From Datagraph</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QPushButton" name="btnAddNtThreeP">
-            <property name="text">
-             <string>Add nt 3'</string>
+             <string>Import from oxDNA</string>
             </property>
            </widget>
           </item>
@@ -374,10 +369,38 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="btnKinetoplast">
+            <property name="text">
+             <string>Kinetoplast</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="btnAddNtThreeP">
+            <property name="text">
+             <string>Add nt 3'</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="0">
            <widget class="QPushButton" name="btnHighlightCrossovers">
             <property name="text">
              <string>Highlight Crossovers</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QPushButton" name="btnExportCanDo">
+            <property name="text">
+             <string>Export to CanDo</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QPushButton" name="btnFix">
+            <property name="text">
+             <string>Fix designs</string>
             </property>
            </widget>
           </item>
@@ -420,7 +443,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
-     <y>300</y>
+     <y>296</y>
     </hint>
    </hints>
   </connection>
@@ -431,8 +454,8 @@
    <slot>onSaveAll()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>88</x>
-     <y>79</y>
+     <x>158</x>
+     <y>82</y>
     </hint>
     <hint type="destinationlabel">
      <x>8</x>
@@ -447,8 +470,8 @@
    <slot>onLoadFile()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>32</x>
-     <y>67</y>
+     <x>59</x>
+     <y>82</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -468,7 +491,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>229</x>
-     <y>300</y>
+     <y>296</y>
     </hint>
    </hints>
   </connection>
@@ -563,7 +586,7 @@
      <y>82</y>
     </hint>
     <hint type="destinationlabel">
-     <x>781</x>
+     <x>699</x>
      <y>71</y>
     </hint>
    </hints>
@@ -575,8 +598,8 @@
    <slot>onChangeScaffold(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>76</y>
+     <x>236</x>
+     <y>69</y>
     </hint>
     <hint type="destinationlabel">
      <x>675</x>
@@ -591,8 +614,8 @@
    <slot>onCheckAutoScaffold(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>76</y>
+     <x>138</x>
+     <y>125</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -607,8 +630,8 @@
    <slot>onCheckClearLogFile(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>76</y>
+     <x>138</x>
+     <y>206</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -623,8 +646,8 @@
    <slot>onCheckShowOverlay(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>76</y>
+     <x>138</x>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -639,8 +662,8 @@
    <slot>onCheckDisplayCrossovers(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>76</y>
+     <x>138</x>
+     <y>179</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -655,8 +678,8 @@
    <slot>onCheckInterpolateDimensions(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>76</y>
+     <x>138</x>
+     <y>233</y>
     </hint>
     <hint type="destinationlabel">
      <x>258</x>
@@ -719,8 +742,8 @@
    <slot>onSetPathNtthal()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>123</x>
-     <y>76</y>
+     <x>503</x>
+     <y>268</y>
     </hint>
     <hint type="destinationlabel">
      <x>261</x>
@@ -735,12 +758,60 @@
    <slot>onSaveSelection()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>173</x>
-     <y>67</y>
+     <x>276</x>
+     <y>82</y>
     </hint>
     <hint type="destinationlabel">
      <x>261</x>
      <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnExportCanDo</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onExportToCanDo()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>87</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnFix</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onFixDesigns()</slot>
+    <hints>
+      <hint type="sourcelabel">
+        <x>254</x>
+        <y>194</y>
+      </hint>
+      <hint type="destinationlabel">
+        <x>262</x>
+        <y>148</y>
+      </hint>
+    </hints>
+  </connection>
+  <connection>
+   <sender>btnSetStart</sender>
+   <signal>clicked()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onSetStart()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>630</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>695</x>
+     <y>142</y>
     </hint>
    </hints>
   </connection>
@@ -769,5 +840,7 @@
   <slot>onAddNtThreeP()</slot>
   <slot>onSetPathNtthal()</slot>
   <slot>onSaveSelection()</slot>
+  <slot>onExportToCanDo()</slot>
+  <slot>onFixDesigns()</slot>
  </slots>
 </ui>

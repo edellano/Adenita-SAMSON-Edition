@@ -26,6 +26,7 @@ namespace ADNLoader {
 
   // samson
   ADNPointer<ADNPart> GenerateModelFromDatagraph(SBNode* sn);
+  ADNPointer<ADNPart> GenerateModelFromDatagraphParametrized(SBNode* sn, SBQuantity::length maxCutOff, SBQuantity::length minCutOff, double maxAngle);
 
   // oxdna
   void OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options);
@@ -34,12 +35,20 @@ namespace ADNLoader {
   std::ofstream CreateOutputFile(std::string fname, std::string folder, bool sign = false);
   std::pair<bool, ADNPointer<ADNPart>> InputFromOxDNA(std::string topoFile, std::string configFile);
 
+  // CanDo
+  void OutputToCanDo(ADNPointer<ADNPart> part, std::string filename);
+  void OutputToCanDo(ADNNanorobot* nanorobot, std::string filename);
+
   // sequence list
   void OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std::string folder);
 
   // generic functions
   //! Populates base segments and double strands from nucleotides and single strands
   void BuildTopScales(ADNPointer<ADNPart> part);
+
+  // generic functions
+  //! Populates base segments and double strands from residues
+  void BuildTopScalesParemetrized(ADNPointer<ADNPart> part, SBQuantity::length maxCutOff, SBQuantity::length minCutOff, double maxAngle);
 
   template <typename T>
   struct Wrap {

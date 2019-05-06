@@ -121,4 +121,6 @@ namespace ADNAuxiliary {
   SBVector3 VectorToSBVector(std::vector<double> v);
   
   bool ValidateSequence(std::string seq);
+
+  QString AdenitaCitation();
 };

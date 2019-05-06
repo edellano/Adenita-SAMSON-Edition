@@ -68,6 +68,8 @@ public :
   void FromDatagraph();
   void HighlightXOs();
   void HighlightPosXOs();
+  void ExportToCanDo(QString filename);
+  void FixDesigns();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
