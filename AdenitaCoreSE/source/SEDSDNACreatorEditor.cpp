@@ -69,20 +69,21 @@ SBPosition3 SEDSDNACreatorEditor::GetSnappedPosition()
 {
   SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
 
-  auto highlightedBaseSegments = nanorobot_->GetHighlightedBaseSegments();
-  auto highlightedBaseSegmentsFromNucleotides = nanorobot_->GetHighlightedBaseSegmentsFromNucleotides();
-  auto highlightedAtoms = nanorobot_->GetHighlightedAtoms();
+  if (snappingActive_) {
+    auto highlightedBaseSegments = nanorobot_->GetHighlightedBaseSegments();
+    auto highlightedBaseSegmentsFromNucleotides = nanorobot_->GetHighlightedBaseSegmentsFromNucleotides();
+    auto highlightedAtoms = nanorobot_->GetHighlightedAtoms();
 
-  if (highlightedAtoms.size() == 1) {
-    currentPosition = highlightedAtoms[0]->getPosition();
+    if (highlightedAtoms.size() == 1) {
+      currentPosition = highlightedAtoms[0]->getPosition();
+    }
+    else if (highlightedBaseSegments.size() == 1) {
+      currentPosition = highlightedBaseSegments[0]->GetPosition();
+    }
+    else if (highlightedBaseSegmentsFromNucleotides.size() == 1) {
+      currentPosition = highlightedBaseSegmentsFromNucleotides[0]->GetPosition();
+    }
   }
-  else if (highlightedBaseSegments.size() == 1) {
-    currentPosition = highlightedBaseSegments[0]->GetPosition();
-  }
-  else if (highlightedBaseSegmentsFromNucleotides.size() == 1) {
-    currentPosition = highlightedBaseSegmentsFromNucleotides[0]->GetPosition();
-  }
-  
 
   return currentPosition;
 }
@@ -451,12 +452,21 @@ void SEDSDNACreatorEditor::keyPressEvent(QKeyEvent* event) {
     SAMSON::requestViewportUpdate();
 
   }
+
+  if (event->key() == Qt::Key_Control) {
+    snappingActive_ = false;
+  }
 }
 
 void SEDSDNACreatorEditor::keyReleaseEvent(QKeyEvent* event) {
 
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
+
+  if (event->key() == Qt::Key_Control) {
+    snappingActive_ = true;
+  }
+
 
 }
 
