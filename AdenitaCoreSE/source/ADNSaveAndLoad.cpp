@@ -21,12 +21,12 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(std::string filename)
     return LoadPartFromJsonLegacy(filename);
   }
 
-  ADNPointer<ADNPart> part = LoadPartFromJson(d);
+  ADNPointer<ADNPart> part = LoadPartFromJson(d, versionValue);
 
   return part;
 }
 
-ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(Value & val)
+ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(Value & val, double versionValue)
 {
   ADNPointer<ADNPart> part = new ADNPart();
 
@@ -58,6 +58,10 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(Value & val)
       nt->SetE1(ADNAuxiliary::StringToUblasVector(itr2->value["e1"].GetString()));
       nt->SetE2(ADNAuxiliary::StringToUblasVector(itr2->value["e2"].GetString()));
       nt->SetE3(ADNAuxiliary::StringToUblasVector(itr2->value["e3"].GetString()));
+
+      if (versionValue >= 0.5) {
+        nt->setTag(itr2->value["tag"].GetString());
+      }
 
       nts.Store(nt, std::stoi(itr2->name.GetString()));
       nexts.insert(std::make_pair(std::stoi(itr2->name.GetString()), itr2->value["next"].GetInt()));
@@ -215,7 +219,7 @@ std::vector<ADNPointer<ADNPart>> ADNLoader::LoadPartsFromJson(std::string filena
   Value& partList = d["parts"];
   for (Value::MemberIterator itr = partList.MemberBegin(); itr != partList.MemberEnd(); ++itr) {
     Value& v = itr->value;
-    ADNPointer<ADNPart> p = LoadPartFromJson(v);
+    ADNPointer<ADNPart> p = LoadPartFromJson(v, versionValue);
     parts.push_back(p);
   }
 
@@ -540,12 +544,6 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
 
 void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, rapidjson::Writer<StringBuffer>& writer)
 {
-
-  //std::string st_position = ADNAuxiliary::SBPositionToString(p->GetPosition());
-
-  //writer.Key("position");
-  //writer.String(st_position.c_str());
-
   writer.Key("name");
   writer.String(p->GetName().c_str());
 
@@ -766,6 +764,9 @@ void ADNLoader::SavePartToJson(ADNPointer<ADNPart> p, rapidjson::Writer<StringBu
 
       writer.Key("sidechainCenter");
       writer.String(ADNAuxiliary::SBPositionToString(nt->GetSidechainPosition()).c_str());
+
+      writer.Key("tag");
+      writer.String(nt->getTag().c_str());
 
       writer.EndObject();  // end nt
     }
