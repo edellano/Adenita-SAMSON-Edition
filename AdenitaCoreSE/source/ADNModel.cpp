@@ -115,6 +115,8 @@ void ADNNucleotide::serialize(SBCSerializer * serializer, const SBNodeIndexer & 
 
   serializer->writeUnsignedIntElement("pair", nodeIndexer.getIndex(pair_()));
   serializer->writeUnsignedIntElement("base_segment", nodeIndexer.getIndex(bs_()));
+
+  serializer->writeStringElement("tag", tag_);
 }
 
 void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
@@ -173,6 +175,9 @@ void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer 
   ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(bsNode);
   SetPair(p);
   SetBaseSegment(bs);
+
+  std::string tag = serializer->readStringElement();
+  setTag(tag);
 }
 
 void ADNNucleotide::SetType(DNABlocks t)

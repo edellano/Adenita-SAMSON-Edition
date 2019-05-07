@@ -448,14 +448,33 @@ void SEAdenitaCoreSEApp::FixDesigns()
   SB_FOR(auto node, nodes) {
     ADNPointer<ADNPart> part = static_cast<ADNPart*>(node);
 
+    auto nucleotides = part->GetNucleotides();
+    SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+      auto bbPos = nt->GetBackbonePosition();
+      auto scPos = nt->GetSidechainPosition();
+      auto pos = (bbPos + scPos)*0.5;
+
+      auto at = nt->GetCenterAtom();
+      if (at == nullptr) at = new ADNAtom();
+      at->setElementType(SBElement::Meitnerium);
+      nt->SetCenterAtom(at);
+
+      nt->SetPosition(pos);
+      ublas::vector<double> e(3, 0.0);
+      nt->SetE3(e);
+      nt->SetE2(e);
+      nt->SetE1(e);
+    }
+
     auto baseSegments = part->GetBaseSegments();
     SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
       auto nucleotides = bs->GetNucleotides();
       SBPosition3 pos;
       SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        pos += nt->GetPosition();
+        pos += nt->GetBackbonePosition();
+        pos += nt->GetSidechainPosition();
       }
-      pos /= nucleotides.size();
+      pos /= nucleotides.size()*2;
 
       auto at = bs->GetCenterAtom();
       if (at == nullptr) at = new ADNAtom();
@@ -466,6 +485,10 @@ void SEAdenitaCoreSEApp::FixDesigns()
       bs->HideCenterAtom();
 
       bs->SetPosition(pos);
+      ublas::vector<double> e(3, 0.0);
+      bs->SetE3(e);
+      bs->SetE2(e);
+      bs->SetE1(e);
     }
     AddLoadedPartToNanorobot(part);
   }
