@@ -12,7 +12,7 @@
 SB_CLASS_BEGIN(SELatticeCreatorEditor);
 
 	SB_CLASS_TYPE(SBCClass::Editor);
-        SB_CLASS_DESCRIPTION("SELatticeCreatorEditor : SAMSON Element generator pro tip: modify me");
+        SB_CLASS_DESCRIPTION("SELatticeCreatorEditor : Create dsDNA in a Honeycomb or Square Lattice");
 
 	SB_FACTORY_BEGIN;
 
