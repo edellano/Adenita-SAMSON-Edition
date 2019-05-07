@@ -204,9 +204,12 @@ public:
   void SetSidechain(ADNPointer<ADNSidechain> sc);
 
   void SetSidechainPosition(Position3D pos);
-  Position3D GetSidechainPosition();
+  Position3D GetSidechainPosition() const;
   void SetBackbonePosition(Position3D pos);
-  Position3D GetBackbonePosition();
+  Position3D GetBackbonePosition() const;
+
+  // overload position to retrieve it from bb and sc
+  Position3D GetPosition() const;
 
   std::string const & GetName() const;
   void SetName(const std::string &name);

@@ -15,7 +15,7 @@ namespace ADNConstants {
   double const MIN_CUTOFF_XO = 0.20;  // lower limit for detecting crossovers (nm)
 
   // Other constants
-  double const JSON_FORMAT_VERSION = 0.4;  // version of the json format that we are using, to keep compatibility 
+  double const JSON_FORMAT_VERSION = 0.5;  // version of the json format that we are using, to keep compatibility 
   enum LatticeType {
     Unknown = -1,
     Honeycomb = 0,

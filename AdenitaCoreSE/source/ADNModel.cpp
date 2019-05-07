@@ -454,7 +454,7 @@ void ADNNucleotide::SetSidechainPosition(Position3D pos)
   sc->SetPosition(pos);
 }
 
-Position3D ADNNucleotide::GetSidechainPosition()
+Position3D ADNNucleotide::GetSidechainPosition() const
 {
   auto sc = GetSidechain();
   return sc->GetPosition();
@@ -466,10 +466,16 @@ void ADNNucleotide::SetBackbonePosition(Position3D pos)
   bb->SetPosition(pos);
 }
 
-Position3D ADNNucleotide::GetBackbonePosition()
+Position3D ADNNucleotide::GetBackbonePosition() const
 {
   auto bb = GetBackbone();
   return bb->GetPosition();
+}
+
+Position3D ADNNucleotide::GetPosition() const
+{
+  auto pos = (GetBackbonePosition() + GetSidechainPosition())*0.5;
+  return pos;
 }
 
 bool ADNNucleotide::GlobalBaseIsSet() {
