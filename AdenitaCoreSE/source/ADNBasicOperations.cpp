@@ -160,8 +160,39 @@ ADNPointer<ADNPart> ADNBasicOperations::MergeParts(ADNPointer<ADNPart> part1, AD
     auto nt = ss->GetFivePrime();
     while (nt != nullptr) {
       auto ntNext = nt->GetNext();
+      auto bs = nt->GetBaseSegment();
+      auto cellType = bs->GetCellType();
+      
+      bool left = true;
+      if (cellType == BasePair) {
+        auto bp = static_cast<ADNBasePair*>(bs->GetCell()());
+        if (bp->IsRight(nt)) left = false;
+      }
+      else if (cellType == LoopPair) {
+        auto lp = static_cast<ADNLoopPair*>(bs->GetCell()());
+        if (lp->IsRight(nt)) left = false;
+      }
+
       part2->DeregisterNucleotide(nt, false);
+      // nt has de-registered from bp or loop pair
       part->RegisterNucleotideThreePrime(ss, nt, false);
+
+      if (cellType == BasePair) {
+        auto bp = static_cast<ADNBasePair*>(bs->GetCell()());
+        if (left) bp->SetLeftNucleotide(nt);
+        else bp->SetRightNucleotide(nt);
+      }
+      else if (cellType == LoopPair) {
+        auto lp = static_cast<ADNLoopPair*>(bs->GetCell()());
+        if (left) {
+          auto loop = lp->GetLeftLoop();
+          loop->AddNucleotide(nt);
+        }
+        else {
+          auto loop = lp->GetRightLoop();
+          loop->AddNucleotide(nt);
+        }
+      }
 
       auto atoms = nt->GetAtoms();
       SB_FOR(ADNPointer<ADNAtom> atom, atoms) {
