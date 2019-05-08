@@ -70,6 +70,7 @@ public :
   void HighlightPosXOs();
   void ExportToCanDo(QString filename);
   void FixDesigns();
+  void CreateBasePair();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events

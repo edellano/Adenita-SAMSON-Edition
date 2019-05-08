@@ -90,6 +90,7 @@ public slots:
   void onHighlightPosXOs();
   void onExportToCanDo();
   void onFixDesigns();
+  void onCreateBasePair();
 
 private slots:
   void CheckForLoadedParts();

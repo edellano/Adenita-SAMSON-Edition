@@ -632,6 +632,12 @@ void SEAdenitaCoreSEAppGUI::onFixDesigns()
   t->FixDesigns();
 }
 
+void SEAdenitaCoreSEAppGUI::onCreateBasePair()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->CreateBasePair();
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";

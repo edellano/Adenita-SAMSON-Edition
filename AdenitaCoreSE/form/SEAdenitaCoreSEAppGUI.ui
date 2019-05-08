@@ -61,7 +61,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -401,6 +401,13 @@
            <widget class="QPushButton" name="btnFix">
             <property name="text">
              <string>Fix designs</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QPushButton" name="btnCreateBasePair">
+            <property name="text">
+             <string>Create Base Pair</string>
             </property>
            </widget>
           </item>
@@ -788,16 +795,16 @@
    <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
    <slot>onFixDesigns()</slot>
-    <hints>
-      <hint type="sourcelabel">
-        <x>254</x>
-        <y>194</y>
-      </hint>
-      <hint type="destinationlabel">
-        <x>262</x>
-        <y>148</y>
-      </hint>
-    </hints>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>148</y>
+    </hint>
+   </hints>
   </connection>
   <connection>
    <sender>btnSetStart</sender>
@@ -812,6 +819,22 @@
     <hint type="destinationlabel">
      <x>695</x>
      <y>142</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnCreateBasePair</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCreateBasePair()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>421</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>349</x>
+     <y>148</y>
     </hint>
    </hints>
   </connection>
@@ -842,5 +865,6 @@
   <slot>onSaveSelection()</slot>
   <slot>onExportToCanDo()</slot>
   <slot>onFixDesigns()</slot>
+  <slot>onCreateBasePair()</slot>
  </slots>
 </ui>

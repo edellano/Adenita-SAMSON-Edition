@@ -1127,7 +1127,7 @@ int DASDaedalus::CalculateEdgeSize(SBQuantity::length nmLength) {
   SBQuantity::dimensionless zSB = nmLength / SBQuantity::nanometer(ADNConstants::BP_RISE);
   std::ldiv_t div;
   div = std::div(long(zSB.getValue()), long(10.5));
-  int sz = round(div.quot * 10.5);
+  int sz = std::floor(div.quot * 10.5);
   if (sz < 31) sz = 31;
   return sz;
 }
