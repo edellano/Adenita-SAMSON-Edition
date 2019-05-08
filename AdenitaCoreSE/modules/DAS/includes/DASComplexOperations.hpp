@@ -20,4 +20,6 @@ namespace DASOperations {
 
   void CreateCrossover(ADNPointer<ADNPart> part1, ADNPointer<ADNPart> part2, ADNPointer<ADNNucleotide> nt1, 
     ADNPointer<ADNNucleotide> nt2, bool two = false, std::string seq = "");
+
+  void AddComplementaryStrands(ADNNanorobot* nanorobot, CollectionMap<ADNNucleotide> selectedNucleotides);
 }

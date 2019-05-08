@@ -168,3 +168,74 @@ void DASOperations::CreateCrossover(ADNPointer<ADNPart> part1, ADNPointer<ADNPar
     }
   }
 }
+
+void DASOperations::AddComplementaryStrands(ADNNanorobot* nanorobot, CollectionMap<ADNNucleotide> selectedNucleotides)
+{
+  DASBackToTheAtom btta = DASBackToTheAtom();
+
+  ADNPointer<ADNPart> prevPart = nullptr;
+  ADNPointer<ADNSingleStrand> ss = nullptr;
+  int i = 1;
+  CollectionMap<ADNNucleotide> nucleotides;
+  bool createSs = true;
+
+  SB_FOR(ADNPointer<ADNNucleotide> nt, selectedNucleotides) {
+    auto bs = nt->GetBaseSegment();
+    ADNPointer<ADNPart> part = nanorobot->GetPart(bs->GetDoubleStrand());
+    auto next = nt->GetNext(true);
+
+    if (nt->GetPair() == nullptr) {
+      if (prevPart != part) {
+        if (ss != nullptr) {
+          btta.SetPositionsForNewNucleotides(prevPart, nucleotides);
+          ss->create();
+          prevPart->DeregisterSingleStrand(ss);
+          prevPart->RegisterSingleStrand(ss);
+          nucleotides.clear();
+        }
+        createSs = true;
+      }
+
+      if (createSs) {
+        // create new strand if we change part
+        ss = new ADNSingleStrand();
+        ss->SetName("Paired Strand " + std::to_string(i));
+        ++i;
+        part->RegisterSingleStrand(ss);
+        createSs = false;
+      }
+
+      ADNPointer<ADNNucleotide> pair = new ADNNucleotide();
+      pair->Init();
+      pair->SetType(ADNModel::GetComplementaryBase(nt->GetType()));
+      nucleotides.addReferenceTarget(pair());
+
+      auto cellType = bs->GetCellType();
+      if (cellType == BasePair) {
+        ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(bs->GetCell()());
+        if (bp->IsLeft(nt)) {
+          bp->SetRightNucleotide(pair);
+        }
+        else {
+          bp->SetLeftNucleotide(pair);
+        }
+        bp->PairNucleotides();
+      }
+      pair->SetBaseSegment(bs);
+
+      part->RegisterNucleotideFivePrime(ss, pair);
+
+      if (!selectedNucleotides.hasIndex(next())) {
+        if (ss != nullptr) {
+          btta.SetPositionsForNewNucleotides(part, nucleotides);
+          ss->create();
+          part->DeregisterSingleStrand(ss);
+          part->RegisterSingleStrand(ss);
+          nucleotides.clear();
+        }
+        createSs = true;
+      }
+    }
+    prevPart = part;
+  }
+}
