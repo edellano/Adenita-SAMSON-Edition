@@ -68,6 +68,7 @@ public slots:
   void onSaveSelection();
   void onExport();
   void onSetScaffold();
+  void onCreateBasePair();
   // Options
   void onChangeScaffold(int idx);
   void onCheckDisplayCrossovers(bool b);
@@ -90,7 +91,6 @@ public slots:
   void onHighlightPosXOs();
   void onExportToCanDo();
   void onFixDesigns();
-  void onCreateBasePair();
 
 private slots:
   void CheckForLoadedParts();

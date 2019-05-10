@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
+    <width>716</width>
     <height>297</height>
    </rect>
   </property>
@@ -18,13 +18,13 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>526</width>
+    <width>716</width>
     <height>297</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>700</width>
+    <width>924</width>
     <height>297</height>
    </size>
   </property>
@@ -50,7 +50,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>502</width>
+         <width>0</width>
          <height>273</height>
         </size>
        </property>
@@ -61,7 +61,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -72,7 +72,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>658</width>
+           <width>669</width>
            <height>51</height>
           </rect>
          </property>
@@ -192,6 +192,13 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnCreateBasePair">
+            <property name="text">
+             <string>Create Base Pair</string>
             </property>
            </widget>
           </item>
@@ -401,13 +408,6 @@
            <widget class="QPushButton" name="btnFix">
             <property name="text">
              <string>Fix designs</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QPushButton" name="btnCreateBasePair">
-            <property name="text">
-             <string>Create Base Pair</string>
             </property>
            </widget>
           </item>
@@ -819,22 +819,6 @@
     <hint type="destinationlabel">
      <x>695</x>
      <y>142</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnCreateBasePair</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onCreateBasePair()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>421</x>
-     <y>194</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>349</x>
-     <y>148</y>
     </hint>
    </hints>
   </connection>
