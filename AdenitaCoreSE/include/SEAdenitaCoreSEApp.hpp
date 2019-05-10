@@ -56,6 +56,7 @@ public :
   void MergeComponents(ADNPointer<ADNPart> p1, ADNPointer<ADNPart> p2);
   void MoveDoubleStrand(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNPart> p);
   void MoveSingleStrand(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> p);
+  void CreateBasePair();
   // Debug
   void AddNtThreeP(int numNt);
   void CenterPart();
@@ -70,7 +71,6 @@ public :
   void HighlightPosXOs();
   void ExportToCanDo(QString filename);
   void FixDesigns();
-  void CreateBasePair();
 
   virtual void onDocumentEvent(SBDocumentEvent* documentEvent);						///< Handles document events
   virtual void onStructuralEvent(SBStructuralEvent* documentEvent);					///< Handles structural events
