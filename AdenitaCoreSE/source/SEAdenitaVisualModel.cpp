@@ -325,6 +325,8 @@ void SEAdenitaVisualModel::initDisplayIndices() {
 
   ntMap_.clear();
   atomMap_.clear();
+  ntBsIndexMap_.clear();
+  atomNtIndexMap_.clear();
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
