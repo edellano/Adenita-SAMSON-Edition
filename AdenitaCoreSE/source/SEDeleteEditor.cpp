@@ -142,12 +142,18 @@ void SEDeleteEditor::mousePressEvent(QMouseEvent* event) {
 
   if (highlightedNucleotides.size() == 1) {
     ADNPointer<ADNNucleotide> nt = highlightedNucleotides[0];
+    ADNPointer<ADNBaseSegment> bs = nt->GetBaseSegment();
     ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
     ADNPointer<ADNPart> part = nanorobot->GetPart(ss);
     auto newStrands = ADNBasicOperations::DeleteNucleotide(part, nt);
     if (ss->getNumberOfNucleotides() == 0) {
       // delete single strand if was left empty
       part->DeregisterSingleStrand(ss);
+    }
+    auto numBsNts = bs->GetNucleotides().size();
+    if (numBsNts == 0) {
+      // if base segment is empty, delete
+      ADNBasicOperations::DeleteBaseSegment(part, bs);
     }
   }
 

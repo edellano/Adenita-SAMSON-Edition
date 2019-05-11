@@ -1419,6 +1419,11 @@ SBNode * ADNDoubleStrand::getFirstBaseSegment() const
   return GetFirstBaseSegment()();
 }
 
+void ADNDoubleStrand::SetStart(ADNPointer<ADNBaseSegment> bs)
+{
+  start_ = bs;
+}
+
 ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetLastBaseSegment() const
 {
   return end_;
@@ -1427,6 +1432,11 @@ ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetLastBaseSegment() const
 SBNode * ADNDoubleStrand::getLastBaseSegment() const
 {
   return GetLastBaseSegment()();
+}
+
+void ADNDoubleStrand::SetEnd(ADNPointer<ADNBaseSegment> bs)
+{
+  end_ = bs;
 }
 
 void ADNDoubleStrand::AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs)
