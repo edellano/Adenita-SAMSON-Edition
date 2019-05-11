@@ -543,8 +543,10 @@ public:
 
   ADNPointer<ADNBaseSegment> GetFirstBaseSegment() const;
   SBNode* getFirstBaseSegment() const;
+  void SetStart(ADNPointer<ADNBaseSegment> bs);
   ADNPointer<ADNBaseSegment> GetLastBaseSegment() const;
   SBNode* getLastBaseSegment() const;
+  void SetEnd(ADNPointer<ADNBaseSegment> bs);
 
   void AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs);
   void AddBaseSegmentEnd(ADNPointer<ADNBaseSegment> bs);

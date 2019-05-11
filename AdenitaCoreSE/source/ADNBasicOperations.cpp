@@ -301,6 +301,17 @@ std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOper
   dsFP->SetInitialTwistAngle(initAngle);
   dsTP->SetInitialTwistAngle(initAngle + ADNConstants::BP_ROT * num);
 
+  auto sz = ds->GetBaseSegments().size();
+  if (sz > 0) {
+    std::string msg = "Possible error when breaking strands inside part";
+    ADNLogger& logger = ADNLogger::GetLogger();
+    logger.LogDebug(msg);
+  }
+  else {
+    // Deregister old strand
+    part->DeregisterDoubleStrand(ds);
+  }
+
   std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> dsPair = std::make_pair(dsFP, dsTP);
   return dsPair;
 }
@@ -322,7 +333,7 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
     // we don't need to break, just delete
     ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
     if (ntNext != nullptr) {
-      if (e == ThreePrime) {
+      if (ntNext->GetEnd() == ThreePrime) {
         ntNext->SetEnd(FiveAndThreePrime);
       }
       else {
@@ -401,20 +412,69 @@ void ADNBasicOperations::DeleteNucleotideWithoutBreak(ADNPointer<ADNPart> part, 
 
 std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOperations::DeleteBaseSegment(ADNPointer<ADNPart> part, ADNPointer<ADNBaseSegment> bs)
 {
+  SEConfig& config = SEConfig::GetInstance();
+  ADNLogger& logger = ADNLogger::GetLogger();
+
+  auto numBss = part->GetNumberOfBaseSegments();
+  auto numDS = part->GetNumberOfDoubleStrands();
+
   std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> res = std::make_pair(nullptr, nullptr);
-  // first break
-  auto ssPair = BreakDoubleStrand(part, bs);
-  res.first = ssPair.first;
-  if (bs->GetNext() == nullptr) {
-    ssPair.second.deleteReferenceTarget();
+
+  ADNPointer<ADNDoubleStrand> ds = bs->GetDoubleStrand();
+  ADNPointer<ADNBaseSegment> oldNext = bs->GetNext();
+  bool fst = bs->GetPrev() == nullptr;
+  bool fstAndLst = bs->GetNext() == nullptr && fst;
+
+  if (fstAndLst || fst) {
+    // we don't need to break, just delete
+    if (!fstAndLst) {
+      if (oldNext->GetNext() == nullptr) {
+        ds->SetEnd(oldNext);
+      }
+      ds->SetStart(oldNext);
+      res.first = ds;
+    }
+    else {
+      // last base segment of the double strand
+      part->DeregisterDoubleStrand(ds);
+    }
+    part->DeregisterBaseSegment(bs);
+    bs.deleteReferenceTarget();
   }
   else {
-    // second break
-    auto ssPair2 = BreakDoubleStrand(part, bs->GetNext());
-    res.second = ssPair2.second;
+    // first break
+    auto dsPair = BreakDoubleStrand(part, bs);
+    res.first = dsPair.first;
+    part->RegisterDoubleStrand(res.first);  // register new strand
 
-    // delete remaining single strand containing nt
-    ssPair2.first.deleteReferenceTarget();
+    if (oldNext == nullptr) {
+      part->DeregisterDoubleStrand(dsPair.second);
+    }
+    else {
+      // second break
+      auto dsPair2 = BreakDoubleStrand(part, oldNext);
+      res.second = dsPair2.second;
+      part->RegisterDoubleStrand(res.second);
+      part->DeregisterDoubleStrand(dsPair2.first);  // deregister strand containing only the nt we want to delete
+    }
+
+    part->DeregisterBaseSegment(bs);
+    bs.deleteReferenceTarget();
+  }
+
+  auto numBssNew = part->GetNumberOfBaseSegments();
+  auto numDSNew = part->GetNumberOfDoubleStrands();
+
+  if (config.mode == DEBUG_NO_LOG || config.mode == DEBUG_LOG) {
+    logger.LogDateTime();
+    std::string msg = "  --> DELETING NUCLEOTIDE";
+    logger.LogDebug(msg);
+    msg = "         Nucleotides before deletion: " + std::to_string(numBss) + "\n";
+    msg += "         Nucleotides after deletion: " + std::to_string(numBssNew);
+    logger.LogDebug(msg);
+    msg = "         Single Strands before deletion: " + std::to_string(numDS) + "\n";
+    msg += "         Single Strands after deletion: " + std::to_string(numDSNew);
+    logger.LogDebug(msg);
   }
 
   return res;
