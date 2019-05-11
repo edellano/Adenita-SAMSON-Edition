@@ -204,6 +204,7 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
 
         if (skip) {
           bs->SetCell(new ADNSkipPair());
+          --bs_number;
         }
         else if (k > 0) {
           bs->SetCell(new ADNLoopPair());
