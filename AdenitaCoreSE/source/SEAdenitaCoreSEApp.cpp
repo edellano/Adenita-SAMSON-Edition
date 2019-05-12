@@ -2,6 +2,7 @@
 #include "SEAdenitaCoreSEAppGUI.hpp"
 #include "SEAdenitaVisualModelProperties.hpp"
 #include "PICrossovers.hpp"
+#include "DASAlgorithms.hpp"
 
 SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
 
@@ -155,6 +156,15 @@ void SEAdenitaCoreSEApp::CenterPart()
 {
   auto parts = GetNanorobot()->GetSelectedParts();
   SB_FOR(ADNPointer<ADNPart> part, parts) ADNBasicOperations::CenterPart(part);
+}
+
+void SEAdenitaCoreSEApp::GenerateSequence(double gcCont, int maxContGs)
+{
+  auto strands = GetNanorobot()->GetSelectedSingleStrands();
+  SB_FOR(ADNPointer<ADNSingleStrand> ss, strands) {
+    std::string seq = DASAlgorithms::GenerateSequence(gcCont, maxContGs, ss->getNumberOfNucleotides());
+    ADNBasicOperations::SetSingleStrandSequence(ss, seq);
+  }
 }
 
 void SEAdenitaCoreSEApp::ResetVisualModel() {
