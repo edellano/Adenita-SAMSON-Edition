@@ -185,6 +185,9 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
     bool firstBs = true;
     ds->SetInitialTwistAngle(initAng);
 
+    // position offset due to skip pairs
+    int posOffset = 0;
+
     SBPosition3 fp = initPos;
     for (int i = 0; i < length; ++i) {
       // take into account the loops, we place for now base segments of loops in the same position as the previous base segment
@@ -192,19 +195,16 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
       bool skip = vs->skips_[tube.initPos_ + i] == -1;
       if (max_iter > 0) max_iter = 1;  // a loop is contained in a base segment
       for (int k = 0; k <= max_iter; k++) {
-        fp = vGrid_.GetGridCellPos3D(tube.initPos_ + i, vs->row_, vs->col_);
+        int z = tube.initPos_ + i - posOffset;
+        fp = vGrid_.GetGridCellPos3D(z, vs->row_, vs->col_);
         double factor = 1.0;
         if ((vs->row_ + vs->col_) % 2 == 0) factor = -1.0;
 
         ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment();
-        nanorobot->RegisterBaseSegmentEnd(ds, bs);
-        bs->SetNumber(bs_number);
-        bs->SetPosition(fp);
-        bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(dir));
-
         if (skip) {
           bs->SetCell(new ADNSkipPair());
           --bs_number;
+          ++posOffset;
         }
         else if (k > 0) {
           bs->SetCell(new ADNLoopPair());
@@ -212,6 +212,11 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
         else {
           bs->SetCell(new ADNBasePair());
         }
+        nanorobot->RegisterBaseSegmentEnd(ds, bs);
+        bs->SetNumber(bs_number);
+        bs->SetPosition(fp);
+        bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(dir));
+
         std::pair<int, int> key = std::make_pair(tube.initPos_ + i, k);
         positions.insert(std::make_pair(key, bs));
         ++bs_number;
