@@ -475,22 +475,21 @@ std::string DASAlgorithms::GenerateSequence(double gcCont, int maxContGs, int sz
         base = "G";
         ++numGs;
       }
-      else base = "C";
+      else {
+        base = "C";
+        numGs = 0;
+      }
     }
     else {
       // AT
       if (c == 0) base = "A";
       else base = "T";
+      numGs = 0;
     }
 
     seq += base;
-    if (numGs == maxContGs) {
-      g = false;
-      numGs = 0;
-    }
-    else {
-      g = true;
-    }
+    if (maxContGs > 0 && numGs == maxContGs) g = false;
+    else g = true;
 
     --count;
   }

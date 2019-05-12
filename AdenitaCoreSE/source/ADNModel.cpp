@@ -783,7 +783,7 @@ double ADNSingleStrand::GetGCContent() const
     }
   }
   gcCont /= nucleotides.size();
-  return gcCont;
+  return gcCont * 100.0;
 }
 
 double ADNSingleStrand::getGCContent() const
