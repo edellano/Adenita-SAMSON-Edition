@@ -228,7 +228,8 @@ private:
     CROSSOVERS = 1,
     GC = 2,
     TAGGED = 3,
-	LENGTH = 4
+		LENGTH = 4,
+		NOBASE = 5
   };
 
   HighlightType highlightType_ = NONE;
