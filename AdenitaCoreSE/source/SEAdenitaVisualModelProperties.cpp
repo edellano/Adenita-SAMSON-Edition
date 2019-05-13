@@ -8,7 +8,7 @@ SEAdenitaVisualModelProperties::SEAdenitaVisualModelProperties() {
 	visualModel = 0;
 	ui.setupUi( this );
 	observer = new Observer(this);
-
+	ui.gboHighlight->hide();
 }
 
 SEAdenitaVisualModelProperties::~SEAdenitaVisualModelProperties() {
@@ -159,7 +159,15 @@ void SEAdenitaVisualModelProperties::onPropertyColorsChanged(int propertyIdx)
 void SEAdenitaVisualModelProperties::onHighlightChanged(int highlightIdx)
 {
   visualModel->changeHighlight(highlightIdx);
+  if (highlightIdx == 4) {
+	  ui.gboHighlight->show();
+  }
+  else {
+	  ui.gboHighlight->hide();
+  }
+  
   SAMSON::requestViewportUpdate();
+
 }
 
 void SEAdenitaVisualModelProperties::onPropertyColorSchemeChanged(int colorSchemeIdx)
@@ -189,6 +197,18 @@ void SEAdenitaVisualModelProperties::onDoubleStrandColorSchemeChanged(int index)
 void SEAdenitaVisualModelProperties::onShowBasePairing(bool show)
 {
   visualModel->showBasePairing(show);
+}
+
+void SEAdenitaVisualModelProperties::onMinLenChanged(QString text)
+{
+	unsigned int val = text.toUInt();
+	visualModel->setHighlightMinLen(val);
+}
+
+void SEAdenitaVisualModelProperties::onMaxLenChanged(QString text)
+{
+	unsigned int val = text.toUInt();
+	visualModel->setHighlightMaxLen(val);
 }
 
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
