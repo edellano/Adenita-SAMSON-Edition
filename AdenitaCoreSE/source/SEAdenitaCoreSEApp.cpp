@@ -456,51 +456,72 @@ void SEAdenitaCoreSEApp::FixDesigns()
   CollectionMap<ADNPart> parts;
 
   SB_FOR(auto node, nodes) {
+    if (!node->isSelected()) continue;
+
     ADNPointer<ADNPart> part = static_cast<ADNPart*>(node);
 
-    auto nucleotides = part->GetNucleotides();
-    SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-      auto bbPos = nt->GetBackbonePosition();
-      auto scPos = nt->GetSidechainPosition();
-      auto pos = (bbPos + scPos)*0.5;
+    // .sam format fix
+    //auto nucleotides = part->GetNucleotides();
+    //SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+    //  auto bbPos = nt->GetBackbonePosition();
+    //  auto scPos = nt->GetSidechainPosition();
+    //  auto pos = (bbPos + scPos)*0.5;
 
-      auto at = nt->GetCenterAtom();
-      if (at == nullptr) at = new ADNAtom();
-      at->setElementType(SBElement::Meitnerium);
-      nt->SetCenterAtom(at);
+    //  auto at = nt->GetCenterAtom();
+    //  if (at == nullptr) at = new ADNAtom();
+    //  at->setElementType(SBElement::Meitnerium);
+    //  nt->SetCenterAtom(at);
 
-      nt->SetPosition(pos);
-      ublas::vector<double> e(3, 0.0);
-      nt->SetE3(e);
-      nt->SetE2(e);
-      nt->SetE1(e);
-    }
+    //  nt->SetPosition(pos);
+    //  ublas::vector<double> e(3, 0.0);
+    //  nt->SetE3(e);
+    //  nt->SetE2(e);
+    //  nt->SetE1(e);
+    //}
 
-    auto baseSegments = part->GetBaseSegments();
-    SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
-      auto nucleotides = bs->GetNucleotides();
-      SBPosition3 pos;
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        pos += nt->GetBackbonePosition();
-        pos += nt->GetSidechainPosition();
-      }
-      pos /= nucleotides.size()*2;
+    //auto baseSegments = part->GetBaseSegments();
+    //SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
+    //  auto nucleotides = bs->GetNucleotides();
+    //  SBPosition3 pos;
+    //  SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+    //    pos += nt->GetBackbonePosition();
+    //    pos += nt->GetSidechainPosition();
+    //  }
+    //  pos /= nucleotides.size()*2;
 
-      auto at = bs->GetCenterAtom();
-      if (at == nullptr) at = new ADNAtom();
-      at->setElementType(SBElement::Meitnerium);
-      bs->SetCenterAtom(at);
-      part->RegisterAtom(bs, at, true);
-      // hiding atoms here cause when they are created is too slow
-      bs->HideCenterAtom();
+    //  auto at = bs->GetCenterAtom();
+    //  if (at == nullptr) at = new ADNAtom();
+    //  at->setElementType(SBElement::Meitnerium);
+    //  bs->SetCenterAtom(at);
+    //  part->RegisterAtom(bs, at, true);
+    //  // hiding atoms here cause when they are created is too slow
+    //  bs->HideCenterAtom();
 
-      bs->SetPosition(pos);
-      ublas::vector<double> e(3, 0.0);
-      bs->SetE3(e);
-      bs->SetE2(e);
-      bs->SetE1(e);
-    }
-    AddLoadedPartToNanorobot(part);
+    //  bs->SetPosition(pos);
+    //  ublas::vector<double> e(3, 0.0);
+    //  bs->SetE3(e);
+    //  bs->SetE2(e);
+    //  bs->SetE1(e);
+    //}
+    //AddLoadedPartToNanorobot(part);
+
+    // fix for cadnano designs
+    auto scaffolds = part->GetScaffolds();
+    ADNPointer<ADNSingleStrand> scaffold = scaffolds[0];
+    ADNPointer<ADNSingleStrand> newScaf = new ADNSingleStrand();
+    newScaf->SetName(scaffold->GetName());
+    newScaf->IsScaffold(true);
+    newScaf->create();
+    part->RegisterSingleStrand(newScaf);
+    // reverse 5'->3' direction
+    ADNPointer<ADNNucleotide> nt = scaffold->GetFivePrime();
+    while (nt != nullptr) {
+      auto next = nt->GetNext();
+      part->DeregisterNucleotide(nt, true, false);
+      part->RegisterNucleotideFivePrime(newScaf, nt);
+      nt = next;
+    }    
+    part->DeregisterSingleStrand(scaffold);
   }
 
   ResetVisualModel();
