@@ -75,3 +75,11 @@ QString SETaggingEditorGUI::getCitation() const {
 		"[1] <a href=\"https://www.samson-connect.net\">https://www.samson-connect.net</a><br/>";
 
 }
+
+void SETaggingEditorGUI::onModeChanged(bool tags) {
+  int m = 0;
+  if (!tags) m = 1;
+
+  SETaggingEditor* t = getEditor();
+  t->changeMode(m);
+}
