@@ -236,6 +236,18 @@ void DASOperations::AddComplementaryStrands(ADNNanorobot* nanorobot, CollectionM
         createSs = true;
       }
     }
+    else {
+      // if ss has nucleotides create and start a new one
+      if (ss != nullptr) {
+        btta.SetPositionsForNewNucleotides(part, nucleotides);
+        ss->create();
+        part->DeregisterSingleStrand(ss);
+        part->RegisterSingleStrand(ss);
+        nucleotides.clear();
+      }
+      createSs = true;
+    }
+
     prevPart = part;
   }
 }
