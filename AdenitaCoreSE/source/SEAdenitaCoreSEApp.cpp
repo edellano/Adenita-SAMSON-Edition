@@ -506,22 +506,24 @@ void SEAdenitaCoreSEApp::FixDesigns()
     //AddLoadedPartToNanorobot(part);
 
     // fix for cadnano designs
-    auto scaffolds = part->GetScaffolds();
-    ADNPointer<ADNSingleStrand> scaffold = scaffolds[0];
-    ADNPointer<ADNSingleStrand> newScaf = new ADNSingleStrand();
-    newScaf->SetName(scaffold->GetName());
-    newScaf->IsScaffold(true);
-    newScaf->create();
-    part->RegisterSingleStrand(newScaf);
-    // reverse 5'->3' direction
-    ADNPointer<ADNNucleotide> nt = scaffold->GetFivePrime();
-    while (nt != nullptr) {
-      auto next = nt->GetNext();
-      part->DeregisterNucleotide(nt, true, false);
-      part->RegisterNucleotideFivePrime(newScaf, nt);
-      nt = next;
-    }    
-    part->DeregisterSingleStrand(scaffold);
+    auto strands = part->GetSingleStrands();
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, strands) {
+      ADNPointer<ADNSingleStrand> newSs = new ADNSingleStrand();
+      newSs->SetName(ss->GetName());
+      newSs->IsScaffold(ss->IsScaffold());
+      newSs->create();
+      part->RegisterSingleStrand(newSs);
+      // reverse 5'->3' direction
+      ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
+      while (nt != nullptr) {
+        auto next = nt->GetNext();
+        part->DeregisterNucleotide(nt, true, false);
+        part->RegisterNucleotideFivePrime(newSs, nt);
+        nt = next;
+      }
+      part->DeregisterSingleStrand(ss);
+    }
+    
   }
 
   ResetVisualModel();
