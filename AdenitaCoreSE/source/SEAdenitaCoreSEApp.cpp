@@ -218,7 +218,7 @@ SBVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
 void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
 {
   ADNPointer<ADNNucleotide> breakNt = nullptr;
-  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  auto nts = GetNanorobot()->GetHighlightedNucleotides();
   if (nts.size() == 1) {
     ADNPointer<ADNNucleotide> nt = nts[0];
     if (nt->GetEnd() != ThreePrime) {
