@@ -72,14 +72,14 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
 		xyText_ = "x: ";
 		xyText_ += to_string(int(xNumStrands));
 		xyText_ += " ds / ";
-		xyText_ += to_string(int(SBQuantity::nanometer(x).getValue()));
+		int xLen = int(SBQuantity::nanometer(x).getValue());
+		if (lType_ == LatticeType::Honeycomb) xLen * 1.5;
+		xyText_ += to_string(xLen);
 		xyText_ += " nm; ";
 		xyText_ += "y: ";
 		xyText_ += to_string(int(yNumStrands));
 		xyText_ += " ds / ";
-		int yLen = int(SBQuantity::nanometer(y).getValue());
-		if (lType_ == LatticeType::Honeycomb) yLen * 1.5;
-		xyText_ += to_string(yLen);
+		xyText_ += to_string(SBQuantity::nanometer(y).getValue());
 		xyText_ += " nm; ";
 		zText_ = "z: ";
 		zText_ += to_string(int(numBps));
