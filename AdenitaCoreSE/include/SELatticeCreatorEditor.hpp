@@ -111,7 +111,7 @@ private:
   void displayLattice();
   void sendPartToAdenita(ADNPointer<ADNPart> lattice);
 
-	LatticeType lType_;
+	LatticeType lType_ = LatticeType::Honeycomb;
   VGrid vGrid_;
 
   DASCreatorEditors::UIData positions_;
