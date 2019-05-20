@@ -117,6 +117,9 @@ private:
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
 
+	string xyText_ = "";
+	string zText_ = "";
+
   ZLatticePattern zPattern_ = ZLatticePattern::ALLZ;
 
 };
