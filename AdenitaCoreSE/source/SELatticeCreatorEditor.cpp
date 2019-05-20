@@ -58,6 +58,16 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
   if (xNumStrands < 1) xNumStrands = 1;
   if (yNumStrands < 1) yNumStrands = 1;
 
+	//check ranges
+	if (lType_ == LatticeType::Square) {
+		if (xNumStrands > 55)  xNumStrands = 55;
+		if (yNumStrands > 55)  yNumStrands = 55;
+	}
+	else if (lType_ == LatticeType::Honeycomb) {
+		if (xNumStrands > 32)  xNumStrands = 32;
+		if (yNumStrands > 30)  yNumStrands = 30;
+	}
+	
   if (numBps > 0) {
 		xyText_ = "x: ";
 		xyText_ += to_string(int(xNumStrands));
@@ -67,9 +77,10 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
 		xyText_ += "y: ";
 		xyText_ += to_string(int(yNumStrands));
 		xyText_ += " ds / ";
-		xyText_ += to_string(int(SBQuantity::nanometer(y).getValue()));
+		int yLen = int(SBQuantity::nanometer(y).getValue());
+		if (lType_ == LatticeType::Honeycomb) yLen * 1.5;
+		xyText_ += to_string(yLen);
 		xyText_ += " nm; ";
-
 		zText_ = "z: ";
 		zText_ += to_string(int(numBps));
 		zText_ += " bps / ";
@@ -217,9 +228,9 @@ void SELatticeCreatorEditor::display() {
     }
 
 		SBPosition3 offset = SBPosition3(
-			SBQuantity::angstrom(50),
-			SBQuantity::angstrom(50),
-			SBQuantity::angstrom(50));
+			SBQuantity::angstrom(5),
+			SBQuantity::angstrom(5),
+			SBQuantity::angstrom(5));
 
 		if (positions_.positionsCounter == 1) {
 			ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
@@ -400,6 +411,7 @@ void SELatticeCreatorEditor::onStructuralEvent(SBStructuralEvent* documentEvent)
 void SELatticeCreatorEditor::setLatticeType(LatticeType type)
 {
   vGrid_.CreateLattice(type);
+	lType_ = type;
   SBCamera * camera = SAMSON::getActiveCamera();
   camera->rightView();
 }
