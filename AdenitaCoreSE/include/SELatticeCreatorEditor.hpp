@@ -105,6 +105,10 @@ public :
 	SELatticeCreatorEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
+
+	void															setMaxXds(int val);
+	void															setMaxYds(int val);
+	void															setMaxZBps(int val);
 private:
 
   ADNPointer<ADNPart> generateLattice(bool mock = false);
@@ -117,6 +121,10 @@ private:
   DASCreatorEditors::UIData positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
+
+	int maxXds_ = 32;
+	int maxYds_ = 30;
+	int maxZBps_ = 400;
 
 	string xyText_ = "";
 	string zText_ = "";
