@@ -66,12 +66,14 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
     z = (positions_.ThirdPosition - firstPos).norm();
   }
   
+
   auto xNumStrands = round((x / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
   auto yNumStrands = round((y / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
   auto numBps = round((z / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
 
   if (xNumStrands < 1) xNumStrands = 1;
-  if (yNumStrands < 1) yNumStrands = 1;
+	if (yNumStrands < 1) yNumStrands = 1;
+	if (numBps < 1) numBps = 1;
 
 	if (xNumStrands > maxXds_)  xNumStrands = maxXds_;
 	if (yNumStrands > maxYds_)  yNumStrands = maxYds_;
