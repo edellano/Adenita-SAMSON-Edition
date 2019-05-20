@@ -25,6 +25,21 @@ SELatticeCreatorEditor::~SELatticeCreatorEditor() {
 
 SELatticeCreatorEditorGUI* SELatticeCreatorEditor::getPropertyWidget() const { return static_cast<SELatticeCreatorEditorGUI*>(propertyWidget); }
 
+void SELatticeCreatorEditor::setMaxXds(int val)
+{
+	maxXds_ = val;
+}
+
+void SELatticeCreatorEditor::setMaxYds(int val)
+{
+	maxYds_ = val;
+}
+
+void SELatticeCreatorEditor::setMaxZBps(int val)
+{
+	maxZBps_ = val;
+}
+
 ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*/)
 {
   //ADNLogger& logger = ADNLogger::GetLogger();
@@ -51,30 +66,54 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
     z = (positions_.ThirdPosition - firstPos).norm();
   }
   
+
   auto xNumStrands = round((x / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
   auto yNumStrands = round((y / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
-  auto numNucleotides = round((z / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
+  auto numBps = round((z / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
 
   if (xNumStrands < 1) xNumStrands = 1;
-  if (yNumStrands < 1) yNumStrands = 1;
+	if (yNumStrands < 1) yNumStrands = 1;
+	if (numBps < 1) numBps = 1;
 
-  if (numNucleotides > 0) {
-    part = new ADNPart();
+	if (xNumStrands > maxXds_)  xNumStrands = maxXds_;
+	if (yNumStrands > maxYds_)  yNumStrands = maxYds_;
+	if (numBps > maxZBps_)  numBps = maxZBps_;
 
-    SBVector3 dir = SBVector3(1, 0, 0);
-    for (int xt = 0; xt < xNumStrands; xt++) {
-      for (int yt = 0; yt < yNumStrands; yt++) {
-        auto pos = vGrid_.GetGridCellPos3D(0, xt, yt);
-        pos += positions_.FirstPosition;
+	xyText_ = "x: ";
+	xyText_ += to_string(int(xNumStrands));
+	xyText_ += " ds / ";
+	auto xLen = SBQuantity::nanometer(x).getValue();
+	if (lType_ == LatticeType::Honeycomb)
+		xLen *= 1.5;
+	xyText_ += to_string(int(xLen));
+	xyText_ += " nm; ";
+	xyText_ += "y: ";
+	xyText_ += to_string(int(yNumStrands));
+	xyText_ += " ds / ";
+	xyText_ += to_string(int(SBQuantity::nanometer(y).getValue()));
+	xyText_ += " nm; ";
+	zText_ = "z: ";
+	zText_ += to_string(int(numBps));
+	zText_ += " bps / ";
+	zText_ += to_string(int(SBQuantity::nanometer(z).getValue()));
+	zText_ += " nm; ";
 
-        int zLength = numNucleotides;
-        if (zPattern_ == TRIANGLE) {
-          zLength = (xt / xNumStrands) * numNucleotides;
-        }
-        if (zLength > 0) auto ds = DASCreator::CreateDoubleStrand(part, zLength, pos, dir, mock);
-      }
-    }
-  }
+	part = new ADNPart();
+
+	SBVector3 dir = SBVector3(1, 0, 0);
+	for (int xt = 0; xt < xNumStrands; xt++) {
+		for (int yt = 0; yt < yNumStrands; yt++) {
+			auto pos = vGrid_.GetGridCellPos3D(0, xt, yt);
+			pos += positions_.FirstPosition;
+
+			int zLength = numBps;
+			if (zPattern_ == TRIANGLE) {
+				zLength = (xt / xNumStrands) * numBps;
+			}
+			if (zLength > 0) auto ds = DASCreator::CreateDoubleStrand(part, zLength, pos, dir, mock);
+		}
+	}
+
 
   return part;
 }
@@ -184,16 +223,7 @@ void SELatticeCreatorEditor::display() {
   if (display_) {
     SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
 
-    if (positions_.positionsCounter == 1) {
-      ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
-    }
-    else if (positions_.positionsCounter == 2) {
-      ADNDisplayHelper::displayLine(positions_.FirstPosition, positions_.SecondPosition);
-      ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
-
-    }
-
-    tempPart_ = generateLattice(true);
+		tempPart_ = generateLattice(true);
 
     if (tempPart_ != nullptr) {
 
@@ -207,6 +237,26 @@ void SELatticeCreatorEditor::display() {
       glDisable(GL_DEPTH_TEST);
 
     }
+
+		SBPosition3 offset = SBPosition3(
+			SBQuantity::angstrom(5),
+			SBQuantity::angstrom(5),
+			SBQuantity::angstrom(5));
+
+		if (positions_.positionsCounter == 1) {
+			ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
+			
+			SBPosition3 xyPos = currentPosition + offset;
+			ADNDisplayHelper::displayText(xyPos, xyText_);
+		}
+		else if (positions_.positionsCounter == 2) {
+			ADNDisplayHelper::displayLine(positions_.FirstPosition, positions_.SecondPosition);
+			ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
+
+			SBPosition3 zPos = currentPosition + offset;
+			ADNDisplayHelper::displayText(zPos, zText_);
+
+		}
   }
 
 }
@@ -372,8 +422,10 @@ void SELatticeCreatorEditor::onStructuralEvent(SBStructuralEvent* documentEvent)
 void SELatticeCreatorEditor::setLatticeType(LatticeType type)
 {
   vGrid_.CreateLattice(type);
+	lType_ = type;
   SBCamera * camera = SAMSON::getActiveCamera();
   camera->rightView();
+
 }
 
 void SELatticeCreatorEditor::setZPattern(ZLatticePattern pattern)
