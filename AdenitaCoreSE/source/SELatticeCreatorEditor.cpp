@@ -53,12 +53,29 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
   
   auto xNumStrands = round((x / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
   auto yNumStrands = round((y / SBQuantity::nanometer(ADNConstants::DH_DIAMETER)).getValue());
-  auto numNucleotides = round((z / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
+  auto numBps = round((z / SBQuantity::nanometer(ADNConstants::BP_RISE)).getValue());
 
   if (xNumStrands < 1) xNumStrands = 1;
   if (yNumStrands < 1) yNumStrands = 1;
 
-  if (numNucleotides > 0) {
+  if (numBps > 0) {
+		xyText_ = "x: ";
+		xyText_ += to_string(int(xNumStrands));
+		xyText_ += " ds / ";
+		xyText_ += to_string(int(SBQuantity::nanometer(x).getValue()));
+		xyText_ += " nm; ";
+		xyText_ += "y: ";
+		xyText_ += to_string(int(yNumStrands));
+		xyText_ += " ds / ";
+		xyText_ += to_string(int(SBQuantity::nanometer(y).getValue()));
+		xyText_ += " nm; ";
+
+		zText_ = "z: ";
+		zText_ += to_string(int(numBps));
+		zText_ += " bps / ";
+		zText_ += to_string(int(SBQuantity::nanometer(z).getValue()));
+		zText_ += " nm; ";
+
     part = new ADNPart();
 
     SBVector3 dir = SBVector3(1, 0, 0);
@@ -67,9 +84,9 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
         auto pos = vGrid_.GetGridCellPos3D(0, xt, yt);
         pos += positions_.FirstPosition;
 
-        int zLength = numNucleotides;
+        int zLength = numBps;
         if (zPattern_ == TRIANGLE) {
-          zLength = (xt / xNumStrands) * numNucleotides;
+          zLength = (xt / xNumStrands) * numBps;
         }
         if (zLength > 0) auto ds = DASCreator::CreateDoubleStrand(part, zLength, pos, dir, mock);
       }
@@ -184,16 +201,7 @@ void SELatticeCreatorEditor::display() {
   if (display_) {
     SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
 
-    if (positions_.positionsCounter == 1) {
-      ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
-    }
-    else if (positions_.positionsCounter == 2) {
-      ADNDisplayHelper::displayLine(positions_.FirstPosition, positions_.SecondPosition);
-      ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
-
-    }
-
-    tempPart_ = generateLattice(true);
+		tempPart_ = generateLattice(true);
 
     if (tempPart_ != nullptr) {
 
@@ -207,6 +215,26 @@ void SELatticeCreatorEditor::display() {
       glDisable(GL_DEPTH_TEST);
 
     }
+
+		SBPosition3 offset = SBPosition3(
+			SBQuantity::angstrom(50),
+			SBQuantity::angstrom(50),
+			SBQuantity::angstrom(50));
+
+		if (positions_.positionsCounter == 1) {
+			ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
+			
+			SBPosition3 xyPos = currentPosition + offset;
+			ADNDisplayHelper::displayText(xyPos, xyText_);
+		}
+		else if (positions_.positionsCounter == 2) {
+			ADNDisplayHelper::displayLine(positions_.FirstPosition, positions_.SecondPosition);
+			ADNDisplayHelper::displayLine(positions_.FirstPosition, currentPosition);
+
+			SBPosition3 zPos = currentPosition + offset;
+			ADNDisplayHelper::displayText(zPos, zText_);
+
+		}
   }
 
 }
