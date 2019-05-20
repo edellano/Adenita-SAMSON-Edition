@@ -210,6 +210,8 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
       ADNPointer<ADNNucleotide> end = highlightedNucleotides[0];
       ADNPointer<ADNPart> part2 = nanorobot->GetPart(end->GetStrand());
 
+      if (start->GetStrand() == end->GetStrand() && !start->IsEnd() && !end->IsEnd()) return;
+
       bool two = false;
       if (mode_ == Double) two = true;
 
