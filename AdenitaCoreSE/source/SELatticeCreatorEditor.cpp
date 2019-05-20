@@ -68,43 +68,42 @@ ADNPointer<ADNPart> SELatticeCreatorEditor::generateLattice(bool mock /*= false*
 		if (yNumStrands > 30)  yNumStrands = 30;
 	}
 	
-  if (numBps > 0) {
-		xyText_ = "x: ";
-		xyText_ += to_string(int(xNumStrands));
-		xyText_ += " ds / ";
-		auto xLen = SBQuantity::nanometer(x).getValue();
-		if (lType_ == LatticeType::Honeycomb) 
-			xLen *= 1.5; 
-		xyText_ += to_string(int(xLen));
-		xyText_ += " nm; ";
-		xyText_ += "y: ";
-		xyText_ += to_string(int(yNumStrands));
-		xyText_ += " ds / ";
-		xyText_ += to_string(int(SBQuantity::nanometer(y).getValue()));
-		xyText_ += " nm; ";
-		zText_ = "z: ";
-		zText_ += to_string(int(numBps));
-		zText_ += " bps / ";
-		zText_ += to_string(int(SBQuantity::nanometer(z).getValue()));
-		zText_ += " nm; ";
+	xyText_ = "x: ";
+	xyText_ += to_string(int(xNumStrands));
+	xyText_ += " ds / ";
+	auto xLen = SBQuantity::nanometer(x).getValue();
+	if (lType_ == LatticeType::Honeycomb) 
+		xLen *= 1.5; 
+	xyText_ += to_string(int(xLen));
+	xyText_ += " nm; ";
+	xyText_ += "y: ";
+	xyText_ += to_string(int(yNumStrands));
+	xyText_ += " ds / ";
+	xyText_ += to_string(int(SBQuantity::nanometer(y).getValue()));
+	xyText_ += " nm; ";
+	zText_ = "z: ";
+	zText_ += to_string(int(numBps));
+	zText_ += " bps / ";
+	zText_ += to_string(int(SBQuantity::nanometer(z).getValue()));
+	zText_ += " nm; ";
 
 
-    part = new ADNPart();
+  part = new ADNPart();
 
-    SBVector3 dir = SBVector3(1, 0, 0);
-    for (int xt = 0; xt < xNumStrands; xt++) {
-      for (int yt = 0; yt < yNumStrands; yt++) {
-        auto pos = vGrid_.GetGridCellPos3D(0, xt, yt);
-        pos += positions_.FirstPosition;
+  SBVector3 dir = SBVector3(1, 0, 0);
+  for (int xt = 0; xt < xNumStrands; xt++) {
+    for (int yt = 0; yt < yNumStrands; yt++) {
+      auto pos = vGrid_.GetGridCellPos3D(0, xt, yt);
+      pos += positions_.FirstPosition;
 
-        int zLength = numBps;
-        if (zPattern_ == TRIANGLE) {
-          zLength = (xt / xNumStrands) * numBps;
-        }
-        if (zLength > 0) auto ds = DASCreator::CreateDoubleStrand(part, zLength, pos, dir, mock);
+      int zLength = numBps;
+      if (zPattern_ == TRIANGLE) {
+        zLength = (xt / xNumStrands) * numBps;
       }
+      if (zLength > 0) auto ds = DASCreator::CreateDoubleStrand(part, zLength, pos, dir, mock);
     }
   }
+  
 
   return part;
 }
