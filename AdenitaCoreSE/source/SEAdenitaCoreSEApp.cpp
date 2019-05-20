@@ -540,15 +540,15 @@ void SEAdenitaCoreSEApp::CreateBasePair()
 
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
-  //auto t = documentEvent->getType();
-  //if (documentEvent->getType() == SBDocumentEvent::StructuralModelAdded) {
-  //  // on load a non-registered ADNPart
-  //  auto node = documentEvent->getAuxiliaryNode();
-  //  ADNPointer<ADNPart> part = dynamic_cast<ADNPart*>(node);
-  //  if (part != nullptr) {
-  //    AddLoadedPartToNanorobot(part);
-  //  }
-  //}
+  auto t = documentEvent->getType();
+  if (documentEvent->getType() == SBDocumentEvent::StructuralModelRemoved) {
+    // on delete a registered ADNPart
+    auto node = documentEvent->getAuxiliaryNode();
+    ADNPointer<ADNPart> part = dynamic_cast<ADNPart*>(node);
+    if (part != nullptr) {
+      GetNanorobot()->DeregisterPart(part);
+    }
+  }
 }
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
@@ -563,13 +563,37 @@ void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
     }
   }
 
-  //if (documentEvent->getType() == SBStructuralEvent::ResidueRemoved) {
-  //  auto node = documentEvent->getAuxiliaryNode();
-  //  ADNPointer<ADNSingleStrand> ss = static_cast<ADNSingleStrand*>(documentEvent->getSender());
-  //  ADNPointer<ADNNucleotide> nt = dynamic_cast<ADNNucleotide*>(node);
-  //  auto part = GetNanorobot()->GetPart(ss);
-  //  part->DeregisterNucleotide(nt, false, true, true);
-  //}
+  if (documentEvent->getType() == SBStructuralEvent::ResidueRemoved) {
+    auto node = documentEvent->getAuxiliaryNode();
+    ADNPointer<ADNNucleotide> nt = dynamic_cast<ADNNucleotide*>(node);
+    if (nt != nullptr) {
+      ADNPointer<ADNSingleStrand> ss = static_cast<ADNSingleStrand*>(documentEvent->getSender());
+      auto part = GetNanorobot()->GetPart(ss);
+      part->DeregisterNucleotide(nt, false, true, true);
+      if (ss->getNumberOfNucleotides() == 0) ss->erase();
+    }
+  }
+
+  if (documentEvent->getType() == SBStructuralEvent::StructuralGroupRemoved) {
+    auto node = documentEvent->getAuxiliaryNode();
+    ADNPointer<ADNBaseSegment> bs = dynamic_cast<ADNBaseSegment*>(node);
+    if (bs != nullptr) {
+      auto nucleotides = bs->GetNucleotides();
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        nt->erase();
+      }
+      ADNPointer<ADNDoubleStrand> ds = static_cast<ADNDoubleStrand*>(documentEvent->getSender());
+      auto part = GetNanorobot()->GetPart(ds);
+      part->DeregisterBaseSegment(bs, false, true);
+    }
+    else {
+      ADNPointer<ADNDoubleStrand> ds = dynamic_cast<ADNDoubleStrand*>(node);
+      if (ds != nullptr) {
+        ADNPointer<ADNPart> part = static_cast<ADNPart*>(documentEvent->getSender()->getParent());
+        part->DeregisterDoubleStrand(ds, false, true);
+      }
+    }   
+  }
 }
 
 void SEAdenitaCoreSEApp::ConnectToDocument(SBDocument* doc)
