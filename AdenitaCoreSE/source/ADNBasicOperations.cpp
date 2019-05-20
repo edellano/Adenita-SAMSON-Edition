@@ -15,8 +15,14 @@ ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<AD
   ADNPointer<ADNNucleotide> nt = fivePrimeF;
   while (nt != nullptr) {
     ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
+    // keep record of nt position in base segment
+    auto info = GetBaseSegmentInfo(nt);
+
     part1->DeregisterNucleotide(nt, true, false);
     part1->RegisterNucleotideThreePrime(ss, nt);
+
+    // nt was removed from base segment add it again
+    SetBackNucleotideIntoBaseSegment(nt, info);
     nt = ntNext;
   }
 
@@ -24,8 +30,15 @@ ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<AD
   nt = fivePrimeS;
   while (nt != nullptr) {
     ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
+    // keep record of nt position in base segment
+    auto info = GetBaseSegmentInfo(nt);
+
     part2->DeregisterNucleotide(nt, true, false);
     part1->RegisterNucleotideThreePrime(ss, nt);
+
+    // nt was removed from base segment add it again
+    SetBackNucleotideIntoBaseSegment(nt, info);
+
     nt = ntNext;
   }
 
@@ -160,39 +173,13 @@ ADNPointer<ADNPart> ADNBasicOperations::MergeParts(ADNPointer<ADNPart> part1, AD
     auto nt = ss->GetFivePrime();
     while (nt != nullptr) {
       auto ntNext = nt->GetNext();
-      auto bs = nt->GetBaseSegment();
-      auto cellType = bs->GetCellType();
-      
-      bool left = true;
-      if (cellType == BasePair) {
-        auto bp = static_cast<ADNBasePair*>(bs->GetCell()());
-        if (bp->IsRight(nt)) left = false;
-      }
-      else if (cellType == LoopPair) {
-        auto lp = static_cast<ADNLoopPair*>(bs->GetCell()());
-        if (lp->IsRight(nt)) left = false;
-      }
+      auto info = GetBaseSegmentInfo(nt);
 
       part2->DeregisterNucleotide(nt, false);
       // nt has de-registered from bp or loop pair
       part->RegisterNucleotideThreePrime(ss, nt, false);
 
-      if (cellType == BasePair) {
-        auto bp = static_cast<ADNBasePair*>(bs->GetCell()());
-        if (left) bp->SetLeftNucleotide(nt);
-        else bp->SetRightNucleotide(nt);
-      }
-      else if (cellType == LoopPair) {
-        auto lp = static_cast<ADNLoopPair*>(bs->GetCell()());
-        if (left) {
-          auto loop = lp->GetLeftLoop();
-          loop->AddNucleotide(nt);
-        }
-        else {
-          auto loop = lp->GetRightLoop();
-          loop->AddNucleotide(nt);
-        }
-      }
+      SetBackNucleotideIntoBaseSegment(nt, info);
 
       auto atoms = nt->GetAtoms();
       SB_FOR(ADNPointer<ADNAtom> atom, atoms) {
@@ -227,15 +214,19 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
 
   while (nucleo != nt) {
     ADNPointer<ADNNucleotide> ntNext = nucleo->GetNext();
+    auto info = GetBaseSegmentInfo(nucleo);
     part->DeregisterNucleotide(nucleo, true, false);
     part->RegisterNucleotideThreePrime(ssFP, nucleo);
+    SetBackNucleotideIntoBaseSegment(nucleo, info);
     nucleo = ntNext;
   }
 
   while (nucleo != nullptr) {
     ADNPointer<ADNNucleotide> ntNext = nucleo->GetNext();
+    auto info = GetBaseSegmentInfo(nucleo);
     part->DeregisterNucleotide(nucleo, true, false);
     part->RegisterNucleotideThreePrime(ssTP, nucleo);
+    SetBackNucleotideIntoBaseSegment(nucleo, info);
     nucleo = ntNext;
   }
 
@@ -682,4 +673,58 @@ std::pair<End, ADNPointer<ADNBaseSegment>> ADNBasicOperations::GetNextBaseSegmen
   }
 
   return std::make_pair(end, nextBs);
+}
+
+std::tuple<ADNPointer<ADNBaseSegment>, bool, bool, bool> ADNBasicOperations::GetBaseSegmentInfo(ADNPointer<ADNNucleotide> nt)
+{
+  auto bs = nt->GetBaseSegment();
+  auto cell = bs->GetCell();
+  bool left = bs->IsLeft(nt);
+  bool start = false;
+  bool end = false;
+  if (bs->GetCellType() == LoopPair) {
+    ADNPointer<ADNLoopPair> lp = static_cast<ADNLoopPair*>(cell());
+    if (left) {
+      auto leftLoop = lp->GetLeftLoop();
+      start = leftLoop->GetStart() == nt;
+      end = leftLoop->GetEnd() == nt;
+    }
+    else {
+      auto rightLoop = lp->GetRightLoop();
+      start = rightLoop->GetStart() == nt;
+      end = rightLoop->GetEnd() == nt;
+    }
+  }
+
+  return std::make_tuple(bs, left, start, end);
+}
+
+void ADNBasicOperations::SetBackNucleotideIntoBaseSegment(ADNPointer<ADNNucleotide> nt, std::tuple<ADNPointer<ADNBaseSegment>, bool, bool, bool> info)
+{
+  auto bs = std::get<0>(info);
+  bool left = std::get<1>(info);
+  bool start = std::get<2>(info);
+  bool end = std::get<3>(info);
+
+  auto cell = bs->GetCell();
+  if (bs->GetCellType() == BasePair) {
+    ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(cell());
+    if (left) bp->SetLeftNucleotide(nt);
+    else bp->SetRightNucleotide(nt);
+  }
+  else if (bs->GetCellType() == LoopPair) {
+    ADNPointer<ADNLoopPair> lp = static_cast<ADNLoopPair*>(cell());
+    if (left) {
+      auto leftLoop = lp->GetLeftLoop();
+      leftLoop->AddNucleotide(nt);
+      if (start) leftLoop->SetStart(nt);
+      if (end) leftLoop->SetEnd(nt);
+    }
+    else {
+      auto rightLoop = lp->GetRightLoop();
+      rightLoop->AddNucleotide(nt);
+      if (start) rightLoop->SetStart(nt);
+      if (end) rightLoop->SetEnd(nt);
+    }
+  }
 }
