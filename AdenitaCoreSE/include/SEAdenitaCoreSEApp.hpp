@@ -90,10 +90,14 @@ public :
 
   virtual void keyPressEvent(QKeyEvent* event);
 
+  void SetMod(bool m);
+
 private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);
 
   std::map<SBDocument*, ADNNanorobot*> nanorobots_;
+
+  bool mod_ = false;
 };
 
 SB_REGISTER_TARGET_TYPE(SEAdenitaCoreSEApp, "SEAdenitaCoreSEApp", "85DB7CE6-AE36-0CF1-7195-4A5DF69B1528");

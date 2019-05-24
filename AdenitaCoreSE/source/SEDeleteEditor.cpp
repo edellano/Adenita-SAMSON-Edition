@@ -132,6 +132,7 @@ void SEDeleteEditor::mousePressEvent(QMouseEvent* event) {
 
   auto app = getAdenitaApp();
   auto nanorobot = app->GetNanorobot();
+  app->SetMod(true);
 
   auto selectedNucleotides = nanorobot->GetSelectedNucleotides();
   auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
@@ -158,6 +159,7 @@ void SEDeleteEditor::mousePressEvent(QMouseEvent* event) {
   }
 
   app->ResetVisualModel();
+  app->SetMod(false);
 }
 
 void SEDeleteEditor::mouseReleaseEvent(QMouseEvent* event) {
