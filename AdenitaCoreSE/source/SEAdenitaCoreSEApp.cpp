@@ -217,6 +217,8 @@ SBVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
 
 void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
 {
+  mod_ = true;
+
   ADNPointer<ADNNucleotide> breakNt = nullptr;
   auto nts = GetNanorobot()->GetHighlightedNucleotides();
   if (nts.size() == 1) {
@@ -240,6 +242,8 @@ void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
       }
     }
   }
+
+  mod_ = false;
 }
 
 void SEAdenitaCoreSEApp::TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle)
@@ -540,6 +544,8 @@ void SEAdenitaCoreSEApp::CreateBasePair()
 
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
+  if (mod_) return; // modifications handle themselves deletions
+
   auto t = documentEvent->getType();
   if (documentEvent->getType() == SBDocumentEvent::StructuralModelRemoved) {
     // on delete a registered ADNPart
@@ -553,6 +559,8 @@ void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
 {
+  if (mod_) return; // modifications handle themselves deletions
+
   auto t = documentEvent->getType();
   if (t == SBStructuralEvent::ChainRemoved) {
     auto node = documentEvent->getAuxiliaryNode();
@@ -727,4 +735,9 @@ void SEAdenitaCoreSEApp::keyPressEvent(QKeyEvent* event)
   if (event->key() == Qt::Key_0) {
     SAMSON::requestViewportUpdate();
   }
+}
+
+void SEAdenitaCoreSEApp::SetMod(bool m)
+{
+  mod_ = m;
 }

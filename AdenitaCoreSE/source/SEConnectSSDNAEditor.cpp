@@ -230,8 +230,10 @@ void SEConnectSSDNAEditor::mouseReleaseEvent(QMouseEvent* event) {
         }
       }
 
+      app->SetMod(true);
       DASOperations::CreateCrossover(part1, part2, start, end, two, seq);
       app->ResetVisualModel();
+      app->SetMod(false);
     }
   }
 
