@@ -77,6 +77,8 @@ public :
 	void                                update();
 	void                                setHighlightMinLen(unsigned int min);
 	void                                setHighlightMaxLen(unsigned int max);
+  void                                setNotWithinRange(bool c);
+  void                                setNotScaffold(bool c);
 
   virtual void												display();																///< Displays the visual model
   virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
@@ -236,6 +238,8 @@ private:
   bool showBasePairing_ = false;
   unsigned int highlightMinLen_ = 0;
   unsigned int highlightMaxLen_ = UINT_MAX;
+  bool notWithin_ = false;
+  bool notScaffold_ = true;
 };
 
 
