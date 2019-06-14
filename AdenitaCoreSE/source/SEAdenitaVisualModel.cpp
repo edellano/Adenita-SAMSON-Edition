@@ -273,13 +273,25 @@ void SEAdenitaVisualModel::update()
 void SEAdenitaVisualModel::setHighlightMinLen(unsigned int min)
 {
 	highlightMinLen_ = min;
-	changeHighlight(4);
+	changeHighlight(HighlightType::LENGTH);
 }
 
 void SEAdenitaVisualModel::setHighlightMaxLen(unsigned int max)
 {
 	highlightMaxLen_ = max;
-	changeHighlight(4);
+	changeHighlight(HighlightType::LENGTH);
+}
+
+void SEAdenitaVisualModel::setNotWithinRange(bool c)
+{
+  notWithin_ = c;
+  changeHighlight(HighlightType::LENGTH);
+}
+
+void SEAdenitaVisualModel::setNotScaffold(bool c)
+{
+  notScaffold_ = c;
+  changeHighlight(HighlightType::LENGTH);
 }
 
 void SEAdenitaVisualModel::initNucleotidesAndSingleStrands(bool createIndex /* = true */)
@@ -2140,6 +2152,8 @@ void SEAdenitaVisualModel::highlightNucleotides()
 		  auto singleStrands = nanorobot_->GetSingleStrands(part);
 		  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
 			  bool inRange = ss->getNumberOfNucleotides() > highlightMinLen_ && ss->getNumberOfNucleotides() < highlightMaxLen_;
+        if (notWithin_) inRange = !inRange;
+        if (notScaffold_) inRange = ss->IsScaffold() ? false : inRange;
 			  if (inRange) {
 				  auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
 				  SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {

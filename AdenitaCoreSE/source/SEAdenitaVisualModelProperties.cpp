@@ -211,6 +211,16 @@ void SEAdenitaVisualModelProperties::onMaxLenChanged(QString text)
 	visualModel->setHighlightMaxLen(val);
 }
 
+void SEAdenitaVisualModelProperties::onNotWithinRangeChanged(bool c)
+{
+  visualModel->setNotWithinRange(c);
+}
+
+void SEAdenitaVisualModelProperties::onNotScaffoldChanged(bool c)
+{
+  visualModel->setNotScaffold(c);
+}
+
 SEAdenitaVisualModelProperties::Observer::Observer(SEAdenitaVisualModelProperties* properties) { this->properties = properties; }
 SEAdenitaVisualModelProperties::Observer::~Observer() {}
 
