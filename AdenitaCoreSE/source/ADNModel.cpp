@@ -1615,11 +1615,13 @@ void ADNLoopPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
 bool ADNLoopPair::IsRight(ADNPointer<ADNNucleotide> nt)
 {
   bool s = false;
-  auto nts = right_->GetNucleotides();
-  SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
-    if (c == nt) {
-      s = true;
-      break;
+  if (right_ != nullptr) {
+    auto nts = right_->GetNucleotides();
+    SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
+      if (c == nt) {
+        s = true;
+        break;
+      }
     }
   }
 
@@ -1629,11 +1631,13 @@ bool ADNLoopPair::IsRight(ADNPointer<ADNNucleotide> nt)
 bool ADNLoopPair::IsLeft(ADNPointer<ADNNucleotide> nt)
 {
   bool s = false;
-  auto nts = left_->GetNucleotides();
-  SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
-    if (c == nt) {
-      s = true;
-      break;
+  if (left_ != nullptr) {
+    auto nts = left_->GetNucleotides();
+    SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
+      if (c == nt) {
+        s = true;
+        break;
+      }
     }
   }
 
