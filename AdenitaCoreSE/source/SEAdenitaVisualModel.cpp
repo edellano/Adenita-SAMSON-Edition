@@ -265,6 +265,7 @@ void SEAdenitaVisualModel::update()
 
   prepareDiscreteScalesDim();
 
+  if (highlightType_ != HighlightType::NONE) highlightNucleotides();
   changeScale(scale_);
 
 }
