@@ -38,6 +38,7 @@ void SETwistHelixEditorGUI::onMinus(bool checked)
     SETwistHelixEditor* editor = getEditor();
     double angle = -ADNConstants::BP_ROT;
     editor->SetTwistAngle(angle);
+
   }
 }
 
