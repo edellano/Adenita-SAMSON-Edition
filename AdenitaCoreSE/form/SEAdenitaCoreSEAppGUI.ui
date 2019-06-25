@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
+    <width>578</width>
     <height>297</height>
    </rect>
   </property>
@@ -18,13 +18,13 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>526</width>
+    <width>578</width>
     <height>297</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>700</width>
+    <width>578</width>
     <height>297</height>
    </size>
   </property>
@@ -50,7 +50,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>502</width>
+         <width>0</width>
          <height>273</height>
         </size>
        </property>
@@ -67,18 +67,52 @@
         <attribute name="title">
          <string>New UI</string>
         </attribute>
-        <widget class="QWidget" name="gridLayoutWidget_4">
+        <widget class="QWidget" name="gridLayoutWidget_2">
          <property name="geometry">
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>658</width>
-           <height>51</height>
+           <width>531</width>
+           <height>91</height>
           </rect>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="4">
+           <widget class="QToolButton" name="btnSetScaff">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Set Scaffold</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+;</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
            <widget class="QToolButton" name="btnLoad">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
             <property name="text">
              <string>Load</string>
             </property>
@@ -99,46 +133,14 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QToolButton" name="btnSaveAll">
-            <property name="text">
-             <string>Save All</string>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="shortcut">
-             <string>Ctrl+S</string>
-            </property>
-            <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextUnderIcon</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="btnSaveSelection">
-            <property name="text">
-             <string>Save Selection</string>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="shortcut">
-             <string>Ctrl+S</string>
-            </property>
-            <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextUnderIcon</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
+          <item row="0" column="3">
            <widget class="QToolButton" name="btnExport">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Export</string>
             </property>
@@ -156,10 +158,16 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QToolButton" name="btnSetScaff">
+          <item row="0" column="2">
+           <widget class="QToolButton" name="btnSaveSelection">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>Set Scaffold</string>
+             <string>Save Selection</string>
             </property>
             <property name="iconSize">
              <size>
@@ -168,15 +176,46 @@
              </size>
             </property>
             <property name="shortcut">
-             <string>Ctrl+;</string>
+             <string>Ctrl+S</string>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="0" column="1">
+           <widget class="QToolButton" name="btnSaveAll">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Save All</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="shortcut">
+             <string>Ctrl+S</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
            <widget class="QToolButton" name="btnCalculateBindingProperties">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Calculate Properties</string>
             </property>
@@ -185,13 +224,45 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="1">
            <widget class="QToolButton" name="btnSetStart">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Set 5'</string>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="btnCreateBasePair">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Create Base Pair</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="btnGenerateSequence">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Generate Sequence</string>
             </property>
            </widget>
           </item>
@@ -788,16 +859,16 @@
    <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
    <slot>onFixDesigns()</slot>
-    <hints>
-      <hint type="sourcelabel">
-        <x>254</x>
-        <y>194</y>
-      </hint>
-      <hint type="destinationlabel">
-        <x>262</x>
-        <y>148</y>
-      </hint>
-    </hints>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>148</y>
+    </hint>
+   </hints>
   </connection>
   <connection>
    <sender>btnSetStart</sender>
@@ -812,6 +883,38 @@
     <hint type="destinationlabel">
      <x>695</x>
      <y>142</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnGenerateSequence</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onGenerateSequence()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>357</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnCreateBasePair</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCreateBasePair()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>282</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>148</y>
     </hint>
    </hints>
   </connection>
@@ -842,5 +945,7 @@
   <slot>onSaveSelection()</slot>
   <slot>onExportToCanDo()</slot>
   <slot>onFixDesigns()</slot>
+  <slot>onCreateBasePair()</slot>
+  <slot>onGenerateSequence()</slot>
  </slots>
 </ui>

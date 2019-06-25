@@ -70,9 +70,9 @@ public:
     195.0f / 255.0f,
     1.0f };
   double cytosine_color[4] = {
-    252.0f / 255.0f,
-    141.0f / 255.0f,
-    98.0f / 255.0f,
+    229.0f / 255.0f,
+    196.0f / 255.0f,
+    148.0f / 255.0f,
     1.0f };
 
   float nucleotide_V_radius = 160.0f;

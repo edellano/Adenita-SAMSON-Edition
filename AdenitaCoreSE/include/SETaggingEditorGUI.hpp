@@ -51,6 +51,10 @@ public:
 
 	//@}
 
+public slots:
+
+  void onModeChanged(bool tags);
+
 private:
 
 	Ui::SETaggingEditorGUIClass									ui;

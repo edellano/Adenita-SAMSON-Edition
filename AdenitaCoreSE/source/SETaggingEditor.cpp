@@ -63,7 +63,7 @@ QString SETaggingEditor::getToolTip() const {
 	
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
-	return QObject::tr("Tag nucleotides. The tag will appear when exporting sequences."); 
+	return QObject::tr("Tag nucleotides or change their base. The tag will appear when exporting sequences."); 
 
 }
 
@@ -100,7 +100,12 @@ void SETaggingEditor::display() {
 
 	// SAMSON Element generator pro tip: this function is called by SAMSON during the main rendering loop. 
 	// Implement this function to display things in SAMSON, for example thanks to the utility functions provided by SAMSON (e.g. displaySpheres, displayTriangles, etc.)
-  
+
+  if (mode_ == TaggingMode::Base) {
+    std::string base(1, ADNModel::GetResidueName(ntType_));
+    SBPosition3 pos = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
+    ADNDisplayHelper::displayText(pos, base);
+  }
 }
 
 
@@ -136,17 +141,21 @@ void SETaggingEditor::mouseReleaseEvent(QMouseEvent* event) {
 
   auto nt = GetHighlightedNucleotide();
 
-  if (nt()) {
-    bool ok;
-    QString text = QInputDialog::getText(this, tr("Enter Nucleotide Tag"),
-      tr("Tag:"), QLineEdit::Normal, QString(), &ok);
-    if (ok && !text.isEmpty()) {
-      nt->setTag(text.toStdString());
-      nt->setSelectionFlag(true);
+  if (nt != nullptr) {
+    if (mode_ == TaggingMode::Tags) {
+      bool ok;
+      QString text = QInputDialog::getText(this, tr("Enter Nucleotide Tag"),
+        tr("Tag:"), QLineEdit::Normal, QString(), &ok);
+      if (ok && !text.isEmpty()) {
+        nt->setTag(text.toStdString());
+        nt->setSelectionFlag(true);
+      }
     }
+    else if (mode_ == TaggingMode::Base) {
+      ADNBasicOperations::MutateNucleotide(nt, ntType_);
+    }
+    getAdenitaApp()->ResetVisualModel();
   }
-  
-
 }
 
 void SETaggingEditor::mouseMoveEvent(QMouseEvent* event) {
@@ -169,6 +178,11 @@ void SETaggingEditor::wheelEvent(QWheelEvent* event) {
 	// SAMSON Element generator pro tip: SAMSON redirects Qt events to the active editor. 
 	// Implement this function to handle this event with your editor.
 
+  QPoint numDegrees = event->angleDelta() / 8;
+  if (!numDegrees.isNull()) {
+    QPoint numSteps = numDegrees / 15;
+    ntType_ = GetNtType(numSteps);
+  }
 }
 
 void SETaggingEditor::keyPressEvent(QKeyEvent* event) {
@@ -212,7 +226,7 @@ void SETaggingEditor::onStructuralEvent(SBStructuralEvent* documentEvent) {
 ADNPointer<ADNNucleotide> SETaggingEditor::GetHighlightedNucleotide()
 {
   ADNPointer<ADNNucleotide> nt = nullptr;
-  auto highlightedNucleotides = nanorobot_->GetHighlightedNucleotides();
+  auto highlightedNucleotides = getAdenitaApp()->GetNanorobot()->GetHighlightedNucleotides();
 
   if (highlightedNucleotides.size() == 1) {
     nt = highlightedNucleotides[0];
@@ -220,5 +234,55 @@ ADNPointer<ADNNucleotide> SETaggingEditor::GetHighlightedNucleotide()
 
 
   return nt;
+}
+
+void SETaggingEditor::changeMode(int mode)
+{
+  mode_ = TaggingMode(mode);
+}
+
+SEAdenitaCoreSEApp * SETaggingEditor::getAdenitaApp() const
+{
+  return static_cast<SEAdenitaCoreSEApp*>(SAMSON::getApp(SBCContainerUUID("85DB7CE6-AE36-0CF1-7195-4A5DF69B1528"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+}
+
+DNABlocks SETaggingEditor::GetNtType(QPoint numSteps)
+{
+  DNABlocks t = ntType_;
+
+  std::map<int, DNABlocks> values = {
+    {0, DNABlocks::DA},
+    {1, DNABlocks::DT},
+    {2, DNABlocks::DC},
+    {3, DNABlocks::DG},
+    {4, DNABlocks::DI}
+  };
+
+  std::map<DNABlocks, int> indices = {
+    {DNABlocks::DA, 0},
+    {DNABlocks::DT, 1},
+    {DNABlocks::DC, 2},
+    {DNABlocks::DG, 3},
+    {DNABlocks::DI, 4}
+  };
+
+  int currIndex = indices[t];
+  int newIndex = currIndex + numSteps.y();
+  // keep new index between 0 and 4
+  size_t numValues = values.size();
+  if (newIndex < 0) {
+    int turns = abs(newIndex);
+    std::div_t divresult;
+    divresult = std::div(turns, numValues);
+    newIndex = numValues - divresult.rem + 1;
+  }
+  else if (newIndex > 4) {
+    int turns = newIndex + 1; // take into account 0
+    std::div_t divresult;
+    divresult = std::div(turns, numValues);
+    newIndex = divresult.rem;
+  }
+  t = values[newIndex];
+  return t;
 }
 

@@ -47,6 +47,7 @@ public :
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part = nullptr);
   void ExportToSequenceList(QString filename, ADNPointer<ADNPart> part = nullptr);
   void SetScaffoldSequence(std::string seq);
+  void GenerateSequence(double gcCont, int maxContGs);
   void ResetVisualModel();
   SBVisualModel* GetVisualModel();
   // Modifications
@@ -56,6 +57,7 @@ public :
   void MergeComponents(ADNPointer<ADNPart> p1, ADNPointer<ADNPart> p2);
   void MoveDoubleStrand(ADNPointer<ADNDoubleStrand> ds, ADNPointer<ADNPart> p);
   void MoveSingleStrand(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> p);
+  void CreateBasePair();
   // Debug
   void AddNtThreeP(int numNt);
   void CenterPart();
@@ -88,10 +90,14 @@ public :
 
   virtual void keyPressEvent(QKeyEvent* event);
 
+  void SetMod(bool m);
+
 private:
   void ConnectStructuralSignalSlots(ADNPointer<ADNPart> part);
 
   std::map<SBDocument*, ADNNanorobot*> nanorobots_;
+
+  bool mod_ = false;
 };
 
 SB_REGISTER_TARGET_TYPE(SEAdenitaCoreSEApp, "SEAdenitaCoreSEApp", "85DB7CE6-AE36-0CF1-7195-4A5DF69B1528");

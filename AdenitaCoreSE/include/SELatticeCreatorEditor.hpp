@@ -105,17 +105,29 @@ public :
 	SELatticeCreatorEditorGUI*											getPropertyWidget() const;												///< Returns the property widget of the editor
 
 	//@}
+
+	void															setMaxXds(int val);
+	void															setMaxYds(int val);
+	void															setMaxZBps(int val);
 private:
 
   ADNPointer<ADNPart> generateLattice(bool mock = false);
   void displayLattice();
   void sendPartToAdenita(ADNPointer<ADNPart> lattice);
 
+	LatticeType lType_ = LatticeType::Honeycomb;
   VGrid vGrid_;
 
   DASCreatorEditors::UIData positions_;
   bool display_ = false;
   ADNPointer<ADNPart> tempPart_ = nullptr;
+
+	int maxXds_ = 32;
+	int maxYds_ = 30;
+	int maxZBps_ = 400;
+
+	string xyText_ = "";
+	string zText_ = "";
 
   ZLatticePattern zPattern_ = ZLatticePattern::ALLZ;
 

@@ -140,17 +140,6 @@ void SEBreakEditor::mousePressEvent(QMouseEvent* event) {
   auto app = getAdenitaApp();
   auto nanorobot = app->GetNanorobot();
 
-  auto selectedNucleotides = nanorobot->GetSelectedNucleotides();
-  auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
-
-  SB_FOR(auto node, selectedNucleotides) {
-    node->setSelectionFlag(false);
-  }
-
-  if (highlightedNucleotides.size() == 1) {
-    highlightedNucleotides[0]->setSelectionFlag(true);
-  }
-
   app->BreakSingleStrand();
 }
 

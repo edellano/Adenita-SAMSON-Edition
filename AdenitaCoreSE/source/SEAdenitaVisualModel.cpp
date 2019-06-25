@@ -265,8 +265,33 @@ void SEAdenitaVisualModel::update()
 
   prepareDiscreteScalesDim();
 
+  if (highlightType_ != HighlightType::NONE) highlightNucleotides();
   changeScale(scale_);
 
+}
+
+void SEAdenitaVisualModel::setHighlightMinLen(unsigned int min)
+{
+	highlightMinLen_ = min;
+	changeHighlight(HighlightType::LENGTH);
+}
+
+void SEAdenitaVisualModel::setHighlightMaxLen(unsigned int max)
+{
+	highlightMaxLen_ = max;
+	changeHighlight(HighlightType::LENGTH);
+}
+
+void SEAdenitaVisualModel::setNotWithinRange(bool c)
+{
+  notWithin_ = c;
+  changeHighlight(HighlightType::LENGTH);
+}
+
+void SEAdenitaVisualModel::setNotScaffold(bool c)
+{
+  notScaffold_ = c;
+  changeHighlight(HighlightType::LENGTH);
 }
 
 void SEAdenitaVisualModel::initNucleotidesAndSingleStrands(bool createIndex /* = true */)
@@ -325,6 +350,8 @@ void SEAdenitaVisualModel::initDisplayIndices() {
 
   ntMap_.clear();
   atomMap_.clear();
+  ntBsIndexMap_.clear();
+  atomNtIndexMap_.clear();
   SB_FOR(auto part, parts) {
     auto singleStrands = nanorobot_->GetSingleStrands(part);
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
@@ -1447,6 +1474,13 @@ void SEAdenitaVisualModel::changeHighlight(int highlightIdx)
   else if (highlightIdx == 3) {
     highlightType_ = HighlightType::TAGGED;
   }
+  else if (highlightIdx == 4) {
+	  highlightType_ = HighlightType::LENGTH;
+  }
+	else if (highlightIdx == 5) {
+		highlightType_ = HighlightType::NOBASE;
+	}
+
 
   highlightNucleotides();
   changeScale(scale_);
@@ -2103,6 +2137,65 @@ void SEAdenitaVisualModel::highlightNucleotides()
       }
     }
   }
+  else if (highlightType_ == HighlightType::LENGTH) {
+	  for (auto p : ntMap_) {
+		  auto index = p.second;
+		  ntContext.push_back(index);
+	  }
+
+	  for (auto p : bsMap_) {
+		  auto index = p.second;
+		  bsContext.push_back(index);
+	  }
+
+	  SB_FOR(auto part, parts) {
+		  auto singleStrands = nanorobot_->GetSingleStrands(part);
+		  SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+			  bool inRange = ss->getNumberOfNucleotides() > highlightMinLen_ && ss->getNumberOfNucleotides() < highlightMaxLen_;
+        if (notWithin_) inRange = !inRange;
+        if (notScaffold_) inRange = ss->IsScaffold() ? false : inRange;
+			  if (inRange) {
+				  auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+				  SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+					  auto indexNt = ntMap_[nt()];
+					  ntHighlight.push_back(indexNt);
+					  auto bs = nt->GetBaseSegment();
+					  auto indexDs = bsMap_[bs()];
+					  bsHighlight.push_back(indexDs);
+				  }
+			  }
+		  }
+	  }
+  }
+	else if (highlightType_ == HighlightType::NOBASE) {
+
+	for (auto p : ntMap_) {
+		auto index = p.second;
+		ntContext.push_back(index);
+	}
+
+	for (auto p : bsMap_) {
+		auto index = p.second;
+		bsContext.push_back(index);
+	}
+
+	SB_FOR(auto part, parts) {
+		auto singleStrands = nanorobot_->GetSingleStrands(part);
+		SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
+			auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
+			SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+				auto indexNt = ntMap_[nt()];
+				if (nt->getNucleotideType() == DNABlocks::DI) {
+					ntHighlight.push_back(indexNt);
+					auto bs = nt->GetBaseSegment();
+					auto indexDs = bsMap_[bs()];
+					bsHighlight.push_back(indexDs);
+				}
+
+			}
+		}
+	}
+	}
 
   emphasizeColors(colorsVNt_, ntContext, 0.4f, 0.4f, 0.4f, 1.0f);
   emphasizeColors(colorsENt_, ntContext, 0.4f, 0.4f, 0.4f, 1.0f);
@@ -2131,7 +2224,7 @@ ADNArray<float> SEAdenitaVisualModel::calcPropertyColor(int colorSchemeIdx, floa
     color(1) = colorScheme(0, 1);
     color(2) = colorScheme(0, 2);
     color(3) = colorScheme(0, 3);
-
+		
     return color;
   }
 

@@ -36,12 +36,16 @@ void SELatticeCreatorEditorGUI::setHoneycomb()
 {
   SELatticeCreatorEditor* t = getEditor();
   t->setLatticeType(LatticeType::Honeycomb);
+	ui.spbMaxXds->setMaximum(32);
+	ui.spbMaxYds->setMaximum(30);
 }
 
 void SELatticeCreatorEditorGUI::setSquare()
 {
   SELatticeCreatorEditor* t = getEditor();
   t->setLatticeType(LatticeType::Square);
+	ui.spbMaxXds->setMaximum(50);
+	ui.spbMaxYds->setMaximum(50);
 }
 
 void SELatticeCreatorEditorGUI::onZPatternChanged(int index)
@@ -60,6 +64,24 @@ void SELatticeCreatorEditorGUI::onZPatternChanged(int index)
     t->setZPattern(ZLatticePattern::CIRCLE);
   }
 
+}
+
+void SELatticeCreatorEditorGUI::onMaxXdsChanged(int val)
+{
+	SELatticeCreatorEditor* t = getEditor();
+	t->setMaxXds(val);
+}
+
+void SELatticeCreatorEditorGUI::onMaxYdsChanged(int val)
+{
+	SELatticeCreatorEditor* t = getEditor();
+	t->setMaxYds(val);
+}
+
+void SELatticeCreatorEditorGUI::onMaxZBpsChanged(int val)
+{
+	SELatticeCreatorEditor* t = getEditor();
+	t->setMaxZBps(val);
 }
 
 SBCContainerUUID SELatticeCreatorEditorGUI::getUUID() const { return SBCContainerUUID( "A9C48A6E-8BD1-B387-6A63-1CB8A19C1948" );}

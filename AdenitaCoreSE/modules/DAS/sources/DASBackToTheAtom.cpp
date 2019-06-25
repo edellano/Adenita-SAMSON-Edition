@@ -189,6 +189,13 @@ void DASBackToTheAtom::SetPositionsForNewNucleotides(ADNPointer<ADNPart> part, C
     }
 
     auto bs = nt->GetBaseSegment();
+
+    auto bsAt = bs->GetCenterAtom();
+    if (!bsAt->isCreated()) {
+      part->RegisterAtom(bs, bsAt, false);
+      bs->HideCenterAtom();
+    }
+
     SetNucleotidePosition(bs, true);
   }
 }

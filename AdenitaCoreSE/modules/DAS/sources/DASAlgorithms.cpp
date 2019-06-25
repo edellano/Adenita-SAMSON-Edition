@@ -1,4 +1,5 @@
 #include "DASAlgorithms.hpp"
+#include <random>
 
 bool DASAlgorithms::CheckCrossoverBetweenNucleotides(ADNPointer<ADNNucleotide> ntFirst, ADNPointer<ADNNucleotide> ntSecond, double angle_threshold, double dist_threshold) {
   bool crssv = false;
@@ -447,4 +448,51 @@ void DASCrossover::CreateCrossover(ADNPointer<ADNPart> part) {
 
 bool DASCrossover::IsScaffoldCrossover() {
   return (firstNt_->GetStrand()->IsScaffold()|| secondNt_->GetStrand()->IsScaffold());
+}
+
+std::string DASAlgorithms::GenerateSequence(double gcCont, int maxContGs, int sz)
+{
+  std::string seq = "";
+
+  bool g = true;
+
+  auto count = sz;
+  int numGs = 0;
+
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  std::uniform_real_distribution<double> dist(0.0, std::nextafter(1.0, std::numeric_limits<double>::max()));
+  std::uniform_int_distribution<int> coin(0, 1);
+
+  while (count > 0) {
+    double v = dist(mt);
+    int c = coin(mt);
+
+    std::string base = "N";
+    if (v <= gcCont) {
+      // GC
+      if (c == 0 && g) {
+        base = "G";
+        ++numGs;
+      }
+      else {
+        base = "C";
+        numGs = 0;
+      }
+    }
+    else {
+      // AT
+      if (c == 0) base = "A";
+      else base = "T";
+      numGs = 0;
+    }
+
+    seq += base;
+    if (maxContGs > 0 && numGs == maxContGs) g = false;
+    else g = true;
+
+    --count;
+  }
+  
+  return seq;
 }

@@ -56,9 +56,10 @@ public:
   
   void                            setHoneycomb();
   void                            setSquare();
-
-
   void                            onZPatternChanged(int index);
+	void														onMaxXdsChanged(int val);
+	void														onMaxYdsChanged(int val);
+	void														onMaxZBpsChanged(int val);
 
 private:
 
