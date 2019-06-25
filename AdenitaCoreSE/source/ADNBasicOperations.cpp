@@ -15,8 +15,14 @@ ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<AD
   ADNPointer<ADNNucleotide> nt = fivePrimeF;
   while (nt != nullptr) {
     ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
+    // keep record of nt position in base segment
+    auto info = GetBaseSegmentInfo(nt);
+
     part1->DeregisterNucleotide(nt, true, false);
     part1->RegisterNucleotideThreePrime(ss, nt);
+
+    // nt was removed from base segment add it again
+    SetBackNucleotideIntoBaseSegment(nt, info);
     nt = ntNext;
   }
 
@@ -24,8 +30,15 @@ ADNPointer<ADNSingleStrand> ADNBasicOperations::MergeSingleStrands(ADNPointer<AD
   nt = fivePrimeS;
   while (nt != nullptr) {
     ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
+    // keep record of nt position in base segment
+    auto info = GetBaseSegmentInfo(nt);
+
     part2->DeregisterNucleotide(nt, true, false);
     part1->RegisterNucleotideThreePrime(ss, nt);
+
+    // nt was removed from base segment add it again
+    SetBackNucleotideIntoBaseSegment(nt, info);
+
     nt = ntNext;
   }
 
@@ -160,8 +173,13 @@ ADNPointer<ADNPart> ADNBasicOperations::MergeParts(ADNPointer<ADNPart> part1, AD
     auto nt = ss->GetFivePrime();
     while (nt != nullptr) {
       auto ntNext = nt->GetNext();
+      auto info = GetBaseSegmentInfo(nt);
+
       part2->DeregisterNucleotide(nt, false);
+      // nt has de-registered from bp or loop pair
       part->RegisterNucleotideThreePrime(ss, nt, false);
+
+      SetBackNucleotideIntoBaseSegment(nt, info);
 
       auto atoms = nt->GetAtoms();
       SB_FOR(ADNPointer<ADNAtom> atom, atoms) {
@@ -196,15 +214,19 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
 
   while (nucleo != nt) {
     ADNPointer<ADNNucleotide> ntNext = nucleo->GetNext();
+    auto info = GetBaseSegmentInfo(nucleo);
     part->DeregisterNucleotide(nucleo, true, false);
     part->RegisterNucleotideThreePrime(ssFP, nucleo);
+    SetBackNucleotideIntoBaseSegment(nucleo, info);
     nucleo = ntNext;
   }
 
   while (nucleo != nullptr) {
     ADNPointer<ADNNucleotide> ntNext = nucleo->GetNext();
+    auto info = GetBaseSegmentInfo(nucleo);
     part->DeregisterNucleotide(nucleo, true, false);
     part->RegisterNucleotideThreePrime(ssTP, nucleo);
+    SetBackNucleotideIntoBaseSegment(nucleo, info);
     nucleo = ntNext;
   }
 
@@ -270,6 +292,17 @@ std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOper
   dsFP->SetInitialTwistAngle(initAngle);
   dsTP->SetInitialTwistAngle(initAngle + ADNConstants::BP_ROT * num);
 
+  auto sz = ds->GetBaseSegments().size();
+  if (sz > 0) {
+    std::string msg = "Possible error when breaking strands inside part";
+    ADNLogger& logger = ADNLogger::GetLogger();
+    logger.LogDebug(msg);
+  }
+  else {
+    // Deregister old strand
+    part->DeregisterDoubleStrand(ds);
+  }
+
   std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> dsPair = std::make_pair(dsFP, dsTP);
   return dsPair;
 }
@@ -291,7 +324,7 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
     // we don't need to break, just delete
     ADNPointer<ADNNucleotide> ntNext = nt->GetNext();
     if (ntNext != nullptr) {
-      if (e == ThreePrime) {
+      if (ntNext->GetEnd() == ThreePrime) {
         ntNext->SetEnd(FiveAndThreePrime);
       }
       else {
@@ -370,20 +403,69 @@ void ADNBasicOperations::DeleteNucleotideWithoutBreak(ADNPointer<ADNPart> part, 
 
 std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOperations::DeleteBaseSegment(ADNPointer<ADNPart> part, ADNPointer<ADNBaseSegment> bs)
 {
+  SEConfig& config = SEConfig::GetInstance();
+  ADNLogger& logger = ADNLogger::GetLogger();
+
+  auto numBss = part->GetNumberOfBaseSegments();
+  auto numDS = part->GetNumberOfDoubleStrands();
+
   std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> res = std::make_pair(nullptr, nullptr);
-  // first break
-  auto ssPair = BreakDoubleStrand(part, bs);
-  res.first = ssPair.first;
-  if (bs->GetNext() == nullptr) {
-    ssPair.second.deleteReferenceTarget();
+
+  ADNPointer<ADNDoubleStrand> ds = bs->GetDoubleStrand();
+  ADNPointer<ADNBaseSegment> oldNext = bs->GetNext();
+  bool fst = bs->GetPrev() == nullptr;
+  bool fstAndLst = bs->GetNext() == nullptr && fst;
+
+  if (fstAndLst || fst) {
+    // we don't need to break, just delete
+    if (!fstAndLst) {
+      if (oldNext->GetNext() == nullptr) {
+        ds->SetEnd(oldNext);
+      }
+      ds->SetStart(oldNext);
+      res.first = ds;
+    }
+    else {
+      // last base segment of the double strand
+      part->DeregisterDoubleStrand(ds);
+    }
+    part->DeregisterBaseSegment(bs);
+    bs.deleteReferenceTarget();
   }
   else {
-    // second break
-    auto ssPair2 = BreakDoubleStrand(part, bs->GetNext());
-    res.second = ssPair2.second;
+    // first break
+    auto dsPair = BreakDoubleStrand(part, bs);
+    res.first = dsPair.first;
+    part->RegisterDoubleStrand(res.first);  // register new strand
 
-    // delete remaining single strand containing nt
-    ssPair2.first.deleteReferenceTarget();
+    if (oldNext == nullptr) {
+      part->DeregisterDoubleStrand(dsPair.second);
+    }
+    else {
+      // second break
+      auto dsPair2 = BreakDoubleStrand(part, oldNext);
+      res.second = dsPair2.second;
+      part->RegisterDoubleStrand(res.second);
+      part->DeregisterDoubleStrand(dsPair2.first);  // deregister strand containing only the nt we want to delete
+    }
+
+    part->DeregisterBaseSegment(bs);
+    bs.deleteReferenceTarget();
+  }
+
+  auto numBssNew = part->GetNumberOfBaseSegments();
+  auto numDSNew = part->GetNumberOfDoubleStrands();
+
+  if (config.mode == DEBUG_NO_LOG || config.mode == DEBUG_LOG) {
+    logger.LogDateTime();
+    std::string msg = "  --> DELETING NUCLEOTIDE";
+    logger.LogDebug(msg);
+    msg = "         Nucleotides before deletion: " + std::to_string(numBss) + "\n";
+    msg += "         Nucleotides after deletion: " + std::to_string(numBssNew);
+    logger.LogDebug(msg);
+    msg = "         Single Strands before deletion: " + std::to_string(numDS) + "\n";
+    msg += "         Single Strands after deletion: " + std::to_string(numDSNew);
+    logger.LogDebug(msg);
   }
 
   return res;
@@ -591,4 +673,58 @@ std::pair<End, ADNPointer<ADNBaseSegment>> ADNBasicOperations::GetNextBaseSegmen
   }
 
   return std::make_pair(end, nextBs);
+}
+
+std::tuple<ADNPointer<ADNBaseSegment>, bool, bool, bool> ADNBasicOperations::GetBaseSegmentInfo(ADNPointer<ADNNucleotide> nt)
+{
+  auto bs = nt->GetBaseSegment();
+  auto cell = bs->GetCell();
+  bool left = bs->IsLeft(nt);
+  bool start = false;
+  bool end = false;
+  if (bs->GetCellType() == LoopPair) {
+    ADNPointer<ADNLoopPair> lp = static_cast<ADNLoopPair*>(cell());
+    if (left) {
+      auto leftLoop = lp->GetLeftLoop();
+      start = leftLoop->GetStart() == nt;
+      end = leftLoop->GetEnd() == nt;
+    }
+    else {
+      auto rightLoop = lp->GetRightLoop();
+      start = rightLoop->GetStart() == nt;
+      end = rightLoop->GetEnd() == nt;
+    }
+  }
+
+  return std::make_tuple(bs, left, start, end);
+}
+
+void ADNBasicOperations::SetBackNucleotideIntoBaseSegment(ADNPointer<ADNNucleotide> nt, std::tuple<ADNPointer<ADNBaseSegment>, bool, bool, bool> info)
+{
+  auto bs = std::get<0>(info);
+  bool left = std::get<1>(info);
+  bool start = std::get<2>(info);
+  bool end = std::get<3>(info);
+
+  auto cell = bs->GetCell();
+  if (bs->GetCellType() == BasePair) {
+    ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(cell());
+    if (left) bp->SetLeftNucleotide(nt);
+    else bp->SetRightNucleotide(nt);
+  }
+  else if (bs->GetCellType() == LoopPair) {
+    ADNPointer<ADNLoopPair> lp = static_cast<ADNLoopPair*>(cell());
+    if (left) {
+      auto leftLoop = lp->GetLeftLoop();
+      leftLoop->AddNucleotide(nt);
+      if (start) leftLoop->SetStart(nt);
+      if (end) leftLoop->SetEnd(nt);
+    }
+    else {
+      auto rightLoop = lp->GetRightLoop();
+      rightLoop->AddNucleotide(nt);
+      if (start) rightLoop->SetStart(nt);
+      if (end) rightLoop->SetEnd(nt);
+    }
+  }
 }

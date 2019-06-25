@@ -74,16 +74,18 @@ public :
   void                                setSingleStrandColors(int index);
   void                                setNucleotideColors(int index);
   void                                setDoubleStrandColors(int index);
-  void                                update();
+	void                                update();
+	void                                setHighlightMinLen(unsigned int min);
+	void                                setHighlightMaxLen(unsigned int max);
+  void                                setNotWithinRange(bool c);
+  void                                setNotScaffold(bool c);
 
   virtual void												display();																///< Displays the visual model
   virtual void												displayForShadow();														///< Displays the visual model for shadow purposes
 	virtual void												displayForSelection();													///< Displays the visual model for selection purposes
 
   virtual void                        highlightNucleotides();
-
 	virtual void												expandBounds(SBIAPosition3& bounds) const;								///< Expands the bounds to make sure the visual model fits inside them
-
 	virtual void												collectAmbientOcclusion(const SBPosition3& boxOrigin, const SBPosition3& boxSize, unsigned int nCellsX, unsigned int nCellsY, unsigned int nCellsZ, float* ambientOcclusionData);		///< To collect ambient occlusion data
 
 	//@}
@@ -227,11 +229,17 @@ private:
     NONE = 0,
     CROSSOVERS = 1,
     GC = 2,
-    TAGGED
+    TAGGED = 3,
+		LENGTH = 4,
+		NOBASE = 5
   };
 
   HighlightType highlightType_ = NONE;
   bool showBasePairing_ = false;
+  unsigned int highlightMinLen_ = 0;
+  unsigned int highlightMaxLen_ = UINT_MAX;
+  bool notWithin_ = false;
+  bool notScaffold_ = true;
 };
 
 

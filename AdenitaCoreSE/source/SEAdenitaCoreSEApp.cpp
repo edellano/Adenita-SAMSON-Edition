@@ -2,6 +2,7 @@
 #include "SEAdenitaCoreSEAppGUI.hpp"
 #include "SEAdenitaVisualModelProperties.hpp"
 #include "PICrossovers.hpp"
+#include "DASAlgorithms.hpp"
 
 SEAdenitaCoreSEApp::SEAdenitaCoreSEApp() {
 
@@ -157,6 +158,15 @@ void SEAdenitaCoreSEApp::CenterPart()
   SB_FOR(ADNPointer<ADNPart> part, parts) ADNBasicOperations::CenterPart(part);
 }
 
+void SEAdenitaCoreSEApp::GenerateSequence(double gcCont, int maxContGs)
+{
+  auto strands = GetNanorobot()->GetSelectedSingleStrands();
+  SB_FOR(ADNPointer<ADNSingleStrand> ss, strands) {
+    std::string seq = DASAlgorithms::GenerateSequence(gcCont, maxContGs, ss->getNumberOfNucleotides());
+    ADNBasicOperations::SetSingleStrandSequence(ss, seq);
+  }
+}
+
 void SEAdenitaCoreSEApp::ResetVisualModel() {
   //create visual model per nanorobot
   ADNLogger& logger = ADNLogger::GetLogger();
@@ -207,8 +217,10 @@ SBVisualModel* SEAdenitaCoreSEApp::GetVisualModel()
 
 void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
 {
+  mod_ = true;
+
   ADNPointer<ADNNucleotide> breakNt = nullptr;
-  auto nts = GetNanorobot()->GetSelectedNucleotides();
+  auto nts = GetNanorobot()->GetHighlightedNucleotides();
   if (nts.size() == 1) {
     ADNPointer<ADNNucleotide> nt = nts[0];
     if (nt->GetEnd() != ThreePrime) {
@@ -230,6 +242,8 @@ void SEAdenitaCoreSEApp::BreakSingleStrand(bool fPrime)
       }
     }
   }
+
+  mod_ = false;
 }
 
 void SEAdenitaCoreSEApp::TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle)
@@ -446,48 +460,107 @@ void SEAdenitaCoreSEApp::FixDesigns()
   CollectionMap<ADNPart> parts;
 
   SB_FOR(auto node, nodes) {
+    if (!node->isSelected()) continue;
+
     ADNPointer<ADNPart> part = static_cast<ADNPart*>(node);
 
-    auto baseSegments = part->GetBaseSegments();
-    SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
-      auto nucleotides = bs->GetNucleotides();
-      SBPosition3 pos;
-      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-        pos += nt->GetPosition();
+    // .sam format fix
+    //auto nucleotides = part->GetNucleotides();
+    //SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+    //  auto bbPos = nt->GetBackbonePosition();
+    //  auto scPos = nt->GetSidechainPosition();
+    //  auto pos = (bbPos + scPos)*0.5;
+
+    //  auto at = nt->GetCenterAtom();
+    //  if (at == nullptr) at = new ADNAtom();
+    //  at->setElementType(SBElement::Meitnerium);
+    //  nt->SetCenterAtom(at);
+
+    //  nt->SetPosition(pos);
+    //  ublas::vector<double> e(3, 0.0);
+    //  nt->SetE3(e);
+    //  nt->SetE2(e);
+    //  nt->SetE1(e);
+    //}
+
+    //auto baseSegments = part->GetBaseSegments();
+    //SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
+    //  auto nucleotides = bs->GetNucleotides();
+    //  SBPosition3 pos;
+    //  SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+    //    pos += nt->GetBackbonePosition();
+    //    pos += nt->GetSidechainPosition();
+    //  }
+    //  pos /= nucleotides.size()*2;
+
+    //  auto at = bs->GetCenterAtom();
+    //  if (at == nullptr) at = new ADNAtom();
+    //  at->setElementType(SBElement::Meitnerium);
+    //  bs->SetCenterAtom(at);
+    //  part->RegisterAtom(bs, at, true);
+    //  // hiding atoms here cause when they are created is too slow
+    //  bs->HideCenterAtom();
+
+    //  bs->SetPosition(pos);
+    //  ublas::vector<double> e(3, 0.0);
+    //  bs->SetE3(e);
+    //  bs->SetE2(e);
+    //  bs->SetE1(e);
+    //}
+    //AddLoadedPartToNanorobot(part);
+
+    // fix for cadnano designs
+    auto strands = part->GetSingleStrands();
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, strands) {
+      ADNPointer<ADNSingleStrand> newSs = new ADNSingleStrand();
+      newSs->SetName(ss->GetName());
+      newSs->IsScaffold(ss->IsScaffold());
+      newSs->create();
+      part->RegisterSingleStrand(newSs);
+      // reverse 5'->3' direction
+      ADNPointer<ADNNucleotide> nt = ss->GetFivePrime();
+      while (nt != nullptr) {
+        auto next = nt->GetNext();
+        part->DeregisterNucleotide(nt, true, false);
+        part->RegisterNucleotideFivePrime(newSs, nt);
+        nt = next;
       }
-      pos /= nucleotides.size();
-
-      auto at = bs->GetCenterAtom();
-      if (at == nullptr) at = new ADNAtom();
-      at->setElementType(SBElement::Meitnerium);
-      bs->SetCenterAtom(at);
-      part->RegisterAtom(bs, at, true);
-      // hiding atoms here cause when they are created is too slow
-      bs->HideCenterAtom();
-
-      bs->SetPosition(pos);
+      part->DeregisterSingleStrand(ss);
     }
-    AddLoadedPartToNanorobot(part);
+    
   }
 
   ResetVisualModel();
 }
 
+void SEAdenitaCoreSEApp::CreateBasePair()
+{
+  auto selectedNucleotides = GetNanorobot()->GetSelectedNucleotides();
+  if (selectedNucleotides.size() > 0) {
+    DASOperations::AddComplementaryStrands(GetNanorobot(), selectedNucleotides);
+    ResetVisualModel();
+  }
+}
+
 void SEAdenitaCoreSEApp::onDocumentEvent(SBDocumentEvent* documentEvent)
 {
-  //auto t = documentEvent->getType();
-  //if (documentEvent->getType() == SBDocumentEvent::StructuralModelAdded) {
-  //  // on load a non-registered ADNPart
-  //  auto node = documentEvent->getAuxiliaryNode();
-  //  ADNPointer<ADNPart> part = dynamic_cast<ADNPart*>(node);
-  //  if (part != nullptr) {
-  //    AddLoadedPartToNanorobot(part);
-  //  }
-  //}
+  if (mod_) return; // modifications handle themselves deletions
+
+  auto t = documentEvent->getType();
+  if (documentEvent->getType() == SBDocumentEvent::StructuralModelRemoved) {
+    // on delete a registered ADNPart
+    auto node = documentEvent->getAuxiliaryNode();
+    ADNPointer<ADNPart> part = dynamic_cast<ADNPart*>(node);
+    if (part != nullptr) {
+      GetNanorobot()->DeregisterPart(part);
+    }
+  }
 }
 
 void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
 {
+  if (mod_) return; // modifications handle themselves deletions
+
   auto t = documentEvent->getType();
   if (t == SBStructuralEvent::ChainRemoved) {
     auto node = documentEvent->getAuxiliaryNode();
@@ -498,13 +571,37 @@ void SEAdenitaCoreSEApp::onStructuralEvent(SBStructuralEvent* documentEvent)
     }
   }
 
-  //if (documentEvent->getType() == SBStructuralEvent::ResidueRemoved) {
-  //  auto node = documentEvent->getAuxiliaryNode();
-  //  ADNPointer<ADNSingleStrand> ss = static_cast<ADNSingleStrand*>(documentEvent->getSender());
-  //  ADNPointer<ADNNucleotide> nt = dynamic_cast<ADNNucleotide*>(node);
-  //  auto part = GetNanorobot()->GetPart(ss);
-  //  part->DeregisterNucleotide(nt, false, true, true);
-  //}
+  if (documentEvent->getType() == SBStructuralEvent::ResidueRemoved) {
+    auto node = documentEvent->getAuxiliaryNode();
+    ADNPointer<ADNNucleotide> nt = dynamic_cast<ADNNucleotide*>(node);
+    if (nt != nullptr) {
+      ADNPointer<ADNSingleStrand> ss = static_cast<ADNSingleStrand*>(documentEvent->getSender());
+      auto part = GetNanorobot()->GetPart(ss);
+      part->DeregisterNucleotide(nt, false, true, true);
+      if (ss->getNumberOfNucleotides() == 0) ss->erase();
+    }
+  }
+
+  if (documentEvent->getType() == SBStructuralEvent::StructuralGroupRemoved) {
+    auto node = documentEvent->getAuxiliaryNode();
+    ADNPointer<ADNBaseSegment> bs = dynamic_cast<ADNBaseSegment*>(node);
+    if (bs != nullptr) {
+      auto nucleotides = bs->GetNucleotides();
+      SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
+        nt->erase();
+      }
+      ADNPointer<ADNDoubleStrand> ds = static_cast<ADNDoubleStrand*>(documentEvent->getSender());
+      auto part = GetNanorobot()->GetPart(ds);
+      part->DeregisterBaseSegment(bs, false, true);
+    }
+    else {
+      ADNPointer<ADNDoubleStrand> ds = dynamic_cast<ADNDoubleStrand*>(node);
+      if (ds != nullptr) {
+        ADNPointer<ADNPart> part = static_cast<ADNPart*>(documentEvent->getSender()->getParent());
+        part->DeregisterDoubleStrand(ds, false, true);
+      }
+    }   
+  }
 }
 
 void SEAdenitaCoreSEApp::ConnectToDocument(SBDocument* doc)
@@ -638,4 +735,9 @@ void SEAdenitaCoreSEApp::keyPressEvent(QKeyEvent* event)
   if (event->key() == Qt::Key_0) {
     SAMSON::requestViewportUpdate();
   }
+}
+
+void SEAdenitaCoreSEApp::SetMod(bool m)
+{
+  mod_ = m;
 }

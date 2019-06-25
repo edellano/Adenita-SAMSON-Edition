@@ -632,6 +632,44 @@ void SEAdenitaCoreSEAppGUI::onFixDesigns()
   t->FixDesigns();
 }
 
+void SEAdenitaCoreSEAppGUI::onCreateBasePair()
+{
+  SEAdenitaCoreSEApp* t = getApp();
+  t->CreateBasePair();
+}
+
+void SEAdenitaCoreSEAppGUI::onGenerateSequence()
+{
+  QDialog dialog(this);
+  QFormLayout form(&dialog);
+
+  form.addRow(new QLabel("Generate Sequence"));
+
+  // gc content
+  QDoubleSpinBox *gcCont = new QDoubleSpinBox(&dialog);
+  gcCont->setMaximum(100.0);
+  gcCont->setMinimum(0.0);
+  gcCont->setValue(40.0);
+  form.addRow(new QLabel("GC Content"), gcCont);
+
+  QSpinBox *contigousGs = new QSpinBox(&dialog);
+  contigousGs->setMinimum(0);
+  contigousGs->setMaximum(100);
+  form.addRow(new QLabel("Maximum amount of contiguous Gs"), contigousGs);
+
+  QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+  form.addRow(&buttonBox);
+  QObject::connect(&buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+  QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
+  if (dialog.exec() == QDialog::Accepted) {
+    double gc100 = gcCont->value() / 100;
+    int maxContGs = contigousGs->value();
+    SEAdenitaCoreSEApp* t = getApp();
+    t->GenerateSequence(gc100, maxContGs);
+  }
+}
+
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";

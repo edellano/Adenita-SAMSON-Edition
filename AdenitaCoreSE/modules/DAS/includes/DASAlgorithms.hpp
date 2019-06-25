@@ -40,4 +40,7 @@ public:
     \param a pointer to the part containing the nanotube
   */
   static void RouteNanotube(int numTubes, int lengthTubes, ADNPointer<ADNPart> nanotube);
+
+  //! Generates a sequence with a specific GC content and a maximum number of contiguous Gs
+  static std::string GenerateSequence(double gcCont, int maxContGs, int sz);
 };

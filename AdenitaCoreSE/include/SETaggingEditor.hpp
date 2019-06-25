@@ -20,10 +20,14 @@ class SETaggingEditor : public SBGEditor {
 	Q_OBJECT
 
 public :
-  enum TaggingShape {
-    Sphere,
-    Rod,
-    HisTag
+  //enum TaggingShape {
+  //  Sphere,
+  //  Rod,
+  //  HisTag
+  //};
+  enum TaggingMode {
+    Tags = 0,
+    Base = 1
   };
 
 	/// \name Constructors and destructors
@@ -103,12 +107,17 @@ public :
   ADNPointer<ADNNucleotide>               GetHighlightedNucleotide();
 	//@}
 
-  ADNNanorobot * nanorobot_;
+  void changeMode(int mode);
 
-  TaggingShape shape_ = TaggingShape::Sphere;
+private:
+  SEAdenitaCoreSEApp*					          getAdenitaApp() const;															///< Returns a pointer to the app
+  DNABlocks GetNtType(QPoint numSteps);
+
+  //TaggingShape shape_ = TaggingShape::Sphere;
+  TaggingMode mode_ = TaggingMode::Tags;
+  DNABlocks ntType_ = DNABlocks::DI;
 
   DASCreatorEditors::UIData positions_;
-  bool display_ = false;
 
   float opaqueness_ = 0.5f;
   float radius_ = 100.0f;

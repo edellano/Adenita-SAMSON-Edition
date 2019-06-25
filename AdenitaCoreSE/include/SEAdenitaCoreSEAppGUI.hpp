@@ -68,6 +68,8 @@ public slots:
   void onSaveSelection();
   void onExport();
   void onSetScaffold();
+  void onCreateBasePair();
+  void onGenerateSequence();
   // Options
   void onChangeScaffold(int idx);
   void onCheckDisplayCrossovers(bool b);

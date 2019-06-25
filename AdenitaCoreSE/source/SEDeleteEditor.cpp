@@ -132,6 +132,7 @@ void SEDeleteEditor::mousePressEvent(QMouseEvent* event) {
 
   auto app = getAdenitaApp();
   auto nanorobot = app->GetNanorobot();
+  app->SetMod(true);
 
   auto selectedNucleotides = nanorobot->GetSelectedNucleotides();
   auto highlightedNucleotides = nanorobot->GetHighlightedNucleotides();
@@ -142,6 +143,7 @@ void SEDeleteEditor::mousePressEvent(QMouseEvent* event) {
 
   if (highlightedNucleotides.size() == 1) {
     ADNPointer<ADNNucleotide> nt = highlightedNucleotides[0];
+    ADNPointer<ADNBaseSegment> bs = nt->GetBaseSegment();
     ADNPointer<ADNSingleStrand> ss = nt->GetStrand();
     ADNPointer<ADNPart> part = nanorobot->GetPart(ss);
     auto newStrands = ADNBasicOperations::DeleteNucleotide(part, nt);
@@ -149,9 +151,15 @@ void SEDeleteEditor::mousePressEvent(QMouseEvent* event) {
       // delete single strand if was left empty
       part->DeregisterSingleStrand(ss);
     }
+    auto numBsNts = bs->GetNucleotides().size();
+    if (numBsNts == 0) {
+      // if base segment is empty, delete
+      ADNBasicOperations::DeleteBaseSegment(part, bs);
+    }
   }
 
   app->ResetVisualModel();
+  app->SetMod(false);
 }
 
 void SEDeleteEditor::mouseReleaseEvent(QMouseEvent* event) {

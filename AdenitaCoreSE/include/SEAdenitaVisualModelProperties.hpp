@@ -82,6 +82,10 @@ void                              onSingleStrandColorSchemeChanged(int index);
 void                              onNucleotideColorSchemeChanged(int index);
 void                              onDoubleStrandColorSchemeChanged(int index);
 void                              onShowBasePairing(bool show);
+void                              onMinLenChanged(QString text);
+void                              onMaxLenChanged(QString text);
+void                              onNotWithinRangeChanged(bool c);
+void                              onNotScaffoldChanged(bool c);
 
 private:
 

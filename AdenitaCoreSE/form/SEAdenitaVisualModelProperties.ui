@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>433</width>
-    <height>428</height>
+    <height>521</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -173,16 +173,26 @@
          <string>Tagged</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Length</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>No Base</string>
+        </property>
+       </item>
       </widget>
      </item>
-     <item row="8" column="0">
+     <item row="10" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Property Colors</string>
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
+     <item row="10" column="1">
       <widget class="QComboBox" name="cbbPropertyColorSchemes">
        <item>
         <property name="text">
@@ -201,14 +211,14 @@
        </item>
       </widget>
      </item>
-     <item row="9" column="0">
+     <item row="11" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>Single Strand Colors</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="1">
+     <item row="11" column="1">
       <widget class="QComboBox" name="cbbSingleStrandColorScheme">
        <item>
         <property name="text">
@@ -232,14 +242,14 @@
        </item>
       </widget>
      </item>
-     <item row="10" column="0">
+     <item row="12" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
         <string>Nucleotide Colors</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="1">
+     <item row="12" column="1">
       <widget class="QComboBox" name="cbbNucleotideColorScheme">
        <item>
         <property name="text">
@@ -263,14 +273,14 @@
        </item>
       </widget>
      </item>
-     <item row="11" column="0">
+     <item row="13" column="0">
       <widget class="QLabel" name="label_8">
        <property name="text">
         <string>Double Strand Colors</string>
        </property>
       </widget>
      </item>
-     <item row="11" column="1">
+     <item row="13" column="1">
       <widget class="QComboBox" name="cbbDoulbeStrandColorScheme">
        <item>
         <property name="text">
@@ -299,11 +309,82 @@
        </item>
       </widget>
      </item>
-     <item row="12" column="1">
+     <item row="14" column="1">
       <widget class="QCheckBox" name="chbShowBasePairing">
        <property name="text">
         <string>Show Base Pairing</string>
        </property>
+      </widget>
+     </item>
+     <item row="8" column="0" colspan="2">
+      <widget class="QGroupBox" name="gboHighlight">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>100</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>Highlight Options</string>
+       </property>
+       <widget class="QWidget" name="formLayoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>19</y>
+          <width>391</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Min Length (nts)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Max Length (nts)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lneMinLen"/>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="lneMax"/>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="chkNotWithinRange">
+           <property name="text">
+            <string>Not within this range</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="chkNotScaffold">
+           <property name="text">
+            <string>Not Scaffold</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -319,8 +400,8 @@
    <slot>onSliderScaleChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>197</x>
-     <y>66</y>
+     <x>209</x>
+     <y>56</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -335,8 +416,8 @@
    <slot>onSliderVisibilityChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>230</x>
-     <y>195</y>
+     <x>242</x>
+     <y>166</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -352,7 +433,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>420</x>
-     <y>166</y>
+     <y>137</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -367,8 +448,8 @@
    <slot>onSliderDimensionChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>161</x>
-     <y>137</y>
+     <x>173</x>
+     <y>108</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -383,8 +464,8 @@
    <slot>onPropertyColorsChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>194</x>
-     <y>205</y>
+     <x>334</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -399,8 +480,8 @@
    <slot>onPropertyColorSchemeChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>359</x>
-     <y>282</y>
+     <x>420</x>
+     <y>360</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -415,8 +496,8 @@
    <slot>onSingleStrandColorSchemeChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>359</x>
-     <y>311</y>
+     <x>420</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -432,7 +513,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>420</x>
-     <y>340</y>
+     <y>418</y>
     </hint>
     <hint type="destinationlabel">
      <x>430</x>
@@ -448,7 +529,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>420</x>
-     <y>369</y>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel">
      <x>432</x>
@@ -463,8 +544,8 @@
    <slot>onHighlightChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>279</x>
-     <y>240</y>
+     <x>419</x>
+     <y>224</y>
     </hint>
     <hint type="destinationlabel">
      <x>428</x>
@@ -479,12 +560,76 @@
    <slot>onShowBasePairing(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>232</x>
-     <y>385</y>
+     <x>420</x>
+     <y>474</y>
     </hint>
     <hint type="destinationlabel">
      <x>432</x>
      <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lneMinLen</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onMinLenChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>304</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>432</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lneMax</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onMaxLenChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>260</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>428</x>
+     <y>311</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkNotWithinRange</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onNotWithinRangeChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkNotScaffold</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaVisualModelPropertiesClass</receiver>
+   <slot>onNotScaffoldChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>294</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>260</y>
     </hint>
    </hints>
   </connection>
@@ -502,5 +647,9 @@
   <slot>onDoubleStrandColorSchemeChanged(int)</slot>
   <slot>onHighlightChanged(int)</slot>
   <slot>onShowBasePairing(bool)</slot>
+  <slot>onMinLenChanged(QString)</slot>
+  <slot>onMaxLenChanged(QString)</slot>
+  <slot>onNotWithinRangeChanged(bool)</slot>
+  <slot>onNotScaffoldChanged(bool)</slot>
  </slots>
 </ui>

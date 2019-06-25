@@ -204,9 +204,12 @@ public:
   void SetSidechain(ADNPointer<ADNSidechain> sc);
 
   void SetSidechainPosition(Position3D pos);
-  Position3D GetSidechainPosition();
+  Position3D GetSidechainPosition() const;
   void SetBackbonePosition(Position3D pos);
-  Position3D GetBackbonePosition();
+  Position3D GetBackbonePosition() const;
+
+  // overload position to retrieve it from bb and sc
+  Position3D GetPosition() const;
 
   std::string const & GetName() const;
   void SetName(const std::string &name);
@@ -540,8 +543,10 @@ public:
 
   ADNPointer<ADNBaseSegment> GetFirstBaseSegment() const;
   SBNode* getFirstBaseSegment() const;
+  void SetStart(ADNPointer<ADNBaseSegment> bs);
   ADNPointer<ADNBaseSegment> GetLastBaseSegment() const;
   SBNode* getLastBaseSegment() const;
+  void SetEnd(ADNPointer<ADNBaseSegment> bs);
 
   void AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs);
   void AddBaseSegmentEnd(ADNPointer<ADNBaseSegment> bs);

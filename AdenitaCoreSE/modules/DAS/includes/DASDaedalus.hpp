@@ -159,7 +159,7 @@ private:
   int vertex_staple_span_end_= 11;
   /** Size of the single crossover staples
    */
-  int crossover_staple_span_ = 11;
+  int crossover_staple_span_ = 10;
   /** Crossover staple split
    */
   int crossover_split_ = 16;

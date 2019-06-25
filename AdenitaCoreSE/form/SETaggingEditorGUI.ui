@@ -22,17 +22,27 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QRadioButton" name="rdbNanosphere">
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="rdoTags">
        <property name="text">
-        <string>Gold nanosphere</string>
+        <string>Tags</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QRadioButton" name="rdbNanorod">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Gold nanorod</string>
+        <string>Mode:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QRadioButton" name="rdoBase">
+       <property name="text">
+        <string>Base</string>
        </property>
       </widget>
      </item>
@@ -41,5 +51,25 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>rdoTags</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SETaggingEditorGUIClass</receiver>
+   <slot>onModeChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>149</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>149</x>
+     <y>49</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onModeChanged(bool)</slot>
+ </slots>
 </ui>

@@ -115,6 +115,8 @@ void ADNNucleotide::serialize(SBCSerializer * serializer, const SBNodeIndexer & 
 
   serializer->writeUnsignedIntElement("pair", nodeIndexer.getIndex(pair_()));
   serializer->writeUnsignedIntElement("base_segment", nodeIndexer.getIndex(bs_()));
+
+  serializer->writeStringElement("tag", tag_);
 }
 
 void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer & nodeIndexer, const SBVersionNumber & sdkVersionNumber, const SBVersionNumber & classVersionNumber)
@@ -173,6 +175,9 @@ void ADNNucleotide::unserialize(SBCSerializer * serializer, const SBNodeIndexer 
   ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(bsNode);
   SetPair(p);
   SetBaseSegment(bs);
+
+  std::string tag = serializer->readStringElement();
+  setTag(tag);
 }
 
 void ADNNucleotide::SetType(DNABlocks t)
@@ -449,7 +454,7 @@ void ADNNucleotide::SetSidechainPosition(Position3D pos)
   sc->SetPosition(pos);
 }
 
-Position3D ADNNucleotide::GetSidechainPosition()
+Position3D ADNNucleotide::GetSidechainPosition() const
 {
   auto sc = GetSidechain();
   return sc->GetPosition();
@@ -461,10 +466,16 @@ void ADNNucleotide::SetBackbonePosition(Position3D pos)
   bb->SetPosition(pos);
 }
 
-Position3D ADNNucleotide::GetBackbonePosition()
+Position3D ADNNucleotide::GetBackbonePosition() const
 {
   auto bb = GetBackbone();
   return bb->GetPosition();
+}
+
+Position3D ADNNucleotide::GetPosition() const
+{
+  auto pos = (GetBackbonePosition() + GetSidechainPosition())*0.5;
+  return pos;
 }
 
 bool ADNNucleotide::GlobalBaseIsSet() {
@@ -772,7 +783,7 @@ double ADNSingleStrand::GetGCContent() const
     }
   }
   gcCont /= nucleotides.size();
-  return gcCont;
+  return gcCont * 100.0;
 }
 
 double ADNSingleStrand::getGCContent() const
@@ -1071,12 +1082,12 @@ void ADNBaseSegment::serialize(SBCSerializer * serializer, const SBNodeIndexer &
 {
   SBStructuralGroup::serialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
   
-  //ADNPointer<ADNAtom> at = GetCenterAtom();
-  SBPosition3 pos = GetPosition();
+  ADNPointer<ADNAtom> at = GetCenterAtom();
+  /*SBPosition3 pos = GetPosition();
   serializer->writeDoubleElement("x", pos[0].getValue());
   serializer->writeDoubleElement("y", pos[1].getValue());
-  serializer->writeDoubleElement("z", pos[2].getValue());
-  //serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
+  serializer->writeDoubleElement("z", pos[2].getValue());*/
+  serializer->writeUnsignedIntElement("centerAtom", nodeIndexer.getIndex(at()));
 
   serializer->writeStartElement("e3");
   auto e3 = GetE3();
@@ -1116,14 +1127,14 @@ void ADNBaseSegment::unserialize(SBCSerializer * serializer, const SBNodeIndexer
 {
   SBStructuralGroup::unserialize(serializer, nodeIndexer, sdkVersionNumber, classVersionNumber);
   
-  //unsigned int idx = serializer->readUnsignedIntElement();
-  //ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
-  //SetCenterAtom(at);
-  double x = serializer->readDoubleElement();
-  double y = serializer->readDoubleElement();
-  double z = serializer->readDoubleElement();
-  SBPosition3 pos = SBPosition3(SBQuantity::picometer(x), SBQuantity::picometer(y), SBQuantity::picometer(z));
-  SetPosition(pos);
+  unsigned int idx = serializer->readUnsignedIntElement();
+  ADNPointer<ADNAtom> at = (ADNAtom*)nodeIndexer.getNode(idx);
+  SetCenterAtom(at);
+  //double x = serializer->readDoubleElement();
+  //double y = serializer->readDoubleElement();
+  //double z = serializer->readDoubleElement();
+  //SBPosition3 pos = SBPosition3(SBQuantity::picometer(x), SBQuantity::picometer(y), SBQuantity::picometer(z));
+  //SetPosition(pos);
 
   serializer->readStartElement();
   double e3x = serializer->readDoubleElement();
@@ -1408,6 +1419,11 @@ SBNode * ADNDoubleStrand::getFirstBaseSegment() const
   return GetFirstBaseSegment()();
 }
 
+void ADNDoubleStrand::SetStart(ADNPointer<ADNBaseSegment> bs)
+{
+  start_ = bs;
+}
+
 ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetLastBaseSegment() const
 {
   return end_;
@@ -1416,6 +1432,11 @@ ADNPointer<ADNBaseSegment> ADNDoubleStrand::GetLastBaseSegment() const
 SBNode * ADNDoubleStrand::getLastBaseSegment() const
 {
   return GetLastBaseSegment()();
+}
+
+void ADNDoubleStrand::SetEnd(ADNPointer<ADNBaseSegment> bs)
+{
+  end_ = bs;
 }
 
 void ADNDoubleStrand::AddBaseSegmentBeginning(ADNPointer<ADNBaseSegment> bs)
@@ -1594,11 +1615,13 @@ void ADNLoopPair::RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {
 bool ADNLoopPair::IsRight(ADNPointer<ADNNucleotide> nt)
 {
   bool s = false;
-  auto nts = right_->GetNucleotides();
-  SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
-    if (c == nt) {
-      s = true;
-      break;
+  if (right_ != nullptr) {
+    auto nts = right_->GetNucleotides();
+    SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
+      if (c == nt) {
+        s = true;
+        break;
+      }
     }
   }
 
@@ -1608,11 +1631,13 @@ bool ADNLoopPair::IsRight(ADNPointer<ADNNucleotide> nt)
 bool ADNLoopPair::IsLeft(ADNPointer<ADNNucleotide> nt)
 {
   bool s = false;
-  auto nts = left_->GetNucleotides();
-  SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
-    if (c == nt) {
-      s = true;
-      break;
+  if (left_ != nullptr) {
+    auto nts = left_->GetNucleotides();
+    SB_FOR(ADNPointer<ADNNucleotide> c, nts) {
+      if (c == nt) {
+        s = true;
+        break;
+      }
     }
   }
 

@@ -71,6 +71,9 @@ void SEMergePartsEditor::MergeParts(int idx, int jdx)
 {
   if (idx == jdx) return;
 
+  auto app = getAdenitaApp();
+  app->SetMod(true);
+
   ADNPointer<ADNPart> p1 = nullptr;
   ADNPointer<ADNPart> p2 = nullptr;
   if (indexParts_.find(idx) != indexParts_.end()) p1 = indexParts_.at(idx);
@@ -79,10 +82,15 @@ void SEMergePartsEditor::MergeParts(int idx, int jdx)
     SEAdenitaCoreSEApp* t = getAdenitaApp();
     t->MergeComponents(p1, p2);
   }
+
+  app->SetMod(false);
 }
 
 void SEMergePartsEditor::MoveElement(int edx, int pdx)
 {
+  auto app = getAdenitaApp();
+  app->SetMod(true);
+
   ADNPointer<ADNPart> p = nullptr;
   if (indexParts_.find(pdx) != indexParts_.end()) p = indexParts_.at(pdx);
   Element el;
@@ -96,6 +104,8 @@ void SEMergePartsEditor::MoveElement(int edx, int pdx)
       t->MoveSingleStrand(el.ss, p);
     }
   }
+
+  app->SetMod(false);
 }
 
 SEAdenitaCoreSEApp* SEMergePartsEditor::getAdenitaApp() const
