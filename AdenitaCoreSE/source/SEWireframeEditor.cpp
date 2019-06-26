@@ -409,6 +409,9 @@ void SEWireframeEditor::display() {
   SEConfig& config = SEConfig::GetInstance();
 
   if (!display_) return;
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   SBPosition3 currentPosition = SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport());
 
@@ -462,7 +465,7 @@ void SEWireframeEditor::display() {
 
     if (config.preview_editor) {
       tempPart_ = generateWireframe(true);
-      ADNDisplayHelper::displayPart(tempPart_);
+      ADNDisplayHelper::displayPart(tempPart_, 1000.0f, 1.0f);
     }
 
     if (tempPart_ != nullptr) {
@@ -470,6 +473,8 @@ void SEWireframeEditor::display() {
     }
   }
 
+	glDisable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
 
 }
 
