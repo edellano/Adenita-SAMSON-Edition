@@ -833,19 +833,33 @@ void ADNDisplayHelper::displayPart(ADNPointer<ADNPart> part, float basePairRadiu
     SB_FOR(auto baseSegment, baseSegments) {
       auto cell = baseSegment->GetCell();
 
+			radiiV(index) = basePairRadius;
+			SBPosition3 pos = baseSegment->GetPosition();
+			positions(index, 0) = (float)pos.v[0].getValue();
+			positions(index, 1) = (float)pos.v[1].getValue();
+			positions(index, 2) = (float)pos.v[2].getValue();
+
       if (cell->GetType() == BasePair) {
-        SBPosition3 pos = baseSegment->GetPosition();
-        positions(index, 0) = (float)pos.v[0].getValue();
-        positions(index, 1) = (float)pos.v[1].getValue();
-        positions(index, 2) = (float)pos.v[2].getValue();
-      }
 
-      colorsV(index, 0) = config.double_strand_color[0];
-      colorsV(index, 1) = config.double_strand_color[1];
-      colorsV(index, 2) = config.double_strand_color[2];
-      colorsV(index, 3) = opaqueness;
+				colorsV(index, 0) = config.double_strand_color[0];
+				colorsV(index, 1) = config.double_strand_color[1];
+				colorsV(index, 2) = config.double_strand_color[2];
+				colorsV(index, 3) = opaqueness;
+      } else if (cell->GetType() == CellType::SkipPair) {
+				colorsV(index, 0) = 0.0f;
+				colorsV(index, 1) = 0.0f;
+				colorsV(index, 2) = 0.3f;
+				colorsV(index, 3) = opaqueness;
+			}
+			else if (cell->GetType() == CellType::LoopPair) {
+				radiiV(index) = config.base_pair_radius * 1.2f;
+				colorsV(index, 0) = 0.0f;
+				colorsV(index, 1) = config.double_strand_color[1];
+				colorsV(index, 2) = config.double_strand_color[2];
+				colorsV(index, 3) = opaqueness;
+			}
 
-      radiiV(index) = basePairRadius;
+
 
       flags(index) = baseSegment->getInheritedFlags();
 
