@@ -72,7 +72,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>531</width>
+           <width>560</width>
            <height>91</height>
           </rect>
          </property>
@@ -240,21 +240,8 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="btnCreateBasePair">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Create Base Pair</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="3">
-           <widget class="QPushButton" name="btnGenerateSequence">
+           <widget class="QToolButton" name="btnGenerateSequence">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -263,6 +250,25 @@
             </property>
             <property name="text">
              <string>Generate Sequence</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QToolButton" name="btnCreateBasePair">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Create Complement</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
            </widget>
           </item>
@@ -883,38 +889,6 @@
     <hint type="destinationlabel">
      <x>695</x>
      <y>142</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnGenerateSequence</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onGenerateSequence()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>492</x>
-     <y>104</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>357</x>
-     <y>148</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnCreateBasePair</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onCreateBasePair()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>282</x>
-     <y>116</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>288</x>
-     <y>148</y>
     </hint>
    </hints>
   </connection>
