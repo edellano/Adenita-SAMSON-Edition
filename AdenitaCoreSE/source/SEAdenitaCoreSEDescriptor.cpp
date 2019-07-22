@@ -25,9 +25,10 @@
 // SAMSON Element generator pro tip: modify the information below if necessary
 // (for example when a new class is added, when the version number changes, to describe categories more precisely, etc.)
 
+#define SB_ELEMENT_VERSION_HASH ""
 SB_ELEMENT_DESCRIPTION("Modeling and Visualization of DNA Nanostructures");
 SB_ELEMENT_DOCUMENTATION("Resource/Documentation/doc.html");
-SB_ELEMENT_VERSION_NUMBER("0.7.14");
+SB_ELEMENT_VERSION_NUMBER("0.8.1");
 
 SB_ELEMENT_CLASSES_BEGIN;
 

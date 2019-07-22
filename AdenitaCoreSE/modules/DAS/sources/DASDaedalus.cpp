@@ -950,7 +950,7 @@ void DASDaedalus::SetVerticesPositions(ADNPointer<ADNPart> origami, DASPolyhedro
     v = vertices.at(nId);
     ++count;
   }
-  cm /= vertices.size();
+  cm /= boost::numeric_cast<int>(vertices.size());
   // center
   if (center) {
     for (auto vit = vertices.begin(); vit != vertices.end(); ++vit) {

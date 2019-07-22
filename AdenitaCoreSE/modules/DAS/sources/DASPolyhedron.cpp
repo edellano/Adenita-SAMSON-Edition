@@ -719,7 +719,7 @@ void DASPolyhedron::Center(SBPosition3 center) {
 SBPosition3 DASPolyhedron::GetCenter()
 {
   SBPosition3 cm;
-  auto numVertices = vertices_.size();
+  int numVertices = boost::numeric_cast<int>(vertices_.size());
   for (auto v : vertices_) {
     auto vertex = v.second;
     cm += vertex->GetSBPosition();
