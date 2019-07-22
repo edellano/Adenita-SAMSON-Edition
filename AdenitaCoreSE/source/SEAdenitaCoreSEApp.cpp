@@ -158,13 +158,14 @@ void SEAdenitaCoreSEApp::CenterPart()
   SB_FOR(ADNPointer<ADNPart> part, parts) ADNBasicOperations::CenterPart(part);
 }
 
-void SEAdenitaCoreSEApp::GenerateSequence(double gcCont, int maxContGs)
+void SEAdenitaCoreSEApp::GenerateSequence(double gcCont, int maxContGs, bool overwrite)
 {
   auto strands = GetNanorobot()->GetSelectedSingleStrands();
   SB_FOR(ADNPointer<ADNSingleStrand> ss, strands) {
     std::string seq = DASAlgorithms::GenerateSequence(gcCont, maxContGs, ss->getNumberOfNucleotides());
-    ADNBasicOperations::SetSingleStrandSequence(ss, seq);
+    ADNBasicOperations::SetSingleStrandSequence(ss, seq, true, overwrite);
   }
+  ResetVisualModel();
 }
 
 void SEAdenitaCoreSEApp::ResetVisualModel() {

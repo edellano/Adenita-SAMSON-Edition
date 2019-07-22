@@ -47,7 +47,7 @@ public :
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part = nullptr);
   void ExportToSequenceList(QString filename, ADNPointer<ADNPart> part = nullptr);
   void SetScaffoldSequence(std::string seq);
-  void GenerateSequence(double gcCont, int maxContGs);
+  void GenerateSequence(double gcCont, int maxContGs, bool overwrite = true);
   void ResetVisualModel();
   SBVisualModel* GetVisualModel();
   // Modifications

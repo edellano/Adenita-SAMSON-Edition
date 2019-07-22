@@ -657,6 +657,10 @@ void SEAdenitaCoreSEAppGUI::onGenerateSequence()
   contigousGs->setMaximum(100);
   form.addRow(new QLabel("Maximum amount of contiguous Gs"), contigousGs);
 
+  QCheckBox* chk = new QCheckBox(&dialog);
+  chk->setChecked(false);
+  form.addRow(new QLabel("Overwrite existing base pairs"), chk);
+
   QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
   form.addRow(&buttonBox);
   QObject::connect(&buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
@@ -665,8 +669,9 @@ void SEAdenitaCoreSEAppGUI::onGenerateSequence()
   if (dialog.exec() == QDialog::Accepted) {
     double gc100 = gcCont->value() / 100;
     int maxContGs = contigousGs->value();
+    bool overwrite = chk->isChecked();
     SEAdenitaCoreSEApp* t = getApp();
-    t->GenerateSequence(gc100, maxContGs);
+    t->GenerateSequence(gc100, maxContGs, overwrite);
   }
 }
 

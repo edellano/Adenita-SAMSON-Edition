@@ -492,7 +492,7 @@ void ADNBasicOperations::MutateNucleotide(ADNPointer<ADNNucleotide> nt, DNABlock
   }
 }
 
-void ADNBasicOperations::SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss, std::string seq, bool changePair)
+void ADNBasicOperations::SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss, std::string seq, bool changePair, bool overwrite)
 {
   ADNPointer<ADNNucleotide> fivePrime = ss->GetFivePrime();
   ADNPointer<ADNNucleotide> nt = fivePrime;
@@ -500,7 +500,7 @@ void ADNBasicOperations::SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss,
 
   while (count < seq.size() && nt != nullptr) {
     DNABlocks t = ADNModel::ResidueNameToType(seq[count]);
-    MutateNucleotide(nt, t, changePair);
+    if (overwrite || (!overwrite && nt->GetType() == DNABlocks::DI)) MutateNucleotide(nt, t, changePair);
     ++count;
     nt = nt->GetNext();
   }
