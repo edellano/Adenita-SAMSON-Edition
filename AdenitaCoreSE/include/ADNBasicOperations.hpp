@@ -32,7 +32,7 @@ namespace ADNBasicOperations {
 
   // Mutations
   void MutateNucleotide(ADNPointer<ADNNucleotide> nt, DNABlocks newType, bool changePair = true);
-  void SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss, std::string seq, bool changePair = true);
+  void SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss, std::string seq, bool changePair = true, bool overwrite = true);
   void MutateBasePairIntoLoopPair(ADNPointer<ADNBaseSegment> bs);
   //! Shift start of the strand to the selected nucleotide and sequence.
   /*!
