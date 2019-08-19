@@ -695,7 +695,7 @@ void ADNDisplayHelper::displayBasePairConnection(ADNPointer<ADNNucleotide> nt)
   }
 }
 
-void ADNDisplayHelper::displayBaseVectors(ADNPointer<ADNNucleotide> nt, int scale)
+void ADNDisplayHelper::displayBaseVectors(ADNPointer<ADNNucleotide> nt, SBPosition3 pos)
 {
   SBVector3 e1 = SBVector3(nt->GetE1()[0], nt->GetE1()[1], nt->GetE1()[2]);
   SBVector3 e2 = SBVector3(nt->GetE2()[0], nt->GetE2()[1], nt->GetE2()[2]);
@@ -704,18 +704,6 @@ void ADNDisplayHelper::displayBaseVectors(ADNPointer<ADNNucleotide> nt, int scal
   float e1_c[] = { 0, 0, 1, 1 };
   float e2_c[] = { 1, 0, 0, 1 };
   float e3_c[] = { 0, 1, 0, 1 };
-
-  SBPosition3 pos;
-
-  if (scale == 3 || scale == 7) {
-    pos = nt->GetBackbonePosition();
-  }
-  else if (scale == 4 || scale == 5 || scale == 6) {
-    pos = nt->GetSidechainPosition();
-  }
-  else if (scale < 3 || scale > 7) {
-    pos = nt->GetPosition();
-  }
 
   displayVector(e1, pos, e1_c, 700);
   displayVector(e2, pos, e2_c, 700);

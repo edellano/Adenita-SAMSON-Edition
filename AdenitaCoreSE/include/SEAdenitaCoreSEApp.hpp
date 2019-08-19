@@ -84,7 +84,7 @@ public :
   QStringList GetPartsNameList();
 
   // Adding things to data graph
-  void AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions = true, bool positionsFromNucleotides = false);
+  void AddPartToActiveLayer(ADNPointer<ADNPart> part, bool positionsData = false);
   void AddConformationToActiveLayer(ADNPointer<ADNConformation> conf);
   void AddLoadedPartToNanorobot(ADNPointer<ADNPart> part);
 
