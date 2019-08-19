@@ -1894,25 +1894,19 @@ void SEAdenitaVisualModel::displayForDebugging()
   SEConfig& config = SEConfig::GetInstance();
 
   if (config.debugOptions.display_nucleotide_basis) {
-    auto parts = nanorobot_->GetParts();
-
-    SB_FOR(auto part, parts) {
-      auto singleStrands = nanorobot_->GetSingleStrands(part);
-      SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
-        auto nucleotides = nanorobot_->GetSingleStrandNucleotides(ss);
-        SB_FOR(ADNPointer<ADNNucleotide> nt, nucleotides) {
-          if (nt->isSelected()) {
-            ADNDisplayHelper::displayBaseVectors(nt, scale_);
-          }
-        }
+    SB_FOR(auto pair, ntMap_) {
+      ADNPointer<ADNNucleotide> nt = pair.first;
+      unsigned int idx = pair.second;
+      if (nt->isSelected()) {
+        SBPosition3 currPos = SBPosition3(SBQuantity::picometer(positionsNt_(idx, 0)), 
+          SBQuantity::picometer(positionsNt_(idx, 1)), SBQuantity::picometer(positionsNt_(idx, 2)));
+        ADNDisplayHelper::displayBaseVectors(nt, currPos);
       }
     }
   }
   if (config.debugOptions.display_base_pairing) {
     displayBasePairConnections(true);
   }
-
-
 }
 
 void SEAdenitaVisualModel::displayCircularDNAConnection()

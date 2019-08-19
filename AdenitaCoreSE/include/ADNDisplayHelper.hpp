@@ -27,7 +27,7 @@ namespace ADNDisplayHelper {
   void displayOrthoPlane(SBVector3 vec, SBPosition3 shift);
   void displaySphere(SBPosition3 pos, float radius, ADNArray<float> color);
   void displayBasePairConnection(ADNPointer<ADNNucleotide> nt);
-  void displayBaseVectors(ADNPointer<ADNNucleotide> nt, int scale);
+  void displayBaseVectors(ADNPointer<ADNNucleotide> nt, SBPosition3 pos);
   void displayText(SBPosition3 pos, std::string text = "");
   void displayTextBottomLeft(std::string text = "");
   void displayTriangleMesh(DASPolyhedron * polyhedron);

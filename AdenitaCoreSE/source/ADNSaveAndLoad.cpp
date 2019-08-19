@@ -866,6 +866,14 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph(SBNode* n)
       scPos /= scCount;
 
       // Calculate local axis
+
+      // to calculate e3 we fit the sidechain atoms to a plain, and set e3 as the normal to that plain in the 5' -> 3' direction
+      // we only need C1 position and e3 to find pair:
+      // - check neighbors
+      // -(e3, e3n) needs to be negative
+      // - |(e3, e3n)| amounts to just a few grades:
+      //   --> Build planes with C1 and C1n as center, check (C1n-C1) vector is almost contained in the plain
+      //   --> Check (C1n-C1) doesn't intersect backbone
       SBVector3 e3SB = (pos - prevPos).normalizedVersion();
       SBVector3 e2SB = (scPos - bbPos).normalizedVersion();
 
@@ -876,6 +884,8 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph(SBNode* n)
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
       nt->Init();
       nt->SetPosition(pos);
+      nt->SetBackbonePosition(bbPos);
+      nt->SetSidechainPosition(scPos);
       nt->SetE3(e3);
       nt->SetE2(e2);
       nt->SetE1(e1);
