@@ -10,7 +10,7 @@ class ADNPart : public SBStructuralModel {
   SB_CLASS
 public:
 
-  ADNPart() : SBStructuralModel() {};
+  ADNPart() : SBStructuralModel() { InitBoundingBox(); };
   ADNPart(const ADNPart &n);
   ~ADNPart() = default;
 
@@ -61,6 +61,9 @@ public:
   bool loadedViaSAMSON();
   void loadedViaSAMSON(bool l);
 
+  std::pair<SBPosition3, SBPosition3> GetBoundingBox();
+  void ResetBoundingBox();
+
 protected:
 private:
   // inside these pointers ids are unique
@@ -76,6 +79,12 @@ private:
   unsigned int nucleotideId_ = 1;
   unsigned int singleStrandId_ = 1;
   unsigned int doubleStrandId_ = 1;
+
+  void SetBoundingBox(ADNPointer<ADNNucleotide> newNt);
+  void InitBoundingBox();
+
+  SBPosition3 minBox_;
+  SBPosition3 maxBox_;
 };
 
 SB_REGISTER_TARGET_TYPE(ADNPart, "ADNPart", "D3809709-A2EA-DDC1-9753-A40B2B9DE57E");

@@ -689,6 +689,7 @@ void SEAdenitaCoreSEApp::AddPartToActiveLayer(ADNPointer<ADNPart> part, bool pos
     //btta.CheckDistances(part);
   }
 
+  part->ResetBoundingBox();
   GetNanorobot()->RegisterPart(part);
 
   //events
