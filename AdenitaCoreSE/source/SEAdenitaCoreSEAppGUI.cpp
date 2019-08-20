@@ -301,18 +301,19 @@ void SEAdenitaCoreSEAppGUI::onExport()
       accButton->setDefault(true);
       QPushButton* cButton = new QPushButton(tr("Cancel"));
 
-      QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal);
-      buttonBox->addButton(accButton, QDialogButtonBox::ActionRole);
-      buttonBox->addButton(cButton, QDialogButtonBox::ActionRole);
+      QDialogButtonBox* bttBox = new QDialogButtonBox(Qt::Horizontal);
+      bttBox->addButton(accButton, QDialogButtonBox::ActionRole);
+      bttBox->addButton(cButton, QDialogButtonBox::ActionRole);
 
-      QObject::connect(cButton, SIGNAL(released()), dialog, SLOT(close()));
-      QObject::connect(accButton, SIGNAL(released()), dialog, SLOT(accept()));
+      QObject::connect(cButton, SIGNAL(released()), dialogOxDNA, SLOT(close()));
+      QObject::connect(accButton, SIGNAL(released()), dialogOxDNA, SLOT(accept()));
 
       oxDNALayout->setSizeConstraint(QLayout::SetFixedSize);
       oxDNALayout->addWidget(info);
       oxDNALayout->addRow(QString("Box size X (nm)"), boxX);
       oxDNALayout->addRow(QString("Box size Y (nm)"), boxY);
       oxDNALayout->addRow(QString("Box size Z (nm)"), boxZ);
+      oxDNALayout->addWidget(bttBox);
 
       dialogOxDNA->setLayout(oxDNALayout);
       dialogOxDNA->setWindowTitle(tr("Set bounding box size"));
@@ -324,7 +325,7 @@ void SEAdenitaCoreSEAppGUI::onExport()
         options.boxSizeY_ = boxY->value();
         options.boxSizeZ_ = boxZ->value();
 
-        QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
+        QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath(), QFileDialog::DontUseNativeDialog);
         t->ExportToOxDNA(folder, options, part);
       }
     }
