@@ -275,26 +275,29 @@ void SEAdenitaCoreSEAppGUI::onExport()
       auto bbSize = boundingBox.second - boundingBox.first;
 
       ADNAuxiliary::OxDNAOptions options;
-      options.boxSizeX_ = bbSize[0].getValue() * 0.001;  // nm
-      options.boxSizeY_ = bbSize[1].getValue() * 0.001;  // nm
-      options.boxSizeZ_ = bbSize[2].getValue() * 0.001;  // nm
+      double sysX = bbSize[0].getValue() * 0.001;  // nm
+      double sysY = bbSize[1].getValue() * 0.001;  // nm
+      double sysZ = bbSize[2].getValue() * 0.001;  // nm
+
+      double refVal = max(sysX, sysY);
+      refVal = max(refVal, sysZ);
 
       // oxDNA dialog
       QDialog* dialogOxDNA = new QDialog();
       QFormLayout *oxDNALayout = new QFormLayout;
       QLabel* info = new QLabel;
-      info->setText("Default values are three times the system size.");
+      info->setText("System size (nm): " + QString::number(sysX, 'g',2) + " x " + QString::number(sysY, 'g', 2) + " x " + QString::number(sysZ, 'g', 2));
       QDoubleSpinBox* boxX = new QDoubleSpinBox();
       boxX->setRange(0.0, 99999.9);
-      boxX->setValue(options.boxSizeX_ * 3);
+      boxX->setValue(refVal * 3);
       boxX->setDecimals(2);
       QDoubleSpinBox* boxY = new QDoubleSpinBox();
       boxY->setRange(0.0, 99999.9);
-      boxY->setValue(options.boxSizeY_ * 3);
+      boxY->setValue(refVal * 3);
       boxY->setDecimals(2);
       QDoubleSpinBox* boxZ = new QDoubleSpinBox();
       boxZ->setRange(0.0, 99999.9);
-      boxZ->setValue(options.boxSizeZ_ * 3);
+      boxZ->setValue(refVal * 3);
       boxZ->setDecimals(2);
 
       QPushButton* accButton = new QPushButton(tr("Continue"));
@@ -308,12 +311,11 @@ void SEAdenitaCoreSEAppGUI::onExport()
       QObject::connect(cButton, SIGNAL(released()), dialogOxDNA, SLOT(close()));
       QObject::connect(accButton, SIGNAL(released()), dialogOxDNA, SLOT(accept()));
 
-      oxDNALayout->setSizeConstraint(QLayout::SetFixedSize);
-      oxDNALayout->addWidget(info);
+      oxDNALayout->addRow(info);
       oxDNALayout->addRow(QString("Box size X (nm)"), boxX);
       oxDNALayout->addRow(QString("Box size Y (nm)"), boxY);
       oxDNALayout->addRow(QString("Box size Z (nm)"), boxZ);
-      oxDNALayout->addWidget(bttBox);
+      oxDNALayout->addRow(bttBox);
 
       dialogOxDNA->setLayout(oxDNALayout);
       dialogOxDNA->setWindowTitle(tr("Set bounding box size"));
