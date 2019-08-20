@@ -271,13 +271,62 @@ void SEAdenitaCoreSEAppGUI::onExport()
       t->ExportToSequenceList(filename, part);
     }
     else if (eType == "oxDNA") {
-      ADNAuxiliary::OxDNAOptions options;
-      options.boxSizeX_ = 0.0;
-      options.boxSizeY_ = 0.0;
-      options.boxSizeZ_ = 0.0;
+      std::pair<SBPosition3, SBPosition3> boundingBox = part->GetBoundingBox();
+      auto bbSize = boundingBox.second - boundingBox.first;
 
-      QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
-      t->ExportToOxDNA(folder, options, part);
+      ADNAuxiliary::OxDNAOptions options;
+      options.boxSizeX_ = bbSize[0].getValue() * 0.001;  // nm
+      options.boxSizeY_ = bbSize[1].getValue() * 0.001;  // nm
+      options.boxSizeZ_ = bbSize[2].getValue() * 0.001;  // nm
+
+      // oxDNA dialog
+      QDialog* dialogOxDNA = new QDialog();
+      QFormLayout *oxDNALayout = new QFormLayout;
+      QLabel* info = new QLabel;
+      info->setText("Default values are three times the system size.");
+      QDoubleSpinBox* boxX = new QDoubleSpinBox();
+      boxX->setRange(0.0, 99999.9);
+      boxX->setValue(options.boxSizeX_ * 3);
+      boxX->setDecimals(2);
+      QDoubleSpinBox* boxY = new QDoubleSpinBox();
+      boxY->setRange(0.0, 99999.9);
+      boxY->setValue(options.boxSizeY_ * 3);
+      boxY->setDecimals(2);
+      QDoubleSpinBox* boxZ = new QDoubleSpinBox();
+      boxZ->setRange(0.0, 99999.9);
+      boxZ->setValue(options.boxSizeZ_ * 3);
+      boxZ->setDecimals(2);
+
+      QPushButton* accButton = new QPushButton(tr("Continue"));
+      accButton->setDefault(true);
+      QPushButton* cButton = new QPushButton(tr("Cancel"));
+
+      QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal);
+      buttonBox->addButton(accButton, QDialogButtonBox::ActionRole);
+      buttonBox->addButton(cButton, QDialogButtonBox::ActionRole);
+
+      QObject::connect(cButton, SIGNAL(released()), dialog, SLOT(close()));
+      QObject::connect(accButton, SIGNAL(released()), dialog, SLOT(accept()));
+
+      oxDNALayout->setSizeConstraint(QLayout::SetFixedSize);
+      oxDNALayout->addWidget(info);
+      oxDNALayout->addRow(QString("Box size X (nm)"), boxX);
+      oxDNALayout->addRow(QString("Box size Y (nm)"), boxY);
+      oxDNALayout->addRow(QString("Box size Z (nm)"), boxZ);
+
+      dialogOxDNA->setLayout(oxDNALayout);
+      dialogOxDNA->setWindowTitle(tr("Set bounding box size"));
+
+      int dCode = dialogOxDNA->exec();
+
+      if (dCode == QDialog::Accepted) {
+        options.boxSizeX_ = boxX->value();
+        options.boxSizeY_ = boxY->value();
+        options.boxSizeZ_ = boxZ->value();
+
+        QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
+        t->ExportToOxDNA(folder, options, part);
+      }
     }
 
   }
