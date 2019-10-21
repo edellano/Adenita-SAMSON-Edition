@@ -46,6 +46,14 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   setStart.addFile(string(iconsPath + "set5Prime.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnSetStart->setIcon(setStart);
 
+  QIcon createBp;
+  createBp.addFile(string(iconsPath + "createBasePair.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnCreateBasePair->setIcon(createBp);
+
+  QIcon generateSequences;
+  generateSequences.addFile(string(iconsPath + "generateSeqs.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnGenerateSequence->setIcon(generateSequences);
+
   // disable debug menu if compiling in release mode
   #if NDEBUG
   ui.tabWidget->removeTab(2);
@@ -263,13 +271,65 @@ void SEAdenitaCoreSEAppGUI::onExport()
       t->ExportToSequenceList(filename, part);
     }
     else if (eType == "oxDNA") {
-      ADNAuxiliary::OxDNAOptions options;
-      options.boxSizeX_ = 0.0;
-      options.boxSizeY_ = 0.0;
-      options.boxSizeZ_ = 0.0;
+      std::pair<SBPosition3, SBPosition3> boundingBox = part->GetBoundingBox();
+      auto bbSize = boundingBox.second - boundingBox.first;
 
-      QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath());
-      t->ExportToOxDNA(folder, options, part);
+      ADNAuxiliary::OxDNAOptions options;
+      double sysX = bbSize[0].getValue() * 0.001;  // nm
+      double sysY = bbSize[1].getValue() * 0.001;  // nm
+      double sysZ = bbSize[2].getValue() * 0.001;  // nm
+
+      double refVal = max(sysX, sysY);
+      refVal = max(refVal, sysZ);
+
+      // oxDNA dialog
+      QDialog* dialogOxDNA = new QDialog();
+      QFormLayout *oxDNALayout = new QFormLayout;
+      QLabel* info = new QLabel;
+      info->setText("System size (nm): " + QString::number(sysX, 'g',2) + " x " + QString::number(sysY, 'g', 2) + " x " + QString::number(sysZ, 'g', 2));
+      QDoubleSpinBox* boxX = new QDoubleSpinBox();
+      boxX->setRange(0.0, 99999.9);
+      boxX->setValue(refVal * 3);
+      boxX->setDecimals(2);
+      QDoubleSpinBox* boxY = new QDoubleSpinBox();
+      boxY->setRange(0.0, 99999.9);
+      boxY->setValue(refVal * 3);
+      boxY->setDecimals(2);
+      QDoubleSpinBox* boxZ = new QDoubleSpinBox();
+      boxZ->setRange(0.0, 99999.9);
+      boxZ->setValue(refVal * 3);
+      boxZ->setDecimals(2);
+
+      QPushButton* accButton = new QPushButton(tr("Continue"));
+      accButton->setDefault(true);
+      QPushButton* cButton = new QPushButton(tr("Cancel"));
+
+      QDialogButtonBox* bttBox = new QDialogButtonBox(Qt::Horizontal);
+      bttBox->addButton(accButton, QDialogButtonBox::ActionRole);
+      bttBox->addButton(cButton, QDialogButtonBox::ActionRole);
+
+      QObject::connect(cButton, SIGNAL(released()), dialogOxDNA, SLOT(close()));
+      QObject::connect(accButton, SIGNAL(released()), dialogOxDNA, SLOT(accept()));
+
+      oxDNALayout->addRow(info);
+      oxDNALayout->addRow(QString("Box size X (nm)"), boxX);
+      oxDNALayout->addRow(QString("Box size Y (nm)"), boxY);
+      oxDNALayout->addRow(QString("Box size Z (nm)"), boxZ);
+      oxDNALayout->addRow(bttBox);
+
+      dialogOxDNA->setLayout(oxDNALayout);
+      dialogOxDNA->setWindowTitle(tr("Set bounding box size"));
+
+      int dCode = dialogOxDNA->exec();
+
+      if (dCode == QDialog::Accepted) {
+        options.boxSizeX_ = boxX->value();
+        options.boxSizeY_ = boxY->value();
+        options.boxSizeZ_ = boxZ->value();
+
+        QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath(), QFileDialog::DontUseNativeDialog);
+        t->ExportToOxDNA(folder, options, part);
+      }
     }
 
   }
@@ -657,6 +717,10 @@ void SEAdenitaCoreSEAppGUI::onGenerateSequence()
   contigousGs->setMaximum(100);
   form.addRow(new QLabel("Maximum amount of contiguous Gs"), contigousGs);
 
+  QCheckBox* chk = new QCheckBox(&dialog);
+  chk->setChecked(false);
+  form.addRow(new QLabel("Overwrite existing base pairs"), chk);
+
   QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
   form.addRow(&buttonBox);
   QObject::connect(&buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
@@ -665,8 +729,9 @@ void SEAdenitaCoreSEAppGUI::onGenerateSequence()
   if (dialog.exec() == QDialog::Accepted) {
     double gc100 = gcCont->value() / 100;
     int maxContGs = contigousGs->value();
+    bool overwrite = chk->isChecked();
     SEAdenitaCoreSEApp* t = getApp();
-    t->GenerateSequence(gc100, maxContGs);
+    t->GenerateSequence(gc100, maxContGs, overwrite);
   }
 }
 

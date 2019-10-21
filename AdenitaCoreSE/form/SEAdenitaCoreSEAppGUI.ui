@@ -69,8 +69,13 @@
           <rect>
            <x>10</x>
            <y>10</y>
+<<<<<<< HEAD
            <width>231</width>
            <height>231</height>
+=======
+           <width>560</width>
+           <height>91</height>
+>>>>>>> master
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -228,8 +233,13 @@
             </property>
            </widget>
           </item>
+<<<<<<< HEAD
           <item row="2" column="0">
            <widget class="QToolButton" name="btnSetScaff">
+=======
+          <item row="1" column="3">
+           <widget class="QToolButton" name="btnGenerateSequence">
+>>>>>>> master
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -237,6 +247,7 @@
              </sizepolicy>
             </property>
             <property name="text">
+<<<<<<< HEAD
              <string>Set Scaffold</string>
             </property>
             <property name="iconSize">
@@ -247,14 +258,22 @@
             </property>
             <property name="shortcut">
              <string>Ctrl+;</string>
+=======
+             <string>Generate Sequence</string>
+>>>>>>> master
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
            </widget>
           </item>
+<<<<<<< HEAD
           <item row="4" column="0">
            <widget class="QPushButton" name="btnGenerateSequence">
+=======
+          <item row="1" column="2">
+           <widget class="QToolButton" name="btnCreateBasePair">
+>>>>>>> master
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -262,7 +281,10 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Generate Sequence</string>
+             <string>Create Complement</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
            </widget>
           </item>
@@ -899,38 +921,6 @@
     <hint type="destinationlabel">
      <x>695</x>
      <y>142</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnGenerateSequence</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onGenerateSequence()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>492</x>
-     <y>104</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>357</x>
-     <y>148</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnCreateBasePair</sender>
-   <signal>released()</signal>
-   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
-   <slot>onCreateBasePair()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>282</x>
-     <y>116</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>288</x>
-     <y>148</y>
     </hint>
    </hints>
   </connection>

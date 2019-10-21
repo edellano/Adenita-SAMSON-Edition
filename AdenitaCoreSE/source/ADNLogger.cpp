@@ -50,6 +50,7 @@ void ADNLogger::LogDebug(std::string value)
 {
   SEConfig& config = SEConfig::GetInstance();
   if (config.mode == DEBUG_LOG) {
+    SB_WARNING("Adenita debug: " + value);
     Log(value);
   }
 }
@@ -86,34 +87,6 @@ void ADNLogger::LogDebug(ublas::matrix<double> m)
   }
 }
 
-time_t ADNLogger::LogDebugPassedSeconds(time_t time1, std::string text)
-{
-  SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == DEBUG_LOG) {
-    return LogPassedSeconds(time1, text);
-  }
-
-  return time(0);
-}
-
-clock_t ADNLogger::LogDebugPassedMilliseconds(clock_t time1, std::string text)
-{
-  SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == "debug_log") {
-    return LogPassedMilliseconds(time1, text);
-  }
-
-  return clock();
-}
-
-void ADNLogger::LogDebugDateTime()
-{
-  SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == "debug_log") {
-    LogDateTime();
-  }
-}
-
 void ADNLogger::Log(float value)
 {
   Log(std::to_string(value));
@@ -127,6 +100,7 @@ void ADNLogger::Log(int value)
 void ADNLogger::Log(std::string value)
 {
   QString qs = QString::fromStdString(value);
+  SB_INFORMATION("Adenita info: " + value);
   Log(qs);
 }
 
@@ -171,41 +145,11 @@ void ADNLogger::Log(SBPosition3 pos)
 
 }
 
-time_t ADNLogger::LogPassedSeconds(time_t time1, std::string text)
-{
-  double seconds_since_start = difftime(time(0), time1);
-  Log(QString("\t *** ") + QString(text.c_str()) + QString(" ") + QString::number(seconds_since_start) + QString(" seconds"));
-  return time(0);
-}
-
-clock_t ADNLogger::LogPassedMilliseconds(clock_t time1, std::string text)
-{
-  float ms_since_start = float (clock() - time1) / CLOCKS_PER_SEC;
-  Log(QString("\t *** ") + QString(text.c_str()) + QString(" ") + QString::number(ms_since_start) + QString(" seconds"));
-  return clock();
-}
-
 void ADNLogger::Log(quintptr ptr)
 {
   QString ptrStr = QString("0x%1").arg(ptr,
     QT_POINTER_SIZE * 2, 16, QChar('0'));
   Log(ptrStr);
-}
-
-void ADNLogger::LogDateTime()
-{
-  time_t rawtime;
-  struct tm * timeinfo;
-  char buffer[80];
-
-  time(&rawtime);
-  timeinfo = localtime(&rawtime);
-
-  strftime(buffer, sizeof(buffer), "%d-%m-%Y %I:%M:%S", timeinfo);
-  std::string str(buffer);
-
-  std::string msg = " == Adenita starting at: " + str + " == ";
-  Log(msg);
 }
 
 //void ADNAuxiliary::logPosition(string name, SBPosition3 pos)

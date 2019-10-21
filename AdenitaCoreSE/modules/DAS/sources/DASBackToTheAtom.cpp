@@ -674,8 +674,8 @@ void DASBackToTheAtom::PopulateWithMockAtoms(ADNPointer<ADNPart> origami, bool p
     auto cBB = bb->GetCenterAtom();
     auto cSC = sc->GetCenterAtom();
     if (positionsFromNucleotide) {
-      cBB->SetPosition(nt->GetPosition());
-      cSC->SetPosition(nt->GetPosition());
+      cBB->SetPosition(nt->GetBackbonePosition());
+      cSC->SetPosition(nt->GetSidechainPosition());
     }
     
     origami->RegisterAtom(nt, NucleotideGroup::Backbone, cBB, createAtoms);

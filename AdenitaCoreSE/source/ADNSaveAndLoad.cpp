@@ -849,10 +849,11 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph(SBNode* n)
         }
       }
       bbPos /= count;
-      int scCount = 0;
 
+      int scCount = 0;
       SBPointer<SBSideChain> sc = res->getSideChain();
       SBPointerList<SBStructuralNode> scAtoms = *sc->getChildren();
+      ublas::matrix<double> scPoints(0, 3);
       SB_FOR(SBStructuralNode* at, scAtoms) {
         if (at->getType() == SBNode::Atom) {
           SBPointer<SBAtom> atom = static_cast<SBAtom*>(at);
@@ -860,40 +861,55 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraph(SBNode* n)
           scPos += atom->getPosition();
           ++count;
           ++scCount;
+          // fill matrix
+          ublas::vector<double> r = ADNAuxiliary::SBPositionToUblas(atom->getPosition());
+          ADNVectorMath::AddRowToMatrix(scPoints, r);
         }
       }
       pos /= count;
       scPos /= scCount;
 
       // Calculate local axis
-      SBVector3 e3SB = (pos - prevPos).normalizedVersion();
-      SBVector3 e2SB = (scPos - bbPos).normalizedVersion();
 
-      ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(e3SB);
-      ublas::vector<double> e2 = ADNAuxiliary::SBVectorToUblasVector(e2SB);
-      ublas::vector<double> e1 = ADNVectorMath::CrossProduct(e2, e3);
+      // to calculate e3 we fit the sidechain atoms to a plain, and set e3 as the normal to that plain in the 5' -> 3' direction
+      ublas::vector<double> e3 = ADNVectorMath::CalculatePlane(scPoints);
+
+      // we only need C1 position and e3 to find pair:
+      // - check neighbors
+      // -(e3, e3n) needs to be negative
+      // - |(e3, e3n)| amounts to just a few grades:
+      //   --> Build planes with C1 and C1n as center, check (C1n-C1) vector is almost contained in the plain
+      //   --> Check (C1n-C1) doesn't intersect backbone
+      //SBVector3 e3SB = (pos - prevPos).normalizedVersion();
+      //SBVector3 e2SB = (scPos - bbPos).normalizedVersion();
+
+      //ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(e3SB);
+      //ublas::vector<double> e2 = ADNAuxiliary::SBVectorToUblasVector(e2SB);
+      //ublas::vector<double> e1 = ADNVectorMath::CrossProduct(e2, e3);
 
       ADNPointer<ADNNucleotide> nt = new ADNNucleotide();
       nt->Init();
       nt->SetPosition(pos);
+      nt->SetBackbonePosition(bbPos);
+      nt->SetSidechainPosition(scPos);
       nt->SetE3(e3);
-      nt->SetE2(e2);
-      nt->SetE1(e1);
+      //nt->SetE2(e2);
+      //nt->SetE1(e1);
       nt->SetType(res->getResidueType());
 
       part->RegisterNucleotideThreePrime(ss, nt);
       prevPos = pos;
     }
     // fix directionality of first nucleotide
-    if (ss->getNumberOfNucleotides() > 1) {
+    /*if (ss->getNumberOfNucleotides() > 1) {
       auto fPrime = ss->GetFivePrime();
       SBVector3 newE3 = (fPrime->GetNext()->GetPosition() - fPrime->GetPosition()).normalizedVersion();
       ublas::vector<double> e3 = ADNAuxiliary::SBVectorToUblasVector(newE3);
       fPrime->SetE3(e3);
       ublas::vector<double> e1 = ADNVectorMath::CrossProduct(fPrime->GetE2(), e3);
       fPrime->SetE1(e1);
-    }
-    else if (ss->getNumberOfNucleotides() == 0) {
+    }*/
+    if (ss->getNumberOfNucleotides() == 0) {
       // delete single strands since it's empty
       part->DeregisterSingleStrand(ss);
     }

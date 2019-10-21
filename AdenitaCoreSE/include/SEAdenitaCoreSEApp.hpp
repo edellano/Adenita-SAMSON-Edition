@@ -47,7 +47,7 @@ public :
   void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part = nullptr);
   void ExportToSequenceList(QString filename, ADNPointer<ADNPart> part = nullptr);
   void SetScaffoldSequence(std::string seq);
-  void GenerateSequence(double gcCont, int maxContGs);
+  void GenerateSequence(double gcCont, int maxContGs, bool overwrite = true);
   void ResetVisualModel();
   SBVisualModel* GetVisualModel();
   // Modifications
@@ -84,7 +84,7 @@ public :
   QStringList GetPartsNameList();
 
   // Adding things to data graph
-  void AddPartToActiveLayer(ADNPointer<ADNPart> part, bool calculatePositions = true, bool positionsFromNucleotides = false);
+  void AddPartToActiveLayer(ADNPointer<ADNPart> part, bool positionsData = false);
   void AddConformationToActiveLayer(ADNPointer<ADNConformation> conf);
   void AddLoadedPartToNanorobot(ADNPointer<ADNPart> part);
 

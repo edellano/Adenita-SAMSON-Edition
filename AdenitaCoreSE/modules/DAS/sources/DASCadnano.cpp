@@ -29,6 +29,8 @@ void DASCadnano::ParseJSON(std::string filename)
 
 void DASCadnano::ParseCadnanoFormat3(Document & d)
 {
+  auto& logger = ADNLogger::GetLogger();
+  logger.Log(std::string("Cadnano format 3.0 not yet supported."));
 }
 
 void DASCadnano::ParseCadnanoLegacy(Document& d)
@@ -143,6 +145,8 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
   }
   else {
     // error
+    SB_ERROR("Cadnano module couldn't find a compatible lattice: number of vHelix positions = " + totalCount);
+    return;
   }
   vGrid_.CreateLattice(json_.lType_);
 }
@@ -150,10 +154,14 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
 ADNPointer<ADNPart> DASCadnano::CreateCadnanoModel()
 {
   ADNPointer<ADNPart> part = new ADNPart();
+  auto& logger = ADNLogger::GetLogger();
 
   CreateEdgeMap(part);
+  logger.Log(std::string("Cadnano module > Double strands created"));
   CreateScaffold(part);
+  logger.Log(std::string("Cadnano module > Scaffold created"));
   CreateStaples(part);
+  logger.Log(std::string("Cadnano module > Staples created"));
 
   return part;
 }
@@ -251,13 +259,11 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot)
   //find number of staples and their starting points
   std::vector<vec2> stapleStarts = json_.stapleStarts_;  //vstrand id and position on vstrand
   std::string numStaplesString;
-  numStaplesString += "num of staple strands ";
-  numStaplesString += to_string(stapleStarts.size());
+  numStaplesString += "Cadnano module > Detected " + std::to_string(stapleStarts.size()) + " staples";
   logger.Log(numStaplesString);
 
   auto& vstrands = json_.vstrands_;
   int sid = 1; //because scaffold is chain 0
-  int numSkips = 0;
 
   for (vec2 curStapleStart : stapleStarts) {
     int vStrandId = curStapleStart.n0;
@@ -275,9 +281,6 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot)
 
     TraceSingleStrand(vStrandId, z, staple, nanorobot, false);
   }
-
-  std::string msg = "numSkips (init) " + std::to_string(numSkips * 2);
-  logger.Log(msg);
 }
 
 void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> nanorobot, bool scaf)
@@ -488,7 +491,9 @@ SBPointer<SBMStructuralModelConformation> DASCadnano::Get1DConformation()
 
 ADNPointer<ADNPart> DASCadnano::CreateCadnanoPart(std::string file)
 {
+  auto& logger = ADNLogger::GetLogger();
   ParseJSON(file);
+  logger.Log(std::string("Cadnano design parsed"));
   return CreateCadnanoModel();
 }
 

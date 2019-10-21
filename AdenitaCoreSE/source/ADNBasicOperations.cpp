@@ -370,15 +370,14 @@ std::pair<ADNPointer<ADNSingleStrand>, ADNPointer<ADNSingleStrand>> ADNBasicOper
   auto numSSNew = part->GetNumberOfSingleStrands();
 
   if (config.mode == DEBUG_NO_LOG || config.mode == DEBUG_LOG) {
-    logger.LogDateTime();
     std::string msg = "  --> DELETING NUCLEOTIDE";
-    logger.LogDebug(msg);
+    logger.Log(msg);
     msg = "         Nucleotides before deletion: " + std::to_string(numNts) + "\n";
     msg += "         Nucleotides after deletion: " + std::to_string(numNtsNew);
-    logger.LogDebug(msg);
+    logger.Log(msg);
     msg = "         Single Strands before deletion: " + std::to_string(numSS) + "\n";
     msg += "         Single Strands after deletion: " + std::to_string(numSSNew);
-    logger.LogDebug(msg);
+    logger.Log(msg);
   }
 
   return res;
@@ -457,7 +456,6 @@ std::pair<ADNPointer<ADNDoubleStrand>, ADNPointer<ADNDoubleStrand>> ADNBasicOper
   auto numDSNew = part->GetNumberOfDoubleStrands();
 
   if (config.mode == DEBUG_NO_LOG || config.mode == DEBUG_LOG) {
-    logger.LogDateTime();
     std::string msg = "  --> DELETING NUCLEOTIDE";
     logger.LogDebug(msg);
     msg = "         Nucleotides before deletion: " + std::to_string(numBss) + "\n";
@@ -492,7 +490,7 @@ void ADNBasicOperations::MutateNucleotide(ADNPointer<ADNNucleotide> nt, DNABlock
   }
 }
 
-void ADNBasicOperations::SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss, std::string seq, bool changePair)
+void ADNBasicOperations::SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss, std::string seq, bool changePair, bool overwrite)
 {
   ADNPointer<ADNNucleotide> fivePrime = ss->GetFivePrime();
   ADNPointer<ADNNucleotide> nt = fivePrime;
@@ -500,7 +498,7 @@ void ADNBasicOperations::SetSingleStrandSequence(ADNPointer<ADNSingleStrand> ss,
 
   while (count < seq.size() && nt != nullptr) {
     DNABlocks t = ADNModel::ResidueNameToType(seq[count]);
-    MutateNucleotide(nt, t, changePair);
+    if (overwrite || (!overwrite && nt->GetType() == DNABlocks::DI)) MutateNucleotide(nt, t, changePair);
     ++count;
     nt = nt->GetNext();
   }

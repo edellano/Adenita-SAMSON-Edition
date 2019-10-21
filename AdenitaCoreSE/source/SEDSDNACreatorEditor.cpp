@@ -326,8 +326,6 @@ void SEDSDNACreatorEditor::display() {
       positions_.SecondPosition = GetSnappedPosition();
 
       ADNDisplayHelper::displayLine(positions_.FirstPosition, positions_.SecondPosition);
-
-
     }
 
     if (config.preview_editor) {
