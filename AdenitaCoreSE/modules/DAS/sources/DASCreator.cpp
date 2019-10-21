@@ -184,7 +184,6 @@ ADNPointer<ADNPart> DASCreator::CreateNanotube(SBQuantity::length radius, SBPosi
   }
 
   ADNLogger& logger = ADNLogger::GetLogger();
-  logger.LogDebugDateTime();
   logger.LogDebug(std::string("-> Creating DNA nanotube"));
   logger.LogDebug(std::string("    * num of ds: ") + std::to_string(num));
   logger.LogDebug(std::string("    * bps per ds: ") + std::to_string(length));

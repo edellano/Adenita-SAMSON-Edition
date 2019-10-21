@@ -36,10 +36,6 @@ public:
   void LogDebug(ublas::vector<double> v);
   void LogDebug(std::string name, ublas::vector<double> v);
   void LogDebug(ublas::matrix<double> m);
-  // time logs debug
-  time_t LogDebugPassedSeconds(time_t time1, std::string text);
-  clock_t LogDebugPassedMilliseconds(clock_t time1, std::string text);
-  void LogDebugDateTime();
 
   // normal logging
   void Log(float value);
@@ -51,16 +47,6 @@ public:
   void Log(ublas::matrix<double> m);
   void Log(quintptr ptr);
   void Log(SBPosition3 pos);
-
-  // time logs
-  time_t LogPassedSeconds(time_t time1, std::string text);
-  clock_t LogPassedMilliseconds(clock_t time1, std::string text);
-  void LogDateTime();
-
-  //void logPosition(std::string name, SBPosition3 pos);
-  //void logVector(std::string name, SBPicometerPerSecond3 pos);
-  //void logVector(std::string name, SBRadianPerSecond3 pos);
-  //void logVector(std::string name, SBVector3 pos);
 
 private:
   ADNLogger();
