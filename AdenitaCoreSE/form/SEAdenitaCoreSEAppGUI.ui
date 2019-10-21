@@ -892,6 +892,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnGenerateSequence</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onGenerateSequence()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>428</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
