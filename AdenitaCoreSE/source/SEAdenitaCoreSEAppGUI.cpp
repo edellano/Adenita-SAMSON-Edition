@@ -1,5 +1,6 @@
 #include "SEAdenitaCoreSEAppGUI.hpp"
 #include "SEAdenitaCoreSEApp.hpp"
+#include "SEAdenitaCoreSettingsGUI.hpp"
 #include "SAMSON.hpp"
 #include "SBGWindow.hpp"
 #include <QInputDialog>
@@ -106,14 +107,14 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   dnaTwister.addFile(string(iconsPath + "SEDNATwisterEditorIcon.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnTwisterEditor->setIcon(dnaTwister);
 
+  QIcon settings;
+  settings.addFile(string(iconsPath + "settings.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnSettings->setIcon(settings);
+
   // disable debug menu if compiling in release mode
   #if NDEBUG
   ui.tabWidget->removeTab(2);
   #endif
-
-  // set ntthal if previously defined
-  SEConfig& c = SEConfig::GetInstance();
-  if (c.ntthal != "") ui.lineNtthal->setText(QString::fromStdString(c.ntthal));
 
   QTimer *timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(CheckForLoadedParts()));
@@ -144,8 +145,10 @@ void SEAdenitaCoreSEAppGUI::saveSettings( SBGSettings *settings ) {
 
 std::string SEAdenitaCoreSEAppGUI::GetScaffoldFilename()
 {
+  SEConfig& c = SEConfig::GetInstance();
+
   std::string filename = "";
-  ADNAuxiliary::ScaffoldSeq type = ADNAuxiliary::ScaffoldSeq(ui.cmbScaffold->currentIndex());
+  ADNAuxiliary::ScaffoldSeq type = ADNAuxiliary::ScaffoldSeq(c.scaffType);
   if (type == ADNAuxiliary::m13mp18) {
     filename = SB_ELEMENT_PATH + "/Data/m13mp18.fasta";
   }
@@ -153,8 +156,7 @@ std::string SEAdenitaCoreSEAppGUI::GetScaffoldFilename()
     filename = SB_ELEMENT_PATH + "/Data/p7249.fasta";
   }
   else if (type == ADNAuxiliary::Custom) {
-    QString fname = ui.lineCustomScaffold->displayText();
-    if (!fname.isEmpty()) filename = fname.toStdString();
+    filename = c.scaffCustomFilename;
   }
 
   return filename;
@@ -467,54 +469,6 @@ void SEAdenitaCoreSEAppGUI::onCenterPart()
   SAMSON::getActiveCamera()->center();
 }
 
-void SEAdenitaCoreSEAppGUI::onChangeScaffold(int idx)
-{
-  if (idx == 2) {
-    // custom scaffold
-    QString filename = QFileDialog::getOpenFileName(this, tr("Choose scaffold"), QDir::currentPath(), tr("(Sequences *.fasta)"));
-    ui.lineCustomScaffold->setText(filename);
-  }
-}
-
-void SEAdenitaCoreSEAppGUI::onCheckDisplayCrossovers(bool b)
-{
-  SEConfig& c = SEConfig::GetInstance();
-  c.setDisplayPossibleCrossovers(b);
-}
-
-void SEAdenitaCoreSEAppGUI::onCheckInterpolateDimensions(bool b)
-{
-  SEConfig& c = SEConfig::GetInstance();
-  c.setInterpolateDimensions(b);
-}
-
-void SEAdenitaCoreSEAppGUI::onCheckClearLogFile(bool b)
-{
-  SEConfig& c = SEConfig::GetInstance();
-  c.setClearLogFile(b);
-}
-
-void SEAdenitaCoreSEAppGUI::onCheckAutoScaffold(bool b)
-{
-  SEConfig& c = SEConfig::GetInstance();
-  c.setAutoSetScaffoldSequence(b);
-}
-
-void SEAdenitaCoreSEAppGUI::onCheckShowOverlay(bool b)
-{
-  SEConfig& c = SEConfig::GetInstance();
-  c.setShowOverlay(b);
-}
-
-void SEAdenitaCoreSEAppGUI::onSetPathNtthal()
-{
-  QString filename = QFileDialog::getOpenFileName(this, tr("Set path to ntthal executable"), QDir::currentPath(), tr("(ntthal.exe)"));
-  ui.lineNtthal->setText(filename);
-  // update config
-  SEConfig& c = SEConfig::GetInstance();
-  c.setNtthalExe(filename.toStdString());
-}
-
 void SEAdenitaCoreSEAppGUI::onCatenanes()
 {
   QDialog* dialog = new QDialog();
@@ -784,6 +738,13 @@ void SEAdenitaCoreSEAppGUI::onGenerateSequence()
     SEAdenitaCoreSEApp* t = getApp();
     t->GenerateSequence(gc100, maxContGs, overwrite);
   }
+}
+
+void SEAdenitaCoreSEAppGUI::onSettings()
+{
+  SEAdenitaCoreSettingsGUI diag(this);
+  //SAMSON::addDialog(&diag);
+  diag.exec();
 }
 
 void SEAdenitaCoreSEAppGUI::onBreakEditor()

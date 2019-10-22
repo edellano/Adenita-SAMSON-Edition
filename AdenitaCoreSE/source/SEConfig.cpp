@@ -13,7 +13,7 @@ void SEConfig::setAutoSetScaffoldSequence(bool b)
     setting_["auto_set_scaffold_sequence"].SetBool(b);
   }
   else {
-    Value v;
+    Val v;
     v.SetBool(b);
     setting_.AddMember("auto_set_scaffold_sequence", v, setting_.GetAllocator());
   }
@@ -26,7 +26,7 @@ void SEConfig::setShowOverlay(bool b)
     setting_["show_overlay"].SetBool(b);
   }
   else {
-    Value v;
+    Val v;
     v.SetBool(b);
     setting_.AddMember("show_overlay", v, setting_.GetAllocator());
   }
@@ -39,7 +39,7 @@ void SEConfig::setDisplayPossibleCrossovers(bool b)
     setting_["display_possible_crossovers"].SetBool(b);
   }
   else {
-    Value v;
+    Val v;
     v.SetBool(b);
     setting_.AddMember("display_possible_crossovers", v, setting_.GetAllocator());
   }
@@ -52,7 +52,7 @@ void SEConfig::setClearLogFile(bool b)
     setting_["clear_log_file"].SetBool(b);
   }
   else {
-    Value v;
+    Val v;
     v.SetBool(b);
     setting_.AddMember("clear_log_file", v, setting_.GetAllocator());
   }
@@ -65,24 +65,50 @@ void SEConfig::setInterpolateDimensions(bool b)
     setting_["interpolate_dimensions"].SetBool(b);
   }
   else {
-    Value v;
+    Val v;
     v.SetBool(b);
     setting_.AddMember("interpolate_dimensions", v, setting_.GetAllocator());
   }
   writeDocumentToJson();
 }
 
-void SEConfig::setNtthalExe(std::string filename)
+void SEConfig::setNtthalExe(std::string filename, bool write)
 {
   if (setting_.FindMember("ntthal") != setting_.MemberEnd()) {
     setting_["ntthal"].SetString(filename.c_str(), filename.size());
   }
   else {
-    Value v;
+    Val v;
     v.SetString(filename.c_str(), filename.size());
     setting_.AddMember("ntthal", v, setting_.GetAllocator());
   }
+  if (write) writeDocumentToJson();
+}
+
+void SEConfig::setScaffType(int typ)
+{
+  if (setting_.FindMember("scaffType") != setting_.MemberEnd()) {
+    setting_["scaffType"].SetInt(typ);
+  }
+  else {
+    Val v;
+    v.SetInt(typ);
+    setting_.AddMember("scaffType", v, setting_.GetAllocator());
+  }
   writeDocumentToJson();
+}
+
+void SEConfig::setScaffCustomFilename(std::string filename, bool write)
+{
+  if (setting_.FindMember("scaffCustomFilename") != setting_.MemberEnd()) {
+    setting_["scaffCustomFilename"].SetString(filename.c_str(), filename.size());
+  }
+  else {
+    Val v;
+    v.SetString(filename.c_str(), filename.size());
+    setting_.AddMember("scaffCustomFilename", v, setting_.GetAllocator());
+  }
+  if (write) writeDocumentToJson();
 }
 
 void SEConfig::updateDebugConfig()
@@ -97,7 +123,7 @@ void SEConfig::updateDebugConfig()
       debugOptions.minCutOff = debugSetting_["min_cutoff"].GetDouble();
     }
     
-    if (debugSetting_.FindMember("max_cutoff") != setting_.MemberEnd()) {
+    if (debugSetting_.FindMember("max_cutoff") != debugSetting_.MemberEnd()) {
       debugOptions.maxCutOff = debugSetting_["max_cutoff"].GetDouble();
     }
 
@@ -211,9 +237,15 @@ void SEConfig::loadConfig() {
 
     writer.Key("auto_set_scaffold_sequence");
     writer.Bool(auto_set_scaffold_sequence);
-    
+
+    writer.Key("scaffCustomFilename");
+    writer.String(scaffCustomFilename.c_str(), scaffCustomFilename.size());
+
+    writer.Key("scaffType");
+    writer.Int(scaffType);
+
     writer.Key("ntthal");
-    writer.String(ntthal.c_str());
+    writer.String(ntthal.c_str(), ntthal.size());
 
     writer.EndObject();
 
@@ -357,42 +389,42 @@ void SEConfig::updateConfig() {
     }
 
     if (setting_.FindMember("double_helix_V_color") != setting_.MemberEnd()) {
-      Value& double_helix_V_colorVal = setting_["double_helix_V_color"];
+      Val& double_helix_V_colorVal = setting_["double_helix_V_color"];
       readDoubleArray(double_helix_V_colorVal, double_helix_V_color, 4);
     }
 
     if (setting_.FindMember("nucleotide_E_Color") != setting_.MemberEnd()) {
-      Value& nucleotide_E_ColorVal = setting_["nucleotide_E_Color"];
+      Val& nucleotide_E_ColorVal = setting_["nucleotide_E_Color"];
       readDoubleArray(nucleotide_E_ColorVal, nucleotide_E_Color, 4);
     }
 
     if (setting_.FindMember("double_strand_color") != setting_.MemberEnd()) {
-      Value& double_strand_colorVal = setting_["double_strand_color"];
+      Val& double_strand_colorVal = setting_["double_strand_color"];
       readDoubleArray(double_strand_colorVal, double_strand_color, 4);
     }
 
     if (setting_.FindMember("adenine_color") != setting_.MemberEnd()) {
-      Value& adenine_colorVal = setting_["adenine_color"];
+      Val& adenine_colorVal = setting_["adenine_color"];
       readDoubleArray(adenine_colorVal, adenine_color, 4);
     }
 
     if (setting_.FindMember("thymine_color") != setting_.MemberEnd()) {
-      Value& thymine_colorVal = setting_["thymine_color"];
+      Val& thymine_colorVal = setting_["thymine_color"];
       readDoubleArray(thymine_colorVal, thymine_color, 4);
     }
 
     if (setting_.FindMember("guanine_color") != setting_.MemberEnd()) {
-      Value& guanine_colorVal = setting_["guanine_color"];
+      Val& guanine_colorVal = setting_["guanine_color"];
       readDoubleArray(guanine_colorVal, guanine_color, 4);
     }
 
     if (setting_.FindMember("cytosine_color") != setting_.MemberEnd()) {
-      Value& cytosine_colorVal = setting_["cytosine_color"];
+      Val& cytosine_colorVal = setting_["cytosine_color"];
       readDoubleArray(cytosine_colorVal, cytosine_color, 4);
     }
 
     if (setting_.FindMember("staple_colors") != setting_.MemberEnd()) {
-      Value& staple_colorsVal = setting_["staple_colors"];
+      Val& staple_colorsVal = setting_["staple_colors"];
       readDoubleArray(staple_colorsVal, staple_colors, 48);
     }
 
@@ -416,6 +448,14 @@ void SEConfig::updateConfig() {
       auto_set_scaffold_sequence = setting_["auto_set_scaffold_sequence"].GetBool();
     }
 
+    if (setting_.FindMember("scaffType") != setting_.MemberEnd()) {
+      scaffType = setting_["scaffType"].GetInt();
+    }
+
+    if (setting_.FindMember("scaffCustomFilename") != setting_.MemberEnd()) {
+      scaffCustomFilename = setting_["scaffCustomFilename"].GetString();
+    }
+
     if (setting_.FindMember("ntthal") != setting_.MemberEnd()) {
       ntthal = setting_["ntthal"].GetString();
     }
@@ -433,7 +473,7 @@ void SEConfig::writeDoubleArray(Writer<StringBuffer> & writer, std::string key, 
   writer.EndArray();
 }
 
-void SEConfig::readDoubleArray(Value & val, double * arr, int length) {
+void SEConfig::readDoubleArray(Val & val, double * arr, int length) {
   for (int i = 0; i < length; ++i) {
     arr[i] = val[i].GetDouble();
   }

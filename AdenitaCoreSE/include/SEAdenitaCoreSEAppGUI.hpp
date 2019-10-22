@@ -71,6 +71,7 @@ public slots:
   void onSetScaffold();
   void onCreateBasePair();
   void onGenerateSequence();
+  void onSettings();
   // Editors
   void onBreakEditor();
   void onConnectEditor();
@@ -83,14 +84,6 @@ public slots:
   void onWireframeEditor();
   void onTaggingEditor();
   void onTwisterEditor();
-  // Options
-  void onChangeScaffold(int idx);
-  void onCheckDisplayCrossovers(bool b);
-  void onCheckInterpolateDimensions(bool b);
-  void onCheckClearLogFile(bool b);
-  void onCheckAutoScaffold(bool b);
-  void onCheckShowOverlay(bool b);
-  void onSetPathNtthal();
   // Debug
   void onAddNtThreeP();
   void onCenterPart();
@@ -111,7 +104,6 @@ private slots:
 
 private:
   std::string IsJsonCadnano(QString filename);
-  
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
 };
