@@ -245,8 +245,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
   }
   else {
     std::string msg = "Format is too old and can't be loaded with the current Adenita version";
-    ADNLogger& logger = ADNLogger::GetLogger();
-    logger.Log(msg);
+    ADNLogger::LogError(msg);
   }
 
   std::string name = d["name"].GetString();
@@ -1631,9 +1630,8 @@ void ADNLoader::BuildTopScales(ADNPointer<ADNPart> part)
       ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment(CellType::BasePair);
       SBPosition3 bsPos = posNt + SBQuantity::nanometer(ADNConstants::DH_DIAMETER * 0.5) * ADNAuxiliary::UblasVectorToSBVector(e2Nt);
       ublas::vector<double> e3 = nt->GetE3();
-      ADNLogger& logger = ADNLogger::GetLogger();
       std::string msg = ss->GetName() + ": " + std::to_string(e3[0]) + " " + std::to_string(e3[1]) + " " + std::to_string(e3[2]);
-      logger.LogDebug(msg);
+      ADNLogger::LogDebug(msg);
       ublas::vector<double> e1 = nt->GetE1();
       ADNPointer<ADNBasePair> bp = static_cast<ADNBasePair*>(bs->GetCell()());
       bp->SetLeftNucleotide(nt);

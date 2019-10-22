@@ -27,8 +27,7 @@ SEAdenitaVisualModel::SEAdenitaVisualModel(const SBNodeIndexer& nodeIndexer) {
 }
 
 SEAdenitaVisualModel::~SEAdenitaVisualModel() {
-  ADNLogger& logger = ADNLogger::GetLogger();
-  logger.Log(QString("SEAdenitaVisualModel got destroyed!"));
+  ADNLogger::Log(std::string("SEAdenitaVisualModel got destroyed!"));
 }
 
  bool SEAdenitaVisualModel::isSerializable() const {
@@ -404,8 +403,6 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getAtomIndices()
 
 ADNArray<unsigned int> SEAdenitaVisualModel::getNucleotideIndices()
 {
-  ADNLogger& logger = ADNLogger::GetLogger();
-
   auto singleStrands = nanorobot_->GetSingleStrands();
 
   unsigned int nPositions = nanorobot_->GetNumberOfNucleotides();
@@ -465,9 +462,7 @@ ADNArray<unsigned int> SEAdenitaVisualModel::getBaseSegmentIndices()
   //not clear yet whether the indices are needed
   //for now this function is just used to construct the bsMap_
 
-  ADNLogger& logger = ADNLogger::GetLogger();
   auto parts = nanorobot_->GetParts();
-
 
   unsigned int nDs = bsMap_.size();
   
@@ -815,7 +810,6 @@ void SEAdenitaVisualModel::orderVisibility()
   unsigned int order = 1;
 
   SEConfig& config = SEConfig::GetInstance();
-  ADNLogger& logger = ADNLogger::GetLogger();
   
   auto parts = nanorobot_->GetParts();
 
@@ -1429,9 +1423,7 @@ void SEAdenitaVisualModel::changePropertyColors(int propertyIdx, int colorScheme
     auto p = PIPrimer3::GetInstance();
 
     auto parts = nanorobot_->GetParts();
-    ADNLogger& logger = ADNLogger::GetLogger();
 
-    
     SB_FOR(auto part, parts) {
       auto regions = p.GetBindingRegions(part);
 
@@ -1452,8 +1444,6 @@ void SEAdenitaVisualModel::changePropertyColors(int propertyIdx, int colorScheme
           ADNArray<float> gibbsColor = calcPropertyColor(colorSchemeIdx, config.min_gibbs_free_energy, config.max_gibbs_free_energy, gibbs);
           gibbsColors->SetColor(gibbsColor, nt);
           gibbsColors->SetColor(gibbsColor, baseSegment);
-
-
         }
       }
     }
@@ -1480,7 +1470,6 @@ void SEAdenitaVisualModel::changeHighlight(int highlightIdx)
 	else if (highlightIdx == 5) {
 		highlightType_ = HighlightType::NOBASE;
 	}
-
 
   highlightNucleotides();
   changeScale(scale_);
@@ -1510,7 +1499,6 @@ void SEAdenitaVisualModel::display() {
 void SEAdenitaVisualModel::prepareNucleotides()
 {
   SEConfig& config = SEConfig::GetInstance();
-  ADNLogger& logger = ADNLogger::GetLogger();
 
   auto parts = nanorobot_->GetParts();
 
@@ -1619,7 +1607,6 @@ void SEAdenitaVisualModel::prepareSingleStrands()
 void SEAdenitaVisualModel::prepareDoubleStrands()
 {
   SEConfig& config = SEConfig::GetInstance();
-  ADNLogger& logger = ADNLogger::GetLogger();
 
   auto parts = nanorobot_->GetParts();
 
@@ -1976,7 +1963,6 @@ void SEAdenitaVisualModel::displayTags()
 void SEAdenitaVisualModel::prepareAtoms()
 {
   SEConfig& config = SEConfig::GetInstance();
-  ADNLogger& logger = ADNLogger::GetLogger();
   MSVColors * curColors = colors_[curColorType_];
 
   auto parts = nanorobot_->GetParts();

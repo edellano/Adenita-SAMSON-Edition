@@ -63,6 +63,7 @@ public:
 
 public slots:
 
+  // Main
   void onLoadFile();
   void onSaveFile();
   void onSaveSelection();
@@ -70,6 +71,18 @@ public slots:
   void onSetScaffold();
   void onCreateBasePair();
   void onGenerateSequence();
+  // Editors
+  void onBreakEditor();
+  void onConnectEditor();
+  void onDeleteEditor();
+  void onDNATwistEditor();
+  void onMergePartsEditor();
+  void onCreateStrandEditor();
+  void onNanotubeCreatorEditor();
+  void onLatticeCreatorEditor();
+  void onWireframeEditor();
+  void onTaggingEditor();
+  void onTwisterEditor();
   // Options
   void onChangeScaffold(int idx);
   void onCheckDisplayCrossovers(bool b);

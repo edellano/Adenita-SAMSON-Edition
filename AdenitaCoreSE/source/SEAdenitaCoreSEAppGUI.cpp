@@ -6,8 +6,15 @@
 #include <QFormLayout>
 #include "SEWireframeEditor.hpp"
 #include "SEBreakEditor.hpp"
+#include "SEConnectSSDNAEditor.hpp"
 #include "SEDeleteEditor.hpp"
 #include "SETwistHelixEditor.hpp"
+#include "SEDNATwisterEditor.hpp"
+#include "SETaggingEditor.hpp"
+#include "SELatticeCreatorEditor.hpp"
+#include "SENanotubeCreatorEditor.hpp"
+#include "SEDSDNACreatorEditor.hpp"
+#include "SEMergePartsEditor.hpp"
 #include <QPixmap>
 #include <QTimer>
 
@@ -53,6 +60,51 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   QIcon generateSequences;
   generateSequences.addFile(string(iconsPath + "generateSeqs.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
   ui.btnGenerateSequence->setIcon(generateSequences);
+
+  // Editor icons
+  QIcon breakEditor;
+  breakEditor.addFile(string(iconsPath + "break.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnBreakEditor->setIcon(breakEditor);
+
+  QIcon deleteEditor;
+  deleteEditor.addFile(string(iconsPath + "delete.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnDeleteEditor->setIcon(deleteEditor);
+
+  QIcon connectEditor;
+  connectEditor.addFile(string(iconsPath + "connectDS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnConnectEditor->setIcon(connectEditor);
+
+  QIcon twistDsDNA;
+  twistDsDNA.addFile(string(iconsPath + "twistDS.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnDNATwisterEditor->setIcon(twistDsDNA);
+
+  QIcon mergePartsEditor;
+  mergePartsEditor.addFile(string(iconsPath + "merge.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnMergePartsEditor->setIcon(mergePartsEditor);
+
+  QIcon strandCreator;
+  strandCreator.addFile(string(iconsPath + "SEDSDNACreatorEditorIcon.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnDsDNACreatorEditor->setIcon(strandCreator);
+
+  QIcon nanotubeEditor;
+  nanotubeEditor.addFile(string(iconsPath + "SENanotubeCreatorEditorIcon.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnNanotubeCreator->setIcon(nanotubeEditor);
+
+  QIcon latticeEditor;
+  latticeEditor.addFile(string(iconsPath + "SELatticeCreatorEditorIcon.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnLatticeCreatorEditor->setIcon(latticeEditor);
+
+  QIcon wireframeEditor;
+  wireframeEditor.addFile(string(iconsPath + "SEWireframeEditorIcon.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnWireframeEditor->setIcon(wireframeEditor);
+
+  QIcon tagEditor;
+  tagEditor.addFile(string(iconsPath + "SETaggingEditorIcon.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnTaggingEditor->setIcon(tagEditor);
+
+  QIcon dnaTwister;
+  dnaTwister.addFile(string(iconsPath + "SEDNATwisterEditorIcon.png").c_str(), QSize(), QIcon::Normal, QIcon::Off);
+  ui.btnTwisterEditor->setIcon(dnaTwister);
 
   // disable debug menu if compiling in release mode
   #if NDEBUG
@@ -111,7 +163,6 @@ std::string SEAdenitaCoreSEAppGUI::GetScaffoldFilename()
 void SEAdenitaCoreSEAppGUI::onLoadFile()
 {
   SEConfig& config = SEConfig::GetInstance();
-  ADNLogger& logger = ADNLogger::GetLogger();
     
   if (config.mode == SEConfigMode::HAICHAO) {
     
@@ -733,6 +784,72 @@ void SEAdenitaCoreSEAppGUI::onGenerateSequence()
     SEAdenitaCoreSEApp* t = getApp();
     t->GenerateSequence(gc100, maxContGs, overwrite);
   }
+}
+
+void SEAdenitaCoreSEAppGUI::onBreakEditor()
+{
+  SEBreakEditor* be = static_cast<SEBreakEditor*>(SAMSON::getEditor(SBCContainerUUID("CFACD1E5-FCD1-916F-2CF7-4B60979F1A77"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(be);
+}
+
+void SEAdenitaCoreSEAppGUI::onConnectEditor()
+{
+  SEConnectSSDNAEditor* c = static_cast<SEConnectSSDNAEditor*>(SAMSON::getEditor(SBCContainerUUID("48FDCE78-A55E-FDA2-237E-319202E56080"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(c);
+}
+
+void SEAdenitaCoreSEAppGUI::onDeleteEditor()
+{
+  SEDeleteEditor* c = static_cast<SEDeleteEditor*>(SAMSON::getEditor(SBCContainerUUID("592B8158-15E9-B621-0BCB-D7DA210FF149"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(c);
+}
+
+void SEAdenitaCoreSEAppGUI::onDNATwistEditor()
+{
+  SETwistHelixEditor* c = static_cast<SETwistHelixEditor*>(SAMSON::getEditor(SBCContainerUUID("4B60FECA-2A79-680F-F289-B4908A924409"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(c);
+}
+
+void SEAdenitaCoreSEAppGUI::onMergePartsEditor()
+{
+  SEMergePartsEditor* c = static_cast<SEMergePartsEditor*>(SAMSON::getEditor(SBCContainerUUID("EB812444-8EA8-BD83-988D-AFF5987461D8"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(c);
+}
+
+void SEAdenitaCoreSEAppGUI::onCreateStrandEditor()
+{
+  SEDSDNACreatorEditor* c = static_cast<SEDSDNACreatorEditor*>(SAMSON::getEditor(SBCContainerUUID("86204A08-DFD6-97A8-2BE2-4CFC8B4169A3"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(c);
+}
+
+void SEAdenitaCoreSEAppGUI::onNanotubeCreatorEditor()
+{
+  SENanotubeCreatorEditor* c = static_cast<SENanotubeCreatorEditor*>(SAMSON::getEditor(SBCContainerUUID("4B6A0B18-48B5-233A-28A4-BA3EF3D56AB8"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(c);
+}
+
+void SEAdenitaCoreSEAppGUI::onLatticeCreatorEditor()
+{
+  SELatticeCreatorEditor* c = static_cast<SELatticeCreatorEditor*>(SAMSON::getEditor(SBCContainerUUID("EA67625E-89B5-2EEA-156D-FC836214B0E4"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(c);
+}
+
+void SEAdenitaCoreSEAppGUI::onWireframeEditor()
+{
+  SEWireframeEditor* c = static_cast<SEWireframeEditor*>(SAMSON::getEditor(SBCContainerUUID("F1F29042-3D87-DA61-BC5C-D3348EB2E1FA"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(c);
+}
+
+void SEAdenitaCoreSEAppGUI::onTaggingEditor()
+{
+  SETaggingEditor* c = static_cast<SETaggingEditor*>(SAMSON::getEditor(SBCContainerUUID("473D2F88-5D06-25F5-EB58-053661504C43"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(c);
+}
+
+void SEAdenitaCoreSEAppGUI::onTwisterEditor()
+{
+  SEDNATwisterEditor* c = static_cast<SEDNATwisterEditor*>(SAMSON::getEditor(SBCContainerUUID("677B1667-7856-12E6-5901-E8EAC729501A"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
+  SAMSON::setActiveEditor(c);
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)

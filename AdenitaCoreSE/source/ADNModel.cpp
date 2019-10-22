@@ -797,8 +797,7 @@ void ADNSingleStrand::SetSequence(std::string seq) {
 
   if (isScaffold_ != true) {
     std::string msg = "Forcing sequence on staple " + GetName();
-    ADNLogger& logger = ADNLogger::GetLogger();
-    logger.Log(msg);
+    ADNLogger::Log(msg);
   }
   ADNPointer<ADNNucleotide> nt = fivePrime_;
   int count = 0;

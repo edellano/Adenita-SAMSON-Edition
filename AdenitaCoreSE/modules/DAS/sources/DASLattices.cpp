@@ -40,10 +40,9 @@ LatticeCell DASLattice::GetLatticeCell(unsigned int row, unsigned int column)
 {
   size_t rSize = mat_.size1();
   size_t cSize = mat_.size2();
-  ADNLogger& logger = ADNLogger::GetLogger();
   if (row >= rSize || column >= cSize) {
     std::string msg = "Lattice overflow. Probably worng lattice type was selected.";
-    logger.Log(msg);
+    ADNLogger::LogError(msg);
   }
   return mat_(row, column);
 }

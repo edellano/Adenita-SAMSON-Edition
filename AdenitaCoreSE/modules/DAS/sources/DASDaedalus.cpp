@@ -40,9 +40,8 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron &
   int r_length = RoutingLength(bpLengths_);
   if (r_length > seq.size()) {
     // we should display here a message in SAMSON
-    std::string msg = "Selected sequence too short for targeted figure.";
-    ADNLogger& logger = ADNLogger::GetLogger();
-    logger.Log(msg);
+    std::string msg = "Daedalus module > Selected sequence too short for targeted figure, including random nucleotides";
+    ADNLogger::Log(msg);
     // fulfill with NNN bases (this should be optional)
     int d = r_length - boost::numeric_cast<int>(seq.size());
     std::string ap = "";
@@ -877,8 +876,7 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
       ADNPointer<ADNCell> cell = bs->GetCell();
       if (cell->GetType() != LoopPair) {
         std::string msg = "PolyT region not reached";
-        ADNLogger& logger = ADNLogger::GetLogger();
-        logger.Log(msg);
+        ADNLogger::LogDebug(msg);
       }
       else {
         ADNPointer<ADNLoopPair> loop_cell = static_cast<ADNLoopPair*>(cell());
@@ -965,26 +963,25 @@ void DASDaedalus::LogEdgeMap(ADNPointer<ADNPart> origami) {
   std::vector<ADNPointer<ADNBaseSegment>> bases;
   auto edgeMap = origami->GetBaseSegments();
   // log the edge map as n x 3 matrix
-  std::string msg = " == Recording edge map ==";
-  ADNLogger& logger = ADNLogger::GetLogger();
-  logger.Log(msg);
+  std::string msg = "Daedalus module > Recording edge map";
+  ADNLogger::LogDebug(msg);
   SB_FOR(SBStructuralNode* n, edgeMap) {
     ADNPointer<ADNBaseSegment> bs = static_cast<ADNBaseSegment*>(n);
     if (bsPairs_.find(bs->getNodeIndex()) == bsPairs_.end()) {
       bases.push_back(bs);
     }
   }
-  msg = " == Unpaired bases == ";
-  logger.Log(msg);
+  msg = "Daedalus module > Unpaired bases";
+  ADNLogger::LogDebug(msg);
+  msg = "Daedalus module > ";
   for (auto vit = bases.begin(); vit != bases.end(); ++vit) {
-    msg = std::to_string((*vit)->getNodeIndex());
-    ADNLogger& logger = ADNLogger::GetLogger();
-    logger.Log(msg);
+    msg += std::to_string((*vit)->getNodeIndex()) + ",";
   }
-  msg = " == End of unpaired bases ==";
-  logger.Log(msg);
-  msg = " == End of edge map == ";
-  logger.Log(msg);
+  ADNLogger::LogDebug(msg);
+  msg = "Daedalus module > End of unpaired bases";
+  ADNLogger::LogDebug(msg);
+  msg = "Daedalus module > End of edge map record";
+  ADNLogger::LogDebug(msg);
 }
 
 SBVector3 DASDaedalus::SBCrossProduct(SBVector3 v, SBVector3 w) {
@@ -996,9 +993,6 @@ double DASDaedalus::SBInnerProduct(SBVector3 v, SBVector3 w) {
 }
 
 void DASDaedalus::LogLinkGraph() {
-  std::string msg = " == Recording link graph ==";
-  ADNLogger& logger = ADNLogger::GetLogger();
-  logger.Log(msg);
   for (auto lit = linkGraph_.begin(); lit != linkGraph_.end(); ++lit) {
     DOTNode* source = (*lit)->source_;
     DOTNode* target = (*lit)->target_;
@@ -1011,16 +1005,12 @@ void DASDaedalus::LogLinkGraph() {
       n2 += " (p)";
     }
     std::string nodes = n1 + "," + n2;
-    logger.Log(msg);
     std::vector<double> c1 = source->coordinates_;
     std::string coords1 = std::to_string(c1[0]) + "," + std::to_string(c1[1]) + "," + std::to_string(c1[2]);
     std::vector<double> c2 = target->coordinates_;
     std::string coords2 = std::to_string(c2[0]) + "," + std::to_string(c2[1]) + "," + std::to_string(c2[2]);
     std::string coords = coords1 + "\t" + coords2;
-    logger.Log(msg);
   }
-  msg = " == End of scaffold routing ==";
-  logger.Log(msg);
 }
 
 SBVector3 DASDaedalus::GetPolygonNorm(DASPolygon * face)

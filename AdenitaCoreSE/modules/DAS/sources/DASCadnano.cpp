@@ -9,8 +9,6 @@ void DASCadnano::ParseJSON(std::string filename)
   Document d;
   d.ParseStream(is);
 
-  ADNLogger& logger = ADNLogger::GetLogger();
-
   // check for save version
   double versionValue = 0.0;
   if (Value* version = Pointer("/format").Get(d)) {
@@ -29,8 +27,7 @@ void DASCadnano::ParseJSON(std::string filename)
 
 void DASCadnano::ParseCadnanoFormat3(Document & d)
 {
-  auto& logger = ADNLogger::GetLogger();
-  logger.Log(std::string("Cadnano format 3.0 not yet supported."));
+  ADNLogger::LogError(std::string("Cadnano format 3.0 not yet supported."));
 }
 
 void DASCadnano::ParseCadnanoLegacy(Document& d)
@@ -154,14 +151,13 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
 ADNPointer<ADNPart> DASCadnano::CreateCadnanoModel()
 {
   ADNPointer<ADNPart> part = new ADNPart();
-  auto& logger = ADNLogger::GetLogger();
 
   CreateEdgeMap(part);
-  logger.Log(std::string("Cadnano module > Double strands created"));
+  ADNLogger::LogDebug(std::string("Cadnano module > Double strands created"));
   CreateScaffold(part);
-  logger.Log(std::string("Cadnano module > Scaffold created"));
+  ADNLogger::LogDebug(std::string("Cadnano module > Scaffold created"));
   CreateStaples(part);
-  logger.Log(std::string("Cadnano module > Staples created"));
+  ADNLogger::LogDebug(std::string("Cadnano module > Staples created"));
 
   return part;
 }
@@ -240,8 +236,6 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNPart> nanorobot)
   int startVstrand = json_.scaffoldStartPosition_.first;
   int startVstrandPos = json_.scaffoldStartPosition_.second;
 
-  ADNLogger& logger = ADNLogger::GetLogger();
-
   //create the scaffold strand
   ADNPointer<ADNSingleStrand> scaff = new ADNSingleStrand();
   scaff->SetName("Scaffold");
@@ -255,12 +249,11 @@ void DASCadnano::CreateScaffold(ADNPointer<ADNPart> nanorobot)
 
 void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot)
 {
-  ADNLogger& logger = ADNLogger::GetLogger();
   //find number of staples and their starting points
   std::vector<vec2> stapleStarts = json_.stapleStarts_;  //vstrand id and position on vstrand
   std::string numStaplesString;
   numStaplesString += "Cadnano module > Detected " + std::to_string(stapleStarts.size()) + " staples";
-  logger.Log(numStaplesString);
+  ADNLogger::LogDebug(numStaplesString);
 
   auto& vstrands = json_.vstrands_;
   int sid = 1; //because scaffold is chain 0
@@ -285,7 +278,6 @@ void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot)
 
 void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNPart> nanorobot, bool scaf)
 {
-  ADNLogger& logger = ADNLogger::GetLogger();
   //trace scaffold through vstrands
   auto& vstrands = json_.vstrands_;
 
@@ -339,7 +331,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
           }
           else {
             std::string msg = "Expected BasePair but found another cell type";
-            logger.Log(msg);
+            ADNLogger::LogDebug(msg);
           }
         }
         else {
@@ -370,7 +362,7 @@ void DASCadnano::TraceSingleStrand(int startVStrand, int startVStrandPos, ADNPoi
           }
           else {
             std::string msg = "Expected LoopPair but found another cell type";
-            logger.Log(msg);
+            ADNLogger::LogDebug(msg);
           }
         }
 
@@ -491,9 +483,8 @@ SBPointer<SBMStructuralModelConformation> DASCadnano::Get1DConformation()
 
 ADNPointer<ADNPart> DASCadnano::CreateCadnanoPart(std::string file)
 {
-  auto& logger = ADNLogger::GetLogger();
   ParseJSON(file);
-  logger.Log(std::string("Cadnano design parsed"));
+  ADNLogger::LogDebug(std::string("Cadnano design parsed"));
   return CreateCadnanoModel();
 }
 

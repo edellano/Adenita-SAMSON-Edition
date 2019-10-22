@@ -183,11 +183,10 @@ ADNPointer<ADNPart> DASCreator::CreateNanotube(SBQuantity::length radius, SBPosi
     //nanorobot->SetE3(ADNVectorMath::row(subspace, 2));
   }
 
-  ADNLogger& logger = ADNLogger::GetLogger();
-  logger.LogDebug(std::string("-> Creating DNA nanotube"));
-  logger.LogDebug(std::string("    * num of ds: ") + std::to_string(num));
-  logger.LogDebug(std::string("    * bps per ds: ") + std::to_string(length));
-  logger.LogDebug(std::string("    * total bps: ") + std::to_string(length*num));
+  ADNLogger::LogDebug(std::string("-> Creating DNA nanotube"));
+  ADNLogger::LogDebug(std::string("    * num of ds: ") + std::to_string(num));
+  ADNLogger::LogDebug(std::string("    * bps per ds: ") + std::to_string(length));
+  ADNLogger::LogDebug(std::string("    * total bps: ") + std::to_string(length*num));
  
   return nanorobot;
 }
