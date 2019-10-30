@@ -221,19 +221,20 @@ void SEDSDNACreatorEditor::displayStrand()
 {
   ADNDisplayHelper::displayPart(tempPart_, basePairRadius_, opaqueness_);
 
-  string text = "Opaqueness: ";
-  stringstream s1;
-  s1 << fixed << setprecision(2) << opaqueness_;
-  text += s1.str();
+  //string text = "Opaqueness: ";
+  //stringstream s1;
+  //s1 << fixed << setprecision(2) << opaqueness_;
+  //text += s1.str();
 
-  text += ", Radius: ";
-  stringstream s2;
-  s2 << fixed << setprecision(2) << basePairRadius_;
-  text += s2.str();
+  //text += ", Radius: ";
+  //stringstream s2;
+  //s2 << fixed << setprecision(2) << basePairRadius_;
+  //text += s2.str();
 
   SBPosition3 offset = SBPosition3(SBQuantity::nanometer(0),
     SBQuantity::nanometer(-1),
     SBQuantity::nanometer(0));
+  std::string text = std::to_string(tempPart_->GetNumberOfBaseSegments()) + "bp";
   ADNDisplayHelper::displayText(SAMSON::getWorldPositionFromViewportPosition(SAMSON::getMousePositionInViewport()) + offset, text);
 
 }

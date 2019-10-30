@@ -1,7 +1,3 @@
-/** \file
- *  \author   Elisa de Llano <elisa.dellano.fl@ait.ac.at>
- */
-
 #include "DASDaedalus.hpp"
 
 DASDaedalus::~DASDaedalus() {
@@ -30,12 +26,15 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron &
 
   ADNPointer<ADNPart> daedalus_part = new ADNPart();
   auto fig = p;
+  if (center) fig.Center(SBPosition3());
 
   // Set edge lengths in base pairs and generate the scaffold
   SetEdgeBps(min_edge_length_, daedalus_part, fig);
-  SetVerticesPositions(daedalus_part, fig, center);
+  
+  //SetVerticesPositions(daedalus_part, fig, center);
   CreateLinkGraphFromMesh(daedalus_part, fig);
-  InitEdgeMap(daedalus_part, fig);
+  InitEdgeMap2(daedalus_part, fig);
+  //InitEdgeMap(daedalus_part, fig);
 
   int r_length = RoutingLength(bpLengths_);
   if (r_length > seq.size()) {
@@ -582,6 +581,185 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
         bs->SetE1(ADNAuxiliary::SBVectorToUblasVector(norm));
         bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(dir));
         bs->SetE2(ADNAuxiliary::SBVectorToUblasVector(u));
+        bs->SetNumber(i);
+
+        if (i == l - 1) {
+          // this region is polyT
+          ADNPointer<ADNLoopPair> cell = new ADNLoopPair();
+          bs->SetCell(cell());
+        }
+
+        // match first segment with corresponding halfedge
+        if (i == 0) {
+          firstBasesHe_.insert(std::make_pair(he, bs));
+        }
+
+        origami->RegisterBaseSegmentEnd(ds, bs);
+
+        coords += SBQuantity::angstrom(BP_RISE)*dir;
+      }
+      he = he->next_;
+    } while (he != begin);
+  }
+  // Pair base segments and create double helices
+
+  // don't register ds twice!
+  std::map<DASHalfEdge*, ADNPointer<ADNDoubleStrand>> registeredDs;
+  for (auto it = firstBasesHe_.begin(); it != firstBasesHe_.end(); ++it) {
+    DASHalfEdge* fhe = it->first;
+    DASHalfEdge* she = fhe->pair_;
+    ADNPointer<ADNBaseSegment> begin = it->second;
+    ADNPointer<ADNBaseSegment> bs = begin;
+    DASEdge* e = fhe->edge_;
+    int length = bpLengths_.at(e) + 1;  // to include polyTs
+    ADNPointer<ADNBaseSegment> bs_pair = AdvanceBaseSegment(firstBasesHe_.at(she), length - 2); // since the last one is a PolyT
+
+    for (int i = 0; i < length - 1; ++i) {
+      auto bsId = origami->GetBaseSegmentIndex(bs);
+      auto bsPairId = origami->GetBaseSegmentIndex(bs_pair);
+      bsPairs_.insert(std::make_pair(bsId, bsPairId));
+      bsPairs_.insert(std::make_pair(bsPairId, bsId));
+      bs = bs->GetNext();
+      bs_pair = bs_pair->GetPrev();
+    }
+  }
+}
+
+void DASDaedalus::InitEdgeMap2(ADNPointer<ADNPart> origami, DASPolyhedron & fig)
+{
+  double pi = atan(1) * 4;
+  // get the span distance for the beginning of half-edges w.r.t. vertices
+  std::map<DASVertex*, double> vertex_span;
+  Vertices vertices = fig.GetVertices();
+  for (auto &pair : vertices) {
+    DASVertex* vertex = pair.second;
+    DASHalfEdge* start = vertex->halfEdge_;
+    auto he = start;
+    auto he_next = start->pair_->next_;
+    double theta_max = -1;
+    double theta_tot = 0.0;
+    do {
+      SBPosition3 v = he->source_->position_ - he->pair_->source_->position_;
+      SBPosition3 w = he_next->source_->position_ - he_next->pair_->source_->position_;
+      double theta = acos( ADNVectorMath::SBInnerProduct(v.normalizedVersion(), w.normalizedVersion()) );
+      if (theta > theta_max) theta_max = theta;
+      theta_tot += theta;
+      he = he_next;
+      he_next = he->pair_->next_;
+    } while (he != start);
+
+    double r = ADNConstants::DH_DIAMETER / tan(theta_max * pi / theta_tot);
+    double s = (2 * pi / theta_tot) * r;
+    if (theta_tot > 2 * pi) s = r;
+    vertex_span[vertex] = s;
+  }
+
+  //// scale entire model
+  //std::vector<DASVertex*> done_vertex;
+  //Vertices originalVertices = fig.GetOriginalVertices();
+  //DASVertex* orig_v = nullptr;
+  //DASVertex* v = vertices.begin()->second;
+  //int count = 0;
+  //while (done_vertex.size() < originalVertices.size()) {
+  //  orig_v = originalVertices.at(v->id_);
+  //  DASHalfEdge* begin = v->halfEdge_;
+  //  DASHalfEdge* he = begin;
+  //  do {
+  //    SBPosition3 c_v = v->GetSBPosition();
+  //    SBPosition3 orig_c_v = orig_v->GetSBPosition();
+  //    DASVertex* next_v = he->pair_->source_;
+  //    DASVertex* orig_next_v = originalVertices.at(next_v->id_);
+  //    DASEdge* edge = DASPolyhedron::GetEdgeByVertices(v, next_v);
+  //    int bp_length = bpLengths_.at(edge);
+  //    double length = bp_length * BP_RISE + vertex_span[v] * 10; // angstrom
+
+  //    // modify next vertex
+  //    if (std::find(done_vertex.begin(), done_vertex.end(), orig_next_v) == done_vertex.end()) {
+  //      SBPosition3 orig_c_next = orig_next_v->GetSBPosition();
+  //      SBVector3 dir = (orig_c_next - orig_c_v).normalizedVersion();
+  //      SBQuantity::angstrom l(length);
+
+  //      SBPosition3 new_c_next = c_v + l * dir;
+
+  //      next_v->SetCoordinates(new_c_next);
+  //      done_vertex.push_back(orig_next_v);
+  //    }
+
+  //    he = he->pair_->next_;
+  //  } while (he != begin);
+  //  int nId = done_vertex.at(count)->id_;
+  //  v = vertices.at(nId);
+  //  ++count;
+  //}
+
+  //// correct vertices
+  //std::map<DASVertex*, SBPosition3> new_positions;
+  //for (auto &edge : fig.GetEdges()) {
+  //  auto v1 = edge->halfEdge_->source_;
+  //  auto v2 = edge->halfEdge_->pair_->source_;
+  //  SBVector3 vDir = (v2->position_ - v1->position_).normalizedVersion();
+  //  auto edgeCenter = (v1->position_ + v2->position_) * 0.5;
+  //  auto edgeLength = bpLengths_[edge];
+  //  auto xtr1 = vertex_span[v1];
+  //  auto xtr2 = vertex_span[v2];
+
+  //  double length = edgeLength * ADNConstants::BP_RISE;
+  //  auto v1New = v1->position_ + SBQuantity::nanometer(xtr1) * vDir;
+  //  auto v2New = v2->position_ - SBQuantity::nanometer(xtr2) * vDir;
+  //  new_positions[v1] = v1New;
+  //  new_positions[v2] = v2New;
+  //}
+
+  // create base segments
+  unsigned int b_id = 0;
+  int j_id = 0;
+  Faces faces = fig.GetFaces();
+
+  SEConfig& config = SEConfig::GetInstance();
+  auto dh_dist = SBQuantity::nanometer(ADNConstants::DH_DIAMETER * 0.5);
+
+  for (auto fit = faces.begin(); fit != faces.end(); ++fit) {
+    DASHalfEdge* begin = (*fit)->halfEdge_;
+    DASHalfEdge* he = begin;
+    SBVector3 norm = GetPolygonNorm(*fit);
+    do {
+      // iterate over face half edges
+      DASVertex* s = he->source_;
+      DASVertex* t = he->pair_->source_;
+      DASPolygon* fAdj = he->pair_->left_;
+      SBVector3 adjNorm = GetPolygonNorm(fAdj);
+      SBPosition3 sPos = s->GetSBPosition();
+      SBPosition3 tPos = t->GetSBPosition();
+      auto origSize = (tPos - sPos).norm();
+      SBVector3 dir = (tPos - sPos).normalizedVersion();
+      SBVector3 e1 = (adjNorm + norm).normalizedVersion();
+      SBVector3 e2 = SBCrossProduct(dir, e1);
+
+      auto xtr1 = SBQuantity::nanometer(vertex_span[s]);
+      auto xtr2 = SBQuantity::nanometer(vertex_span[t]);
+      auto length = bpLengths_[he->edge_] * SBQuantity::nanometer(ADNConstants::BP_RISE);
+      // scale the edge to wished length + extra space
+      SBPosition3 coords = sPos * (length + xtr1 + xtr2) / (tPos - sPos).norm();
+      // move away from original positions
+      coords += xtr1 * dir;
+      // shift from pair
+      coords -= dh_dist * e2;
+      //auto coords = sPos - dh_dist * e2;
+
+      int l = bpLengths_.at(he->edge_) + 1; // +1 since we have a polyT region at the end
+
+      ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
+      ds->SetInitialTwistAngle(7 * ADNConstants::BP_ROT);  // necessary to fix crossovers
+      origami->RegisterDoubleStrand(ds);
+
+      for (int i = 0; i < l; ++i) {
+        // every step is a ADNBaseSegment
+        ADNPointer<ADNBaseSegment> bs = new ADNBaseSegment(CellType::BasePair);
+
+        bs->SetPosition(coords);
+        bs->SetE1(ADNAuxiliary::SBVectorToUblasVector(norm));
+        bs->SetE3(ADNAuxiliary::SBVectorToUblasVector(dir));
+        bs->SetE2(ADNAuxiliary::SBVectorToUblasVector(e2));
         bs->SetNumber(i);
 
         if (i == l - 1) {
