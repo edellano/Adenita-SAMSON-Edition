@@ -141,6 +141,8 @@ public:
  *  \param origami ANTNanorobot object
  */
   void InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig);
+  //! Generate geometric model
+  void InitEdgeMap2(ADNPointer<ADNPart> origami, DASPolyhedron &fig);
 
   void SetEdgeBps(int min_edge_bp, ADNPointer<ADNPart> part, DASPolyhedron &fig);
 protected:

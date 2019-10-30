@@ -183,6 +183,11 @@
          <string>No Base</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Unpaired Nucleotides</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="10" column="0">

@@ -231,7 +231,8 @@ private:
     GC = 2,
     TAGGED = 3,
 		LENGTH = 4,
-		NOBASE = 5
+		NOBASE = 5,
+    UNPAIRED = 6
   };
 
   HighlightType highlightType_ = NONE;
