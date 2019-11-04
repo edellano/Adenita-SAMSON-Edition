@@ -923,6 +923,16 @@ void DASDaedalus::RouteScaffold(ADNPointer<ADNPart> part, ADNPointer<ADNSingleSt
     }
     //left *= false;  // we don't need to change to right because double strands have opposite directions
   }
+
+  // advance beginning of scaffold
+  DASEdge* edge = (*linkGraph_.begin())->halfEdge_->edge_;
+  float m = bpLengths_[edge] * 0.5;
+  int idx1 = edge->halfEdge_->source_->id_;
+  int idx2 = edge->halfEdge_->pair_->source_->id_;
+  int pos = ceil(m);
+  if (idx1 < idx2) pos = floor(m);
+  ADNPointer<ADNNucleotide> res = AdvanceNucleotide(scaff->GetFivePrime(), pos);
+  ADNBasicOperations::SetStart(res);
 }
 
 ADNPointer<ADNBaseSegment> DASDaedalus::AdvanceBaseSegment(ADNPointer<ADNBaseSegment> bs, int pos) {
@@ -937,6 +947,15 @@ ADNPointer<ADNBaseSegment> DASDaedalus::MoveBackBaseSegment(ADNPointer<ADNBaseSe
   ADNPointer<ADNBaseSegment> res = bs->GetPrev();
   for (int i = 0; i < pos - 1; ++i) {
     res = res->GetPrev();
+  }
+  return res;
+}
+
+ADNPointer<ADNNucleotide> DASDaedalus::AdvanceNucleotide(ADNPointer<ADNNucleotide> nt, int pos)
+{
+  ADNPointer<ADNNucleotide> res = nt;
+  for (int i = 0; i < pos - 1; ++i) {
+    res = res->GetNext();
   }
   return res;
 }
@@ -1078,6 +1097,8 @@ ADNPointer<ADNSingleStrand> DASDaedalus::CreateVertexChain(ADNPointer<ADNPart> p
     ++count;
   }
 
+  ADNPointer<ADNNucleotide> start = AdvanceNucleotide(chain->GetFivePrime(), 7);
+  ADNBasicOperations::SetStart(start);  // we set this as start to match original Daedalus algorithm
   return chain;
 }
 

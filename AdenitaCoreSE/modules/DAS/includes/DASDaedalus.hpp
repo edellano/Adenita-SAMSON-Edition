@@ -252,6 +252,7 @@ private:
   void RouteScaffold(ADNPointer<ADNPart> part, ADNPointer<ADNSingleStrand> scaff, std::string seq, int routing_length);
   ADNPointer<ADNBaseSegment> AdvanceBaseSegment(ADNPointer<ADNBaseSegment> bs, int pos);
   ADNPointer<ADNBaseSegment> MoveBackBaseSegment(ADNPointer<ADNBaseSegment> bs, int pos);
+  ADNPointer<ADNNucleotide> AdvanceNucleotide(ADNPointer<ADNNucleotide> nt, int pos);
   ADNPointer<ADNSingleStrand> CreateEdgeChain(ADNPointer<ADNPart> origami, ADNPointer<ADNBaseSegment> bs, int c_id, int pos_span, int neg_span);
   ADNPointer<ADNSingleStrand> CreateVertexChain(ADNPointer<ADNPart> part, int c_id, std::vector<DASHalfEdge*>ps, EdgeBps &lengths);
   void LogEdgeMap(ADNPointer<ADNPart> origami);
