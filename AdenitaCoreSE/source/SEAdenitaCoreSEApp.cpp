@@ -27,12 +27,14 @@ SEAdenitaCoreSEAppGUI* SEAdenitaCoreSEApp::getGUI() const { return static_cast<S
 
 void SEAdenitaCoreSEApp::LoadPart(QString filename)
 {
+  SAMSON::setStatusMessage(QString("Loading component ") + filename);
   ADNPointer<ADNPart> part = ADNLoader::LoadPartFromJson(filename.toStdString());
   AddPartToActiveLayer(part);
 }
 
 void SEAdenitaCoreSEApp::LoadParts(QString filename)
 {
+  SAMSON::setStatusMessage(QString("Loading components from ") + filename);
   std::vector<ADNPointer<ADNPart>> parts = ADNLoader::LoadPartsFromJson(filename.toStdString());
   for (ADNPointer<ADNPart> p : parts) {
     AddPartToActiveLayer(p);
@@ -42,15 +44,18 @@ void SEAdenitaCoreSEApp::LoadParts(QString filename)
 void SEAdenitaCoreSEApp::SaveFile(QString filename, ADNPointer<ADNPart> part)
 {
   if (part == nullptr) {
+    SAMSON::setStatusMessage(QString("Saving all designs to ") + filename);
     ADNLoader::SaveNanorobotToJson(GetNanorobot(), filename.toStdString());
   }
   else {
+    SAMSON::setStatusMessage(QString("Saving ") + QString::fromStdString(part->GetName()) + QString(" to ") + filename);
     ADNLoader::SavePartToJson(part, filename.toStdString());
   }
 }
 
 void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
 {
+  SAMSON::setStatusMessage(QString("Loading ") + filename);
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
   _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
   // Apply algorithm
@@ -68,6 +73,7 @@ void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
 
 void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
 {
+  SAMSON::setStatusMessage(QString("Loading ") + filename);
   DASCadnano cad = DASCadnano();
   ADNPointer<ADNPart> part = new ADNPart();
   std::string seq = "";
