@@ -72,6 +72,8 @@ public slots:
   void onCreateBasePair();
   void onGenerateSequence();
   void onSettings();
+  void onSetStart();
+  void onCalculateBindingProperties();
   // Editors
   void onBreakEditor();
   void onConnectEditor();
@@ -89,8 +91,6 @@ public slots:
   void onCenterPart();
   void onCatenanes();
   void onKinetoplast();
-  void onCalculateBindingProperties();
-  void onSetStart();
   void onTestNeighbors();
   void onOxDNAImport();
   void onFromDatagraph();
@@ -104,7 +104,10 @@ private slots:
 
 private:
   std::string IsJsonCadnano(QString filename);
+  void HighlightEditor(QToolButton* b);
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
+
+  QToolButton* highlightedEditor_ = nullptr;
 };
 

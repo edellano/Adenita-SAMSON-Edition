@@ -2,6 +2,7 @@
 
 #include "ui_SEAdenitaCoreSettings.h"
 #include <QDialog>
+#include "SAMSON.hpp"
 
 
 class SEAdenitaCoreSettingsGUI : public QDialog {

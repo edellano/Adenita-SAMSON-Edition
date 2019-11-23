@@ -64,6 +64,9 @@
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="1">
@@ -105,6 +108,9 @@
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="5">
@@ -120,6 +126,9 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -145,6 +154,9 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -177,6 +189,9 @@
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="4">
@@ -201,6 +216,9 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -227,6 +245,9 @@
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="6">
@@ -243,6 +264,9 @@
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="3">
@@ -258,6 +282,9 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -307,6 +334,9 @@
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="6">
@@ -325,6 +355,9 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -345,6 +378,9 @@
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="2" column="1">
@@ -363,6 +399,9 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -383,6 +422,9 @@
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="2">
@@ -401,6 +443,9 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -448,6 +493,9 @@
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="1">
@@ -475,6 +523,9 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -504,6 +555,9 @@
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="2" column="0">
@@ -522,6 +576,9 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -544,6 +601,9 @@
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonTextUnderIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -894,7 +954,7 @@
   </connection>
   <connection>
    <sender>btnSetStart</sender>
-   <signal>clicked()</signal>
+   <signal>released()</signal>
    <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
    <slot>onSetStart()</slot>
    <hints>
@@ -1052,6 +1112,150 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnDeleteEditor</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onDeleteEditor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>539</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnTwisterEditor</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onTwisterEditor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnDNATwisterEditor</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onDNATwistEditor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>746</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnMergePartsEditor</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onMergePartsEditor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>953</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnDsDNACreatorEditor</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onCreateStrandEditor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnNanotubeCreator</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onNanotubeCreatorEditor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnLatticeCreatorEditor</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onLatticeCreatorEditor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>539</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnWireframeEditor</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onWireframeEditor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>746</x>
+     <y>121</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnTaggingEditor</sender>
+   <signal>released()</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onTaggingEditor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -1079,5 +1283,14 @@
   <slot>onConnectEditor()</slot>
   <slot>onChangeEditor(string)</slot>
   <slot>onSettings()</slot>
+  <slot>onDeleteEditor()</slot>
+  <slot>onDNATwistEditor()</slot>
+  <slot>onMergePartsEditor()</slot>
+  <slot>onCreateStrandEditor()</slot>
+  <slot>onNanotubeCreatorEditor()</slot>
+  <slot>onLatticeCreatorEditor()</slot>
+  <slot>onWireframeEditor()</slot>
+  <slot>onTaggingEditor()</slot>
+  <slot>onTwisterEditor()</slot>
  </slots>
 </ui>

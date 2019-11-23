@@ -743,7 +743,6 @@ void SEAdenitaCoreSEAppGUI::onGenerateSequence()
 void SEAdenitaCoreSEAppGUI::onSettings()
 {
   SEAdenitaCoreSettingsGUI diag(this);
-  //SAMSON::addDialog(&diag);
   diag.exec();
 }
 
@@ -751,66 +750,77 @@ void SEAdenitaCoreSEAppGUI::onBreakEditor()
 {
   SEBreakEditor* be = static_cast<SEBreakEditor*>(SAMSON::getEditor(SBCContainerUUID("CFACD1E5-FCD1-916F-2CF7-4B60979F1A77"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(be);
+  HighlightEditor(ui.btnBreakEditor);
 }
 
 void SEAdenitaCoreSEAppGUI::onConnectEditor()
 {
   SEConnectSSDNAEditor* c = static_cast<SEConnectSSDNAEditor*>(SAMSON::getEditor(SBCContainerUUID("48FDCE78-A55E-FDA2-237E-319202E56080"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(c);
+  HighlightEditor(ui.btnConnectEditor);
 }
 
 void SEAdenitaCoreSEAppGUI::onDeleteEditor()
 {
   SEDeleteEditor* c = static_cast<SEDeleteEditor*>(SAMSON::getEditor(SBCContainerUUID("592B8158-15E9-B621-0BCB-D7DA210FF149"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(c);
+  HighlightEditor(ui.btnDeleteEditor);
 }
 
 void SEAdenitaCoreSEAppGUI::onDNATwistEditor()
 {
   SETwistHelixEditor* c = static_cast<SETwistHelixEditor*>(SAMSON::getEditor(SBCContainerUUID("4B60FECA-2A79-680F-F289-B4908A924409"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(c);
+  HighlightEditor(ui.btnDNATwisterEditor);
 }
 
 void SEAdenitaCoreSEAppGUI::onMergePartsEditor()
 {
   SEMergePartsEditor* c = static_cast<SEMergePartsEditor*>(SAMSON::getEditor(SBCContainerUUID("EB812444-8EA8-BD83-988D-AFF5987461D8"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(c);
+  HighlightEditor(ui.btnMergePartsEditor);
 }
 
 void SEAdenitaCoreSEAppGUI::onCreateStrandEditor()
 {
   SEDSDNACreatorEditor* c = static_cast<SEDSDNACreatorEditor*>(SAMSON::getEditor(SBCContainerUUID("86204A08-DFD6-97A8-2BE2-4CFC8B4169A3"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(c);
+  HighlightEditor(ui.btnDsDNACreatorEditor);
 }
 
 void SEAdenitaCoreSEAppGUI::onNanotubeCreatorEditor()
 {
   SENanotubeCreatorEditor* c = static_cast<SENanotubeCreatorEditor*>(SAMSON::getEditor(SBCContainerUUID("4B6A0B18-48B5-233A-28A4-BA3EF3D56AB8"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(c);
+  HighlightEditor(ui.btnNanotubeCreator);
 }
 
 void SEAdenitaCoreSEAppGUI::onLatticeCreatorEditor()
 {
   SELatticeCreatorEditor* c = static_cast<SELatticeCreatorEditor*>(SAMSON::getEditor(SBCContainerUUID("EA67625E-89B5-2EEA-156D-FC836214B0E4"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(c);
+  HighlightEditor(ui.btnLatticeCreatorEditor);
 }
 
 void SEAdenitaCoreSEAppGUI::onWireframeEditor()
 {
   SEWireframeEditor* c = static_cast<SEWireframeEditor*>(SAMSON::getEditor(SBCContainerUUID("F1F29042-3D87-DA61-BC5C-D3348EB2E1FA"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(c);
+  HighlightEditor(ui.btnWireframeEditor);
 }
 
 void SEAdenitaCoreSEAppGUI::onTaggingEditor()
 {
   SETaggingEditor* c = static_cast<SETaggingEditor*>(SAMSON::getEditor(SBCContainerUUID("473D2F88-5D06-25F5-EB58-053661504C43"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(c);
+  HighlightEditor(ui.btnTaggingEditor);
 }
 
 void SEAdenitaCoreSEAppGUI::onTwisterEditor()
 {
   SEDNATwisterEditor* c = static_cast<SEDNATwisterEditor*>(SAMSON::getEditor(SBCContainerUUID("677B1667-7856-12E6-5901-E8EAC729501A"), SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
   SAMSON::setActiveEditor(c);
+  HighlightEditor(ui.btnTwisterEditor);
 }
 
 std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
@@ -832,6 +842,14 @@ std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
   }
 
   return format;
+}
+
+void SEAdenitaCoreSEAppGUI::HighlightEditor(QToolButton* b)
+{
+  // remove current
+  if (highlightedEditor_ != nullptr) highlightedEditor_->setStyleSheet(QString("border: none"));
+  b->setStyleSheet(QString("border: 2px solid #FFFFFF"));
+  highlightedEditor_ = b;
 }
 
 void SEAdenitaCoreSEAppGUI::CheckForLoadedParts()
