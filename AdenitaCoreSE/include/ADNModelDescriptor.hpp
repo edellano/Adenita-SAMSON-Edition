@@ -77,10 +77,6 @@ SB_CLASS_BEGIN(ADNAtom);
     SB_ATTRIBUTE_READ_WRITE_CLEAR(int const&, ADNAtom, CustomType, "Custom type", "Typization");
     SB_ATTRIBUTE_READ_WRITE_CLEAR_ARRAY(char* const&, ADNAtom, SYBYLType, "SYBYL type", "Typization");
 
-
-
-
-
   SB_INTERFACE_END;
 
 SB_CLASS_END(ADNAtom);

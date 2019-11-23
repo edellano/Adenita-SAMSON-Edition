@@ -105,7 +105,7 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(Value & val, double versionValue
       const Value& c = itr2->value["cell"];
       CellType typ = CellType(c["type"].GetInt());
       if (typ == BasePair) {
-        ADNPointer<ADNBasePair> bp_cell = ADNPointer<ADNBasePair>(new ADNBasePair());
+        ADNPointer<ADNBasePair> bp_cell = new ADNBasePair();
         const Value& left = c["left"];
         const Value& right = c["right"];
         int nt_id_left = left.GetInt();
@@ -123,8 +123,12 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJson(Value & val, double versionValue
         bp_cell->AddPair(ntLeft, ntRight);
         bs->SetCell(bp_cell());
       }
+      else if (typ == SkipPair) {
+        ADNPointer<ADNSkipPair> sk_cell = new ADNSkipPair();
+        bs->SetCell(sk_cell());
+      }
       else if (typ == LoopPair) {
-        ADNPointer<ADNLoopPair> lp_cell = ADNPointer<ADNLoopPair>(new ADNLoopPair());
+        ADNPointer<ADNLoopPair> lp_cell = new ADNLoopPair();
 
         const Value& left = c["leftLoop"];
         const Value& right = c["rightLoop"];
