@@ -126,7 +126,7 @@ public:
   *  \param ANTNanorobot object with a mesh as ANTPolyhedron.
   *  \output Origami object.
   */
-  ADNPointer<ADNPart> ApplyAlgorithm(std::string seq, DASPolyhedron & polyhedron, bool center = true);
+  ADNPointer<ADNPart> ApplyAlgorithm(std::string seq, DASPolyhedron & polyhedron, bool center = true, bool editor = false);
   /** Setters
    */
   void SetMinEdgeLength(int l);

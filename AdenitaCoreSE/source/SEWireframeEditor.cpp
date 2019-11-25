@@ -261,17 +261,7 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock)
     remquo(numNucleotides, 10.5, &quot);
     min_edge_size = int(std::floor(float(quot * 10.5)));
   }
-  /*int min_edge_size = 31;
-  if (numNucleotides > 31) {
-    for (int i = 1; i < numNucleotides + 10.5; i++) {
-      int p = (i - 1) * 10.5;
-      int n = i * 10.5;
 
-      if (numNucleotides > p && numNucleotides < n) {
-        min_edge_size = p;
-      }
-    }
-  }*/
   DASPolyhedron polyhedron = DASPolyhedron(filename);
   polyhedron.Center(positions_.FirstPosition);
 
@@ -282,7 +272,7 @@ ADNPointer<ADNPart> SEWireframeEditor::generateWireframe(bool mock)
     DASDaedalus *alg = new DASDaedalus();
     alg->SetMinEdgeLength(min_edge_size);
     std::string seq = "";
-    part = alg->ApplyAlgorithm(seq, polyhedron, false);
+    part = alg->ApplyAlgorithm(seq, polyhedron, false, true);
   }
 
   return part;

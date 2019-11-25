@@ -22,7 +22,7 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, std::string fil
   return daedalus_part;
 }
 
-ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron & p, bool center) {
+ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron & p, bool center, bool editor) {
 
   ADNPointer<ADNPart> daedalus_part = new ADNPart();
   auto fig = p;
@@ -33,11 +33,12 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron &
   
   CreateLinkGraphFromMesh(daedalus_part, fig);
   SEConfig& config = SEConfig::GetInstance();
-  SetVerticesPositions(daedalus_part, fig, center);
   if (!config.custom_mesh_model) {
+    if (editor) SetVerticesPositions(daedalus_part, fig, center);
     InitEdgeMap2(daedalus_part, fig);
   }
   else {
+    SetVerticesPositions(daedalus_part, fig, center);
     InitEdgeMap(daedalus_part, fig);
   }
 
