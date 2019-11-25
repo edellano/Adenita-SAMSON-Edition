@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>389</width>
-    <height>329</height>
+    <height>330</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,60 +28,6 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetNoConstraint</enum>
      </property>
-     <item row="7" column="0" colspan="3">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLineEdit" name="lineNtthal">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Scaffold</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0" colspan="3">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Path to ntthal:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="3">
-      <widget class="QLineEdit" name="lineCustomScaffold">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1" colspan="2">
-      <widget class="QPushButton" name="btnSetPathNtthal">
-       <property name="text">
-        <string>Browse</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1" colspan="2">
       <widget class="QComboBox" name="cmbScaffold">
        <item>
@@ -101,13 +47,20 @@
        </item>
       </widget>
      </item>
-     <item row="2" column="0" colspan="3">
-      <widget class="QCheckBox" name="chkAutoScaffold">
+     <item row="10" column="1" colspan="2">
+      <widget class="QPushButton" name="btnSetPathNtthal">
        <property name="text">
-        <string>Automatically set the scaffold sequence</string>
+        <string>Browse</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0" colspan="3">
+      <widget class="QCheckBox" name="chkInterpolateDim">
+       <property name="text">
+        <string>Interpolate Dimensions</string>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -118,14 +71,17 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="3">
-      <widget class="QCheckBox" name="chkXODisplay">
+     <item row="2" column="0" colspan="3">
+      <widget class="QCheckBox" name="chkAutoScaffold">
        <property name="text">
-        <string>Display possible crossovers</string>
+        <string>Automatically set the scaffold sequence</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
-     <item row="10" column="0" colspan="3">
+     <item row="11" column="0" colspan="3">
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -138,20 +94,78 @@
        </property>
       </spacer>
      </item>
-     <item row="6" column="0" colspan="3">
-      <widget class="QCheckBox" name="chkInterpolateDim">
-       <property name="text">
-        <string>Interpolate Dimensions</string>
+     <item row="10" column="0">
+      <widget class="QLineEdit" name="lineNtthal">
+       <property name="enabled">
+        <bool>false</bool>
        </property>
-       <property name="checked">
-        <bool>true</bool>
+       <property name="readOnly">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
-     <item row="11" column="0" colspan="3">
+     <item row="12" column="0" colspan="3">
       <widget class="QDialogButtonBox" name="dialogButtons">
        <property name="standardButtons">
         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" colspan="3">
+      <widget class="QCheckBox" name="chkXODisplay">
+       <property name="text">
+        <string>Display possible crossovers</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Scaffold</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0" colspan="3">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Path to ntthal:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0" colspan="3">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="0" colspan="3">
+      <widget class="QLineEdit" name="lineCustomScaffold">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="readOnly">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QRadioButton" name="rdbDaedalushMesh">
+       <property name="text">
+        <string>Daedalus mesh model</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1" colspan="2">
+      <widget class="QRadioButton" name="rdbIterativeMesh">
+       <property name="text">
+        <string>Iterative Mesh Model</string>
        </property>
       </widget>
      </item>

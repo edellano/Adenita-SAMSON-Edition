@@ -119,7 +119,9 @@ public:
   std::string ntthal = "";
   // group general
   SEConfigMode mode = DEBUG_NO_LOG; //which mode of the software active. debug_log, debug_no_log, haichao, elisa
-  
+  // algorithm to create a model from a mesh
+  bool custom_mesh_model = false;
+
   // debug
   DebugOptions debugOptions;
 
@@ -132,6 +134,7 @@ public:
   void setNtthalExe(std::string filename, bool write = true);
   void setScaffType(int typ);
   void setScaffCustomFilename(std::string filename, bool write = true);
+  void setCustomMeshModel(bool b);
 
 public slots:
   void updateConfig();

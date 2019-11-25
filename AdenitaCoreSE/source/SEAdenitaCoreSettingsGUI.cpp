@@ -1,6 +1,6 @@
 #include "SEAdenitaCoreSettingsGUI.hpp"
 #include <QFileDialog>
-#include "SEConfig.hpp"
+#include "ADNConfig.hpp"
 
 SEAdenitaCoreSettingsGUI::SEAdenitaCoreSettingsGUI(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f) {
 
@@ -15,6 +15,8 @@ SEAdenitaCoreSettingsGUI::SEAdenitaCoreSettingsGUI(QWidget *parent, Qt::WindowFl
   ui.lineNtthal->setText(QString::fromStdString(c.ntthal));
   ui.lineCustomScaffold->setText(QString::fromStdString(c.scaffCustomFilename));
   ui.cmbScaffold->setCurrentIndex(c.scaffType);
+  ui.rdbDaedalushMesh->setChecked(!c.custom_mesh_model);
+  ui.rdbIterativeMesh->setChecked(c.custom_mesh_model);
 
   QObject::connect(ui.cmbScaffold, SIGNAL(currentIndexChanged(int)), this, SLOT(onChangeScaffold(int)));
   QObject::connect(ui.dialogButtons, SIGNAL(accepted()), this, SLOT(accept()));
@@ -53,4 +55,5 @@ void SEAdenitaCoreSettingsGUI::accept()
   c.setAutoSetScaffoldSequence(ui.chkAutoScaffold->isChecked());
   c.setScaffType(ui.cmbScaffold->currentIndex());
   c.setNtthalExe(ui.lineNtthal->text().toStdString());
+  c.setCustomMeshModel(ui.rdbIterativeMesh->isChecked());
 }
