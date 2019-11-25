@@ -8,7 +8,7 @@
 #include "SBDynamicalEvent.hpp"
 #include "SBStructuralEvent.hpp"
 #include "SBAction.hpp"
-#include "ADNDisplayHelper.hpp"
+#include "MSVDisplayHelper.hpp"
 #include "SEAdenitaCoreSEApp.hpp"
 
 /// This class implements an editor

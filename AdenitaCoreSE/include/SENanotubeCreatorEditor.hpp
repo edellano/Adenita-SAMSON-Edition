@@ -10,7 +10,7 @@
 #include "SBAction.hpp"
 #include "ADNPart.hpp"
 #include "SEAdenitaCoreSEApp.hpp"
-#include "ADNDisplayHelper.hpp"
+#include "MSVDisplayHelper.hpp"
 #include "DASCreator.hpp"
 #include "DASRouter.hpp"
 

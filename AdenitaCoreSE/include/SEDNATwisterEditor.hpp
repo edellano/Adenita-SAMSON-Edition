@@ -11,7 +11,7 @@
 #include "SBAction.hpp"
 #include "ADNNanorobot.hpp"
 #include "DASBackToTheAtom.hpp"
-#include "ADNDisplayHelper.hpp"
+#include "MSVDisplayHelper.hpp"
 
 /// This class implements an editor
 
