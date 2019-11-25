@@ -9,7 +9,7 @@
 #include "DASBackToTheAtom.hpp"
 #include "DASCadnano.hpp"
 #include "DASComplexOperations.hpp"
-#include "SEConfig.hpp"
+#include "ADNConfig.hpp"
 #include "SEAdenitaVisualModel.hpp"
 #include "PIPrimer3.hpp"
 

@@ -13,7 +13,7 @@
 
 #include "SEAdenitaCoreSEApp.hpp"
 #include "ADNPart.hpp"
-#include "ADNDisplayHelper.hpp"
+#include "MSVDisplayHelper.hpp"
 #include "DASCreator.hpp"
 
 /// This class implements an editor

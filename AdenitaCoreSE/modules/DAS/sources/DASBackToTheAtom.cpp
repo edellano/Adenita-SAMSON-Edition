@@ -604,6 +604,7 @@ void DASBackToTheAtom::CreateBonds(ADNPointer<ADNPart> origami)
             else {
               sc->addChild(bond());
             }
+            bond->setVisibilityFlag(false);
           }
         }
       }
@@ -616,6 +617,7 @@ void DASBackToTheAtom::CreateBonds(ADNPointer<ADNPart> origami)
       ADNPointer<ADNAtom> atO3p = *prevNt->GetAtomsByName("O3'").begin();
       SBPointer<SBBond> bond = new SBBond(atP(), atO3p());
       bb->addChild(bond());
+      bond->setVisibilityFlag(false);
     }
   }
 }
@@ -719,6 +721,7 @@ void DASBackToTheAtom::PopulateNucleotideWithAllAtoms(ADNPointer<ADNPart> origam
 
     ADNPointer<ADNAtom> newAtom = CopyAtom(atom);
     origami->RegisterAtom(nt, g, newAtom);
+    newAtom->setVisibilityFlag(false);
   }
 }
 

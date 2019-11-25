@@ -8,7 +8,7 @@
 #include "DASPolyhedron.hpp"
 #include "ADNPart.hpp"
 #include "ADNArray.hpp"
-#include "SEConfig.hpp"
+#include "ADNConfig.hpp"
 
 namespace ADNDisplayHelper {
 

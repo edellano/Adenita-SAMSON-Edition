@@ -7,7 +7,7 @@
 #include <QTextStream>
 #include <QFile>
 #include "ADNAuxiliary.hpp"
-#include "SEConfig.hpp"
+#include "ADNConfig.hpp"
 
 
 namespace ublas = boost::numeric::ublas;
