@@ -137,9 +137,5 @@ QString SEDSDNACreatorEditorGUI::getCitation() const {
 
 	// SAMSON Element generator pro tip: modify this function to add citation information
 
-	return
-		"If you use this editor in your work, please cite: <br/>"
-		"<br/>"
-		"[1] <a href=\"https://www.samson-connect.net\">https://www.samson-connect.net</a><br/>";
-
+  return ADNAuxiliary::AdenitaCitation();
 }
