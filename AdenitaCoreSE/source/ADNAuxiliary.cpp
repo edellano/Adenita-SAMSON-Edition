@@ -301,6 +301,8 @@ QString ADNAuxiliary::AdenitaCitation()
     "<br/>"
     "[1] <br />"
     "You can also cite the visual model as: <br />"
-    "[2] <br />"
-    "[3] ";
+    "[2] H. Miao et al. <strong>Multiscale Visualization and Scale-adaptive Modification of DNA Nanostructures</strong>, "
+    "<em>IEEE Transactions on Visualization and Computer Graphics</em>, 24(1), January 2018 <br/>"
+    "[3] H. Miao et al. <strong>DimSUM: Dimension and Scale Unifying Maps for Visual Abstraction of DNA Origami Structures</strong>, "
+    "<em>Computer Graphics Forum</em>, 37(3), June 2018";
 }

@@ -2,6 +2,8 @@
 #include "SETaggingVisualModel.hpp"
 #include "SAMSON.hpp"
 #include "SBGWindow.hpp"
+#include "ADNAuxiliary.hpp"
+
 
 SETaggingVisualModelProperties::SETaggingVisualModelProperties() {
 
@@ -73,11 +75,7 @@ QString SETaggingVisualModelProperties::getCitation() const {
 
 	// SAMSON Element generator pro tip: modify this function to add citation information
 
-	return
-		"If you use this visual model in your work, please cite: <br/>"
-		"<br/>"
-		"[1] <a href=\"https://www.samson-connect.net\">https://www.samson-connect.net</a><br/>";
-
+  return ADNAuxiliary::AdenitaCitation();
 }
 
 bool SETaggingVisualModelProperties::setup() {
