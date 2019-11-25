@@ -304,5 +304,8 @@ QString ADNAuxiliary::AdenitaCitation()
     "[2] H. Miao et al. <strong>Multiscale Visualization and Scale-adaptive Modification of DNA Nanostructures</strong>, "
     "<em>IEEE Transactions on Visualization and Computer Graphics</em>, 24(1), January 2018 <br/>"
     "[3] H. Miao et al. <strong>DimSUM: Dimension and Scale Unifying Maps for Visual Abstraction of DNA Origami Structures</strong>, "
-    "<em>Computer Graphics Forum</em>, 37(3), June 2018";
+    "<em>Computer Graphics Forum</em>, 37(3), June 2018 <br/>"
+    "If you used the wireframed editor or loaded a .ply file, don't forget to cite: <br />"
+    "[4] R. Veneziano et al. <strong>Designer nanoscale DNA assemblies programmed from the top down</strong>, "
+    "<em>Science</em>, 10.1126/science.aaf4388, June 2016 <br/>";
 }
