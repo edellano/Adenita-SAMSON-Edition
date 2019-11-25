@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>578</width>
+    <width>563</width>
     <height>344</height>
    </rect>
   </property>
@@ -18,13 +18,13 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>578</width>
+    <width>563</width>
     <height>344</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>578</width>
+    <width>563</width>
     <height>344</height>
    </size>
   </property>
@@ -61,7 +61,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -72,7 +72,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>560</width>
+           <width>521</width>
            <height>91</height>
           </rect>
          </property>

@@ -57,7 +57,7 @@ struct CadnanoJSONFile {
   string name_;
   std::map<int, Vstrand> vstrands_;  // key is vStrand num
   LatticeType lType_;
-  std::pair<int, int> scaffoldStartPosition_;  // first is vhelix num, second is position  within it
+  std::vector<std::pair<int, int>> scaffoldStartPositions_;  // first is vhelix num, second is position  within it
   std::vector<vec2> stapleStarts_;  // list of staple starts
 };
 
