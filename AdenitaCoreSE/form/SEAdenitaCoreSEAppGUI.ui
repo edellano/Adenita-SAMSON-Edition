@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>578</width>
-    <height>297</height>
+    <height>344</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>578</width>
-    <height>297</height>
+    <height>344</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>578</width>
-    <height>297</height>
+    <height>344</height>
    </size>
   </property>
   <property name="focusPolicy">
@@ -51,7 +51,7 @@
        <property name="minimumSize">
         <size>
          <width>0</width>
-         <height>273</height>
+         <height>296</height>
         </size>
        </property>
        <property name="maximumSize">
@@ -61,7 +61,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabAdenitaUI">
         <attribute name="title">
@@ -285,10 +285,17 @@
            <x>10</x>
            <y>10</y>
            <width>481</width>
-           <height>231</height>
+           <height>250</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout">
+          <item row="5" column="0" colspan="3">
+           <widget class="QCheckBox" name="chkClearLog">
+            <property name="text">
+             <string>Clear log file on start-up</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
@@ -296,17 +303,17 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="1">
-           <widget class="QLineEdit" name="lineNtthal">
-            <property name="enabled">
-             <bool>false</bool>
+          <item row="3" column="0" colspan="3">
+           <widget class="QCheckBox" name="chkOverlay">
+            <property name="text">
+             <string>Show overlay</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_3">
+          <item row="8" column="2">
+           <widget class="QPushButton" name="btnSetPathNtthal">
             <property name="text">
-             <string>Path to ntthal</string>
+             <string>Set</string>
             </property>
            </widget>
           </item>
@@ -317,30 +324,6 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="2">
-           <widget class="QPushButton" name="btnSetPathNtthal">
-            <property name="text">
-             <string>Set</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0" colspan="3">
-           <widget class="QCheckBox" name="chkInterpolateDim">
-            <property name="text">
-             <string>Interpolate Dimensions</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" colspan="3">
-           <widget class="QCheckBox" name="chkClearLog">
-            <property name="text">
-             <string>Clear log file on start-up</string>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="0" colspan="3">
            <widget class="QCheckBox" name="chkXODisplay">
             <property name="text">
@@ -348,10 +331,10 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0" colspan="3">
-           <widget class="QCheckBox" name="chkOverlay">
+          <item row="8" column="0">
+           <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>Show overlay</string>
+             <string>Path to ntthal</string>
             </property>
            </widget>
           </item>
@@ -364,9 +347,6 @@
              <bool>true</bool>
             </property>
            </widget>
-          </item>
-          <item row="1" column="1" colspan="2">
-           <widget class="QLineEdit" name="lineCustomScaffold"/>
           </item>
           <item row="0" column="1" colspan="2">
            <widget class="QComboBox" name="cmbScaffold">
@@ -385,6 +365,43 @@
               <string>Custom</string>
              </property>
             </item>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="QLineEdit" name="lineNtthal">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="2">
+           <widget class="QLineEdit" name="lineCustomScaffold"/>
+          </item>
+          <item row="6" column="0" colspan="3">
+           <widget class="QCheckBox" name="chkInterpolateDim">
+            <property name="text">
+             <string>Interpolate Dimensions</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QRadioButton" name="rdbDaedalusMesh">
+            <property name="text">
+             <string>Original Daedalus mesh model</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QRadioButton" name="rdbIterativeMesh">
+            <property name="text">
+             <string>Iterative mesh model</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -924,6 +941,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>rdbDaedalusMesh</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SEAdenitaCoreSEAppGUIClass</receiver>
+   <slot>onMeshModelChanged(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>273</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>171</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSetScaffold()</slot>
@@ -953,5 +986,6 @@
   <slot>onFixDesigns()</slot>
   <slot>onCreateBasePair()</slot>
   <slot>onGenerateSequence()</slot>
+  <slot>onMeshModelChanged(bool)</slot>
  </slots>
 </ui>

@@ -31,10 +31,15 @@ ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, DASPolyhedron &
   // Set edge lengths in base pairs and generate the scaffold
   SetEdgeBps(min_edge_length_, daedalus_part, fig);
   
-  //SetVerticesPositions(daedalus_part, fig, center);
   CreateLinkGraphFromMesh(daedalus_part, fig);
-  InitEdgeMap2(daedalus_part, fig);
-  //InitEdgeMap(daedalus_part, fig);
+  SEConfig& config = SEConfig::GetInstance();
+  SetVerticesPositions(daedalus_part, fig, center);
+  if (!config.custom_mesh_model) {
+    InitEdgeMap2(daedalus_part, fig);
+  }
+  else {
+    InitEdgeMap(daedalus_part, fig);
+  }
 
   int r_length = RoutingLength(bpLengths_);
   if (r_length > seq.size()) {
@@ -564,11 +569,8 @@ void DASDaedalus::InitEdgeMap(ADNPointer<ADNPart> origami, DASPolyhedron &fig) {
       SBVector3 dir = (t->GetSBPosition() - s->GetSBPosition()).normalizedVersion();
       SBVector3 u = SBCrossProduct(dir, norm);
       auto coords = vertexPositions[he];
-      //auto coords = he->source_->GetSBPosition();
 
       int l = bpLengths_.at(he->edge_) + 1; // +1 since we have apolyT region at the end
-
-      //coords += SBQuantity::angstrom(BP_RISE)*dir;
 
       ADNPointer<ADNDoubleStrand> ds = new ADNDoubleStrand();
       ds->SetInitialTwistAngle(7 * ADNConstants::BP_ROT);  // necessary to fix crossovers

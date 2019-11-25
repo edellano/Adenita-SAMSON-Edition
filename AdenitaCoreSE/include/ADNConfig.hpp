@@ -109,6 +109,7 @@ public:
   bool show_overlay = false;
   // toggle to automatically set the scaffold sequence when loading a part
   bool auto_set_scaffold_sequence = true;
+  bool custom_mesh_model = false;
   // path to ntthal.exe
   std::string ntthal = "";
   // group general
@@ -124,6 +125,7 @@ public:
   void setClearLogFile(bool b);
   void setInterpolateDimensions(bool b);
   void setNtthalExe(std::string filename);
+  void setCustomMeshModel(bool b);
 
 public slots:
   void updateConfig();

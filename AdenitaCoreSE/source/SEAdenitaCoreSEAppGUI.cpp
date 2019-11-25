@@ -59,9 +59,16 @@ SEAdenitaCoreSEAppGUI::SEAdenitaCoreSEAppGUI( SEAdenitaCoreSEApp* t ) : SBGApp( 
   ui.tabWidget->removeTab(2);
   #endif
 
-  // set ntthal if previously defined
+  // set options if previously defined
   SEConfig& c = SEConfig::GetInstance();
   if (c.ntthal != "") ui.lineNtthal->setText(QString::fromStdString(c.ntthal));
+  ui.rdbDaedalusMesh->setChecked(!c.custom_mesh_model);
+  ui.rdbIterativeMesh->setChecked(c.custom_mesh_model);
+  ui.chkInterpolateDim->setChecked(c.interpolate_dimensions);
+  ui.chkClearLog->setChecked(c.clear_log_file);
+  ui.chkXODisplay->setChecked(c.display_possible_crossovers);
+  ui.chkOverlay->setChecked(c.show_overlay);
+  ui.chkAutoScaffold->setChecked(c.auto_set_scaffold_sequence);
 
   QTimer *timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(CheckForLoadedParts()));
@@ -462,6 +469,12 @@ void SEAdenitaCoreSEAppGUI::onSetPathNtthal()
   // update config
   SEConfig& c = SEConfig::GetInstance();
   c.setNtthalExe(filename.toStdString());
+}
+
+void SEAdenitaCoreSEAppGUI::onMeshModelChanged(bool b)
+{
+  SEConfig& c = SEConfig::GetInstance();
+  c.setCustomMeshModel(!b);
 }
 
 void SEAdenitaCoreSEAppGUI::onCatenanes()

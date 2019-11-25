@@ -9,6 +9,7 @@ SEConfig & SEConfig::GetInstance()
 
 void SEConfig::setAutoSetScaffoldSequence(bool b)
 {
+  auto_set_scaffold_sequence = b;
   if (setting_.FindMember("auto_set_scaffold_sequence") != setting_.MemberEnd()) {
     setting_["auto_set_scaffold_sequence"].SetBool(b);
   }
@@ -22,6 +23,7 @@ void SEConfig::setAutoSetScaffoldSequence(bool b)
 
 void SEConfig::setShowOverlay(bool b)
 {
+  show_overlay = b;
   if (setting_.FindMember("show_overlay") != setting_.MemberEnd()) {
     setting_["show_overlay"].SetBool(b);
   }
@@ -35,6 +37,7 @@ void SEConfig::setShowOverlay(bool b)
 
 void SEConfig::setDisplayPossibleCrossovers(bool b)
 {
+  display_possible_crossovers = b;
   if (setting_.FindMember("display_possible_crossovers") != setting_.MemberEnd()) {
     setting_["display_possible_crossovers"].SetBool(b);
   }
@@ -48,6 +51,7 @@ void SEConfig::setDisplayPossibleCrossovers(bool b)
 
 void SEConfig::setClearLogFile(bool b)
 {
+  clear_log_file = b;
   if (setting_.FindMember("clear_log_file") != setting_.MemberEnd()) {
     setting_["clear_log_file"].SetBool(b);
   }
@@ -61,6 +65,7 @@ void SEConfig::setClearLogFile(bool b)
 
 void SEConfig::setInterpolateDimensions(bool b)
 {
+  interpolate_dimensions = b;
   if (setting_.FindMember("interpolate_dimensions") != setting_.MemberEnd()) {
     setting_["interpolate_dimensions"].SetBool(b);
   }
@@ -74,6 +79,7 @@ void SEConfig::setInterpolateDimensions(bool b)
 
 void SEConfig::setNtthalExe(std::string filename)
 {
+  ntthal = filename;
   if (setting_.FindMember("ntthal") != setting_.MemberEnd()) {
     setting_["ntthal"].SetString(filename.c_str(), filename.size());
   }
@@ -81,6 +87,20 @@ void SEConfig::setNtthalExe(std::string filename)
     Value v;
     v.SetString(filename.c_str(), filename.size());
     setting_.AddMember("ntthal", v, setting_.GetAllocator());
+  }
+  writeDocumentToJson();
+}
+
+void SEConfig::setCustomMeshModel(bool b)
+{
+  custom_mesh_model = b;
+  if (setting_.FindMember("custom_mesh_model") != setting_.MemberEnd()) {
+    setting_["custom_mesh_model"].SetBool(b);
+  }
+  else {
+    Value v;
+    v.SetBool(b);
+    setting_.AddMember("custom_mesh_model", v, setting_.GetAllocator());
   }
   writeDocumentToJson();
 }
@@ -214,6 +234,9 @@ void SEConfig::loadConfig() {
     
     writer.Key("ntthal");
     writer.String(ntthal.c_str());
+
+    writer.Key("custom_mesh_model");
+    writer.Bool(custom_mesh_model);
 
     writer.EndObject();
 
@@ -418,6 +441,10 @@ void SEConfig::updateConfig() {
 
     if (setting_.FindMember("ntthal") != setting_.MemberEnd()) {
       ntthal = setting_["ntthal"].GetString();
+    }
+
+    if (setting_.FindMember("custom_mesh_model") != setting_.MemberEnd()) {
+      custom_mesh_model = setting_["custom_mesh_model"].GetBool();
     }
   }
 }

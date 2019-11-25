@@ -78,6 +78,7 @@ public slots:
   void onCheckAutoScaffold(bool b);
   void onCheckShowOverlay(bool b);
   void onSetPathNtthal();
+  void onMeshModelChanged(bool b);
   // Debug
   void onAddNtThreeP();
   void onCenterPart();
