@@ -35,7 +35,7 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
   json_.name_ = d["name"].GetString();
   Value& vstrandsVal = d["vstrands"];
 
-  int totalCount;
+  int totalCount = -1;
   for (unsigned int i = 0; i < vstrandsVal.Size(); i++) {
 
     Value& vstrandVal = vstrandsVal[i];
@@ -58,7 +58,7 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
 
       //start point
       if (elem.n0 == -1 && elem.n1 == -1 && elem.n2 != -1 && elem.n3 != -1) {
-        json_.scaffoldStartPosition_ = std::make_pair(vstrand.num_, count);
+        json_.scaffoldStartPositions_.push_back(std::make_pair(vstrand.num_, count));
       }
 
       ++count;
@@ -142,7 +142,12 @@ void DASCadnano::ParseCadnanoLegacy(Document& d)
   }
   else {
     // error
-    SB_ERROR("Cadnano module couldn't find a compatible lattice: number of vHelix positions = " + totalCount);
+    if (totalCount == -1) {
+      ADNLogger::LogError(std::string("Adenita couldn't find a compatible lattice: design seems empty"));
+    }
+    else {
+      ADNLogger::LogError(std::string("Adenita couldn't find a compatible lattice: number of vHelix positions = " + totalCount));
+    }
     return;
   }
   vGrid_.CreateLattice(json_.lType_);
@@ -155,7 +160,12 @@ ADNPointer<ADNPart> DASCadnano::CreateCadnanoModel()
   CreateEdgeMap(part);
   ADNLogger::LogDebug(std::string("Cadnano module > Double strands created"));
   CreateScaffold(part);
-  ADNLogger::LogDebug(std::string("Cadnano module > Scaffold created"));
+  if (json_.scaffoldStartPositions_.size() > 0) {
+    ADNLogger::LogDebug(std::string("Cadnano module > Scaffold(s) created"));
+  }
+  else {
+    ADNLogger::LogError(std::string("Adenita couldn't detect a scaffold. Circular scaffolds won't be detected"));
+  }
   CreateStaples(part);
   ADNLogger::LogDebug(std::string("Cadnano module > Staples created"));
 
@@ -232,19 +242,21 @@ void DASCadnano::CreateEdgeMap(ADNPointer<ADNPart> nanorobot)
 
 void DASCadnano::CreateScaffold(ADNPointer<ADNPart> nanorobot)
 {
-  //look for stating point of scaffold in vstrand
-  int startVstrand = json_.scaffoldStartPosition_.first;
-  int startVstrandPos = json_.scaffoldStartPosition_.second;
+  for (auto &p : json_.scaffoldStartPositions_) {
+    //look for stating point of scaffold in vstrand
+    int startVstrand = p.first;
+    int startVstrandPos = p.second;
 
-  //create the scaffold strand
-  ADNPointer<ADNSingleStrand> scaff = new ADNSingleStrand();
-  scaff->SetName("Scaffold");
-  scaff->IsScaffold(true);
-  nanorobot->RegisterSingleStrand(scaff);
-  AddSingleStrandToMap(scaff);
+    //create the scaffold strand
+    ADNPointer<ADNSingleStrand> scaff = new ADNSingleStrand();
+    scaff->SetName("Scaffold");
+    scaff->IsScaffold(true);
+    nanorobot->RegisterSingleStrand(scaff);
+    AddSingleStrandToMap(scaff);
 
-  //trace scaffold through vstrands
-  TraceSingleStrand(startVstrand, startVstrandPos, scaff, nanorobot);
+    //trace scaffold through vstrands
+    TraceSingleStrand(startVstrand, startVstrandPos, scaff, nanorobot);
+  }
 }
 
 void DASCadnano::CreateStaples(ADNPointer<ADNPart> nanorobot)
@@ -485,6 +497,10 @@ ADNPointer<ADNPart> DASCadnano::CreateCadnanoPart(std::string file)
 {
   ParseJSON(file);
   ADNLogger::LogDebug(std::string("Cadnano design parsed"));
+  if (vGrid_.vDoubleStrands_.size() == 0) {
+    SB_ERROR("Adenita couldn't create Cadnano model");
+    return new ADNPart();
+  }
   return CreateCadnanoModel();
 }
 
