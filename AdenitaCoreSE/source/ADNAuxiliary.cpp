@@ -299,7 +299,7 @@ QString ADNAuxiliary::AdenitaCitation()
   return
     "If you use this Adenita in your work, please cite: <br/>"
     "<br/>"
-    "[1] <br />"
+    "[1] E. de Llano et al. <strong>Adenita: Interactive 3D modeling and visualization of DNA nanostructures</strong>, <em>Preprint at bioRxiv</em>, 10.1101/849976, November 2019 <br />"
     "You can also cite the visual model as: <br />"
     "[2] H. Miao et al. <strong>Multiscale Visualization and Scale-adaptive Modification of DNA Nanostructures</strong>, "
     "<em>IEEE Transactions on Visualization and Computer Graphics</em>, 24(1), January 2018 <br/>"
