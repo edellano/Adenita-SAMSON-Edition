@@ -199,7 +199,7 @@ void SEAdenitaCoreSEAppGUI::onLoadFile()
 
 }
 
-void SEAdenitaCoreSEAppGUI::onSaveFile()
+void SEAdenitaCoreSEAppGUI::onSaveAll()
 {
   SEAdenitaCoreSEApp* t = getApp();
 
