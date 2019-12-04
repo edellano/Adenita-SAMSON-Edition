@@ -76,8 +76,6 @@ void ADNNeighbors::SetMinCutOff(SBQuantity::length cutOff)
 
 void ADNNeighbors::InitializeNeighbors(ADNPointer<ADNPart> part)
 {
-  ADNLogger& logger = ADNLogger::GetLogger();
-
   auto nts = part->GetNucleotides();
   headList_ = std::vector<unsigned int>(nts.size());
   numNeighborsList_ = std::vector<unsigned int>(nts.size());
@@ -107,7 +105,7 @@ void ADNNeighbors::InitializeNeighbors(ADNPointer<ADNPart> part)
       if (nt2 == nt1) {
         if (i != j) {
           std::string msg = "Creating neighbor list: looping over neighbors in different order";
-          logger.LogDebug(msg);
+          ADNLogger::LogDebug(msg);
         }
         continue;
       }

@@ -8,7 +8,6 @@ SELatticeCreatorEditor::SELatticeCreatorEditor() {
 
 	propertyWidget = new SELatticeCreatorEditorGUI(this);
 	propertyWidget->loadDefaultSettings();
-	SAMSON::addWidget(propertyWidget);
 
   setLatticeType(LatticeType::Honeycomb);
 
@@ -151,14 +150,6 @@ QString SELatticeCreatorEditor::getName() const {
 
 }
 
-QString SELatticeCreatorEditor::getText() const { 
-	
-	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
-
-	return QObject::tr("SELatticeCreatorEditor"); 
-
-}
-
 QPixmap SELatticeCreatorEditor::getLogo() const {
 
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
@@ -166,6 +157,18 @@ QPixmap SELatticeCreatorEditor::getLogo() const {
 
 	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/SELatticeCreatorEditorIcon.png"));
 
+}
+
+int SELatticeCreatorEditor::getFormat() const
+{
+  // SAMSON Element generator pro tip: modify these default settings to configure the window
+  //
+  // SBGWindow::Savable : let users save and load interface settings (implement loadSettings and saveSettings)
+  // SBGWindow::Lockable : let users lock the window on top
+  // SBGWindow::Resizable : let users resize the window
+  // SBGWindow::Citable : let users obtain citation information (implement getCitation)
+
+  return (SBGWindow::Savable | SBGWindow::Lockable | SBGWindow::Resizable | SBGWindow::Citable);
 }
 
 QKeySequence SELatticeCreatorEditor::getShortcut() const { 
@@ -181,6 +184,22 @@ QString SELatticeCreatorEditor::getToolTip() const {
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
 	return QObject::tr("Create dsDNA on a square or honeycomb lattice"); 
+
+}
+
+void SELatticeCreatorEditor::loadSettings(SBGSettings * settings)
+{
+  if (settings == NULL) return;
+
+  // SAMSON Element generator pro tip: complete this function so your importer can save its GUI state from one session to the next
+
+}
+
+void SELatticeCreatorEditor::saveSettings(SBGSettings* settings) {
+
+  if (settings == NULL) return;
+
+  // SAMSON Element generator pro tip: complete this function so your importer can save its GUI state from one session to the next
 
 }
 

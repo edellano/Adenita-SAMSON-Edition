@@ -9,7 +9,6 @@ SEDSDNACreatorEditor::SEDSDNACreatorEditor() {
 
 	propertyWidget = new SEDSDNACreatorEditorGUI(this);
 	propertyWidget->loadDefaultSettings();
-	SAMSON::addWidget(propertyWidget);
 
   auto app = getAdenitaApp();
   nanorobot_ = app->GetNanorobot();
@@ -250,14 +249,6 @@ QString SEDSDNACreatorEditor::getName() const {
 
 }
 
-QString SEDSDNACreatorEditor::getText() const { 
-	
-	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
-
-	return QObject::tr("DNA Creator"); 
-
-}
-
 QPixmap SEDSDNACreatorEditor::getLogo() const {
 
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
@@ -283,9 +274,38 @@ QString SEDSDNACreatorEditor::getToolTip() const {
 
 }
 
+void SEDSDNACreatorEditor::loadSettings(SBGSettings* settings) {
+
+  if (settings == NULL) return;
+
+  // SAMSON Element generator pro tip: complete this function so your importer can save its GUI state from one session to the next
+
+}
+
+void SEDSDNACreatorEditor::saveSettings(SBGSettings* settings) {
+
+  if (settings == NULL) return;
+
+  // SAMSON Element generator pro tip: complete this function so your importer can save its GUI state from one session to the next
+
+}
+
 QString SEDSDNACreatorEditor::getDescription() const
 {
   return QObject::tr("Adenita | DNA strands Editor");
+}
+
+int SEDSDNACreatorEditor::getFormat() const {
+
+  // SAMSON Element generator pro tip: modify these default settings to configure the window
+  //
+  // SBGWindow::Savable : let users save and load interface settings (implement loadSettings and saveSettings)
+  // SBGWindow::Lockable : let users lock the window on top
+  // SBGWindow::Resizable : let users resize the window
+  // SBGWindow::Citable : let users obtain citation information (implement getCitation)
+
+  return (SBGWindow::Savable | SBGWindow::Lockable | SBGWindow::Resizable | SBGWindow::Citable);
+
 }
 
 void SEDSDNACreatorEditor::beginEditing() {

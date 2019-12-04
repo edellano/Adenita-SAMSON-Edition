@@ -50,6 +50,7 @@ public :
   void GenerateSequence(double gcCont, int maxContGs, bool overwrite = true);
   void ResetVisualModel();
   SBVisualModel* GetVisualModel();
+  void SetStart();
   // Modifications
   void BreakSingleStrand(bool fPrime = false);
   void TwistDoubleHelix(CollectionMap<ADNDoubleStrand> dss, double angle);
@@ -63,7 +64,6 @@ public :
   void CenterPart();
   void LinearCatenanes(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int num);
   void Kinetoplast(SBQuantity::length radius, SBPosition3 center, SBVector3 normal, int rows, int cols);
-  void SetStart();
   void TwistDoubleHelix();
   void TestNeighbors();
   void ImportFromOxDNA(std::string topoFile, std::string configFile);

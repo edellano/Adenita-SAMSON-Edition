@@ -63,6 +63,8 @@ public:
 
 public slots:
 
+  void onChangeSelector(int idx);
+  // Main
   void onLoadFile();
   void onSaveAll();
   void onSaveSelection();
@@ -70,22 +72,26 @@ public slots:
   void onSetScaffold();
   void onCreateBasePair();
   void onGenerateSequence();
-  // Options
-  void onChangeScaffold(int idx);
-  void onCheckDisplayCrossovers(bool b);
-  void onCheckInterpolateDimensions(bool b);
-  void onCheckClearLogFile(bool b);
-  void onCheckAutoScaffold(bool b);
-  void onCheckShowOverlay(bool b);
-  void onSetPathNtthal();
-  void onMeshModelChanged(bool b);
+  void onSettings();
+  void onSetStart();
+  void onCalculateBindingProperties();
+  // Editors
+  void onBreakEditor();
+  void onConnectEditor();
+  void onDeleteEditor();
+  void onDNATwistEditor();
+  void onMergePartsEditor();
+  void onCreateStrandEditor();
+  void onNanotubeCreatorEditor();
+  void onLatticeCreatorEditor();
+  void onWireframeEditor();
+  void onTaggingEditor();
+  void onTwisterEditor();
   // Debug
   void onAddNtThreeP();
   void onCenterPart();
   void onCatenanes();
   void onKinetoplast();
-  void onCalculateBindingProperties();
-  void onSetStart();
   void onTestNeighbors();
   void onOxDNAImport();
   void onFromDatagraph();
@@ -98,9 +104,24 @@ private slots:
   void CheckForLoadedParts();
 
 private:
+  void SetupUI();
   std::string IsJsonCadnano(QString filename);
-  
+  void HighlightEditor(QToolButton* b);
+
+  std::vector<QToolButton*> menuButtons_;
+  std::vector<QToolButton*> editSequencesButtons_;
+  std::vector<QToolButton*> modelingButtons_;
+  std::vector<QToolButton*> creatorsButtons_;
+  std::vector<QPushButton*> debugButtons_;
+
+  std::vector<QToolButton*> GetMenuButtons();
+  std::vector<QToolButton*> GetEditSequencesButtons();
+  std::vector<QToolButton*> GetModelingButtons();
+  std::vector<QToolButton*> GetCreatorsButtons();
+  std::vector<QPushButton*> GetDebugButtons();
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
+
+  QToolButton* highlightedEditor_ = nullptr;
 };
 

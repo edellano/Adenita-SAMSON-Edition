@@ -24,13 +24,12 @@ DASBackToTheAtom::~DASBackToTheAtom() {
 void DASBackToTheAtom::SetDoubleStrandPositions(ADNPointer<ADNDoubleStrand> ds) {
   ADNPointer<ADNBaseSegment> bs = ds->GetFirstBaseSegment();
   std::vector<ADNPointer<ADNBaseSegment>> loops;
-  ADNLogger& logger = ADNLogger::GetLogger();
 
   for (size_t i = 0; i < ds->GetLength(); ++i) {
     if (bs == nullptr) {
       std::string msg = "SetDoubleStrandPositions() ERROR => nullptr BaseSegment on position " + std::to_string(i) 
         + " of doubleStrand " + std::to_string(ds->getNodeIndex()) + "(size " + std::to_string(ds->GetLength()) + ")";
-      logger.Log(msg);
+      ADNLogger::LogError(msg);
       break;
     }
     int num = bs->GetNumber();
@@ -48,7 +47,7 @@ void DASBackToTheAtom::SetDoubleStrandPositions(ADNPointer<ADNDoubleStrand> ds) 
     bs = bs->GetNext();
     if (bs != nullptr && abs(bs->GetNumber() - num) != 1) {
       std::string msg = "Consecutive base segments have not consecutive numbers.";
-      logger.Log(msg);
+      ADNLogger::LogDebug(msg);
     }
   }
 
@@ -117,9 +116,8 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
     nt_l->SetE3(ublas::column(new_basis, 2));
 
     if (nt_l->GetStrand()->IsScaffold()) {
-      ADNLogger& logger = ADNLogger::GetLogger();
       std::string msg = "Left: " + std::to_string(nt_l->GetE3()[0]) + " " + std::to_string(nt_l->GetE3()[1]) + " " + std::to_string(nt_l->GetE3()[2]);
-      logger.LogDebug(msg);
+      ADNLogger::LogDebug(msg);
     }
 
     // Set new residue positions
@@ -144,9 +142,8 @@ void DASBackToTheAtom::SetNucleotidePosition(ADNPointer<ADNBaseSegment> bs, bool
     nt_r->SetE3(ublas::column(basis_r, 2));
 
     if (nt_r->GetStrand()->IsScaffold()) {
-      ADNLogger& logger = ADNLogger::GetLogger();
       std::string msg = "Right: " + std::to_string(nt_r->GetE3()[0]) + " " + std::to_string(nt_r->GetE3()[1]) + " " + std::to_string(nt_r->GetE3()[2]);
-      logger.LogDebug(msg);
+      ADNLogger::LogDebug(msg);
     }
 
     // Set positions
@@ -324,14 +321,13 @@ void DASBackToTheAtom::CheckDistances(ADNPointer<ADNPart> part)
   auto singleStrands = part->GetSingleStrands();
   SBPosition3 prevPos;
   std::string prevName = "";
-  ADNLogger& logger = ADNLogger::GetLogger();
   std::string msg = "Checking distances between nucleotides...";
-  logger.Log(msg);
+  ADNLogger::LogDebug(msg);
   SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {
     int start = 0;
     auto nt = ss->GetFivePrime();
     std::string msg = " string " + ss->GetName();
-    logger.Log(msg);
+    ADNLogger::LogDebug(msg);
     while (nt != nullptr)
     {
       if (start != 0) {
@@ -352,7 +348,7 @@ void DASBackToTheAtom::CheckDistances(ADNPointer<ADNPart> part)
 
   auto baseSegments = part->GetBaseSegments();
   msg = "Checking distances between base segments...";
-  logger.Log(msg);
+  ADNLogger::LogDebug(msg);
   SB_FOR(ADNPointer<ADNBaseSegment> bs, baseSegments) {
     auto bsNext = bs->GetNext();
     if (bsNext != nullptr) {
@@ -376,7 +372,7 @@ void DASBackToTheAtom::CheckDistances(ADNPointer<ADNPart> part)
           auto bpDistance = (basePairCenterPosition - basePairCenterPositionNext).norm();
           if (!ADNVectorMath::IsNearlyZero(bpDistance.getValue() - ADNConstants::BP_RISE * 1000)) {
             msg = "\tBase Pairs " + nextName + " and " + bs->getName() + " too close or too further away: " + std::to_string(distance.getValue()) + "pm";
-            logger.Log(msg);
+            ADNLogger::LogDebug(msg);
           }
         }
       }
@@ -1130,10 +1126,9 @@ void DASBackToTheAtom::LoadNtPairs() {
 
 std::pair<ADNPointer<ADNNucleotide>, ADNPointer<ADNNucleotide>> DASBackToTheAtom::ParseBasePairPDB(std::string source) {
   std::ifstream file(source.c_str(), std::ios::in);
-  ADNLogger& logger = ADNLogger::GetLogger();
   if (!file) {
     std::string msg = "Could not open file " + source;
-    logger.Log(msg);
+    ADNLogger::LogError(msg);
   }
 
   ADNPointer<ADNNucleotide> nt_left = new ADNNucleotide();

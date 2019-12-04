@@ -157,22 +157,6 @@ QString SENanotubeCreatorEditor::getToolTip() const {
 
 }
 
-void SENanotubeCreatorEditor::loadSettings(SBGSettings * settings)
-{
-  if (settings == NULL) return;
-
-  // SAMSON Element generator pro tip: complete this function so your importer can save its GUI state from one session to the next
-
-}
-
-void SENanotubeCreatorEditor::saveSettings(SBGSettings* settings) {
-
-  if (settings == NULL) return;
-
-  // SAMSON Element generator pro tip: complete this function so your importer can save its GUI state from one session to the next
-
-}
-
 QString SENanotubeCreatorEditor::getDescription() const
 {
   return QObject::tr("Adenita | DNA Nanotube Editor");

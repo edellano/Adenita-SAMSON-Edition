@@ -8,7 +8,6 @@ SEWireframeEditor::SEWireframeEditor() {
 
 	propertyWidget = new SEWireframeEditorGUI(this);
 	propertyWidget->loadDefaultSettings();
-	SAMSON::addWidget(propertyWidget);
 
 }
 
@@ -310,20 +309,26 @@ QString SEWireframeEditor::getName() const {
 
 }
 
-QString SEWireframeEditor::getText() const { 
-	
-	// SAMSON Element generator pro tip: modify this function to return a user-friendly string that will be displayed in menus
-
-	return QObject::tr("Daedalus DNA Nanostructures"); 
-
-}
-
 QPixmap SEWireframeEditor::getLogo() const {
 
 	// SAMSON Element generator pro tip: this icon will be visible in the GUI title bar. 
 	// Modify it to better reflect the purpose of your editor.
 
 	return QPixmap(QString::fromStdString(SB_ELEMENT_PATH + "/Resource/Icons/SEWireframeEditorIcon.png"));
+
+}
+
+int SEWireframeEditor::getFormat() const
+{
+
+  // SAMSON Element generator pro tip: modify these default settings to configure the window
+  //
+  // SBGWindow::Savable : let users save and load interface settings (implement loadSettings and saveSettings)
+  // SBGWindow::Lockable : let users lock the window on top
+  // SBGWindow::Resizable : let users resize the window
+  // SBGWindow::Citable : let users obtain citation information (implement getCitation)
+
+  return (SBGWindow::Savable | SBGWindow::Lockable | SBGWindow::Resizable | SBGWindow::Citable);
 
 }
 
@@ -340,6 +345,22 @@ QString SEWireframeEditor::getToolTip() const {
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
 	return QObject::tr("Create wireframe DNA nanostructures using Daedalus"); 
+
+}
+
+void SEWireframeEditor::loadSettings(SBGSettings * settings)
+{
+  if (settings == NULL) return;
+
+  // SAMSON Element generator pro tip: complete this function so your importer can save its GUI state from one session to the next
+
+}
+
+void SEWireframeEditor::saveSettings(SBGSettings* settings) {
+
+  if (settings == NULL) return;
+
+  // SAMSON Element generator pro tip: complete this function so your importer can save its GUI state from one session to the next
 
 }
 

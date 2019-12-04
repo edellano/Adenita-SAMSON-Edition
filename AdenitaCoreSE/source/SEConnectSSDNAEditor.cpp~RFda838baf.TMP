@@ -71,19 +71,6 @@ QPixmap SEConnectSSDNAEditor::getLogo() const {
 
 }
 
-int SEConnectSSDNAEditor::getFormat() const {
-
-  // SAMSON Element generator pro tip: modify these default settings to configure the window
-  //
-  // SBGWindow::Savable : let users save and load interface settings (implement loadSettings and saveSettings)
-  // SBGWindow::Lockable : let users lock the window on top
-  // SBGWindow::Resizable : let users resize the window
-  // SBGWindow::Citable : let users obtain citation information (implement getCitation)
-
-  return (SBGWindow::Savable | SBGWindow::Lockable | SBGWindow::Resizable | SBGWindow::Citable);
-
-}
-
 QKeySequence SEConnectSSDNAEditor::getShortcut() const { 
 	
 	// SAMSON Element generator pro tip: modify this function to associate a tentative shortcut to your editor
@@ -97,22 +84,6 @@ QString SEConnectSSDNAEditor::getToolTip() const {
 	// SAMSON Element generator pro tip: modify this function to have your editor display a tool tip in the SAMSON GUI when the mouse hovers the editor's icon
 
 	return QObject::tr("Connect and create crossovers"); 
-
-}
-
-void SEConnectSSDNAEditor::loadSettings(SBGSettings * settings)
-{
-  if (settings == NULL) return;
-
-  // SAMSON Element generator pro tip: complete this function so your importer can save its GUI state from one session to the next
-
-}
-
-void SEConnectSSDNAEditor::saveSettings(SBGSettings* settings) {
-
-  if (settings == NULL) return;
-
-  // SAMSON Element generator pro tip: complete this function so your importer can save its GUI state from one session to the next
 
 }
 

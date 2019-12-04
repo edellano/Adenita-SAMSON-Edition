@@ -38,15 +38,23 @@ public :
 	/// \name Identity
 	//@{
 
-	virtual SBCContainerUUID									getUUID() const;														///< Returns the widget UUID
-	virtual QString												getName() const;														///< Returns the class name
-	virtual QString												getText() const;														///< Returns the menu item text
-	virtual QPixmap												getLogo() const;														///< Returns the pixmap logo
-	virtual QKeySequence										getShortcut() const;													///< Returns the shorcut
-	virtual QString												getToolTip() const;														///< Returns the tool tip
-  virtual QString getDescription() const;
+  virtual SBCContainerUUID									getUUID() const;														///< Returns the widget UUID
+  virtual QString												getName() const;														///< Returns the class name
+  virtual QString	                      getDescription() const;	                      ///< Returns the menu item text
+  virtual QPixmap												getLogo() const;														///< Returns the pixmap logo
+  virtual int													getFormat() const;														///< Returns the format
+  virtual QKeySequence										getShortcut() const;													///< Returns the shorcut
+  virtual QString												getToolTip() const;														///< Returns the tool tip
 
-	//@}
+  //@}
+
+  ///\name Settings
+  //@{
+
+  virtual void												loadSettings(SBGSettings* settings);									///< Loads \p settings
+  virtual void												saveSettings(SBGSettings* settings);									///< Saves \p settings
+
+  //@}
 
 	/// \name Editing
 	//@{
