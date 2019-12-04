@@ -63,6 +63,7 @@ public:
 
 public slots:
 
+  void onChangeSelector(int idx);
   // Main
   void onLoadFile();
   void onSaveAll();
@@ -103,8 +104,21 @@ private slots:
   void CheckForLoadedParts();
 
 private:
+  void SetupUI();
   std::string IsJsonCadnano(QString filename);
   void HighlightEditor(QToolButton* b);
+
+  std::vector<QToolButton*> menuButtons_;
+  std::vector<QToolButton*> editSequencesButtons_;
+  std::vector<QToolButton*> modelingButtons_;
+  std::vector<QToolButton*> creatorsButtons_;
+  std::vector<QPushButton*> debugButtons_;
+
+  std::vector<QToolButton*> GetMenuButtons();
+  std::vector<QToolButton*> GetEditSequencesButtons();
+  std::vector<QToolButton*> GetModelingButtons();
+  std::vector<QToolButton*> GetCreatorsButtons();
+  std::vector<QPushButton*> GetDebugButtons();
 
 	Ui::SEAdenitaCoreSEAppGUIClass									ui;
 
