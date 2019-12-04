@@ -120,6 +120,11 @@ void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string filename)
   // get selected part
   auto parts = GetNanorobot()->GetSelectedParts();
 
+  if (parts.size() == 0) {
+    SAMSON::informUser(QString("Adenita: Set Scaffold"), 
+      QString("Please select the component whose scaffold sequence you want to set."));
+  }
+
   SB_FOR(ADNPointer<ADNPart> part, parts) {
     auto scafs = part->GetScaffolds();
     SB_FOR(ADNPointer<ADNSingleStrand> ss, scafs) {
@@ -164,6 +169,12 @@ void SEAdenitaCoreSEApp::CenterPart()
 void SEAdenitaCoreSEApp::GenerateSequence(double gcCont, int maxContGs, bool overwrite)
 {
   auto strands = GetNanorobot()->GetSelectedSingleStrands();
+
+  if (strands.size() == 0) {
+    SAMSON::informUser(QString("Adenita: Set random sequence"), 
+      QString("Please select the single strands whose sequence you want to set."));
+  }
+
   SB_FOR(ADNPointer<ADNSingleStrand> ss, strands) {
     std::string seq = DASAlgorithms::GenerateSequence(gcCont, maxContGs, ss->getNumberOfNucleotides());
     ADNBasicOperations::SetSingleStrandSequence(ss, seq, true, overwrite);
@@ -293,6 +304,10 @@ void SEAdenitaCoreSEApp::SetStart()
     auto nt = nts[0];
     ADNBasicOperations::SetStart(nt, true);
   }
+  else if (nts.size() == 0) {
+    SAMSON::informUser(QString("Adenita: Set 5'"), 
+      QString("Please select the nucleotide you want to set as new 5'."));
+  }
 
   ResetVisualModel();
 }
@@ -326,6 +341,12 @@ bool SEAdenitaCoreSEApp::CalculateBindingRegions(int oligoConc, int monovalentCo
 {
   bool res = false;
   auto parts = GetNanorobot()->GetSelectedParts();
+
+  if (parts.size() == 0) {
+    SAMSON::informUser(QString("Adenita: Calculate Thermodynamic Properties"), 
+      QString("Please select one or more components."));
+  }
+
   SB_FOR(ADNPointer<ADNPart> part, parts) {
     PIPrimer3& p = PIPrimer3::GetInstance();
     p.UpdateBindingRegions(part);
@@ -540,6 +561,9 @@ void SEAdenitaCoreSEApp::CreateBasePair()
   if (selectedNucleotides.size() > 0) {
     DASOperations::AddComplementaryStrands(GetNanorobot(), selectedNucleotides);
     ResetVisualModel();
+  }
+  else {
+    SAMSON::informUser(QString("Adenita: Create base pair"), QString("Please select the nucleotides or single strands whose pairs you want to create."));
   }
 }
 
