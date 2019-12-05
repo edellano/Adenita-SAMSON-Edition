@@ -250,6 +250,8 @@ ADNPointer<ADNPart> ADNLoader::LoadPartFromJsonLegacy(std::string filename)
   else {
     std::string msg = "Format is too old and can't be loaded with the current Adenita version";
     ADNLogger::LogError(msg);
+	
+	return part;
   }
 
   std::string name = d["name"].GetString();
