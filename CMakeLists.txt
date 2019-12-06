@@ -83,6 +83,51 @@ SET ( CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SAMSON_SDK_PATH}/cmake" 
 SET ( SAMSON_LIBRARIES_PATH "${CMAKE_SAMSON_SDK_PATH}/libs" )
 SET ( SAMSON_INCLUDE_PATH "${CMAKE_SAMSON_SDK_PATH}/include/" )
 
+# VERSION_HASH information : New since SAMSON 0.8.0
+#
+# The maximum size of this variable is 63 Bytes ie char[63].
+# We can embed into elements file one string to identify it. Usualy we put the git commit hash or the svn revision number inside.
+# The information is relevant only if the working copy is up to date and if everything is commited
+# If you upload your element on samson-connect, you will see this information next to your element inside My SAMSON->My Factory->Edit Element.
+
+# you can choose either git either svn either nothing
+SET ( USE_GIT 1 )
+SET ( USE_SVN 0 )
+
+IF( ${USE_GIT} )
+	# if USE_GIT=1 the next command will get the current commit hash and will store 
+	# it inside VERSION_HASH variable.
+	MESSAGE( "Getting current git commit hash and storing it inside VERSION_HASH variable." )
+	EXECUTE_PROCESS(
+	  COMMAND git log -1 --format=%H
+	  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	  OUTPUT_VARIABLE VERSION_HASH
+	  OUTPUT_STRIP_TRAILING_WHITESPACE
+	 )
+ELSE (${USE_GIT})
+	IF (${USE_SVN})
+		# if USE_SVN=1 and USE_GIT=0 the next command will get the current commit revision
+		# of your working copy and will store it inside VERSION_HASH variable.
+		MESSAGE( "Getting current svn revision and storing it inside VERSION_HASH variable." )
+		find_package(Subversion)
+		IF(SUBVERSION_FOUND)
+		  Subversion_WC_INFO(${CMAKE_SOURCE_DIR} REPO)
+		  SET ( VERSION_HASH ${REPO_WC_REVISION} )
+		ENDIF()
+	ELSE (${USE_SVN})
+		# if USE_SVN=0 and USE_GIT=0 we set the variable VERSION_HASH equal to 
+		# "undefined hash" or what you desire.
+		SET(VERSION_HASH "undefined")
+	ENDIF(${USE_SVN})
+ENDIF(${USE_GIT})
+
+# we create ElementVersionHash.cmake file in CMAKE_SOURCE_DIR folder containing the corresponding VERSION_HASH
+# This file just creates add definition of SB_ELEMENT_VERSION_HASH accessible throught the code.
+FILE ( WRITE ElementVersionHash.cmake "ADD_DEFINITIONS\(-DSB_ELEMENT_VERSION_HASH=\"${VERSION_HASH}\"\)\n" )
+INCLUDE ( ElementVersionHash.cmake )
+
+# End off VERSION_HASH information
+
 INCLUDE ( SDKConfiguration )
 
 IF( UUIDSETTINGS ) 
