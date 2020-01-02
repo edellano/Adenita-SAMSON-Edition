@@ -2,9 +2,7 @@
 
 Adenita is a 3D visualization and modeling toolkit for the in silico design of static and dynamic DNA nanostructures. Based on a multiscale data model, it visualizes DNA-based structures on different abstraction levels and enable users to load and create DNA origami structures and combine them with proteins.
 
-**Adenita: Interactive 3D modeling and visualization of DNA Nanostructures**
-Elisa de Llano, Haichao Miao, Yasaman Ahmadi, Amanda J. Wilson, Morgan Beeby, Ivan Viola, Ivan Barisic
-*Pre-print at bioRxiv (849976)*; doi: https://doi.org/10.1101/849976
+**Adenita: Interactive 3D modeling and visualization of DNA Nanostructures.** Elisa de Llano, Haichao Miao, Yasaman Ahmadi, Amanda J. Wilson, Morgan Beeby, Ivan Viola, Ivan Barisic. *Pre-print at bioRxiv (849976)*; 2019. doi: https://doi.org/10.1101/849976
 
 ## Developers:
 
