@@ -182,7 +182,7 @@ void SEAdenitaCoreSEAppGUI::onExport()
     indexParts.insert(std::make_pair(i, p));
     ++i;
   }
-  typeSelection->insertItem(i, QString::fromStdString("SelectedPart"));
+  typeSelection->insertItem(i, QString::fromStdString("Selected Component"));
   int sel_idx = i;
   typeSelection->insertItem(i+1, QString::fromStdString("Workspace"));
   int all_idx = i + 1;
@@ -217,12 +217,22 @@ void SEAdenitaCoreSEAppGUI::onExport()
   if (dialogCode == QDialog::Accepted) {
     
     auto val = typeSelection->currentIndex();
-    ADNPointer<ADNPart> part = nullptr;
+
+    CollectionMap<ADNPart> selectedParts;
+    std::pair<SBPosition3, SBPosition3> boundingBox;
+
     if (val == sel_idx) {
-      part = nr->GetSelectedParts()[0];
+      selectedParts = nr->GetSelectedParts();
+      boundingBox = nr->GetBoundingBoxForSelection();
     }
     else if (val != all_idx) {
-      part = indexParts.at(val);
+      ADNPointer<ADNPart> part = indexParts.at(val);
+      selectedParts.addReferenceTarget(part());
+      std::pair<SBPosition3, SBPosition3> boundingBox = part->GetBoundingBox();
+    }
+    else {
+      selectedParts = nr->GetParts();
+      boundingBox = nr->GetBoundingBox();
     }
 
     QString eType = exportType->currentText();
@@ -230,10 +240,9 @@ void SEAdenitaCoreSEAppGUI::onExport()
     if (eType == "Sequence list") {
       // export sequences
       auto filename = QFileDialog::getSaveFileName(this, tr("Sequence List"), QDir::currentPath(), tr("Sequence List (*.csv)"));
-      t->ExportToSequenceList(filename, part);
+      t->ExportToSequenceList(filename, selectedParts);
     }
     else if (eType == "oxDNA") {
-      std::pair<SBPosition3, SBPosition3> boundingBox = part->GetBoundingBox();
       auto bbSize = boundingBox.second - boundingBox.first;
 
       ADNAuxiliary::OxDNAOptions options;
@@ -290,7 +299,7 @@ void SEAdenitaCoreSEAppGUI::onExport()
         options.boxSizeZ_ = boxZ->value();
 
         QString folder = QFileDialog::getExistingDirectory(this, tr("Choose an existing directory"), QDir::currentPath(), QFileDialog::DontUseNativeDialog);
-        t->ExportToOxDNA(folder, options, part);
+        t->ExportToOxDNA(folder, options, selectedParts);
       }
     }
 

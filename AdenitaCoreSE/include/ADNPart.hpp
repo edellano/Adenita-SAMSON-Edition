@@ -81,6 +81,7 @@ private:
   unsigned int doubleStrandId_ = 1;
 
   void SetBoundingBox(ADNPointer<ADNNucleotide> newNt);
+  void SetBoundingBox(ADNPointer<ADNBaseSegment> newBs);
   void InitBoundingBox();
 
   SBPosition3 minBox_;
