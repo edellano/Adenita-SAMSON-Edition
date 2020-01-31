@@ -182,7 +182,7 @@ void SEAdenitaCoreSEAppGUI::onExport()
     indexParts.insert(std::make_pair(i, p));
     ++i;
   }
-  typeSelection->insertItem(i, QString::fromStdString("Selected Component"));
+  typeSelection->insertItem(i, QString::fromStdString("Selected Component(s)"));
   int sel_idx = i;
   typeSelection->insertItem(i+1, QString::fromStdString("Workspace"));
   int all_idx = i + 1;

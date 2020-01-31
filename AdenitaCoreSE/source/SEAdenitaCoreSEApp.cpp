@@ -122,9 +122,11 @@ void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string filename)
 
 void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, CollectionMap<ADNPart> parts)
 {
+  SAMSON::setStatusMessage(QString("Exporting to oxDNA..."));
   if (parts.size() > 0) {
     ADNLoader::OutputToOxDNA(parts, folder.toStdString(), options);
   }
+  SAMSON::setStatusMessage(QString("Done export to oxDNA."));
 }
 
 void SEAdenitaCoreSEApp::AddNtThreeP(int numNt)
