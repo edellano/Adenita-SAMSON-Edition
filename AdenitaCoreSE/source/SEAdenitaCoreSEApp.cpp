@@ -53,8 +53,7 @@ void SEAdenitaCoreSEApp::SaveFile(QString filename, ADNPointer<ADNPart> part)
 void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
 {
   SAMSON::setStatusMessage(QString("Loading ") + filename);
-  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+
   // Apply algorithm
   DASDaedalus *alg = new DASDaedalus();
   alg->SetMinEdgeLength(minEdgeSize);

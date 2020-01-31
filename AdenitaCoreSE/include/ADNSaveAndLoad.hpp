@@ -32,7 +32,7 @@ namespace ADNLoader {
   void OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options);
   void OutputToOxDNA(CollectionMap<ADNPart> parts, std::string folder, ADNAuxiliary::OxDNAOptions options);
   void SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrands, std::ofstream& outConf, std::ofstream& outTopo, ADNAuxiliary::OxDNAOptions options);
-  std::ofstream CreateOutputFile(std::string fname, std::string folder, bool sign = false);
+  void SignOutputFile(std::ofstream& output);
   std::pair<bool, ADNPointer<ADNPart>> InputFromOxDNA(std::string topoFile, std::string configFile);
 
   // CanDo

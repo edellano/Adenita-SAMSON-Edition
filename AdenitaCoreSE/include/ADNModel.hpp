@@ -2,13 +2,13 @@
 
 #define _USE_MATH_DEFINES
 
-#include "SBMStructuralModelNodeAtom.hpp"
-#include "SBMStructuralModelNodeBackbone.hpp"
-#include "SBMStructuralModelNodeSidechain.hpp"
-#include "SBMStructuralModelNodeResidue.hpp"
-#include "SBMStructuralModelNodeChain.hpp"
-#include "SBMStructuralModelNodeGroup.hpp"
-#include "SBMStructuralModelNode.hpp"
+#include "SBAtom.hpp"
+#include "SBBackbone.hpp"
+#include "SBSideChain.hpp"
+#include "SBResidue.hpp"
+#include "SBChain.hpp"
+//#include "SBStructuralNode.hpp"
+#include "SBStructuralGroup.hpp"
 #include <boost/bimap.hpp>
 #include <boost/assign/list_of.hpp>
 #include "ADNAuxiliary.hpp"
@@ -67,7 +67,7 @@ class ADNSingleStrand;
 class ADNAtom: public SBAtom {
   SB_CLASS
 public:
-  ADNAtom() : SBAtom() {};
+  ADNAtom() : SBAtom() {}
   ADNAtom(const ADNAtom& other);
   ~ADNAtom() = default;
 
@@ -163,7 +163,7 @@ SB_DECLARE_BASE_TYPE(ADNSidechain, SBSideChain);
 class ADNNucleotide: public PositionableSB, public SBResidue, public Orientable {
   SB_CLASS
 public:
-  ADNNucleotide() : PositionableSB(), SBResidue(), Orientable() {};
+  ADNNucleotide() : PositionableSB(), SBResidue(), Orientable() {}
   ADNNucleotide(const ADNNucleotide& other);
   ~ADNNucleotide() = default;
 
@@ -215,7 +215,7 @@ public:
   void SetName(const std::string &name);
 
   void AddAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
-  void ADNNucleotide::DeleteAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
+  void DeleteAtom(NucleotideGroup g, ADNPointer<ADNAtom> a);
   CollectionMap<ADNAtom> GetAtoms();
   CollectionMap<ADNAtom> GetAtomsByName(std::string name);
   void HideCenterAtoms();
@@ -250,7 +250,7 @@ SB_DECLARE_BASE_TYPE(ADNNucleotide, SBResidue);
 class ADNSingleStrand: public SBChain {
   SB_CLASS
 public:
-  ADNSingleStrand() : SBChain() {};
+  ADNSingleStrand() : SBChain() {}
   //ADNSingleStrand(int numNts);
   //ADNSingleStrand(std::vector<ADNPointer<ADNNucleotide>> nts);
   ADNSingleStrand(const ADNSingleStrand& other);
@@ -326,13 +326,13 @@ SB_DECLARE_BASE_TYPE(ADNSingleStrand, SBChain);
 class ADNCell : public SBStructuralGroup {
   SB_CLASS
 public:
-  ADNCell() : SBStructuralGroup() {};
-  virtual ~ADNCell() {};
-  virtual CellType GetType() { return CellType::Undefined; };
-  virtual void RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {};
-  virtual CollectionMap<ADNNucleotide> GetNucleotides() { return CollectionMap<ADNNucleotide>(); };
-  virtual bool IsLeft(ADNPointer<ADNNucleotide> nt) { return false; };  // samson doesn't like abstract classes
-  virtual bool IsRight(ADNPointer<ADNNucleotide> nt) { return false; };
+  ADNCell() : SBStructuralGroup() {}
+  virtual ~ADNCell() {}
+  virtual CellType GetType() { return CellType::Undefined; }
+  virtual void RemoveNucleotide(ADNPointer<ADNNucleotide> nt) {}
+  virtual CollectionMap<ADNNucleotide> GetNucleotides() { return CollectionMap<ADNNucleotide>(); }
+  virtual bool IsLeft(ADNPointer<ADNNucleotide> nt) { return false; }  // samson doesn't like abstract classes
+  virtual bool IsRight(ADNPointer<ADNNucleotide> nt) { return false; }
   virtual void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
   virtual void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
 };
@@ -346,7 +346,7 @@ public:
   ADNBasePair() = default;
   ~ADNBasePair() = default;
 
-  CellType GetType() { return CellType::BasePair; };
+  CellType GetType() { return CellType::BasePair; }
 
   void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
   void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
@@ -378,15 +378,15 @@ public:
   ADNSkipPair() = default;
   ~ADNSkipPair() = default;
 
-  CellType GetType() { return CellType::SkipPair; };
+  CellType GetType() { return CellType::SkipPair; }
 
   void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
   void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
 
   void RemoveNucleotide(ADNPointer<ADNNucleotide> nt);
 
-  bool IsLeft(ADNPointer<ADNNucleotide> nt) { return false; };
-  bool IsRight(ADNPointer<ADNNucleotide> nt) { return false; };
+  bool IsLeft(ADNPointer<ADNNucleotide> nt) { return false; }
+  bool IsRight(ADNPointer<ADNNucleotide> nt) { return false; }
 private:
 };
 
@@ -396,7 +396,7 @@ SB_DECLARE_BASE_TYPE(ADNSkipPair, ADNCell);
 class ADNLoop: public SBStructuralGroup {
   SB_CLASS
 public:
-  ADNLoop() : SBStructuralGroup() {};
+  ADNLoop() : SBStructuralGroup() {}
   /**
   * Destructor for ANTLoop.
   * Deletes references in other ANTLoop, but not on the ANTSingleStrand.
@@ -437,7 +437,7 @@ public:
   ADNLoopPair() = default;
   ~ADNLoopPair() = default;
 
-  CellType GetType() { return CellType::LoopPair; };
+  CellType GetType() { return CellType::LoopPair; }
 
   void serialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0)) const;														///< Serializes the node
   void unserialize(SBCSerializer* serializer, const SBNodeIndexer& nodeIndexer, const SBVersionNumber& sdkVersionNumber = SB_SDK_VERSION_NUMBER, const SBVersionNumber& classVersionNumber = SBVersionNumber(1, 0, 0));											///< Unserializes the node
@@ -467,7 +467,7 @@ class ADNDoubleStrand;
 class ADNBaseSegment: public PositionableSB, public SBStructuralGroup, public Orientable {
   SB_CLASS
 public:
-  ADNBaseSegment() : PositionableSB(), SBStructuralGroup(), Orientable() {};
+  ADNBaseSegment() : PositionableSB(), SBStructuralGroup(), Orientable() {}
   ADNBaseSegment(CellType cellType);
   ADNBaseSegment(const ADNBaseSegment& other);
   ~ADNBaseSegment() = default;
@@ -517,7 +517,7 @@ SB_DECLARE_BASE_TYPE(ADNBaseSegment, SBStructuralGroup);
 class ADNDoubleStrand : public SBStructuralGroup {
   SB_CLASS
 public:
-  ADNDoubleStrand() : SBStructuralGroup() {};
+  ADNDoubleStrand() : SBStructuralGroup() {}
   ~ADNDoubleStrand() = default;
   ADNDoubleStrand(const ADNDoubleStrand& other);
 

@@ -2,7 +2,7 @@
 
 #include "ADNConstants.hpp"
 #include "ADNModel.hpp"
-#include "SBMStructuralModel.hpp"
+#include "SBStructuralModel.hpp"
 #include "SBMStructuralModelNodeRoot.hpp"
 
 

@@ -211,7 +211,7 @@ private:
    *  \param vector with MST
    *  \param target object
    */
-  void DASDaedalus::SplitEdges(const std::vector<DOTLink*> &mst, ADNPointer<ADNPart> origami, DASPolyhedron &figure);
+  void SplitEdges(const std::vector<DOTLink*> &mst, ADNPointer<ADNPart> origami, DASPolyhedron &figure);
   /** Adds Pseudo-nodes so the A-trail can be routed.
    *  \param the target polyhedron
    */

@@ -2,8 +2,7 @@
 
 void DASCadnano::ParseJSON(std::string filename)
 {
-  FILE* fp;
-  fopen_s(&fp, filename.c_str(), "rb");
+  FILE* fp = fopen(filename.c_str(), "rb");
   char readBuffer[65536];
   FileReadStream is(fp, readBuffer, sizeof(readBuffer));
   Document d;

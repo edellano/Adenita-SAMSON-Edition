@@ -91,7 +91,7 @@ ADNPointer<ADNPart> SEWireframeEditor::generateCuboid(bool mock /*= false*/)
     
   } else {
     part = new ADNPart();
-    DASPolyhedron& p = DASPolyhedron();
+    DASPolyhedron p = DASPolyhedron();
     std::map<int, SBPosition3> vertices;
     std::map<int, std::vector<int>> faces;
 

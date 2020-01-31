@@ -745,8 +745,7 @@ std::string SEAdenitaCoreSEAppGUI::IsJsonCadnano(QString filename)
 {
   std::string format = "unknown";
 
-  FILE* fp;
-  fopen_s(&fp, filename.toStdString().c_str(), "rb");
+  FILE* fp = fopen(filename.toStdString().c_str(), "rb");
   char readBuffer[65536];
   FileReadStream is(fp, readBuffer, sizeof(readBuffer));
   Document d;

@@ -14,7 +14,7 @@ DASDaedalus::~DASDaedalus() {
 ADNPointer<ADNPart> DASDaedalus::ApplyAlgorithm(std::string seq, std::string filename, bool center) {
 
   // Create DASPolyhedron
-  DASPolyhedron& p = DASPolyhedron(filename);
+  DASPolyhedron p(filename);
   p.Center(SBPosition3());
   
   ADNPointer<ADNPart> daedalus_part = ApplyAlgorithm(seq, p, center);
