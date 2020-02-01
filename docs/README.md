@@ -28,7 +28,7 @@ If SAMSON crashes after having added Adenita, please make sure you have the late
 
 Adenita SAMSON edition is a [SAMSON](https://www.samson-connect.net) plugin. It is available for **SAMSON 0.7.0** and **SAMSON 0.8.5**. After installing SAMSON, you can select Adenita from a variety of plugins. Adenita can be combined with any of them! If you are unfamiliar with SAMSON, check out their [tutorials](https://documentation.samson-connect.net/).
 
-If you encounter any problems while working with Adenita, you can report them [here](https://github.com/edellano/Adenita-SAMSON-Edition-Win-/issues)
+If you encounter any problems while working with Adenita, you can report them [here](https://github.com/edellano/Adenita-SAMSON-Edition-Win-/issues).
 
 ## Features
 
