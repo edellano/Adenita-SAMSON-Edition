@@ -22,6 +22,8 @@ This document is a quick-start guide to get you started designing DNA nanostruct
 
 Adenita is available for Windows and Linux. A dedicated graphics card is recommended.
 
+If SAMSON crashes after having added Adenita, please make sure you have the latest supported [Microsoft Visual C++ Redistributable](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads).
+
 ## First steps
 
 Adenita SAMSON edition is a [SAMSON](https://www.samson-connect.net) plugin. It is available for **SAMSON 0.7.0** and **SAMSON 0.8.5**. After installing SAMSON, you can select Adenita from a variety of plugins. Adenita can be combined with any of them! If you are unfamiliar with SAMSON, check out their [tutorials](https://documentation.samson-connect.net/).
