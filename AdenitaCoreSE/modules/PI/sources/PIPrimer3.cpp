@@ -1,4 +1,5 @@
 #include "PIPrimer3.hpp"
+#include <cfloat>
 
 CollectionMap<PIBindingRegion> PIPrimer3::GetBindingRegions()
 {

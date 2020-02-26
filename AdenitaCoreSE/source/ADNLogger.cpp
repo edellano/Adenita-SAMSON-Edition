@@ -14,7 +14,7 @@ void ADNLogger::LogError(QString value)
 void ADNLogger::LogDebug(std::string value)
 {
   SEConfig& config = SEConfig::GetInstance();
-  if (config.mode == DEBUG_LOG) {
+  if (config.mode == SEConfigMode::DEBUG_LOG) {
     SB_WARNING("Adenita debug: " + value);
   }
 }

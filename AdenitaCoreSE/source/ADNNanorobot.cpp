@@ -456,3 +456,23 @@ CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
 
   return bss;
 }
+
+std::pair<SBPosition3, SBPosition3> ADNNanorobot::GetBoundingBox(CollectionMap<ADNPart> parts)
+{
+  auto maxVal = SBQuantity::picometer(std::numeric_limits<double>::max());
+  auto minBox = SBPosition3(maxVal, maxVal, maxVal);
+  auto maxBox = SBPosition3(-maxVal, -maxVal, -maxVal);
+
+  SB_FOR(ADNPointer<ADNPart> part, parts) {
+    auto bbPart = part->GetBoundingBox();
+    if (bbPart.first[0] < minBox[0]) minBox[0] = bbPart.first[0];
+    if (bbPart.first[1] < minBox[1]) minBox[1] = bbPart.first[1];
+    if (bbPart.first[2] < minBox[2]) minBox[2] = bbPart.first[2];
+    if (bbPart.second[0] > maxBox[0]) maxBox[0] = bbPart.second[0];
+    if (bbPart.second[1] > maxBox[1]) maxBox[1] = bbPart.second[1];
+    if (bbPart.second[2] > maxBox[2]) maxBox[2] = bbPart.second[2];
+  }
+
+  std::pair<SBPosition3, SBPosition3> bb(minBox, maxBox);
+  return bb;
+}

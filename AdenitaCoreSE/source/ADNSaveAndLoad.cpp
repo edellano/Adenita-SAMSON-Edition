@@ -1039,10 +1039,11 @@ ADNPointer<ADNPart> ADNLoader::GenerateModelFromDatagraphParametrized(SBNode * s
 
 void ADNLoader::OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNAuxiliary::OxDNAOptions options)
 {
+
   std::string fnameConf = "config.conf";
-  std::ofstream outConf = CreateOutputFile(fnameConf, folder);
+  std::ofstream outConf(folder + "/" + fnameConf);
   std::string fnameTopo = "topo.top";
-  std::ofstream outTopo = CreateOutputFile(fnameTopo, folder);
+  std::ofstream outTopo(folder + "/" + fnameTopo);
 
   auto singleStrands = part->GetSingleStrands();
   SingleStrandsToOxDNA(singleStrands, outConf, outTopo, options);
@@ -1051,16 +1052,21 @@ void ADNLoader::OutputToOxDNA(ADNPointer<ADNPart> part, std::string folder, ADNA
   outTopo.close();
 }
 
-void ADNLoader::OutputToOxDNA(ADNNanorobot* nanorobot, std::string folder, ADNAuxiliary::OxDNAOptions options)
+void ADNLoader::OutputToOxDNA(CollectionMap<ADNPart> parts, std::string folder, ADNAuxiliary::OxDNAOptions options)
 {
-  if (nanorobot == nullptr) return;
+  CollectionMap<ADNSingleStrand> singleStrands;
+  SB_FOR(ADNPointer<ADNPart> p, parts) {
+    auto sss = p->GetSingleStrands();
+    SB_FOR(ADNPointer<ADNSingleStrand> ss, sss) {
+      singleStrands.addReferenceTarget(ss());
+    }
+  }
 
   std::string fnameConf = "config.conf";
-  std::ofstream& outConf = CreateOutputFile(fnameConf, folder);
+  std::ofstream outConf(folder + "/" + fnameConf);
   std::string fnameTopo = "topo.top";
-  std::ofstream& outTopo = CreateOutputFile(fnameTopo, folder);
+  std::ofstream outTopo(folder + "/" + fnameTopo);
 
-  auto singleStrands = nanorobot->GetSingleStrands();
   SingleStrandsToOxDNA(singleStrands, outConf, outTopo, options);
 
   outConf.close();
@@ -1141,10 +1147,8 @@ void ADNLoader::SingleStrandsToOxDNA(CollectionMap<ADNSingleStrand> singleStrand
   }
 }
 
-std::ofstream ADNLoader::CreateOutputFile(std::string fname, std::string folder, bool sign)
+void ADNLoader::SignOutputFile(std::ofstream& output)
 {
-  std::ofstream output(folder + "/" + fname);
-
   time_t rawtime;
   struct tm * timeinfo;
   char buffer[80];
@@ -1155,11 +1159,7 @@ std::ofstream ADNLoader::CreateOutputFile(std::string fname, std::string folder,
   strftime(buffer, sizeof(buffer), "%d-%m-%Y %I:%M:%S", timeinfo);
   std::string str(buffer);
 
-  if (sign) {
-    output << "## File created with Adenita on " + str + "\n";
-  }
-  
-  return output;
+  output << "## File created with Adenita on " + str + "\n";
 }
 
 std::pair<bool, ADNPointer<ADNPart>> ADNLoader::InputFromOxDNA(std::string topoFile, std::string configFile)
@@ -1695,7 +1695,8 @@ void ADNLoader::BuildTopScales(ADNPointer<ADNPart> part)
 void ADNLoader::OutputToCSV(CollectionMap<ADNPart> parts, std::string fname, std::string folder)
 {
   int num = 0;
-  std::ofstream& out = CreateOutputFile(fname, folder);
+  std::ofstream out(folder + "/" + fname);
+  SignOutputFile(out);
   SB_FOR(ADNPointer<ADNPart> part, parts) {
     auto singleStrands = part->GetSingleStrands();
     SB_FOR(ADNPointer<ADNSingleStrand> ss, singleStrands) {

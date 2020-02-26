@@ -211,6 +211,9 @@ public:
   unsigned int UseDoubleStrandId();
   unsigned int UsePartId();
 
+  // bounding box
+  std::pair<SBPosition3, SBPosition3> GetBoundingBox(CollectionMap<ADNPart> parts);
+
 private:
   CollectionMap<ADNPart> partsIndex_;
   CollectionMap<ADNConformation> conformationsIndex_;

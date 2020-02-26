@@ -53,8 +53,7 @@ void SEAdenitaCoreSEApp::SaveFile(QString filename, ADNPointer<ADNPart> part)
 void SEAdenitaCoreSEApp::LoadPartWithDaedalus(QString filename, int minEdgeSize)
 {
   SAMSON::setStatusMessage(QString("Loading ") + filename);
-  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-  _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_DEBUG);
+
   // Apply algorithm
   DASDaedalus *alg = new DASDaedalus();
   alg->SetMinEdgeLength(minEdgeSize);
@@ -89,21 +88,8 @@ void SEAdenitaCoreSEApp::ImportFromCadnano(QString filename)
   AddConformationToActiveLayer(cad.Get1DConformation());
 }
 
-void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, ADNPointer<ADNPart> part)
+void SEAdenitaCoreSEApp::ExportToSequenceList(QString filename, CollectionMap<ADNPart> parts)
 {
-  // get selected part
-  SBDocument* doc = SAMSON::getActiveDocument();
-  SBNodeIndexer nodes;
-  doc->getNodes(nodes, (SBNode::GetClass() == std::string("ADNPart")) && (SBNode::GetElementUUID() == SBUUID("DDA2A078-1AB6-96BA-0D14-EE1717632D7A")));
-
-  CollectionMap<ADNPart> parts;
-  if (part == nullptr) {
-    parts = GetNanorobot()->GetParts();
-  }
-  else {
-    parts.addReferenceTarget(part());
-  }
-
   QFileInfo file = QFileInfo(filename);
   ADNLoader::OutputToCSV(parts, file.fileName().toStdString(), file.path().toStdString());
 }
@@ -134,14 +120,13 @@ void SEAdenitaCoreSEApp::SetScaffoldSequence(std::string filename)
 
 }
 
-void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part)
+void SEAdenitaCoreSEApp::ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, CollectionMap<ADNPart> parts)
 {
-  if (part == nullptr) {
-    ADNLoader::OutputToOxDNA(GetNanorobot(), folder.toStdString(), options);
+  SAMSON::setStatusMessage(QString("Exporting to oxDNA..."));
+  if (parts.size() > 0) {
+    ADNLoader::OutputToOxDNA(parts, folder.toStdString(), options);
   }
-  else {
-    ADNLoader::OutputToOxDNA(part, folder.toStdString(), options);
-  }
+  SAMSON::setStatusMessage(QString("Done export to oxDNA."));
 }
 
 void SEAdenitaCoreSEApp::AddNtThreeP(int numNt)
