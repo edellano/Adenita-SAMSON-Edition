@@ -223,17 +223,15 @@ void SEAdenitaCoreSEAppGUI::onExport()
 
     if (val == sel_idx) {
       selectedParts = nr->GetSelectedParts();
-      boundingBox = nr->GetBoundingBoxForSelection();
     }
     else if (val != all_idx) {
       ADNPointer<ADNPart> part = indexParts.at(val);
       selectedParts.addReferenceTarget(part());
-      std::pair<SBPosition3, SBPosition3> boundingBox = part->GetBoundingBox();
     }
     else {
       selectedParts = nr->GetParts();
-      boundingBox = nr->GetBoundingBox();
     }
+    boundingBox = nr->GetBoundingBox(selectedParts);
 
     QString eType = exportType->currentText();
 

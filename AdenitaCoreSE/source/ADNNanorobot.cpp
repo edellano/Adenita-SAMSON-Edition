@@ -457,56 +457,22 @@ CollectionMap<ADNBaseSegment> ADNNanorobot::GetHighlightedBaseSegments()
   return bss;
 }
 
-void ADNNanorobot::InitBoundingBox()
-{
-  auto maxVal = SBQuantity::picometer(std::numeric_limits<double>::max());
-  minBox_ = SBPosition3(maxVal, maxVal, maxVal);
-  maxBox_ = SBPosition3(-maxVal, -maxVal, -maxVal);
-}
-
-void ADNNanorobot::SetBoundingBox(ADNPointer<ADNPart> newPart)
-{
-  auto bb = newPart->GetBoundingBox();
-  if (bb.first[0] < minBox_[0]) minBox_[0] = bb.first[0];
-  if (bb.first[1] < minBox_[1]) minBox_[1] = bb.first[1];
-  if (bb.first[2] < minBox_[2]) minBox_[2] = bb.first[2];
-  if (bb.second[0] > maxBox_[0]) maxBox_[0] = bb.second[0];
-  if (bb.second[1] > maxBox_[1]) maxBox_[1] = bb.second[1];
-  if (bb.second[2] > maxBox_[2]) maxBox_[2] = bb.second[2];
-}
-
-std::pair<SBPosition3, SBPosition3> ADNNanorobot::GetBoundingBox()
-{
-  return std::pair<SBPosition3, SBPosition3>(minBox_, maxBox_);
-}
-
-std::pair<SBPosition3, SBPosition3> ADNNanorobot::GetBoundingBoxForSelection()
+std::pair<SBPosition3, SBPosition3> ADNNanorobot::GetBoundingBox(CollectionMap<ADNPart> parts)
 {
   auto maxVal = SBQuantity::picometer(std::numeric_limits<double>::max());
   auto minBox = SBPosition3(maxVal, maxVal, maxVal);
   auto maxBox = SBPosition3(-maxVal, -maxVal, -maxVal);
+
+  SB_FOR(ADNPointer<ADNPart> part, parts) {
+    auto bbPart = part->GetBoundingBox();
+    if (bbPart.first[0] < minBox[0]) minBox[0] = bbPart.first[0];
+    if (bbPart.first[1] < minBox[1]) minBox[1] = bbPart.first[1];
+    if (bbPart.first[2] < minBox[2]) minBox[2] = bbPart.first[2];
+    if (bbPart.second[0] > maxBox[0]) maxBox[0] = bbPart.second[0];
+    if (bbPart.second[1] > maxBox[1]) maxBox[1] = bbPart.second[1];
+    if (bbPart.second[2] > maxBox[2]) maxBox[2] = bbPart.second[2];
+  }
+
   std::pair<SBPosition3, SBPosition3> bb(minBox, maxBox);
-
-  auto parts = GetSelectedParts();
-  InitBoundingBox();
-  SB_FOR(ADNPointer<ADNPart> part, parts) {
-    auto bb = part->GetBoundingBox();
-    if (bb.first[0] < minBox[0]) minBox[0] = bb.first[0];
-    if (bb.first[1] < minBox[1]) minBox[1] = bb.first[1];
-    if (bb.first[2] < minBox[2]) minBox[2] = bb.first[2];
-    if (bb.second[0] > maxBox[0]) maxBox[0] = bb.second[0];
-    if (bb.second[1] > maxBox[1]) maxBox[1] = bb.second[1];
-    if (bb.second[2] > maxBox[2]) maxBox[2] = bb.second[2];
-  }
-
   return bb;
-}
-
-void ADNNanorobot::ResetBoundingBox()
-{
-  auto parts = GetParts();
-  InitBoundingBox();
-  SB_FOR(ADNPointer<ADNPart> part, parts) {
-    SetBoundingBox(part);
-  }
 }
