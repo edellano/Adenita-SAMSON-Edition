@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QComboBox>
 #include <QSpinBox>
+#include <QToolButton>
 
 
 class SEAdenitaCoreSEApp;

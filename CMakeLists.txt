@@ -9,7 +9,9 @@
 
 
 CMAKE_MINIMUM_REQUIRED ( VERSION 2.8.9 FATAL_ERROR )
-cmake_policy(SET CMP0071 NEW)
+if (${CMAKE_VERSION} GREATER "3.5.1")
+	cmake_policy(SET CMP0071 NEW)
+endif()
 
 IF( UNIX )
 	IF( DEBUG ) 
