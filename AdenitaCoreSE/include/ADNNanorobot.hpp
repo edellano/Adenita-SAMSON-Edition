@@ -9,7 +9,7 @@
 class ADNNanorobot : public Nameable, public Positionable, public Orientable {
 public:
   //! Default constructor
-  ADNNanorobot() : Nameable(), Positionable(), Orientable() {};
+  ADNNanorobot() : Nameable(), Positionable(), Orientable() { InitBoundingBox(); };
   //! Copy constructor
   ADNNanorobot(const ADNNanorobot &n);
   //! Default destructor
@@ -211,10 +211,22 @@ public:
   unsigned int UseDoubleStrandId();
   unsigned int UsePartId();
 
+  // bounding box
+  std::pair<SBPosition3, SBPosition3> GetBoundingBox();
+  std::pair<SBPosition3, SBPosition3> GetBoundingBoxForSelection();
+  void ResetBoundingBox();
+
 private:
   CollectionMap<ADNPart> partsIndex_;
   CollectionMap<ADNConformation> conformationsIndex_;
 
   // part id only for naming
   unsigned int partId_ = 1;
+
+  // bounding box
+  void SetBoundingBox(ADNPointer<ADNPart> newPart);
+  void InitBoundingBox();
+
+  SBPosition3 minBox_;
+  SBPosition3 maxBox_;
 };

@@ -44,8 +44,8 @@ public :
   void SaveFile(QString filename, ADNPointer<ADNPart> part = nullptr);
   void LoadPartWithDaedalus(QString filename, int minEdgeSize);
   void ImportFromCadnano(QString filename);
-  void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, ADNPointer<ADNPart> part = nullptr);
-  void ExportToSequenceList(QString filename, ADNPointer<ADNPart> part = nullptr);
+  void ExportToOxDNA(QString folder, ADNAuxiliary::OxDNAOptions options, CollectionMap<ADNPart> parts);
+  void ExportToSequenceList(QString filename, CollectionMap<ADNPart> parts);
   void SetScaffoldSequence(std::string seq);
   void GenerateSequence(double gcCont, int maxContGs, bool overwrite = true);
   void ResetVisualModel();

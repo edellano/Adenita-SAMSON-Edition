@@ -323,6 +323,17 @@ void ADNPart::SetBoundingBox(ADNPointer<ADNNucleotide> newNt)
   if (pos[2] > maxBox_[2]) maxBox_[2] = pos[2];
 }
 
+void ADNPart::SetBoundingBox(ADNPointer<ADNBaseSegment> newBs)
+{
+  SBPosition3 pos = newBs->GetPosition();
+  if (pos[0] < minBox_[0]) minBox_[0] = pos[0];
+  if (pos[1] < minBox_[1]) minBox_[1] = pos[1];
+  if (pos[2] < minBox_[2]) minBox_[2] = pos[2];
+  if (pos[0] > maxBox_[0]) maxBox_[0] = pos[0];
+  if (pos[1] > maxBox_[1]) maxBox_[1] = pos[1];
+  if (pos[2] > maxBox_[2]) maxBox_[2] = pos[2];
+}
+
 void ADNPart::InitBoundingBox()
 {
   auto maxVal = SBQuantity::picometer(std::numeric_limits<double>::max());
@@ -352,6 +363,7 @@ void ADNPart::RegisterNucleotideThreePrime(ADNPointer<ADNSingleStrand> ss, ADNPo
   if (addToSs) ss->AddNucleotideThreePrime(nt);
 
   nucleotidesIndex_.addReferenceTarget(nt());
+  SetBoundingBox(nt);
 }
 
 void ADNPart::RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, bool addToSs)
@@ -364,6 +376,7 @@ void ADNPart::RegisterNucleotideFivePrime(ADNPointer<ADNSingleStrand> ss, ADNPoi
   if (addToSs) ss->AddNucleotideFivePrime(nt);
 
   nucleotidesIndex_.addReferenceTarget(nt());
+  SetBoundingBox(nt);
 }
 
 void ADNPart::RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNNucleotide> nt, 
@@ -377,6 +390,7 @@ void ADNPart::RegisterNucleotide(ADNPointer<ADNSingleStrand> ss, ADNPointer<ADNN
   if (addToSs) ss->AddNucleotide(nt, ntNext);
 
   nucleotidesIndex_.addReferenceTarget(nt());
+  SetBoundingBox(nt);
 }
 
 void ADNPart::RegisterAtom(ADNPointer<ADNNucleotide> nt, NucleotideGroup g, ADNPointer<ADNAtom> at, bool create)
@@ -406,6 +420,7 @@ void ADNPart::RegisterBaseSegmentEnd(ADNPointer<ADNDoubleStrand> ds, ADNPointer<
   if (addToDs) ds->AddBaseSegmentEnd(bs);
 
   baseSegmentsIndex_.addReferenceTarget(bs());
+  //SetBoundingBox(bs);
 }
 
 unsigned int ADNPart::GetBaseSegmentIndex(ADNPointer<ADNBaseSegment> bs)
