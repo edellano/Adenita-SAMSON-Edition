@@ -3,7 +3,7 @@
 ## Requirements:
 
 - Qt 5.9.3
-- CMake
+- CMake (Version 3.15 or above)
 - Visual Studio
 - Boost library
 - Rapidjson
